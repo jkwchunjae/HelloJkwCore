@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloJkwCore", "HelloJkwCore\HelloJkwCore.csproj", "{2100F6C4-575E-401E-8876-8580334E80CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloJkwClient", "HelloJkwClient\HelloJkwClient.csproj", "{BADE2AFD-704C-466D-A596-13FE71A3AB38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2100F6C4-575E-401E-8876-8580334E80CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2100F6C4-575E-401E-8876-8580334E80CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2100F6C4-575E-401E-8876-8580334E80CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2100F6C4-575E-401E-8876-8580334E80CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BADE2AFD-704C-466D-A596-13FE71A3AB38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BADE2AFD-704C-466D-A596-13FE71A3AB38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BADE2AFD-704C-466D-A596-13FE71A3AB38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BADE2AFD-704C-466D-A596-13FE71A3AB38}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {57B0B694-E7DE-4F9A-8937-EBCF06750ACC}
+	EndGlobalSection
+EndGlobal
