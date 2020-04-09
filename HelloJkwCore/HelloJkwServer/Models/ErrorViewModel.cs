@@ -1,6 +1,6 @@
 using System;
 
-namespace HelloJkwCore.Models
+namespace HelloJkwServer.Models
 {
     public class ErrorViewModel
     {

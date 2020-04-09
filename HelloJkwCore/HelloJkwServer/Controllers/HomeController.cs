@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using HelloJkwCore.Models;
+using HelloJkwServer.Models;
 
-namespace HelloJkwCore.Controllers
+namespace HelloJkwServer.Controllers
 {
     public class HomeController : Controller
     {

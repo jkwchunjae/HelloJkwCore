@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloJkwCore", "HelloJkwCore\HelloJkwCore.csproj", "{2100F6C4-575E-401E-8876-8580334E80CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloJkwServer", "HelloJkwServer\HelloJkwServer.csproj", "{2100F6C4-575E-401E-8876-8580334E80CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloJkwClient", "HelloJkwClient\HelloJkwClient.csproj", "{BADE2AFD-704C-466D-A596-13FE71A3AB38}"
 EndProject
