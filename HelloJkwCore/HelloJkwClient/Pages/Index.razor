@@ -1,7 +1,20 @@
 ﻿@page "/"
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+
+@code{
+    [CascadingParameter]
+    private AuthenticationState auth { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+    }
+}
+
