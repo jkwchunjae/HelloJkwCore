@@ -48,7 +48,7 @@ namespace HelloJkwServer.Auth
         private async Task SaveUserList(List<AppUser> userList, CancellationToken cancellationToken)
         {
             var jsonText = JsonConvert.SerializeObject(userList, Formatting.Indented);
-            await File.WriteAllTextAsync(_userListPath, jsonText, Encoding.UTF8, cancellationToken);
+            await File.WriteAllTextAsync(_userListPath, jsonText, new UTF8Encoding(), cancellationToken);
         }
 
         public Task AddLoginAsync(AppUser user, UserLoginInfo login, CancellationToken cancellationToken)

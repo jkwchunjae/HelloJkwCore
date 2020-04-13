@@ -29,7 +29,7 @@ namespace HelloJkwServer.Auth
         private List<OAuthOption> LoadOAuthOptions()
         {
             var path = _configuration.GetPath(PathOf.OAuthOption);
-            var jsonText = File.ReadAllText(path, Encoding.UTF8);
+            var jsonText = File.ReadAllText(path, new UTF8Encoding());
             var options = JsonConvert.DeserializeObject<List<OAuthOption>>(jsonText);
             return options;
         }
