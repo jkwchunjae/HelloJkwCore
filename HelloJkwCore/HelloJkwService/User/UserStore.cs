@@ -1,6 +1,4 @@
 ﻿using Common;
-using HelloJkwServer.Misc;
-using HelloJkwServer.Models;
 using JkwExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HelloJkwServer.Auth
+namespace HelloJkwService.User
 {
     public class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUser>
     {

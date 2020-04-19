@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace HelloJkwServer.Models
+namespace HelloJkwService.User
 {
     public class AppUser
     {
         public static string UserId(string loginProvider, string providerKey)
-            => $"{loginProvider}.{providerKey}";
+           => $"{loginProvider}.{providerKey}";
 
         public string Id { get; set; }
         public DateTime CreateTime { get; set; }

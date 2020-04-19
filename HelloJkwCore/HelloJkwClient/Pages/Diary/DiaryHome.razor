@@ -1,0 +1,199 @@
+﻿@page "/diary"
+@page "/diary/{DiaryName}/{DateStr}"
+
+@using JkwExtensions
+@using System.Threading
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Common
+@using HelloJkwService.User
+@using HelloJkwService.Diary
+
+@inject HelloJkwService.Diary.DiaryService DiaryService
+@inject IUserStore<AppUser> UserStore
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+@implements IDisposable
+
+@if (IsAuthenticated && HasDiary)
+{
+    <h2>@Diary.Date.ToString("yyyy.MM.dd") <span class="smaller">@Diary.Date.GetWeekday(DateLanguage.KR, WeekdayFormat.D)</span></h2>
+
+    @foreach (var diary in DiaryList.Where(x => x.Date == DiaryDate))
+    {
+        <pre>@diary.Text</pre>
+    }
+
+    @if (Diary.HasPrev(out var prevDate))
+    {
+        <button class="btn btn-primary" @onclick="@(_ => GotoDiary(DiaryInfo.DiaryName, prevDate))">
+            이전
+        </button>
+    }
+
+    @if (Diary.HasNext(out var nextDate))
+    {
+        <button class="btn btn-primary" @onclick="@(_ => GotoDiary(DiaryInfo.DiaryName, nextDate))">
+            다음
+        </button>
+    }
+
+    @if (IsMyDiary)
+    {
+        <button class="btn btn-success" @onclick="@(_ => WriteDiary())">쓰기</button>
+        <button class="btn btn-warning" @onclick="@(_ => EditDiary())">수정</button>
+    }
+}
+else if (IsAuthenticated && !HasDiary)
+{
+    <span>일기장을 만드세요</span>
+}
+else
+{
+    <span>로그인하세요.</span>
+}
+
+
+@code {
+    [Parameter]
+    public string DiaryName { get; set; }
+    [Parameter]
+    public string DateStr { get; set; }
+
+    [CascadingParameter]
+    private AuthenticationState auth { get; set; }
+
+    public bool IsAuthenticated { get; set; }
+
+    public AppUser User { get; set; }
+    public DiaryInfo DiaryInfo { get; set; }
+    public List<DiaryData> DiaryList;
+    public DiaryData Diary;
+    public DateTime DiaryDate => Diary.Date;
+
+    public bool IsMyDiary => (User?.Email ?? "") == (DiaryInfo?.Owner ?? "");
+    public bool HasDiary => DiaryInfo != null && DiaryList.Any();
+
+    protected override async Task OnInitializedAsync()
+    {
+        auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        IsAuthenticated = auth.User.Identity.IsAuthenticated;
+
+        if (auth.User.Identity.IsAuthenticated)
+        {
+            var userId = auth.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            User = await UserStore.FindByIdAsync(userId, CancellationToken.None);
+
+
+            DiaryInfo = await LoadDiaryInfoAsync();
+            await LoadDiaryListAsync(DiaryInfo);
+        }
+    }
+
+
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += HandleLocationChanged;
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= HandleLocationChanged;
+    }
+
+    private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        if (e.IsNavigationIntercepted == false)
+            return;
+
+        auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        IsAuthenticated = auth.User.Identity.IsAuthenticated;
+
+        if (auth.User.Identity.IsAuthenticated)
+        {
+            var userId = auth.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            User = await UserStore.FindByIdAsync(userId, CancellationToken.None);
+
+
+            DiaryInfo = await LoadDiaryInfoAsync();
+            await LoadDiaryListAsync(DiaryInfo);
+        }
+    }
+
+    public void GotoDiary(string diaryName, DateTime date)
+    {
+        NavigationManager.NavigateTo($"diary/{diaryName}/{date.ToString("yyyyMMdd")}");
+
+        Diary = DiaryList.First(x => x.Date == date);
+    }
+
+    public void WriteDiary()
+    {
+        NavigationManager.NavigateTo($"diary/write/{DiaryInfo.DiaryName}");
+    }
+
+    public void EditDiary()
+    {
+        NavigationManager.NavigateTo($"diary/modify/{DiaryInfo.DiaryName}/{Diary.Date.ToString("yyyyMMdd")}");
+    }
+
+    private async Task<DiaryInfo> LoadDiaryInfoAsync()
+    {
+        if (DiaryName == null)
+        {
+            // Load my diary
+            return await DiaryService.GetDiaryInfoByUserIdAsync(User.Id, CancellationToken.None);
+        }
+        else
+        {
+            return await DiaryService.GetDiaryInfoByDiaryNameAsync(DiaryName, CancellationToken.None);
+        }
+    }
+
+    private async Task LoadDiaryListAsync(DiaryInfo diaryInfo)
+    {
+        if (diaryInfo != null)
+        {
+            DiaryList = await DiaryService.GetDiaryDataListAsync(diaryInfo, CancellationToken.None);
+
+            if (DiaryList.Any())
+            {
+                if (DateStr != null && DateStr.TryToDate(out var date))
+                {
+                    // Normalize date
+                    date = NormalizeDate(date, DiaryList);
+
+                    // 항상 참
+                    Diary = DiaryList.First(x => x.Date == date);
+                }
+                else
+                {
+                    // 날짜가 파싱되지 않으면 마지막 일기
+                    Diary = DiaryList.Last();
+                }
+            }
+            else
+            {
+                // 일기가 아무것도 없는 경우
+            }
+        }
+    }
+
+    private DateTime NormalizeDate(DateTime date, List<DiaryData> diaryList)
+    {
+        if (diaryList.Any(x => x.Date >= date))
+        {
+            return diaryList.First(x => x.Date >= date).Date;
+        }
+        else if (diaryList.Any(x => x.Date < date))
+        {
+            return diaryList.Last(x => x.Date < date).Date;
+        }
+        return DateTime.MinValue;
+    }
+}

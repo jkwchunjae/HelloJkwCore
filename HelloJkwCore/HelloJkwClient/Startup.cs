@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using HelloJkwClient.Data;
+using Microsoft.AspNetCore.Identity;
+using HelloJkwService.User;
 
 namespace HelloJkwClient
 {
@@ -27,7 +29,8 @@ namespace HelloJkwClient
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+
+            services.AddSingleton<IUserStore<AppUser>, UserStore>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
