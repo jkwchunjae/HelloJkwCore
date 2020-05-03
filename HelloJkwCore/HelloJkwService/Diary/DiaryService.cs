@@ -16,13 +16,13 @@ namespace HelloJkwService.Diary
         private readonly DiaryOption _option;
         private readonly Encoding _encoding = new UTF8Encoding(false);
 
-        private readonly Cache<List<DiaryData>> _diaryCache;
+        private readonly ICache<List<DiaryData>> _diaryCache;
 
         public DiaryService(DiaryOption option)
         {
             _option = option;
 
-            _diaryCache = new Cache<List<DiaryData>>();
+            _diaryCache = new MemoryCache<List<DiaryData>>();
         }
 
         private async Task<DiaryInfo> GetDiaryInfoByAsync(Func<DiaryInfo, bool> func, CancellationToken ct)

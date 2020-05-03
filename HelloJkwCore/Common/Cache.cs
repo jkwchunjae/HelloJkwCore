@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Common
 {
-    public class Cache<T>
+    public class MemoryCache<T> : ICache<T>
     {
         private Dictionary<string, T> _cached;
 
-        public Cache()
+        public MemoryCache()
         {
             _cached = new Dictionary<string, T>();
         }
