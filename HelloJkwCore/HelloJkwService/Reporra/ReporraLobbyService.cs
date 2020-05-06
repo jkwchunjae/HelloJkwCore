@@ -52,5 +52,20 @@ namespace HelloJkwService.Reporra
                 return _roomList.ToArray();
             }
         }
+
+        public Result EnterUser(IReporraUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IReporraUser> GetUserList()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result LeaveUser(IReporraUser user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
