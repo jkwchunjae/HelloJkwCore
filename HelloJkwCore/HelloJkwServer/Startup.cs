@@ -9,6 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using HelloJkwService.User;
+using HelloJkwService.Reporra;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.Linq;
 
 namespace HelloJkwServer
 {
@@ -64,7 +67,16 @@ namespace HelloJkwServer
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            services.AddSignalR();
+
+            services.AddResponseCompression(option =>
+            {
+                option.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                    new[] { "application/octet-stream" });
+            });
+
             services.AddDiaryService(Configuration);
+            services.AddReporraService(Configuration);
             services.AddSingleton<WeatherForecastService>();
         }
 
@@ -96,6 +108,8 @@ namespace HelloJkwServer
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapHub<ReporraHub>("/reporraHub");
 
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");

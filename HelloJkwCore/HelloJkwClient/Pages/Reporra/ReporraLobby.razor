@@ -1,0 +1,125 @@
+﻿@page "/reporra/lobby"
+
+@using Microsoft.AspNetCore.SignalR.Client
+@using HelloJkwService.Reporra
+
+@implements IDisposable
+@inject NavigationManager NavigationManager
+@inject IReporraLobbyService Lobby
+
+<h3>ReporraLobby</h3>
+
+<input type="text" @bind="CreateRoomName"/>
+<button @onclick="CreateRoom">Create</button>
+
+<ul id="room-list">
+    @foreach (var room in Lobby.GetRoomList())
+    {
+        <li class="room">
+            <span>@room.GetRoomName()</span>
+            <button @onclick="@(() => EnterRoom(room))">Enter</button>
+            <button @onclick="@(() => SpectateRoom(room))">Spectate</button>
+        </li>
+    }
+</ul>
+
+<ul id="user-list">
+    @foreach (var user in Lobby.GetUserList())
+    {
+        <li class="user">
+            <span>@user.GetUserName()</span>
+        </li>
+    }
+</ul>
+
+@code {
+    private HubConnection _hubConnection;
+
+    public string CreateRoomName;
+
+    public IReporraUser _user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/reporraHub"))
+            .Build();
+
+        await _hubConnection.StartAsync();
+
+        InitEventHandler();
+
+        await InitReporraAsync();
+    }
+
+    public void Dispose()
+    {
+        Lobby.LeaveUser(_user);
+        _hubConnection.DisposeAsync();
+    }
+
+    void InitEventHandler()
+    {
+        _hubConnection.On("UpdateLobby", () =>
+        {
+            this.StateHasChanged();
+        });
+    }
+
+    async Task InitReporraAsync()
+    {
+        _user = MakeUser();
+
+        Lobby.EnterUser(_user);
+
+        await _hubConnection.SendUpdateLobby();
+    }
+
+    IReporraUser MakeUser()
+    {
+        return new ReporraUser();
+    }
+
+    void CreateRoom()
+    {
+        if (string.IsNullOrWhiteSpace(CreateRoomName))
+        {
+            return;
+        }
+
+        var result = Lobby.CreateRoom(new ReporraRoomOption
+        {
+            RoomName = CreateRoomName.Trim(),
+        });
+
+        if (result.IsFail)
+        {
+            return;
+        }
+
+        var room = result.Result;
+        EnterRoom(room);
+    }
+
+    void EnterRoom(IReporraRoom room)
+    {
+        var result = room.EnterUserToPlayer(_user);
+        if (result.IsFail)
+        {
+            return;
+        }
+
+        NavigationManager.NavigateTo($"/reporra/room/{room.GetRoomName()}");
+    }
+
+    void SpectateRoom(IReporraRoom room)
+    {
+        var result = room.EnterUserToSpectator(_user);
+        if (result.IsFail)
+        {
+            return;
+        }
+
+        NavigationManager.NavigateTo($"/reporra/room/{room.GetRoomName()}");
+    }
+}

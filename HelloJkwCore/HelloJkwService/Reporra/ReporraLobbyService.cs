@@ -11,9 +11,13 @@ namespace HelloJkwService.Reporra
         private List<IReporraRoom> _roomList;
         private object _roomListLock = new object();
 
+        private List<IReporraUser> _userList;
+        private object _userListLock = new object();
+
         public ReporraLobbyService()
         {
             _roomList = new List<IReporraRoom>();
+            _userList = new List<IReporraUser>();
         }
 
         public TypedResult<IReporraRoom> CreateRoom(ReporraRoomOption option)
@@ -53,19 +57,34 @@ namespace HelloJkwService.Reporra
             }
         }
 
-        public Result EnterUser(IReporraUser user)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<IReporraUser> GetUserList()
         {
-            throw new NotImplementedException();
+            lock (_userListLock)
+            {
+                return _userList.ToArray();
+            }
+        }
+
+        public Result EnterUser(IReporraUser user)
+        {
+            lock (_userListLock)
+            {
+                _userList.Add(user);
+            }
+            return Result.Success();
         }
 
         public Result LeaveUser(IReporraUser user)
         {
-            throw new NotImplementedException();
+            lock (_userListLock)
+            {
+                if (_userList.Contains(user))
+                {
+                    _userList.Remove(user);
+                    return Result.Success();
+                }
+            }
+            return Result.Fail(ReporraError.NotExist);
         }
     }
 }

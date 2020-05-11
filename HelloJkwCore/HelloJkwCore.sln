@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloJkwService", "HelloJkwService\HelloJkwService.csproj", "{4ADAAE00-6918-4EE5-A6E8-9C5D5273411E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloJkwTests", "HelloJkwTests\HelloJkwTests.csproj", "{CD85093F-02C3-41B5-B5A3-6E88588FB1A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloJkwTests", "HelloJkwTests\HelloJkwTests.csproj", "{CD85093F-02C3-41B5-B5A3-6E88588FB1A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
