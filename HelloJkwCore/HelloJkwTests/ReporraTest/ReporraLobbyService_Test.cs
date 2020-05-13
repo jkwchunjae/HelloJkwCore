@@ -84,7 +84,33 @@ namespace HelloJkwTests.ReporraTest
 
             // Assert
             Assert.DoesNotContain(roomList, x => x == room);
+        }
 
+        [Fact]
+        public void UserList_StartsEmpty()
+        {
+            var userList = _lobby.GetUserList();
+
+            Assert.Empty(userList);
+        }
+
+        [Fact]
+        public void UserList_EnterUser()
+        {
+            var user1 = new ReporraUser();
+            _lobby.EnterUser(user1);
+
+            Assert.Contains(_lobby.GetUserList(), x => x == user1);
+        }
+
+        [Fact]
+        public void UserList_LeaveUser()
+        {
+            var user1 = new ReporraUser();
+            _lobby.EnterUser(user1);
+            _lobby.LeaveUser(user1);
+
+            Assert.Empty(_lobby.GetUserList());
         }
     }
 }
