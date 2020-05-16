@@ -1,15 +1,23 @@
 ﻿@page "/reporra/lobby"
 
+@using System.Security.Claims
+@using System.Threading
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.SignalR.Client
+@using HelloJkwService.User
 @using HelloJkwService.Reporra
 
 @implements IDisposable
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IUserStore<AppUser> UserStore
 @inject NavigationManager NavigationManager
 @inject IReporraLobbyService Lobby
+@inject IReporraHubHelper HubHelper
 
 <h3>ReporraLobby</h3>
 
-<input type="text" @bind="CreateRoomName"/>
+<input type="text" @bind="CreateRoomName" />
 <button @onclick="CreateRoom">Create</button>
 
 <ul id="room-list">
@@ -27,12 +35,20 @@
     @foreach (var user in Lobby.GetUserList())
     {
         <li class="user">
-            <span>@user.GetUserName()</span>
+            <span>@user.Name</span>
+            @if (user.Id == _user?.Id)
+            {
+                <span>(me)</span>
+            }
         </li>
     }
 </ul>
 
 @code {
+    [CascadingParameter]
+    private AuthenticationState auth { get; set; }
+    public bool IsAuthenticated { get; set; }
+
     private HubConnection _hubConnection;
 
     public string CreateRoomName;
@@ -41,6 +57,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        IsAuthenticated = auth.User.Identity.IsAuthenticated;
+
         _hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/reporraHub"))
             .Build();
@@ -60,24 +79,51 @@
 
     void InitEventHandler()
     {
-        _hubConnection.On("UpdateLobby", () =>
+        _hubConnection.On<string>(ClientApiName.UserEntered, (enteredUserId) =>
         {
+            if (_user.Id == enteredUserId)
+                return;
+
+            this.StateHasChanged();
+        });
+
+        _hubConnection.On<string>(ClientApiName.UserLeaved, (leavedUserId) =>
+        {
+            if (_user.Id == leavedUserId)
+                return;
+
             this.StateHasChanged();
         });
     }
 
     async Task InitReporraAsync()
     {
-        _user = MakeUser();
+        _user = await MakeUser();
 
-        Lobby.EnterUser(_user);
+        var result = Lobby.EnterUser(_user);
+        if (result.IsFail)
+        {
+            return;
+        }
 
-        await _hubConnection.SendUpdateLobby();
+        HubHelper.SetUser(_user);
+
+        await _hubConnection.EnterLobby(_user);
     }
 
-    IReporraUser MakeUser()
+    async Task<IReporraUser> MakeUser()
     {
-        return new ReporraUser();
+        if (IsAuthenticated)
+        {
+            var userId = auth.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await UserStore.FindByIdAsync(userId, CancellationToken.None);
+
+            return new ReporraUser(user);
+        }
+        else
+        {
+            return new ReporraUser();
+        }
     }
 
     void CreateRoom()

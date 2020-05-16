@@ -69,6 +69,10 @@ namespace HelloJkwService.Reporra
         {
             lock (_userListLock)
             {
+                if (_userList.Any(x => x.Id == user.Id))
+                {
+                    return Result.Fail(ReporraError.AlreadyEntered);
+                }
                 _userList.Add(user);
             }
             return Result.Success();
@@ -85,6 +89,14 @@ namespace HelloJkwService.Reporra
                 }
             }
             return Result.Fail(ReporraError.NotExist);
+        }
+
+        public IReporraUser GetUser(string userName)
+        {
+            lock (_userListLock)
+            {
+                return _userList.FirstOrDefault(x => x.Name == userName);
+            }
         }
     }
 }

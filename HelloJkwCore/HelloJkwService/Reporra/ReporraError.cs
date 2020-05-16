@@ -12,6 +12,7 @@ namespace HelloJkwService.Reporra
 
         // Begin Service
         public readonly static string DuplicatedName = "DuplicatedName";
+        public readonly static string AlreadyEntered = "AlreadyEntered";
         // End Service
 
         // Begin Room

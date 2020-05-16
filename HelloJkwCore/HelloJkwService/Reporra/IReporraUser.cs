@@ -13,9 +13,11 @@ namespace HelloJkwService.Reporra
 
     public interface IReporraUser
     {
-        string GetUserName();
+        string Id { get; }
+        string Name { get; }
+        bool IsAuthenticated { get; }
+        bool IsPlayer { get; }
+        bool IsSpectator { get; }
         void ChangeUserType(ReporraUserType userType);
-        bool IsPlayer();
-        bool IsSpectator();
     }
 }

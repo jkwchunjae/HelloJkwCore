@@ -14,5 +14,6 @@ namespace HelloJkwService.Reporra
         IEnumerable<IReporraUser> GetUserList();
         Result EnterUser(IReporraUser user);
         Result LeaveUser(IReporraUser user);
+        IReporraUser GetUser(string userName);
     }
 }

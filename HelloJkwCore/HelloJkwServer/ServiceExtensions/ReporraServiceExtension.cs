@@ -13,7 +13,9 @@ namespace HelloJkwServer.ServiceExtensions
         public static IServiceCollection AddReporraService(this IServiceCollection services, IConfiguration configuration)
         {
             return services
-                .AddSingleton<IReporraLobbyService, ReporraLobbyService>();
+                .AddSingleton<IReporraLobbyService, ReporraLobbyService>()
+                .AddSingleton<IReporraHubHelper, ReporraHubHelper>()
+                ;
         }
     }
 }

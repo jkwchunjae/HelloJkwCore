@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HelloJkwService.User;
+using JkwExtensions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,31 +8,32 @@ namespace HelloJkwService.Reporra
 {
     public class ReporraUser : IReporraUser
     {
-        private ReporraUserType _userType;
-        private string _userName;
+        private ReporraUserType _userType = ReporraUserType.None;
+        private readonly AppUser _user = null;
+        private string _id = "";
+        private string _userName = "";
 
-        public bool IsPlayer() => _userType == ReporraUserType.Player;
-        public bool IsSpectator() => _userType == ReporraUserType.Spectator;
+        public string Id => _user?.Id ?? _id;
+        public string Name => _user?.UserName ?? _userName;
+        public bool IsAuthenticated => _user != null;
+        public bool IsPlayer => _userType == ReporraUserType.Player;
+        public bool IsSpectator => _userType == ReporraUserType.Spectator;
 
         public ReporraUser()
         {
-            _userName = "User#" + (new Random().Next(1111, 9999)).ToString();
+            var randomNumber = StaticRandom.Next(1111, 9999);
+            _userName = $"User#{randomNumber}";
+            _id = $"userid.{randomNumber}";
         }
 
-        public ReporraUser(string userName)
+        public ReporraUser(AppUser user)
         {
-            _userName = userName;
-        }
-
-        public string GetUserName()
-        {
-            return _userName;
+            _user = user;
         }
 
         public void ChangeUserType(ReporraUserType userType)
         {
             _userType = userType;
         }
-
     }
 }

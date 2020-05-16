@@ -34,7 +34,7 @@ namespace HelloJkwService.Reporra
                 if (GetStatus() == ReporraRoomStatus.Playing)
                     return Result.Fail(ReporraError.AlreadyStart);
 
-                if (_users.Count(x => x.IsPlayer()) >= MaximumPlayerCount)
+                if (_users.Count(x => x.IsPlayer) >= MaximumPlayerCount)
                     return Result.Fail(ReporraError.RoomIsFull);
 
                 user.ChangeUserType(ReporraUserType.Player);
@@ -67,7 +67,7 @@ namespace HelloJkwService.Reporra
         {
             lock (this)
             {
-                return _users.Where(x => x.IsPlayer()).ToArray();
+                return _users.Where(x => x.IsPlayer).ToArray();
             }
         }
 
@@ -78,7 +78,7 @@ namespace HelloJkwService.Reporra
         {
             lock (this)
             {
-                return _users.Where(x => x.IsSpectator()).ToArray();
+                return _users.Where(x => x.IsSpectator).ToArray();
             }
         }
 
@@ -96,7 +96,7 @@ namespace HelloJkwService.Reporra
         {
             lock (this)
             {
-                if (_users.Count(x => x.IsPlayer()) < MinimumPlayerCount)
+                if (_users.Count(x => x.IsPlayer) < MinimumPlayerCount)
                 {
                     return Result.Fail(ReporraError.NotEnoughPlayer);
                 }
