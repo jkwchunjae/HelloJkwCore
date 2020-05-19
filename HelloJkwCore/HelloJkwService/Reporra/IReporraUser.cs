@@ -18,6 +18,7 @@ namespace HelloJkwService.Reporra
         bool IsAuthenticated { get; }
         bool IsPlayer { get; }
         bool IsSpectator { get; }
+        string Code { get; }
         void ChangeUserType(ReporraUserType userType);
     }
 }

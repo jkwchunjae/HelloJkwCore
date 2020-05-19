@@ -18,6 +18,7 @@ namespace HelloJkwService.Reporra
         public bool IsAuthenticated => _user != null;
         public bool IsPlayer => _userType == ReporraUserType.Player;
         public bool IsSpectator => _userType == ReporraUserType.Spectator;
+        public string Code { get; } = Guid.NewGuid().ToString("N").Substring(StaticRandom.Next(0, 20), StaticRandom.Next(6, 10));
 
         public ReporraUser()
         {

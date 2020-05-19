@@ -7,11 +7,14 @@ namespace HelloJkwService.Reporra
 {
     public interface IReporraRoom
     {
-        string GetRoomName();
-        ReporraRoomStatus GetStatus();
+        string Id { get; }
+        string RoomName { get; }
+        ReporraRoomStatus Status { get; }
         IEnumerable<IReporraUser> GetPlayers();
         IEnumerable<IReporraUser> GetSpectators();
         IEnumerable<IReporraUser> GetAllUsers();
+        TypedResult<IReporraUser> FindUserById(string id);
+        TypedResult<IReporraUser> FindUserByCode(string code);
 
         Result EnterUserToPlayer(IReporraUser user);
         Result EnterUserToSpectator(IReporraUser user);

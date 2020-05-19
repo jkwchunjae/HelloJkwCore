@@ -9,7 +9,8 @@ namespace HelloJkwService.Reporra
     {
         IEnumerable<IReporraRoom> GetRoomList();
         TypedResult<IReporraRoom> CreateRoom(ReporraRoomOption option);
-        Result DeleteRoom(string roomName);
+        Result DeleteRoom(string roomId);
+        TypedResult<IReporraRoom> FindRoomById(string roomId);
 
         IEnumerable<IReporraUser> GetUserList();
         Result EnterUser(IReporraUser user);

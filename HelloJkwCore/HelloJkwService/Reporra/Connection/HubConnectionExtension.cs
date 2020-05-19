@@ -15,5 +15,10 @@ namespace HelloJkwService.Reporra
         {
             await hubConnection.EnterGroup(Group.Lobby, user);
         }
+
+        public static async Task EnterRoom(this HubConnection hubConnection, IReporraRoom room, IReporraUser user)
+        {
+            await hubConnection.EnterGroup(new Group(room.Id), user);
+        }
     }
 }

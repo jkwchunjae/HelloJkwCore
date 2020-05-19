@@ -22,7 +22,7 @@ namespace HelloJkwTests.ReporraTest
 
             var room = new ReporraRoom(option);
 
-            Assert.Equal("ABC", room.GetRoomName());
+            Assert.Equal("ABC", room.RoomName);
         }
 
         [Fact]
@@ -157,7 +157,7 @@ namespace HelloJkwTests.ReporraTest
 
             var result = room.StartGame();
 
-            Assert.Equal(ReporraRoomStatus.Playing, room.GetStatus());
+            Assert.Equal(ReporraRoomStatus.Playing, room.Status);
         }
 
         [Fact]

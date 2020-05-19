@@ -26,7 +26,7 @@ namespace HelloJkwService.Reporra
 
             lock (_roomListLock)
             {
-                if (_roomList.Any(x => x.GetRoomName() == option.RoomName))
+                if (_roomList.Any(x => x.RoomName == option.RoomName))
                     return TypedResult<IReporraRoom>.Fail(ReporraError.DuplicatedName);
 
                 _roomList.Add(room);
@@ -39,7 +39,7 @@ namespace HelloJkwService.Reporra
         {
             lock (_roomListLock)
             {
-                var room = _roomList.FirstOrDefault(x => x.GetRoomName() == roomName);
+                var room = _roomList.FirstOrDefault(x => x.RoomName == roomName);
                 if (room != null)
                 {
                     _roomList.Remove(room);
@@ -54,6 +54,22 @@ namespace HelloJkwService.Reporra
             lock (_roomListLock)
             {
                 return _roomList.ToArray();
+            }
+        }
+
+        public TypedResult<IReporraRoom> FindRoomById(string roomId)
+        {
+            lock (_roomListLock)
+            {
+                var room = _roomList.FirstOrDefault(x => x.Id == roomId);
+                if (room == null)
+                {
+                    return TypedResult<IReporraRoom>.Fail();
+                }
+                else
+                {
+                    return TypedResult<IReporraRoom>.Success(room);
+                }
             }
         }
 

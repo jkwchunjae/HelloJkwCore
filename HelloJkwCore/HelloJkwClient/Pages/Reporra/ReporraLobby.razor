@@ -24,7 +24,7 @@
     @foreach (var room in Lobby.GetRoomList())
     {
         <li class="room">
-            <span>@room.GetRoomName()</span>
+            <span>@room.RoomName</span>
             <button @onclick="@(() => EnterRoom(room))">Enter</button>
             <button @onclick="@(() => SpectateRoom(room))">Spectate</button>
         </li>
@@ -155,7 +155,7 @@
             return;
         }
 
-        NavigationManager.NavigateTo($"/reporra/room/{room.GetRoomName()}");
+        NavigationManager.NavigateTo($"/reporra/room/{room.Id}/{_user.Code}");
     }
 
     void SpectateRoom(IReporraRoom room)
@@ -166,6 +166,6 @@
             return;
         }
 
-        NavigationManager.NavigateTo($"/reporra/room/{room.GetRoomName()}");
+        NavigationManager.NavigateTo($"/reporra/room/{room.Id}/{_user.Code}");
     }
 }
