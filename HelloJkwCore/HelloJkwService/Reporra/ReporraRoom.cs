@@ -22,6 +22,8 @@ namespace HelloJkwService.Reporra
         public string RoomName => _roomName;
         public ReporraRoomStatus Status => _roomStatus;
 
+        private ReporraGame _game;
+
         public ReporraRoom(ReporraRoomOption option)
         {
             _roomName = option.RoomName;

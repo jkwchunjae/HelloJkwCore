@@ -3,6 +3,7 @@ using JkwExtensions;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace HelloJkwService.Reporra
 {
@@ -12,6 +13,8 @@ namespace HelloJkwService.Reporra
         private readonly AppUser _user = null;
         private string _id = "";
         private string _userName = "";
+
+        public event EventHandler<ReporraGame> OnGameUpdated;
 
         public string Id => _user?.Id ?? _id;
         public string Name => _user?.UserName ?? _userName;
@@ -35,6 +38,16 @@ namespace HelloJkwService.Reporra
         public void ChangeUserType(ReporraUserType userType)
         {
             _userType = userType;
+        }
+
+        public void UpdateGame(ReporraGame game)
+        {
+            OnGameUpdated?.Invoke(this, game);
+        }
+
+        public virtual Task<ReporraColor> WaitUserChoiceAsync(int size, string color)
+        {
+            throw new NotImplementedException();
         }
     }
 }
