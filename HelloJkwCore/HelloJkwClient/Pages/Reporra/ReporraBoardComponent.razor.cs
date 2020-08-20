@@ -13,7 +13,14 @@ namespace HelloJkwClient.Pages.Reporra
 
         [Parameter]
         public ReporraGame Game { get; set; }
+        [Parameter]
+        public IReporraUser User { get; set; }
 
-        public ReporraBoard Board => Game?.Board;
+        ReporraBoard Board => Game?.Board;
+        bool Reverse => Game?.Users.First() == User;
+
+        IEnumerable<int> Sequence =>
+            Enumerable.Range(0, Board.Size)
+                .Select(x => Reverse ? Board.Size - x - 1 : x);
     }
 }

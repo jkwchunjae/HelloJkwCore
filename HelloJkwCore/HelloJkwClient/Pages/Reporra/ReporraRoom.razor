@@ -6,7 +6,7 @@
 
 @if (_game != null)
 {
-    <ReporraBoardComponent Game="_game" />
+    <ReporraBoardComponent Game="_game" User="_user"/>
 }
 
 <button @onclick="@(async () => await InitGameAsync())">Set game</button>

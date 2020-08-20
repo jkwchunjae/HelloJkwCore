@@ -27,10 +27,10 @@
 @if (Board != null)
 {
     <table class="@cssReporraBoard">
-        @for (var row = 0; row < Board.Size; row++)
+        @foreach (var row in Sequence)
         {
             <tr class="board-row">
-                @for (var column = 0; column < Board.Size; column++)
+                @foreach (var column in Sequence)
                 {
                     var cell = Board.GetCell(row, column);
                     <td class="board-cell cell-color-@cell.Color.ToString()">
