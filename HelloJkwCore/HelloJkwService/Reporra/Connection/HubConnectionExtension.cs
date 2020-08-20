@@ -6,19 +6,25 @@ namespace HelloJkwService.Reporra
 {
     public static class HubConnectionExtension
     {
-        private static async Task EnterGroup(this HubConnection hubConnection, Group group, IReporraUser user)
+        private static async Task EnterGroup(this HubConnection hubConnection, string groupName, IReporraUser user)
         {
-            await hubConnection.SendAsync(ServerApiName.EnterGroup, group.Name, user.Id);
+            await hubConnection.SendAsync(ServerApiName.EnterGroup, groupName, user.Id);
         }
 
         public static async Task EnterLobby(this HubConnection hubConnection, IReporraUser user)
         {
-            await hubConnection.EnterGroup(Group.Lobby, user);
+            await hubConnection.EnterGroup(Group.Lobby.Name, user);
         }
 
         public static async Task EnterRoom(this HubConnection hubConnection, IReporraRoom room, IReporraUser user)
         {
-            await hubConnection.EnterGroup(new Group(room.Id), user);
+            var groupName = room.Id;
+            await hubConnection.EnterGroup(groupName, user);
+        }
+
+        public static async Task CreateGame(this HubConnection hubConnection, IReporraRoom room)
+        {
+            await hubConnection.SendAsync(ServerApiName.CreateGame, room.Id);
         }
     }
 }

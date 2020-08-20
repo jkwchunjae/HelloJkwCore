@@ -9,6 +9,7 @@ namespace HelloJkwService.Reporra
     {
         string Id { get; }
         string RoomName { get; }
+        ReporraGame Game { get; }
         ReporraRoomStatus Status { get; }
         IEnumerable<IReporraUser> GetPlayers();
         IEnumerable<IReporraUser> GetSpectators();
@@ -19,6 +20,8 @@ namespace HelloJkwService.Reporra
         Result EnterUserToPlayer(IReporraUser user);
         Result EnterUserToSpectator(IReporraUser user);
         Result LeaveUser(IReporraUser user);
+
+        Result CreateGame();
         Result StartGame();
     }
 }

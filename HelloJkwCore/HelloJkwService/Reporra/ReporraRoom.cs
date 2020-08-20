@@ -22,7 +22,7 @@ namespace HelloJkwService.Reporra
         public string RoomName => _roomName;
         public ReporraRoomStatus Status => _roomStatus;
 
-        private ReporraGame _game;
+        public ReporraGame Game { get; private set; }
 
         public ReporraRoom(ReporraRoomOption option)
         {
@@ -120,7 +120,7 @@ namespace HelloJkwService.Reporra
         {
             lock (this)
             {
-                if (_users.Count(x => x.IsPlayer) < MinimumPlayerCount)
+                if (GetPlayers().Count() < MinimumPlayerCount)
                 {
                     return Result.Fail(ReporraError.NotEnoughPlayer);
                 }
@@ -131,6 +131,27 @@ namespace HelloJkwService.Reporra
                 }
 
                 _roomStatus = ReporraRoomStatus.Playing;
+
+                return Result.Success();
+            }
+        }
+
+        public Result CreateGame()
+        {
+            lock (this)
+            {
+                if (GetPlayers().Count() < MinimumPlayerCount)
+                {
+                    return Result.Fail(ReporraError.NotEnoughPlayer);
+                }
+
+                if (_roomStatus != ReporraRoomStatus.Waiting)
+                {
+                    return Result.Fail("Not waiting");
+                }
+
+                Game = new ReporraGame(GetPlayers());
+                Game.CreateBoard(15);
 
                 return Result.Success();
             }

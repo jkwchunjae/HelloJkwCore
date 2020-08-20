@@ -8,5 +8,6 @@ namespace HelloJkwService.Reporra
     {
         public static string UserEntered => "UserEntered";
         public static string UserLeaved => "UserLeaved";
+        public static string GameUpdated => "GameUpdated";
     }
 }

@@ -15,7 +15,7 @@ namespace HelloJkwService.Reporra
 
         public ReporraBoard Board { get; private set; } = null;
 
-        public ReporraGame(List<IReporraUser> users)
+        public ReporraGame(IEnumerable<IReporraUser> users)
         {
             Users.AddRange(users);
         }
@@ -31,6 +31,9 @@ namespace HelloJkwService.Reporra
             _userBasePosition.Add(Users[1], (size - 1, size - 1));
 
             CurrentUser = Users[0];
+
+            Users
+                .ForEach(user => user.UpdateGame(this));
 
             return true;
         }

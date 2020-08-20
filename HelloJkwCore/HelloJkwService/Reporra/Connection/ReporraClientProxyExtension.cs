@@ -8,12 +8,17 @@ namespace HelloJkwService.Reporra
     {
         public static async Task SendUserEntered(this IClientProxy clients, IReporraUser user)
         {
-            await clients.SendAsync("UserEntered", user.Id);
+            await clients.SendAsync(ClientApiName.UserEntered, user.Id);
         }
 
         public static async Task SendUserLeaved(this IClientProxy clients, IReporraUser user)
         {
-            await clients.SendAsync("UserLeaved", user.Id);
+            await clients.SendAsync(ClientApiName.UserLeaved, user.Id);
+        }
+
+        public static async Task SendGameUpdated(this IClientProxy clients)
+        {
+            await clients.SendAsync(ClientApiName.GameUpdated);
         }
     }
 }

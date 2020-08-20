@@ -60,5 +60,18 @@ namespace HelloJkwService.Reporra
 
             await group.SendUserEntered(Clients, user);
         }
+
+        public async Task CreateGame(string roomId)
+        {
+            var result = _lobby.FindRoomById(roomId);
+            if (result.IsFail)
+                return;
+
+            var room = result.Result;
+            room.CreateGame();
+
+            var group = _hubHelper.GetGroup(roomId);
+            await group.SendGameUpdated(Clients);
+        }
     }
 }

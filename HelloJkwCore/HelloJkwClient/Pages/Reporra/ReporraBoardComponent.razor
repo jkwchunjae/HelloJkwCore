@@ -1,0 +1,55 @@
+﻿@using HelloJkwService.Reporra
+
+<Styled @bind-Classname="@cssReporraBoard">
+    font-color: black;
+    & .board-cell {
+        width: 25px;
+        height: 25px;
+    }
+    & .cell-color-A {
+        background-color: #DBB7EE;
+    }
+    & .cell-color-B {
+        background-color: #F8CBAD;
+    }
+    & .cell-color-C {
+        background-color: #FFE699;
+    }
+    & .cell-color-D {
+        background-color: #C6E0B4;
+    }
+    & .cell-color-E {
+        background-color: #FF9595;
+    }
+    & .cell-color-F {
+        background-color: #999999;
+    }
+</Styled>
+
+@{ 
+    var board = Game?.Board;
+}
+@if (board != null)
+{
+    <table class="@cssReporraBoard">
+        @for (var row = 0; row < board.Size; row++)
+        {
+            <tr class="board-row">
+                @for (var column = 0; column < board.Size; column++)
+                {
+                    var cell = board.GetCell(row, column);
+                    <td class="board-cell cell-color-@cell.Color.ToString()">
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+}
+
+
+@code {
+    private string cssReporraBoard;
+
+    [Parameter]
+    public ReporraGame Game { get; set; }
+}

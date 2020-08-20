@@ -15,5 +15,9 @@ namespace HelloJkwService.Reporra
             await clients.Group(group).SendUserLeaved(user);
         }
 
+        public static async Task SendGameUpdated(this Group group, IHubCallerClients clients)
+        {
+            await clients.Group(group).SendGameUpdated();
+        }
     }
 }

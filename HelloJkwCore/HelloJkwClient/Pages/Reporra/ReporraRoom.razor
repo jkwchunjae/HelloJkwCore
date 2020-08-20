@@ -18,6 +18,14 @@
 
 <h2>@_room?.RoomName</h2>
 
+@if (_game != null)
+{
+    <ReporraBoardComponent Game="_game" />
+}
+
+<button @onclick="@(async () => await InitGameAsync())">Set game</button>
+
+<div>
 <span>Players</span>
 <ul>
     @foreach (var player in _room?.GetPlayers())
@@ -33,108 +41,5 @@
         <li>@spectator.Name</li>
     }
 </ul>
+</div>
 
-
-@code {
-    [Parameter]
-    public string RoomId { get; set; }
-    [Parameter]
-    public string UserCode { get; set; }
-
-    [CascadingParameter]
-    private AuthenticationState auth { get; set; }
-    public bool IsAuthenticated { get; set; }
-
-    private HubConnection _hubConnection;
-
-    IReporraRoom _room;
-    IReporraUser _user;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        var result = Lobby.FindRoomById(RoomId);
-
-        if (result.IsFail)
-        {
-            return;
-        }
-        _room = result.Result;
-
-        auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        IsAuthenticated = auth.User.Identity.IsAuthenticated;
-
-        _user = GetUser();
-
-        if (_user == null)
-        {
-            return;
-        }
-
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/reporraHub"))
-            .Build();
-
-        await _hubConnection.StartAsync();
-
-        InitEventHandler();
-
-        await InitReporraAsync();
-    }
-
-    public void Dispose()
-    {
-        _room?.LeaveUser(_user);
-        _hubConnection.DisposeAsync();
-    }
-
-    void InitEventHandler()
-    {
-        _hubConnection.On<string>(ClientApiName.UserEntered, (enteredUserId) =>
-        {
-            if (_user.Id == enteredUserId)
-                return;
-
-            this.StateHasChanged();
-        });
-
-        _hubConnection.On<string>(ClientApiName.UserLeaved, (leavedUserId) =>
-        {
-            if (_user.Id == leavedUserId)
-                return;
-
-            this.StateHasChanged();
-        });
-    }
-
-    private IReporraUser GetUser()
-    {
-        if (IsAuthenticated)
-        {
-            var userId = auth.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var result = _room.FindUserById(userId);
-            if (result.IsSuccess)
-            {
-                return result.Result;
-            }
-        }
-        else
-        {
-            var result = _room.FindUserByCode(UserCode);
-            if (result.IsSuccess)
-            {
-                return result.Result;
-            }
-        }
-        return null;
-    }
-
-    async Task InitReporraAsync()
-    {
-        HubHelper.SetUser(_user);
-
-        await _hubConnection.EnterRoom(_room, _user);
-    }
-
-}
