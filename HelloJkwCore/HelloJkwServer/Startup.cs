@@ -12,6 +12,7 @@ using HelloJkwService.User;
 using HelloJkwService.Reporra;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.Linq;
+using BlazorStyled;
 
 namespace HelloJkwServer
 {
@@ -66,6 +67,7 @@ namespace HelloJkwServer
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddBlazorStyled(true, true);
 
             services.AddSignalR();
 
