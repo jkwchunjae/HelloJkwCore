@@ -1,19 +1,5 @@
 ﻿@page "/reporra/lobby"
 
-@using System.Security.Claims
-@using System.Threading
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.SignalR.Client
-@using HelloJkwService.User
-@using HelloJkwService.Reporra
-
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IUserStore<AppUser> UserStore
-@inject NavigationManager NavigationManager
-@inject IReporraLobbyService Lobby
-@inject IReporraHubHelper HubHelper
-
 <h3>ReporraLobby</h3>
 
 <input type="text" @bind="CreateRoomName" />

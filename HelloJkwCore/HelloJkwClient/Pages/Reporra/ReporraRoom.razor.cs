@@ -1,21 +1,33 @@
 ﻿using HelloJkwService.Reporra;
+using JkwExtensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace HelloJkwClient.Pages.Reporra
 {
-    public partial class ReporraRoom: ComponentBase
+    public partial class ReporraRoom: ComponentBase, IDisposable
     {
         [Parameter]
         public string RoomId { get; set; }
         [Parameter]
         public string UserCode { get; set; }
+
+        [Inject]
+        AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+        [Inject]
+        NavigationManager NavigationManager { get; set; }
+        [Inject]
+        IReporraLobbyService Lobby { get; set; }
+        [Inject]
+        IReporraHubHelper HubHelper { get; set; }
 
         [CascadingParameter]
         private AuthenticationState auth { get; set; }

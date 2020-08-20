@@ -1,19 +1,5 @@
 ﻿@page "/reporra/room/{RoomId}/{UserCode}"
 
-@using System.Security.Claims
-@using System.Threading
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.SignalR.Client
-@using HelloJkwService.User
-@using HelloJkwService.Reporra
-
-@implements IDisposable
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager NavigationManager
-@inject IReporraLobbyService Lobby
-@inject IReporraHubHelper HubHelper
-
 <h2>ReporraRoom</h2>
 
 <h2>@_room?.RoomName</h2>

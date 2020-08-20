@@ -15,6 +15,17 @@ namespace HelloJkwClient.Pages.Reporra
 {
     public partial class ReporraLobby : ComponentBase, IDisposable
     {
+        [Inject]
+        AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+        [Inject]
+        IUserStore<AppUser> UserStore { get; set; }
+        [Inject]
+        NavigationManager NavigationManager { get; set; }
+        [Inject]
+        IReporraLobbyService Lobby { get; set; }
+        [Inject]
+        IReporraHubHelper HubHelper { get; set; }
+
         [CascadingParameter]
         private AuthenticationState auth { get; set; }
         public bool IsAuthenticated { get; set; }
