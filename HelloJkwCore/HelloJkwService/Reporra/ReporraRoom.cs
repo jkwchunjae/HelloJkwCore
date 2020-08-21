@@ -136,7 +136,7 @@ namespace HelloJkwService.Reporra
             }
         }
 
-        public Result CreateGame()
+        public Result CreateGame(GameCreateOption createOption)
         {
             lock (this)
             {
@@ -150,8 +150,8 @@ namespace HelloJkwService.Reporra
                     return Result.Fail("Not waiting");
                 }
 
-                Game = new ReporraGame(GetPlayers());
-                Game.CreateBoard(15);
+                Game = new ReporraGame(GetPlayers(), createOption);
+                Game.CreateBoard();
 
                 return Result.Success();
             }

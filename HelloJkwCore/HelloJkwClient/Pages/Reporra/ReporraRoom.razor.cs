@@ -50,6 +50,7 @@ namespace HelloJkwClient.Pages.Reporra
                 return;
             }
             _room = result.Result;
+            _game = _room.Game;
 
             auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             IsAuthenticated = auth.User.Identity.IsAuthenticated;
@@ -134,7 +135,11 @@ namespace HelloJkwClient.Pages.Reporra
 
         async Task InitGameAsync()
         {
-            await _hubConnection.CreateGame(_room);
+            var createOption = new GameCreateOption
+            {
+                Size = 15,
+            };
+            await _hubConnection.CreateGame(_room, createOption);
         }
     }
 }

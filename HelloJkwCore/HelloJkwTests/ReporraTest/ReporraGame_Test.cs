@@ -22,8 +22,12 @@ namespace HelloJkwTests.ReporraTest
                 new MockReporraUser(),
             };
 
-            var game = new ReporraGame(users);
-            var result = game.CreateBoard(15);
+            var createOption = new GameCreateOption
+            {
+                Size = 15,
+            };
+            var game = new ReporraGame(users, createOption);
+            var result = game.CreateBoard();
 
             Assert.True(result);
         }
@@ -39,8 +43,12 @@ namespace HelloJkwTests.ReporraTest
                 new MockReporraUser(),
             };
 
-            var game = new ReporraGame(users);
-            game.CreateBoard(boardSize);
+            var createOption = new GameCreateOption
+            {
+                Size = boardSize,
+            };
+            var game = new ReporraGame(users, createOption);
+            game.CreateBoard();
 
             var result = await game.StartGame();
 

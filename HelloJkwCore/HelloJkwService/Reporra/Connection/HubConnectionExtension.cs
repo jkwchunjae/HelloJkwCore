@@ -22,9 +22,9 @@ namespace HelloJkwService.Reporra
             await hubConnection.EnterGroup(groupName, user);
         }
 
-        public static async Task CreateGame(this HubConnection hubConnection, IReporraRoom room)
+        public static async Task CreateGame(this HubConnection hubConnection, IReporraRoom room, GameCreateOption createOption)
         {
-            await hubConnection.SendAsync(ServerApiName.CreateGame, room.Id);
+            await hubConnection.SendAsync(ServerApiName.CreateGame, room.Id, createOption);
         }
     }
 }

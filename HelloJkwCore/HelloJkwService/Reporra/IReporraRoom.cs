@@ -21,7 +21,7 @@ namespace HelloJkwService.Reporra
         Result EnterUserToSpectator(IReporraUser user);
         Result LeaveUser(IReporraUser user);
 
-        Result CreateGame();
+        Result CreateGame(GameCreateOption createOption);
         Result StartGame();
     }
 }

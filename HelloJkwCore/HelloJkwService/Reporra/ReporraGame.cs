@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace HelloJkwService.Reporra
 {
+    public class GameCreateOption
+    {
+        public int Size { get; set; }
+    }
     public class ReporraGame
     {
         public List<IReporraUser> Users { get; } = new List<IReporraUser>();
@@ -15,15 +19,20 @@ namespace HelloJkwService.Reporra
 
         public ReporraBoard Board { get; private set; } = null;
 
-        public ReporraGame(IEnumerable<IReporraUser> users)
+        private GameCreateOption _createOption;
+
+        public ReporraGame(IEnumerable<IReporraUser> users, GameCreateOption createOption)
         {
             Users.AddRange(users);
+            _createOption = createOption;
         }
 
-        public bool CreateBoard(int size)
+        public bool CreateBoard()
         {
             if (Users.Count() != 2)
                 return false;
+
+            var size = _createOption.Size;
 
             Board = new ReporraBoard(size);
 
