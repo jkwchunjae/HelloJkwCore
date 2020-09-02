@@ -20,7 +20,7 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Install dependencies
-      run: cd HelloJkwCore
+      run: dotnet restore
       working-directory: ${{env.working-directory}}
     - name: Build
       run: dotnet build --configuration Release --no-restore
