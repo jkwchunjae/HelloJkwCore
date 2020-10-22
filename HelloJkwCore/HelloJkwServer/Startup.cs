@@ -13,6 +13,7 @@ using HelloJkwService.Reporra;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.Linq;
 using BlazorStyled;
+using Microsoft.AspNetCore.Http;
 
 namespace HelloJkwServer
 {
@@ -94,6 +95,12 @@ namespace HelloJkwServer
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseStaticFiles();
+
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                Secure = CookieSecurePolicy.SameAsRequest,
+                MinimumSameSitePolicy = SameSiteMode.Lax,
+            });
 
             app.UseRouting();
 
