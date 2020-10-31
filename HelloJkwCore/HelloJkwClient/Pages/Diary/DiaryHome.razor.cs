@@ -111,6 +111,16 @@ namespace HelloJkwClient.Pages.Diary
             NavigationManager.NavigateTo($"diary/modify/{DiaryInfo.DiaryName}/{Diary.Date.ToString("yyyyMMdd")}");
         }
 
+        public void ShowDiaryList()
+        {
+            NavigationManager.NavigateTo($"diary/showdates/{DiaryInfo.DiaryName}");
+        }
+
+        public void DiarySearch()
+        {
+            NavigationManager.NavigateTo($"diary/search/{DiaryInfo.DiaryName}");
+        }
+
         private async Task<DiaryInfo> LoadDiaryInfoAsync()
         {
             if (DiaryName == null)

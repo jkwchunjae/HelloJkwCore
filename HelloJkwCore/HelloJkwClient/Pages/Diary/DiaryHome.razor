@@ -15,22 +15,24 @@
 
     @if (Diary.HasPrev(out var prevDate))
     {
-        <button class="btn btn-primary" @onclick="@(_ => GotoDiary(DiaryInfo.DiaryName, prevDate))">
+        <button @onclick="@(_ => GotoDiary(DiaryInfo.DiaryName, prevDate))">
             이전
         </button>
     }
 
     @if (Diary.HasNext(out var nextDate))
     {
-        <button class="btn btn-primary" @onclick="@(_ => GotoDiary(DiaryInfo.DiaryName, nextDate))">
+        <button @onclick="@(_ => GotoDiary(DiaryInfo.DiaryName, nextDate))">
             다음
         </button>
     }
 
     @if (IsMyDiary)
     {
-        <button class="btn btn-success" @onclick="@(_ => WriteDiary())">쓰기</button>
-        <button class="btn btn-warning" @onclick="@(_ => EditDiary())">수정</button>
+        <button @onclick="@(_ => WriteDiary())">쓰기</button>
+        <button @onclick="@(_ => EditDiary())">수정</button>
+        <button @onclick="@(_ => ShowDiaryList())">목록</button>
+        <button @onclick="@(_ => DiarySearch())">검색</button>
     }
 }
 else if (IsAuthenticated && !HasDiary)
@@ -42,7 +44,3 @@ else
     <span>로그인하세요.</span>
 }
 
-
-@code {
-
-}
