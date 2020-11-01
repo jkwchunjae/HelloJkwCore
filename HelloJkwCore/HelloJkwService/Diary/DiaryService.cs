@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Core;
 using JkwExtensions;
 using Newtonsoft.Json;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +27,7 @@ namespace HelloJkwService.Diary
             _diaryCache = new MemoryCache<List<DiaryData>>();
         }
 
-        private async Task<DiaryInfo> GetDiaryInfoByAsync(Func<DiaryInfo, bool> func, CancellationToken ct)
+        private async Task<DiaryInfo> GetDiaryInfoByAsync(Func<DiaryInfo, bool> func, CancellationToken ct = default)
         {
             var diaryInfoList = JsonConvert.DeserializeObject<List<DiaryInfo>>
                 (await File.ReadAllTextAsync(_option.DiaryListPath, _encoding, ct));
@@ -33,16 +35,16 @@ namespace HelloJkwService.Diary
             return diaryInfoList.FirstOrDefault(func);
         }
 
-        public async Task<DiaryInfo> GetDiaryInfoByUserIdAsync(string userId, CancellationToken ct)
+        public async Task<DiaryInfo> GetDiaryInfoByUserIdAsync(string userId, CancellationToken ct = default)
             => await GetDiaryInfoByAsync(x => x.Id == userId, ct);
 
-        public async Task<DiaryInfo> GetDiaryInfoByDiaryNameAsync(string diaryName, CancellationToken ct)
+        public async Task<DiaryInfo> GetDiaryInfoByDiaryNameAsync(string diaryName, CancellationToken ct = default)
             => await GetDiaryInfoByAsync(x => x.DiaryName == diaryName, ct);
 
-        public async Task<List<DiaryData>> GetDiaryDataListAsync(DiaryInfo diaryInfo, CancellationToken ct)
+        public async Task<List<DiaryData>> GetDiaryDataListAsync(DiaryInfo diaryInfo, CancellationToken ct = default)
             => await GetDiaryDataListAsync(diaryInfo.DiaryName, ct);
 
-        public async Task<List<DiaryData>> GetDiaryDataListAsync(string diaryName, CancellationToken ct)
+        public async Task<List<DiaryData>> GetDiaryDataListAsync(string diaryName, CancellationToken ct = default)
         {
             if (_diaryCache.TryGet(diaryName, out var diaries))
             {
@@ -50,6 +52,9 @@ namespace HelloJkwService.Diary
             }
 
             var diaryDirectoryPath = Path.Combine(_option.RootPath, diaryName);
+            if (!Directory.Exists(diaryDirectoryPath))
+                Directory.CreateDirectory(diaryDirectoryPath);
+
             var fileList = Directory.GetFiles(diaryDirectoryPath, "*.diary");
 
             var diaryTextList = await Task.WhenAll(fileList
@@ -80,6 +85,52 @@ namespace HelloJkwService.Diary
                 return diaries;
             }
             return new List<DiaryData>();
+        }
+
+        public async Task<Result> WriteDiaryAsync(string diaryName, DateTime date, string content)
+        {
+            var diaryDirectoryPath = Path.Combine(_option.RootPath, diaryName);
+            var searchPattern = $"{date:yyyyMMdd}_*.diary";
+            var exists = Directory.GetFiles(diaryDirectoryPath, searchPattern);
+
+            var index = 1;
+            if (exists.Any())
+            {
+                var regex = new Regex(@"\d+_(\d+).diary");
+                var lastIndex = exists.Select(x => regex.Match(x))
+                    .Where(x => x.Success)
+                    .Select(x => x.Groups[1].Value.ToInt())
+                    .Max();
+                index = lastIndex + 1;
+            }
+
+            var diaryData = new DiaryData
+            {
+                Date = date,
+                CreateDate = DateTime.Now,
+                LastModifyDate = DateTime.Now,
+                Index = index,
+                IsSecure = false,
+                Text = content,
+            };
+
+            var diaryInfo = await GetDiaryInfoByDiaryNameAsync(diaryName);
+            diaryData.SetDiaryInfo(this, diaryInfo);
+
+            var diaryPath = Path.Combine(diaryDirectoryPath, $"{date:yyyyMMdd}_{index}.diary");
+            await File.WriteAllTextAsync(diaryPath, JsonConvert.SerializeObject(diaryData), _encoding);
+
+            if (_diaryCache.TryGet(diaryName, out var diaries))
+            {
+                diaries.Add(diaryData);
+            }
+            else
+            {
+                _diaryCache.Set(diaryName, new List<DiaryData> { diaryData });
+            }
+
+
+            return Result.Success();
         }
     }
 }

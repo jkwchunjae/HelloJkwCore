@@ -38,6 +38,7 @@
 else if (IsAuthenticated && !HasDiary)
 {
     <span>일기장을 만드세요</span>
+    <RadzenButton Click="@(_ => WriteDiary())">쓰기</RadzenButton>
 }
 else
 {

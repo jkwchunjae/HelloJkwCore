@@ -1,4 +1,13 @@
 ﻿@page "/diary/write/{DiaryName}"
 
-<h3>DiaryWrite</h3>
+<div>
+    <RadzenDatePicker @bind-Value="Date" DateFormat="yyyy.MM.dd"/>
+</div>
 
+<div>
+    <RadzenTextArea @bind-Value="Content" Style="max-width: 95vw; width: 500px; max-height: 90vh; height: 500px;"/>
+</div>
+
+<div>
+    <RadzenButton Click="_ => WriteDiary()">쓰기</RadzenButton>
+</div>
