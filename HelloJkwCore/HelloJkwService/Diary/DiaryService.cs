@@ -132,5 +132,39 @@ namespace HelloJkwService.Diary
 
             return Result.Success();
         }
+
+        public async Task<Result> UpdateDiaryAsync(string diaryName, List<DiaryData> diaryList)
+        {
+            var diaryDirectoryPath = Path.Combine(_option.RootPath, diaryName);
+
+            var cachedList = GetDiaryDataListFromCache(diaryName);
+
+            foreach (var diaryData in diaryList)
+            {
+                var date = diaryData.Date;
+                var index = diaryData.Index;
+                var diaryPath = Path.Combine(diaryDirectoryPath, $"{date:yyyyMMdd}_{index}.diary");
+                var findDiary = cachedList.Find(x => x.Date == date && x.Index == index);
+                if (findDiary != null)
+                {
+                    cachedList.Remove(findDiary);
+                }
+
+                if (string.IsNullOrWhiteSpace(diaryData.Text))
+                {
+                    File.Delete(diaryPath);
+                }
+                else
+                {
+                    diaryData.LastModifyDate = DateTime.Now;
+                    cachedList.Add(diaryData);
+                    await File.WriteAllTextAsync(diaryPath, JsonConvert.SerializeObject(diaryData), _encoding);
+                }
+            }
+
+            _diaryCache.Set(diaryName, cachedList);
+
+            return Result.Success();
+        }
     }
 }
