@@ -1,4 +1,6 @@
-﻿using HelloJkwService.Diary;
+﻿using HelloJkwClient.Shared;
+using HelloJkwService.Diary;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -7,12 +9,10 @@ using System.Threading.Tasks;
 
 namespace HelloJkwClient.Pages.Diary
 {
-    public partial class DiaryWrite : ComponentBase
+    public partial class DiaryWrite : JkwPageBase
     {
         [Inject]
         DiaryService DiaryService { get; set; }
-        [Inject]
-        NavigationManager NavigationManager { get; set; }
 
         [Parameter]
         public string DiaryName { get; set; }
@@ -22,6 +22,11 @@ namespace HelloJkwClient.Pages.Diary
 
         async Task WriteDiary()
         {
+            if (!IsAuthenticated)
+                return;
+
+            var diaryInfo = await DiaryService.GetDiaryInfoByUserIdAsync(User.Id);
+
             var result = await DiaryService.WriteDiaryAsync(DiaryName, Date, Content);
 
             if (result.IsSuccess)

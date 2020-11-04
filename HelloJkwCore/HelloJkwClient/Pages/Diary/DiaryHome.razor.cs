@@ -1,4 +1,5 @@
-﻿using HelloJkwService.Diary;
+﻿using HelloJkwClient.Shared;
+using HelloJkwService.Diary;
 using HelloJkwService.User;
 using JkwExtensions;
 using Microsoft.AspNetCore.Components;
@@ -14,29 +15,16 @@ using System.Threading.Tasks;
 
 namespace HelloJkwClient.Pages.Diary
 {
-    public partial class DiaryHome : ComponentBase
+    public partial class DiaryHome : JkwPageBase
     {
         [Inject]
         DiaryService DiaryService { get; set; }
-        [Inject]
-        IUserStore<AppUser> UserStore { get; set; }
-        [Inject]
-        AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-        [Inject]
-        NavigationManager NavigationManager { get; set; }
-
 
         [Parameter]
         public string DiaryName { get; set; }
         [Parameter]
         public string DateStr { get; set; }
 
-        [CascadingParameter]
-        private AuthenticationState auth { get; set; }
-
-        public bool IsAuthenticated { get; set; }
-
-        public AppUser User { get; set; }
         public DiaryInfo DiaryInfo { get; set; }
         public List<DiaryData> DiaryList;
         public DiaryData Diary;
@@ -45,50 +33,19 @@ namespace HelloJkwClient.Pages.Diary
         public bool IsMyDiary => (User?.Email ?? "") == (DiaryInfo?.Owner ?? "");
         public bool HasDiary => DiaryList != null && DiaryList.Any();
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnPageInitializedAsync()
         {
-            auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            IsAuthenticated = auth.User.Identity.IsAuthenticated;
-
-            if (auth.User.Identity.IsAuthenticated)
+            if (IsAuthenticated)
             {
-                var userId = auth.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                User = await UserStore.FindByIdAsync(userId, CancellationToken.None);
-
-
                 DiaryInfo = await LoadDiaryInfoAsync();
                 await LoadDiaryListAsync(DiaryInfo);
             }
         }
 
-
-
-        protected override void OnInitialized()
+        protected override async Task HandleLocationChanged(LocationChangedEventArgs e)
         {
-            NavigationManager.LocationChanged += HandleLocationChanged;
-        }
-
-        public void Dispose()
-        {
-            NavigationManager.LocationChanged -= HandleLocationChanged;
-        }
-
-        private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
-        {
-            if (e.IsNavigationIntercepted == false)
-                return;
-
-            auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            IsAuthenticated = auth.User.Identity.IsAuthenticated;
-
-            if (auth.User.Identity.IsAuthenticated)
+            if (IsAuthenticated)
             {
-                var userId = auth.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                User = await UserStore.FindByIdAsync(userId, CancellationToken.None);
-
-
                 DiaryInfo = await LoadDiaryInfoAsync();
                 await LoadDiaryListAsync(DiaryInfo);
             }

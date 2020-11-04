@@ -1,4 +1,15 @@
-﻿@page "/diary/write/{DiaryName}"
+﻿@inherits JkwPageBase
+
+@page "/diary/write/{DiaryName}"
+
+@if (!IsAuthenticated)
+{
+    <div>
+        로그인하세요 (쓰기페이지)
+    </div>
+}
+else
+{
 
 <div>
     <RadzenDatePicker @bind-Value="Date" DateFormat="yyyy.MM.dd"/>
@@ -11,3 +22,5 @@
 <div>
     <RadzenButton Click="_ => WriteDiary()">쓰기</RadzenButton>
 </div>
+
+}
