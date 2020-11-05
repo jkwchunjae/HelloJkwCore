@@ -59,29 +59,29 @@ namespace HelloJkwClient.Pages.Diary
 
         public void GotoDiary(string diaryName, DateTime date)
         {
-            NavigationManager.NavigateTo($"diary/{diaryName}/{date.ToString("yyyyMMdd")}");
+            NavigationManager.GotoDiary(diaryName, date);
 
             Diary = DiaryList.First(x => x.Date == date);
         }
 
         public void WriteDiary()
         {
-            NavigationManager.NavigateTo($"diary/write/{DiaryInfo.DiaryName}");
+            NavigationManager.GotoWriteDiary(DiaryInfo.DiaryName);
         }
 
         public void EditDiary()
         {
-            NavigationManager.NavigateTo($"diary/modify/{DiaryInfo.DiaryName}/{Diary.Date.ToString("yyyyMMdd")}");
+            NavigationManager.GotoEditDiary(DiaryInfo.DiaryName, Diary.Date);
         }
 
         public void ShowDiaryList()
         {
-            NavigationManager.NavigateTo($"diary/showdates/{DiaryInfo.DiaryName}");
+            NavigationManager.GotoShowDiaryList(DiaryInfo.DiaryName);
         }
 
         public void DiarySearch()
         {
-            NavigationManager.NavigateTo($"diary/search/{DiaryInfo.DiaryName}");
+            NavigationManager.GotoSearchDiary(DiaryInfo.DiaryName);
         }
 
         private async Task<DiaryInfo> LoadDiaryInfoAsync()

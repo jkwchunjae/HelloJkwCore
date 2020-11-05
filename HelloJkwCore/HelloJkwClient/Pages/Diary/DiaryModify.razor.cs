@@ -53,7 +53,7 @@ namespace HelloJkwClient.Pages.Diary
                 var result = await DiaryService.UpdateDiaryAsync(DiaryName, DiaryList);
                 if (result.IsSuccess)
                 {
-                    NavigationManager.NavigateTo($"diary/{DiaryName}/{DiaryDate:yyyyMMdd}");
+                    NavigationManager.GotoDiary(DiaryName, DiaryDate);
                 }
             }
         }

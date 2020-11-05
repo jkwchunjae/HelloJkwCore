@@ -32,7 +32,7 @@ namespace HelloJkwClient.Pages.Diary
 
                 if (result.IsSuccess)
                 {
-                    NavigationManager.NavigateTo($"diary/{DiaryName}/{Date:yyyyMMdd}");
+                    NavigationManager.GotoDiary(DiaryName, Date);
                 }
             }
         }
