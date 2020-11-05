@@ -32,7 +32,13 @@ namespace HelloJkwService.Diary
             var diaryInfoList = JsonConvert.DeserializeObject<List<DiaryInfo>>
                 (await File.ReadAllTextAsync(_option.DiaryListPath, _encoding, ct));
 
-            return diaryInfoList.FirstOrDefault(func);
+            var diaryInfo = diaryInfoList.FirstOrDefault(func);
+            if (diaryInfo != null)
+            {
+                diaryInfo.Writers.Add(diaryInfo.Owner);
+                diaryInfo.Viewers.Add(diaryInfo.Owner);
+            }
+            return diaryInfo;
         }
 
         public async Task<DiaryInfo> GetDiaryInfoByUserIdAsync(string userId, CancellationToken ct = default)
