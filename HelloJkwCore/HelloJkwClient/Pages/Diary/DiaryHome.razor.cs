@@ -35,7 +35,7 @@ namespace HelloJkwClient.Pages.Diary
 
         protected override async Task OnPageInitializedAsync()
         {
-            if (IsAuthenticated)
+            if (!IsAuthenticated)
                 return;
 
             DiaryInfo = await LoadDiaryInfoAsync();
@@ -47,7 +47,7 @@ namespace HelloJkwClient.Pages.Diary
 
         protected override async Task HandleLocationChanged(LocationChangedEventArgs e)
         {
-            if (IsAuthenticated)
+            if (!IsAuthenticated)
                 return;
 
             DiaryInfo = await LoadDiaryInfoAsync();
