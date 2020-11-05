@@ -22,20 +22,23 @@ namespace HelloJkwClient.Pages.Diary
         DateTime DiaryDate { get; set; }
         List<DiaryData> DiaryList { get; set; } = new List<DiaryData>();
 
-        protected override Task OnPageInitializedAsync()
+        protected override async Task OnPageInitializedAsync()
         {
             if (!IsAuthenticated)
-                return Task.CompletedTask;
+                return;
 
-            if (DateStr.TryToDate(out var date))
-                DiaryDate = date;
-            else
-                DiaryDate = DateTime.MinValue;
+            var diaryInfo = await DiaryService.GetDiaryInfoByDiaryNameAsync(DiaryName);
 
-            var all = DiaryService.GetDiaryDataListFromCache(DiaryName);
-            DiaryList = all.Where(x => x.Date == DiaryDate).ToList();
+            if (diaryInfo?.Writers.Contains(User?.Email) ?? false)
+            {
+                if (DateStr.TryToDate(out var date))
+                    DiaryDate = date;
+                else
+                    DiaryDate = DateTime.MinValue;
 
-            return Task.CompletedTask;
+                var all = DiaryService.GetDiaryDataListFromCache(DiaryName);
+                DiaryList = all.Where(x => x.Date == DiaryDate).ToList();
+            }
         }
 
         async Task UpdateDiary()
@@ -43,10 +46,15 @@ namespace HelloJkwClient.Pages.Diary
             if (!IsAuthenticated)
                 return;
 
-            var result = await DiaryService.UpdateDiaryAsync(DiaryName, DiaryList);
-            if (result.IsSuccess)
+            var diaryInfo = await DiaryService.GetDiaryInfoByDiaryNameAsync(DiaryName);
+
+            if (diaryInfo?.Writers.Contains(User?.Email) ?? false)
             {
-                NavigationManager.NavigateTo($"diary/{DiaryName}/{DiaryDate:yyyyMMdd}");
+                var result = await DiaryService.UpdateDiaryAsync(DiaryName, DiaryList);
+                if (result.IsSuccess)
+                {
+                    NavigationManager.NavigateTo($"diary/{DiaryName}/{DiaryDate:yyyyMMdd}");
+                }
             }
         }
     }

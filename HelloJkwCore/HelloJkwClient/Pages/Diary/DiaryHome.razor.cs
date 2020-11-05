@@ -36,8 +36,11 @@ namespace HelloJkwClient.Pages.Diary
         protected override async Task OnPageInitializedAsync()
         {
             if (IsAuthenticated)
+                return;
+
+            DiaryInfo = await LoadDiaryInfoAsync();
+            if (DiaryInfo?.Viewers.Contains(User?.Email) ?? false)
             {
-                DiaryInfo = await LoadDiaryInfoAsync();
                 await LoadDiaryListAsync(DiaryInfo);
             }
         }
@@ -45,8 +48,11 @@ namespace HelloJkwClient.Pages.Diary
         protected override async Task HandleLocationChanged(LocationChangedEventArgs e)
         {
             if (IsAuthenticated)
+                return;
+
+            DiaryInfo = await LoadDiaryInfoAsync();
+            if (DiaryInfo?.Viewers.Contains(User?.Email) ?? false)
             {
-                DiaryInfo = await LoadDiaryInfoAsync();
                 await LoadDiaryListAsync(DiaryInfo);
             }
         }

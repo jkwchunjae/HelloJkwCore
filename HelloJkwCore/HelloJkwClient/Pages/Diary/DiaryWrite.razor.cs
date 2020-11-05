@@ -26,12 +26,14 @@ namespace HelloJkwClient.Pages.Diary
                 return;
 
             var diaryInfo = await DiaryService.GetDiaryInfoByUserIdAsync(User.Id);
-
-            var result = await DiaryService.WriteDiaryAsync(DiaryName, Date, Content);
-
-            if (result.IsSuccess)
+            if (diaryInfo?.Writers.Contains(User?.Email) ?? false)
             {
-                NavigationManager.NavigateTo($"diary/{DiaryName}/{Date:yyyyMMdd}");
+                var result = await DiaryService.WriteDiaryAsync(DiaryName, Date, Content);
+
+                if (result.IsSuccess)
+                {
+                    NavigationManager.NavigateTo($"diary/{DiaryName}/{Date:yyyyMMdd}");
+                }
             }
         }
     }
