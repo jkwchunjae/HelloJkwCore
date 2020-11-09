@@ -37,7 +37,7 @@ namespace HelloJkwClient.Pages.Diary
 
         public static void GotoShowDiaryList(this NavigationManager navigationManager, string diaryName, bool forceLoad = default)
         {
-            navigationManager.NavigateTo($"diary/showdates/{diaryName}", forceLoad);
+            navigationManager.NavigateTo($"diary/spread/{diaryName}", forceLoad);
         }
 
         public static void GotoSearchDiary(this NavigationManager navigationManager, string diaryName, bool forceLoad = default)

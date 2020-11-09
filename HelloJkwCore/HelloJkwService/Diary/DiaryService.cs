@@ -64,12 +64,14 @@ namespace HelloJkwService.Diary
             var fileList = Directory.GetFiles(diaryDirectoryPath, "*.diary");
 
             var diaryTextList = await Task.WhenAll(fileList
+                .AsParallel()
 #if DEBUG
                 .TakeLast(30)
 #endif
                 .Select(path => File.ReadAllTextAsync(path, _encoding, ct)));
 
             var diaryList = diaryTextList
+                .AsParallel()
                 .Select(x => JsonConvert.DeserializeObject<DiaryData>(x))
                 .OrderBy(x => x.Date)
                 .ThenBy(x => x.Index)
