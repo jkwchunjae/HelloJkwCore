@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 
 namespace HelloJkwClient.Pages.Diary
 {
@@ -22,12 +23,20 @@ namespace HelloJkwClient.Pages.Diary
         DateTime DiaryDate { get; set; }
         List<DiaryData> DiaryList { get; set; } = new List<DiaryData>();
 
+        string Password = string.Empty;
+
         protected override async Task OnPageInitializedAsync()
         {
             if (!IsAuthenticated)
                 return;
 
             var diaryInfo = await DiaryService.GetDiaryInfoByDiaryNameAsync(DiaryName);
+
+            if (DiaryService.TryGetPassword(User.Id, out var pw))
+            {
+                Password = pw;
+                StateHasChanged();
+            }
 
             if (diaryInfo?.Writers.Contains(User?.Email) ?? false)
             {
@@ -37,7 +46,7 @@ namespace HelloJkwClient.Pages.Diary
                     DiaryDate = DateTime.MinValue;
 
                 var all = DiaryService.GetDiaryDataListFromCache(DiaryName);
-                DiaryList = all.Where(x => x.Date == DiaryDate).ToList();
+                DiaryList = all.WhereAndDecrypt(DiaryDate, Password).ToList();
             }
         }
 
@@ -50,6 +59,14 @@ namespace HelloJkwClient.Pages.Diary
 
             if (diaryInfo?.Writers.Contains(User?.Email) ?? false)
             {
+                if (diaryInfo.IsSecure)
+                {
+                    foreach (var diary in DiaryList.Where(x => !x.IsSecure))
+                    {
+                        diary.IsSecure = true;
+                        diary.Text = diary.Text.Encrypt(Password);
+                    }
+                }
                 var result = await DiaryService.UpdateDiaryAsync(DiaryName, DiaryList);
                 if (result.IsSuccess)
                 {

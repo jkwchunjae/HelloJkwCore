@@ -19,12 +19,14 @@ namespace HelloJkwService.Diary
         private readonly Encoding _encoding = new UTF8Encoding(false);
 
         private readonly ICache<List<DiaryData>> _diaryCache;
+        private readonly ICache<string> _passwordCache;
 
         public DiaryService(DiaryOption option)
         {
             _option = option;
 
             _diaryCache = new MemoryCache<List<DiaryData>>();
+            _passwordCache = new MemoryCache<string>();
         }
 
         private async Task<DiaryInfo> GetDiaryInfoByAsync(Func<DiaryInfo, bool> func, CancellationToken ct = default)
@@ -95,7 +97,7 @@ namespace HelloJkwService.Diary
             return new List<DiaryData>();
         }
 
-        public async Task<Result> WriteDiaryAsync(string diaryName, DateTime date, string content)
+        public async Task<Result> WriteDiaryAsync(string diaryName, DateTime date, string content, bool isSecure = false, string password = null)
         {
             var diaryDirectoryPath = Path.Combine(_option.RootPath, diaryName);
             var searchPattern = $"{date:yyyyMMdd}_*.diary";
@@ -112,13 +114,18 @@ namespace HelloJkwService.Diary
                 index = lastIndex + 1;
             }
 
+            if (isSecure)
+            {
+                content = content.Encrypt(password);
+            }
+
             var diaryData = new DiaryData
             {
                 Date = date,
                 CreateDate = DateTime.Now,
                 LastModifyDate = DateTime.Now,
                 Index = index,
-                IsSecure = false,
+                IsSecure = isSecure,
                 Text = content,
             };
 
@@ -126,7 +133,7 @@ namespace HelloJkwService.Diary
             diaryData.SetDiaryInfo(this, diaryInfo);
 
             var diaryPath = Path.Combine(diaryDirectoryPath, $"{date:yyyyMMdd}_{index}.diary");
-            await File.WriteAllTextAsync(diaryPath, JsonConvert.SerializeObject(diaryData), _encoding);
+            await File.WriteAllTextAsync(diaryPath, JsonConvert.SerializeObject(diaryData, Formatting.Indented), _encoding);
 
             if (_diaryCache.TryGet(diaryName, out var diaries))
             {
@@ -166,13 +173,23 @@ namespace HelloJkwService.Diary
                 {
                     diaryData.LastModifyDate = DateTime.Now;
                     cachedList.Add(diaryData);
-                    await File.WriteAllTextAsync(diaryPath, JsonConvert.SerializeObject(diaryData), _encoding);
+                    await File.WriteAllTextAsync(diaryPath, JsonConvert.SerializeObject(diaryData, Formatting.Indented), _encoding);
                 }
             }
 
             _diaryCache.Set(diaryName, cachedList);
 
             return Result.Success();
+        }
+
+        public void CachePassword(string userId, string password)
+        {
+            _passwordCache.Set(userId, password, TimeSpan.FromDays(1));
+        }
+
+        public bool TryGetPassword(string userId, out string password)
+        {
+            return _passwordCache.TryGet(userId, out password);
         }
     }
 }

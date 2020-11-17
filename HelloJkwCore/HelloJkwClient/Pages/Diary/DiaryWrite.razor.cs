@@ -20,15 +20,28 @@ namespace HelloJkwClient.Pages.Diary
         DateTime Date { get; set; } = DateTime.Today;
         string Content { get; set; }
 
+        DiaryInfo DiaryInfo;
+        string Password = string.Empty;
+
+        protected override async Task OnPageInitializedAsync()
+        {
+            DiaryInfo = await DiaryService.GetDiaryInfoByUserIdAsync(User.Id);
+
+            if (DiaryService.TryGetPassword(User.Id, out var pw))
+            {
+                Password = pw;
+                StateHasChanged();
+            }
+        }
+
         async Task WriteDiary()
         {
             if (!IsAuthenticated)
                 return;
 
-            var diaryInfo = await DiaryService.GetDiaryInfoByUserIdAsync(User.Id);
-            if (diaryInfo?.Writers.Contains(User?.Email) ?? false)
+            if (DiaryInfo?.Writers.Contains(User?.Email) ?? false)
             {
-                var result = await DiaryService.WriteDiaryAsync(DiaryName, Date, Content);
+                var result = await DiaryService.WriteDiaryAsync(DiaryName, Date, Content, DiaryInfo.IsSecure, Password);
 
                 if (result.IsSuccess)
                 {

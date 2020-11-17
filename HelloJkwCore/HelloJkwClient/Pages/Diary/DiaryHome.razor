@@ -6,23 +6,30 @@
 @using Common
 @using HelloJkwService.Diary
 
-@if (IsAuthenticated && HasDiary)
+@if (IsAuthenticated && (DiaryInfo?.IsSecure ?? false) && Password == string.Empty)
 {
-    <h2>@Diary.Date.ToString("yyyy.MM.dd") <span class="smaller">@Diary.Date.GetWeekday(DateLanguage.KR, WeekdayFormat.D)</span></h2>
+    <span>비밀번호를 입력하세요</span>
+    <form @onsubmit="@(_ => SetPassword())">
+        <RadzenPassword @bind-Value="Password" />
+    </form>
+}
+else if (IsAuthenticated && HasDiary)
+{
+    <h2>@DiaryDate.ToString("yyyy.MM.dd") <span class="smaller">@DiaryDate.GetWeekday(DateLanguage.KR, WeekdayFormat.D)</span></h2>
 
-    @foreach (var diary in DiaryList.Where(x => x.Date == DiaryDate))
+    @foreach (var diary in CurrentDiary)
     {
         <pre>@diary.Text</pre>
     }
 
-    @if (Diary.HasPrev(out var prevDate))
+    @if (CurrentDiary.FirstOrDefault().HasPrev(out var prevDate))
     {
         <button @onclick="@(_ => GotoDiary(DiaryInfo.DiaryName, prevDate))">
             이전
         </button>
     }
 
-    @if (Diary.HasNext(out var nextDate))
+    @if (CurrentDiary.FirstOrDefault().HasNext(out var nextDate))
     {
         <button @onclick="@(_ => GotoDiary(DiaryInfo.DiaryName, nextDate))">
             다음
@@ -35,6 +42,10 @@
         <button @onclick="@(_ => EditDiary())">수정</button>
         <button @onclick="@(_ => ShowDiaryList())">목록</button>
         <button @onclick="@(_ => DiarySearch())">검색</button>
+        @if (DiaryInfo.IsSecure)
+        {
+            <button @onclick="@(_ => ResetPassword())">비밀번호 재설정</button>
+        }
     }
 }
 else if (IsAuthenticated && !HasDiary)

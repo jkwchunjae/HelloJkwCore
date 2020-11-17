@@ -27,16 +27,24 @@ namespace HelloJkwClient.Pages.Diary
 
         public DiaryInfo DiaryInfo { get; set; }
         public List<DiaryData> DiaryList;
-        public DiaryData Diary;
-        public DateTime DiaryDate => Diary.Date;
+        public List<DiaryData> CurrentDiary;
+        public DateTime DiaryDate => CurrentDiary.First().Date;
 
         public bool IsMyDiary => (User?.Email ?? "") == (DiaryInfo?.Owner ?? "");
         public bool HasDiary => DiaryList != null && DiaryList.Any();
+
+        public string Password = string.Empty;
 
         protected override async Task OnPageInitializedAsync()
         {
             if (!IsAuthenticated)
                 return;
+
+            if (DiaryService.TryGetPassword(User.Id, out var pw))
+            {
+                Password = pw;
+                StateHasChanged();
+            }
 
             DiaryInfo = await LoadDiaryInfoAsync();
             if (DiaryInfo?.Viewers.Contains(User?.Email) ?? false)
@@ -61,7 +69,7 @@ namespace HelloJkwClient.Pages.Diary
         {
             NavigationManager.GotoDiary(diaryName, date);
 
-            Diary = DiaryList.First(x => x.Date == date);
+            CurrentDiary = DiaryList.WhereAndDecrypt(date, Password).ToList();
         }
 
         public void WriteDiary()
@@ -71,7 +79,7 @@ namespace HelloJkwClient.Pages.Diary
 
         public void EditDiary()
         {
-            NavigationManager.GotoEditDiary(DiaryInfo.DiaryName, Diary.Date);
+            NavigationManager.GotoEditDiary(DiaryInfo.DiaryName, DiaryDate);
         }
 
         public void ShowDiaryList()
@@ -111,12 +119,12 @@ namespace HelloJkwClient.Pages.Diary
                         date = NormalizeDate(date, DiaryList);
 
                         // 항상 참
-                        Diary = DiaryList.First(x => x.Date == date);
+                        CurrentDiary = DiaryList.WhereAndDecrypt(date, Password).ToList();
                     }
                     else
                     {
                         // 날짜가 파싱되지 않으면 마지막 일기
-                        Diary = DiaryList.Last();
+                        CurrentDiary = DiaryList.WhereAndDecrypt(DiaryList.Last().Date, Password).ToList();
                     }
                 }
                 else
@@ -137,6 +145,21 @@ namespace HelloJkwClient.Pages.Diary
                 return diaryList.Last(x => x.Date < date).Date;
             }
             return DateTime.MinValue;
+        }
+
+        private void SetPassword()
+        {
+            if (Password != string.Empty)
+            {
+                DiaryService.CachePassword(User.Id, Password);
+                CurrentDiary = DiaryList.WhereAndDecrypt(DiaryList.Last().Date, Password).ToList();
+                StateHasChanged();
+            }
+        }
+
+        private void ResetPassword()
+        {
+            Password = string.Empty;
         }
     }
 }
