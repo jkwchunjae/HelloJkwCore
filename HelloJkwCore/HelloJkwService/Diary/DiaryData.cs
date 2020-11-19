@@ -48,7 +48,7 @@ namespace HelloJkwService.Diary
         public bool HasNext(out DateTime nextDate)
         {
             var diaryList = _diaryService.GetDiaryDataListFromCache(_diaryInfo.DiaryName);
-            var firstDiary = diaryList.LastOrDefault(x => x.Date > Date);
+            var firstDiary = diaryList.FirstOrDefault(x => x.Date > Date);
 
             if (firstDiary != null)
             {

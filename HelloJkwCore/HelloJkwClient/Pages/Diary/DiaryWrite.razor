@@ -1,8 +1,32 @@
-﻿@page "/diary/write/{DiaryName}"
+﻿@inherits JkwPageBase
 
-<h3>DiaryWrite</h3>
+@page "/diary/write/{DiaryName}"
 
-@code {
-    [Parameter]
-    public string DiaryName { get; set; }
+@if (!IsAuthenticated)
+{
+    <div>
+        로그인하세요 (쓰기페이지)
+    </div>
+}
+else if (DiaryInfo.IsSecure && Password == string.Empty)
+{
+    <div>
+        비밀번호를 입력하세요.
+    </div>
+}
+else
+{
+
+<div>
+    <RadzenDatePicker @bind-Value="Date" DateFormat="yyyy.MM.dd"/>
+</div>
+
+<div>
+    <RadzenTextArea @bind-Value="Content" Style="max-width: 95vw; width: 700px; height: 50vh;"/>
+</div>
+
+<div>
+    <RadzenButton Click="_ => WriteDiary()">쓰기</RadzenButton>
+</div>
+
 }

@@ -8,7 +8,7 @@ namespace Common
     {
         public bool Contains(string key);
 
-        public void Set(string key, T value);
+        public void Set(string key, T value, TimeSpan? ttl = null);
 
         public T Get(string key);
 

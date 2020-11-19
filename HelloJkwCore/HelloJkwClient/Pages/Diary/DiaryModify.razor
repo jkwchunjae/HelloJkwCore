@@ -1,11 +1,24 @@
-﻿@page "/diary/modify/{DiaryName}/{DateStr}"
+﻿@inherits JkwPageBase
 
-<h3>DiaryModify</h3>
+@page "/diary/modify/{DiaryName}/{DateStr}"
 
-@code {
-    [Parameter]
-    public string DiaryName { get; set; }
-    [Parameter]
-    public string DateStr { get; set; }
+<h3>@DiaryDate.ToString("yyyy.MM.dd")</h3>
 
+@if (DiaryList.Any(x => x.IsSecure))
+{
+    <pre>복호화 하지 못했습니다. 비밀번호를 다시 입력해주세요.</pre>
+}
+else
+{
+    @foreach (var diary in DiaryList)
+    {
+        <div>
+            <RadzenTextArea @bind-Value="diary.Text" Style="max-width: 95vw; width: 700px; height: 50vh;" />
+        </div>
+    }
+
+    @if (DiaryList.All(x => !x.IsSecure))
+    {
+        <RadzenButton Click="@(args => UpdateDiary())">수정</RadzenButton>
+    }
 }
