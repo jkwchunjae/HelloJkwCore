@@ -4,7 +4,7 @@
 
 <h3>@DiaryDate.ToString("yyyy.MM.dd")</h3>
 
-@if (DiaryList.Any(x => x.IsSecure))
+@if (DiaryList?.Any(x => x.IsSecure) ?? false)
 {
     <pre>복호화 하지 못했습니다. 비밀번호를 다시 입력해주세요.</pre>
 }
