@@ -6,14 +6,23 @@
 @using Common
 @using HelloJkwService.Diary
 
-@if (IsAuthenticated && (DiaryInfo?.IsSecure ?? false) && Password == string.Empty)
+@if (!IsAuthenticated)
+{
+    <span>로그인하세요.</span>
+}
+else if ((DiaryInfo?.IsSecure ?? false) && Password == string.Empty)
 {
     <span>비밀번호를 입력하세요</span>
     <form @onsubmit="@(_ => SetPassword())">
         <RadzenPassword @bind-Value="Password" />
     </form>
 }
-else if (IsAuthenticated && HasDiary)
+else if (CurrentDiary.Any(x => x.IsSecure))
+{
+    <pre>복호화 하지 못했습니다. 비밀번호를 다시 입력해주세요.</pre>
+    <button @onclick="@(_ => ResetPassword())">비밀번호 재설정</button>
+}
+else if (HasDiary)
 {
     <h2>@DiaryDate.ToString("yyyy.MM.dd") <span class="smaller">@DiaryDate.GetWeekday(DateLanguage.KR, WeekdayFormat.D)</span></h2>
 
@@ -48,7 +57,7 @@ else if (IsAuthenticated && HasDiary)
         }
     }
 }
-else if (IsAuthenticated && !HasDiary)
+else if (!HasDiary)
 {
     <span>일기장을 만드세요</span>
     <RadzenButton Click="@(_ => WriteDiary())">쓰기</RadzenButton>
