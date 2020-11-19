@@ -26,8 +26,8 @@ namespace HelloJkwClient.Pages.Diary
         public string DateStr { get; set; }
 
         public DiaryInfo DiaryInfo { get; set; }
-        public List<DiaryData> DiaryList;
-        public List<DiaryData> CurrentDiary;
+        public List<DiaryData> DiaryList { get; set; } = new List<DiaryData>();
+        public List<DiaryData> CurrentDiary { get; set; } = new List<DiaryData>();
         public DateTime DiaryDate => CurrentDiary.First().Date;
 
         public bool IsMyDiary => (User?.Email ?? "") == (DiaryInfo?.Owner ?? "");
