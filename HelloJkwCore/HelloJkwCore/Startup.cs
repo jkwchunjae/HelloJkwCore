@@ -42,7 +42,7 @@ namespace HelloJkwCore
 
             if (_coreOption.UseLocalDropbox)
             {
-                _fileSystem = new LocalFileSystem(new UTF8Encoding(false));
+                _fileSystem = new LocalFileSystem();
                 _authUtil = new AuthUtil(_fileSystem);
             }
             else

@@ -12,9 +12,9 @@ namespace Common.FileSystem
     {
         Encoding _encoding;
 
-        public LocalFileSystem(Encoding encoding)
+        public LocalFileSystem(Encoding encoding = null)
         {
-            _encoding = encoding;
+            _encoding = encoding ?? new UTF8Encoding(false);
         }
 
         public Task<bool> FileExistsAsync(string path, CancellationToken ct = default)
