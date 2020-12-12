@@ -8,6 +8,13 @@ namespace Common.Extensions
 {
     public static class ConfigurationPathExtensions
     {
+        private static IConfiguration _configuration;
+
+        public static void SetConfiguration(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         private static List<(string Prefix, Func<IConfiguration, string> PathFunc)> _pathPrefix
             = new List<(string Prefix, Func<IConfiguration, string> PathFunc)>
             {
@@ -33,6 +40,11 @@ namespace Common.Extensions
             {
                 return path;
             }
+        }
+
+        public static string GetPath(this PathType pathType)
+        {
+            return _configuration?.GetPath(pathType);
         }
     }
 }

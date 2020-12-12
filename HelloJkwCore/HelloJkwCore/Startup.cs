@@ -1,4 +1,5 @@
 using Common;
+using Common.Extensions;
 using Common.FileSystem;
 using Dropbox.Api;
 using HelloJkwCore.Authentication;
@@ -30,28 +31,25 @@ namespace HelloJkwCore
 
         readonly AuthUtil _authUtil;
 
-        readonly IFileSystem _dropboxFileSystem;
-        readonly IFileSystem _localFileSystem;
+        readonly IFileSystem _fileSystem;
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
 
-            PathOf.SetConfiguration(Configuration);
+            ConfigurationPathExtensions.SetConfiguration(Configuration);
             _coreOption = CoreOption.Create(Configuration);
-
-            var dropboxClient = GetDropboxClient(_coreOption);
-
-            _localFileSystem = new LocalFileSystem(new UTF8Encoding(false));
-            _dropboxFileSystem = new DropboxFileSystem(dropboxClient);
 
             if (_coreOption.UseLocalDropbox)
             {
-                _authUtil = new AuthUtil(_localFileSystem);
+                _fileSystem = new LocalFileSystem(new UTF8Encoding(false));
+                _authUtil = new AuthUtil(_fileSystem);
             }
             else
             {
-                _authUtil = new AuthUtil(_dropboxFileSystem);
+                var dropboxClient = GetDropboxClient(_coreOption.UseLocalDropbox);
+                _fileSystem = new DropboxFileSystem(dropboxClient);
+                _authUtil = new AuthUtil(_fileSystem);
             }
         }
 
@@ -101,14 +99,7 @@ namespace HelloJkwCore
                     options.CallbackPath = kakaoAuthOption?.Callback;
                 });
 
-            if (_coreOption.UseLocalDropbox)
-            {
-                services.AddSingleton(_localFileSystem);
-            }
-            else
-            {
-                services.AddSingleton(_dropboxFileSystem);
-            }
+            services.AddSingleton(_fileSystem);
 
             services.AddHttpContextAccessor();
             services.AddScoped<HttpContextAccessor>();
@@ -152,9 +143,9 @@ namespace HelloJkwCore
             });
         }
 
-        private DropboxClient GetDropboxClient(CoreOption option)
+        private DropboxClient GetDropboxClient(bool useLocalDropbox)
         {
-            if (option.UseLocalDropbox)
+            if (useLocalDropbox)
             {
                 var localFileSystem = new LocalFileSystem(new UTF8Encoding(false));
                 var oauthPath = Configuration.GetPath(PathType.OAuthOption);

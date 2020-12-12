@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Extensions;
 using Common.FileSystem;
 using JkwExtensions;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +27,7 @@ namespace HelloJkwCore.User
             )
         {
             _logger = loggerFactory.CreateLogger<UserStore>();
-            _userListPath = configuration.GetPath(PathType.UserListFile);
+            _userListPath = PathType.UserListFile.GetPath();
             _fs = fileSystem;
         }
 

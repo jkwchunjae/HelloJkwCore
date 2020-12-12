@@ -16,34 +16,10 @@ namespace HelloJkwCore.Authentication
 
         public AuthUtil(IFileSystem fs)
         {
-            var task = fs.ReadJsonAsync<List<OAuthOption>>(PathOf.Get(PathType.OAuthOption));
+            var task = fs.ReadJsonAsync<List<OAuthOption>>(PathType.OAuthOption.GetPath());
             task.Wait();
             _oauthOptions = task.Result;
         }
-
-        //private List<OAuthOption> LoadFromConfiguration()
-        //{
-        //    var googleAuthOption = new OAuthOption
-        //    {
-        //        Provider = AuthProvider.Google,
-        //        ClientId = _configuration["Auth:Google:ClientId"],
-        //        ClientSecret = _configuration["Auth:Google:ClientSecret"],
-        //        Callback = _configuration["Auth:Google:Callback"],
-        //    };
-        //    var kakaoAuthOption = new OAuthOption
-        //    {
-        //        Provider = AuthProvider.KakaoTalk,
-        //        ClientId = _configuration["Auth:Kakao:ClientId"],
-        //        ClientSecret = _configuration["Auth:Kakao:ClientSecret"],
-        //        Callback = _configuration["Auth:Kakao:Callback"],
-        //    };
-
-        //    return new List<OAuthOption>
-        //    {
-        //        googleAuthOption,
-        //        kakaoAuthOption,
-        //    };
-        //}
 
         public OAuthOption GetAuthOption(AuthProvider provider)
         {
