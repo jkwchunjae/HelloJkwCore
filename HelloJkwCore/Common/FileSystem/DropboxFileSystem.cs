@@ -31,7 +31,7 @@ namespace Common.FileSystem
                 var metadata = await _client.Files.GetMetadataAsync(path);
                 return metadata.IsFile;
             }
-            catch (ApiException<GetMetadataError> ex)
+            catch (ApiException<GetMetadataError>)
             {
                 return false;
             }
@@ -43,24 +43,28 @@ namespace Common.FileSystem
 
         public async Task<T> ReadJsonAsync<T>(string path, CancellationToken ct = default)
         {
-            return await _client.ReadJsonAsync<T>(path);
+            try
+            {
+                return await _client.ReadJsonAsync<T>(path);
+            }
+            catch (ApiException<DownloadError>)
+            {
+                return default;
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         public async Task<bool> WriteJsonAsync<T>(string path, T obj, CancellationToken ct = default)
         {
             try
             {
-                var text = Json.Serialize(obj);
-                var bytes = _encoding.GetBytes(text);
-                using (var stream = new MemoryStream(bytes))
-                {
-                    var uploadResult = await _client.Files.UploadAsync(
-                        commitInfo: new CommitInfo(path: path, mode: Overwrite.Instance),
-                        body: stream);
-                    return true;
-                }
+                await _client.WriteJsonAsync(path, obj, _encoding);
+                return true;
             }
-            catch (ApiException<UploadError> ex)
+            catch (ApiException<UploadError>)
             {
                 return false;
             }

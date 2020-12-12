@@ -9,7 +9,7 @@ namespace Common.FileSystem
 {
     public class InMemoryFileSystem : IFileSystem
     {
-        private Dictionary<string, string> _files = new();
+        private readonly Dictionary<string, string> _files = new();
 
         public Task<bool> FileExistsAsync(string path, CancellationToken ct = default)
         {

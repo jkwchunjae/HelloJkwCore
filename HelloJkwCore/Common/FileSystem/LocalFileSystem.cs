@@ -10,7 +10,7 @@ namespace Common.FileSystem
 {
     public class LocalFileSystem : IFileSystem
     {
-        Encoding _encoding;
+        private readonly Encoding _encoding;
 
         public LocalFileSystem(Encoding encoding = null)
         {
