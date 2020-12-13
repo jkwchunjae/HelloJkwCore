@@ -14,8 +14,13 @@ namespace Tests.Common
     {
         LocalFileSystem _fs;
 
+        private bool IsLocal => Environment.OSVersion.Platform == PlatformID.Win32NT;
+
         public LocalFileSystemTest()
         {
+            if (!IsLocal)
+                return;
+
             _fs = new LocalFileSystem();
 
             if (!Directory.Exists("/test"))
@@ -27,6 +32,9 @@ namespace Tests.Common
         [Fact]
         public async Task FileReadWriteTest()
         {
+            if (!IsLocal)
+                return;
+
             var path = "/test/test.json";
             var data = "test";
 
@@ -40,6 +48,9 @@ namespace Tests.Common
         [Fact]
         public async Task FileExistsTest()
         {
+            if (!IsLocal)
+                return;
+
             var path = "/test/test.json";
             var data = "test";
 
@@ -53,6 +64,9 @@ namespace Tests.Common
         [Fact]
         public async Task FileNotExistsTest()
         {
+            if (!IsLocal)
+                return;
+
             var path = "/test/test_unknown.json";
 
             var exists = await _fs.FileExistsAsync(path);
@@ -63,6 +77,9 @@ namespace Tests.Common
         [Fact]
         public async Task FileDeleteTest()
         {
+            if (!IsLocal)
+                return;
+
             var path = "/test/test.json";
             var data = "test";
 
@@ -78,6 +95,9 @@ namespace Tests.Common
         [Fact]
         public async Task GetFileListTest()
         {
+            if (!IsLocal)
+                return;
+
             var dirPath = "/test";
             var path1 = "/test/test1.json";
             var path2 = "/test/test2.json";
