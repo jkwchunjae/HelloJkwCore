@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloJkwCore", "HelloJkwCor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{ACDE37B4-0944-427D-AE0F-71873731658C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{60837715-5E5F-46FD-AC83-CF9E1FCD6B48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{ACDE37B4-0944-427D-AE0F-71873731658C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACDE37B4-0944-427D-AE0F-71873731658C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACDE37B4-0944-427D-AE0F-71873731658C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60837715-5E5F-46FD-AC83-CF9E1FCD6B48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60837715-5E5F-46FD-AC83-CF9E1FCD6B48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60837715-5E5F-46FD-AC83-CF9E1FCD6B48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60837715-5E5F-46FD-AC83-CF9E1FCD6B48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

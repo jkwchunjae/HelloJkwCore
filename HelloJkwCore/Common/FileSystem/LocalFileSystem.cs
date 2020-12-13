@@ -17,9 +17,24 @@ namespace Common.FileSystem
             _encoding = encoding ?? new UTF8Encoding(false);
         }
 
+        public Task<bool> DeleteFileAsync(string path, CancellationToken ct = default)
+        {
+            File.Delete(path);
+            return Task.FromResult(true);
+        }
+
         public Task<bool> FileExistsAsync(string path, CancellationToken ct = default)
         {
             return Task.FromResult(File.Exists(path));
+        }
+
+        public Task<List<string>> GetFilesAsync(string path, string extension = null)
+        {
+            var list = Directory.GetFiles(path)
+                .Select(x => Path.GetFileName(x))
+                .Where(x => extension == null || x.EndsWith(extension))
+                .ToList();
+            return Task.FromResult(list);
         }
 
         public async Task<T> ReadJsonAsync<T>(string path, CancellationToken ct = default)

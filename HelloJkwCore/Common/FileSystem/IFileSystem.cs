@@ -12,5 +12,7 @@ namespace Common.FileSystem
         Task<T> ReadJsonAsync<T>(string path, CancellationToken ct = default);
         Task<bool> WriteJsonAsync<T>(string path, T obj, CancellationToken ct = default);
         Task<bool> FileExistsAsync(string path, CancellationToken ct = default);
+        Task<bool> DeleteFileAsync(string path, CancellationToken ct = default);
+        Task<List<string>> GetFilesAsync(string path, string extension = null);
     }
 }

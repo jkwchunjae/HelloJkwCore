@@ -24,6 +24,12 @@ namespace Common.FileSystem
             _encoding = encoding ?? new UTF8Encoding(false);
         }
 
+        public async Task<bool> DeleteFileAsync(string path, CancellationToken ct = default)
+        {
+            await _client.Files.DeleteV2Async(path);
+            return true;
+        }
+
         public async Task<bool> FileExistsAsync(string path, CancellationToken ct = default)
         {
             try
@@ -39,6 +45,26 @@ namespace Common.FileSystem
             {
                 return false;
             }
+        }
+
+        public async Task<List<string>> GetFilesAsync(string path, string extension = null)
+        {
+            var fileMetadataList = new List<Metadata>();
+
+            var result = await _client.Files.ListFolderAsync(path);
+            fileMetadataList.AddRange(result.Entries);
+
+            while (result.HasMore)
+            {
+                result = await _client.Files.ListFolderContinueAsync(result.Cursor);
+                fileMetadataList.AddRange(result.Entries);
+            }
+
+            return fileMetadataList
+                .Where(x => x.IsFile)
+                .Select(x => x.Name)
+                .Where(x => extension == null || x.EndsWith(extension))
+                .ToList();
         }
 
         public async Task<T> ReadJsonAsync<T>(string path, CancellationToken ct = default)
