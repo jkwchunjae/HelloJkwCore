@@ -38,7 +38,12 @@ namespace HelloJkwCore
         {
             Configuration = configuration;
 
-            ConfigurationPathExtensions.SetConfiguration(Configuration);
+            var pathConfig = new Dictionary<string, string>();
+            configuration.GetSection("Path").Bind(pathConfig);
+            ConfigurationPathExtensions.SetPathConfig(pathConfig
+                .Where(x => Enum.TryParse<PathType>(x.Key, out var _))
+                .ToDictionary(x => Enum.Parse<PathType>(x.Key), x => x.Value));
+
             _coreOption = CoreOption.Create(Configuration);
 
             if (_coreOption.UseLocalDropbox)
@@ -149,7 +154,7 @@ namespace HelloJkwCore
             if (useLocalDropbox)
             {
                 var localFileSystem = new LocalFileSystem(new UTF8Encoding(false));
-                var oauthPath = Configuration.GetPath(PathType.OAuthOption);
+                var oauthPath = PathType.OAuthOption.GetPath();
                 var task = localFileSystem.ReadJsonAsync<List<OAuthOption>>(oauthPath);
                 task.Wait();
                 var dropboxOption = task.Result.FirstOrDefault(x => x.Provider == AuthProvider.Dropbox);

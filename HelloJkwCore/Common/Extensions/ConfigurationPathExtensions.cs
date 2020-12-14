@@ -8,43 +8,44 @@ namespace Common.Extensions
 {
     public static class ConfigurationPathExtensions
     {
-        private static IConfiguration _configuration;
+        private static Dictionary<PathType, string> _pathConfig = null;
 
-        public static void SetConfiguration(IConfiguration configuration)
+        public static void SetPathConfig(Dictionary<PathType, string> config)
         {
-            _configuration = configuration;
+            _pathConfig = config;
         }
 
-        private static List<(string Prefix, Func<IConfiguration, string> PathFunc)> _pathPrefix
-            = new List<(string Prefix, Func<IConfiguration, string> PathFunc)>
+        private static List<(string Prefix, Func<string> PathFunc)> _pathPrefix
+            = new List<(string Prefix, Func<string> PathFunc)>
             {
                 (Prefix: "dropbox://", PathFunc: DropboxRootPath),
             };
 
-        private static string DropboxRootPath(this IConfiguration configuration)
-            => configuration.GetPath(PathType.DropboxRoot);
+        private static string DropboxRootPath()
+            => GetPath(PathType.DropboxRoot);
 
-        public static string GetPath(this IConfiguration configuration, PathType pathType)
+        public static string GetPath(this PathType pathType)
         {
-            var path = configuration[$"Path:{pathType}"];
+            if (_pathConfig is null)
+                throw new NullReferenceException("Set _pathConfig. Use SetPathConfing method.");
+
+            if (!_pathConfig.ContainsKey(pathType))
+                return null;
+
+            var path = _pathConfig[pathType];
 
             if (_pathPrefix.Any(x => path.StartsWith(x.Prefix)))
             {
                 var prefixData = _pathPrefix.First(x => path.StartsWith(x.Prefix));
                 var prefix = prefixData.Prefix;
-                var prefixPath = prefixData.PathFunc(configuration);
+                var prefixPath = prefixData.PathFunc();
 
-                return Path.Combine(prefixPath, path.Substring(prefix.Length));
+                return $"{prefixPath}/{path.Substring(prefix.Length)}";
             }
             else
             {
                 return path;
             }
-        }
-
-        public static string GetPath(this PathType pathType)
-        {
-            return _configuration?.GetPath(pathType);
         }
     }
 }
