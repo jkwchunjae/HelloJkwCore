@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProjectDiary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,12 @@ namespace HelloJkwCore
         {
             Configuration = configuration;
 
-            ConfigurationPathExtensions.SetConfiguration(Configuration);
+            var pathConfig = new Dictionary<string, string>();
+            configuration.GetSection("Path").Bind(pathConfig);
+            ConfigurationPathExtensions.SetPathConfig(pathConfig
+                .Where(x => Enum.TryParse<PathType>(x.Key, out var _))
+                .ToDictionary(x => Enum.Parse<PathType>(x.Key), x => x.Value));
+
             _coreOption = CoreOption.Create(Configuration);
 
             if (_coreOption.UseLocalDropbox)
@@ -100,8 +106,6 @@ namespace HelloJkwCore
                     options.CallbackPath = kakaoAuthOption?.Callback;
                 });
 
-            services.AddSingleton(_fileSystem);
-
             services.AddHttpContextAccessor();
             services.AddScoped<HttpContextAccessor>();
             //// Required for HttpClient support in the Blazor Client project
@@ -113,6 +117,9 @@ namespace HelloJkwCore
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+
+            services.AddSingleton(_fileSystem);
+            services.AddDiaryService(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -149,7 +156,7 @@ namespace HelloJkwCore
             if (useLocalDropbox)
             {
                 var localFileSystem = new LocalFileSystem(new UTF8Encoding(false));
-                var oauthPath = Configuration.GetPath(PathType.OAuthOption);
+                var oauthPath = PathType.OAuthOption.GetPath();
                 var task = localFileSystem.ReadJsonAsync<List<OAuthOption>>(oauthPath);
                 task.Wait();
                 var dropboxOption = task.Result.FirstOrDefault(x => x.Provider == AuthProvider.Dropbox);

@@ -17,10 +17,22 @@ namespace Common.FileSystem
             _encoding = encoding ?? new UTF8Encoding(false);
         }
 
+        public Task<bool> CreateDirectoryAsync(string path, CancellationToken ct = default)
+        {
+            Directory.CreateDirectory(path);
+            return Task.FromResult(true);
+        }
+
         public Task<bool> DeleteFileAsync(string path, CancellationToken ct = default)
         {
             File.Delete(path);
             return Task.FromResult(true);
+        }
+
+        public Task<bool> DirExistsAsync(string path, CancellationToken ct = default)
+        {
+            var exists = Directory.Exists(path);
+            return Task.FromResult(exists);
         }
 
         public Task<bool> FileExistsAsync(string path, CancellationToken ct = default)

@@ -1,0 +1,43 @@
+﻿@inherits JkwPageBase
+@page "/diary/{DiaryName?}/{Date?}"
+
+@if (!HasDiaryInfo)
+{
+    <RadzenLink Path="@DiaryUrl.Create()" Text="일기장 만들기"></RadzenLink>
+    return;
+}
+else if (!HasDiaryContent)
+{
+    <RadzenLink Path="@DiaryUrl.Write(DiaryInfo)" Text="일기 쓰기"></RadzenLink>
+    return;
+}
+else if (HasDiaryContent)
+{
+    <h2>@View.DiaryContents[0].Date.ToString("yyyy.MM.dd")</h2>
+
+    <div class="button-group">
+    <div id="button-left-group">
+        @if (View.DiaryNavigationData.HasPrev)
+        {
+            <a class="btn btn-sm btn-outline-secondary" href="@DiaryUrl.PrevDate(View)">이전</a>
+        }
+        @if (View.DiaryNavigationData.HasNext)
+        {
+            <a class="btn btn-sm btn-outline-secondary" href="@DiaryUrl.NextDate(View)">다음</a>
+        }
+    </div>
+    <div id="button-right-group">
+        <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Write(DiaryInfo)">쓰기</a>
+        <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Edit(DiaryInfo, View.DiaryContents[0].Date)">수정</a>
+        @if (DiaryInfo.IsSecret)
+        {
+            <a class="btn btn-sm btn-outline-danger" href="@DiaryUrl.SetPassword()">암호</a>
+        }
+    </div>
+    </div>
+
+    @foreach (var content in View.DiaryContents)
+    {
+        <pre>@content.Text</pre>
+    }
+}

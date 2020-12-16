@@ -1,0 +1,10 @@
+﻿@inherits JkwPageBase
+@page "/diary/create"
+
+<h2>일기장 만들기</h2>
+
+<RadzenTextBox @bind-Value="DiaryName" />
+
+<RadzenCheckBox @bind-Value="IsSecret" />
+
+<RadzenButton Text="만들기" Click="@(async () => await CreateDiaryAsync())" />
