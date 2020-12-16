@@ -24,10 +24,44 @@ namespace Common.FileSystem
             _encoding = encoding ?? new UTF8Encoding(false);
         }
 
+        public async Task<bool> CreateDirectoryAsync(string path, CancellationToken ct = default)
+        {
+            try
+            {
+                await _client.Files.CreateFolderV2Async(path);
+                return true;
+            }
+            catch (ApiException<CreateFolderError>)
+            {
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> DeleteFileAsync(string path, CancellationToken ct = default)
         {
             await _client.Files.DeleteV2Async(path);
             return true;
+        }
+
+        public async Task<bool> DirExistsAsync(string path, CancellationToken ct = default)
+        {
+            try
+            {
+                var metadata = await _client.Files.GetMetadataAsync(path);
+                return metadata.IsFolder;
+            }
+            catch (ApiException<GetMetadataError>)
+            {
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<bool> FileExistsAsync(string path, CancellationToken ct = default)

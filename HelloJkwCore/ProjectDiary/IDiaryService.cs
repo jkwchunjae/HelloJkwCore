@@ -8,21 +8,23 @@ namespace ProjectDiary
     public interface IDiaryService
     {
         #region DiaryInfo
-        Task<DiaryInfo> CreateDiaryAsync(AppUser user, string diaryName, bool isSecret);
-        Task<DiaryInfo> GetUserDiaryAsync(AppUser user);
-        Task<List<DiaryInfo>> GetWritableDiaryAsync(AppUser user);
-        Task<List<DiaryInfo>> GetViewableDiaryAsync(AppUser user);
+        Task<DiaryInfo> CreateDiaryInfoAsync(AppUser user, string diaryName, bool isSecret);
+        Task<DiaryInfo> GetUserDiaryInfoAsync(AppUser user);
+        Task<DiaryInfo> GetDiaryInfoAsync(AppUser user, string diaryName);
+        Task<List<DiaryInfo>> GetWritableDiaryInfoAsync(AppUser user);
+        Task<List<DiaryInfo>> GetViewableDiaryInfoAsync(AppUser user);
         #endregion
 
         #region GetDiaryView
-        Task<DiaryView> GetLastDiaryAsync(AppUser user, DiaryInfo diary);
-        Task<DiaryView> GetDiaryAsync(AppUser user, DiaryInfo diary, DateTime date);
+        Task<DiaryView> GetLastDiaryViewAsync(AppUser user, DiaryInfo diary);
+        Task<DiaryView> GetDiaryViewAsync(AppUser user, DiaryInfo diary, DateTime date);
         #endregion
 
         #region Write modify update diary
         Task<DiaryContent> WriteDiaryAsync(AppUser user, DiaryInfo diary, DateTime date, string text);
         Task<DiaryContent> WriteDiaryAsync(AppUser user, DiaryInfo diary, DateTime date, string text, string password);
         Task<List<DiaryContent>> UpdateDiaryAsync(AppUser user, DiaryInfo diary, List<DiaryContent> contents);
+        Task<List<DiaryContent>> UpdateDiaryAsync(AppUser user, DiaryInfo diary, List<DiaryContent> contents, string password);
         #endregion
     }
 }

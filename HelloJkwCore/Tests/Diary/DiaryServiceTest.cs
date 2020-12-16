@@ -53,7 +53,7 @@ namespace Tests.Diary
             var diaryName = "test-diary";
             var isSecret = false;
 
-            var diary = await _diaryService.CreateDiaryAsync(_user, diaryName, isSecret);
+            var diary = await _diaryService.CreateDiaryInfoAsync(_user, diaryName, isSecret);
 
             Assert.Equal(_user.Id, diary.Id);
             Assert.Equal(_user.Email, diary.Owner);
@@ -69,8 +69,8 @@ namespace Tests.Diary
             var diaryName = "test-diary";
             var isSecret = false;
 
-            await _diaryService.CreateDiaryAsync(_user, diaryName, isSecret);
-            var diary = await _diaryService.GetUserDiaryAsync(_user);
+            await _diaryService.CreateDiaryInfoAsync(_user, diaryName, isSecret);
+            var diary = await _diaryService.GetUserDiaryInfoAsync(_user);
 
             Assert.Equal(diaryName, diary.DiaryName);
         }
@@ -78,7 +78,7 @@ namespace Tests.Diary
         [Fact]
         public async Task GetLastDiary_ReturnEmpty_WhenEmptyDiary()
         {
-            var diaryView = await _diaryService.GetLastDiaryAsync(_user, _diary);
+            var diaryView = await _diaryService.GetLastDiaryViewAsync(_user, _diary);
 
             Assert.Null(diaryView);
         }
@@ -90,7 +90,7 @@ namespace Tests.Diary
             await _diaryService.WriteDiaryAsync(_user, _diary, lastDate, "content-2");
             await _diaryService.WriteDiaryAsync(_user, _diary, lastDate.AddDays(-1), "content-1");
 
-            var view = await _diaryService.GetLastDiaryAsync(_user, _diary);
+            var view = await _diaryService.GetLastDiaryViewAsync(_user, _diary);
 
             Assert.NotNull(view);
             Assert.Equal(lastDate, view.DiaryContents.First().Date);
@@ -122,7 +122,7 @@ namespace Tests.Diary
             await _diaryService.WriteDiaryAsync(_user, _diary, nextDate, "content-2");
             await _diaryService.WriteDiaryAsync(_user, _diary, date, "content-1");
 
-            var view = await _diaryService.GetDiaryAsync(_user, _diary, date);
+            var view = await _diaryService.GetDiaryViewAsync(_user, _diary, date);
 
             Assert.Equal(_diary, view.DiaryInfo);
             Assert.Equal(date, view.DiaryNavigationData.Today);
@@ -136,7 +136,7 @@ namespace Tests.Diary
             await _diaryService.WriteDiaryAsync(_user, _diary, nextDate, "content-2");
             await _diaryService.WriteDiaryAsync(_user, _diary, date, "content-1");
 
-            var view = await _diaryService.GetDiaryAsync(_user, _diary, date);
+            var view = await _diaryService.GetDiaryViewAsync(_user, _diary, date);
 
             Assert.Equal(date, view.DiaryNavigationData.Today);
             Assert.False(view.DiaryNavigationData.HasPrev);
@@ -152,7 +152,7 @@ namespace Tests.Diary
             await _diaryService.WriteDiaryAsync(_user, _diary, prevDate, "content-2");
             await _diaryService.WriteDiaryAsync(_user, _diary, date, "content-1");
 
-            var view = await _diaryService.GetDiaryAsync(_user, _diary, date);
+            var view = await _diaryService.GetDiaryViewAsync(_user, _diary, date);
 
             Assert.Equal(date, view.DiaryNavigationData.Today);
             Assert.True(view.DiaryNavigationData.HasPrev);
@@ -170,7 +170,7 @@ namespace Tests.Diary
             content.Text = "modified content";
             await _diaryService.UpdateDiaryAsync(_user, _diary, new List<DiaryContent> { content });
 
-            var view = await _diaryService.GetDiaryAsync(_user, _diary, date);
+            var view = await _diaryService.GetDiaryViewAsync(_user, _diary, date);
             var modified = view.DiaryContents.First();
 
             Assert.Equal(content.Text, modified.Text);
@@ -186,7 +186,7 @@ namespace Tests.Diary
             content.Text = "";
             await _diaryService.UpdateDiaryAsync(_user, _diary, new List<DiaryContent> { content });
 
-            var view = await _diaryService.GetDiaryAsync(_user, _diary, date);
+            var view = await _diaryService.GetDiaryViewAsync(_user, _diary, date);
 
             Assert.Empty(view.DiaryContents);
         }
@@ -201,13 +201,13 @@ namespace Tests.Diary
             await _diaryService.WriteDiaryAsync(_user, _diary, date, text1);
             await _diaryService.WriteDiaryAsync(_user, _diary, date, text2);
 
-            var viewBefore = await _diaryService.GetDiaryAsync(_user, _diary, date);
+            var viewBefore = await _diaryService.GetDiaryViewAsync(_user, _diary, date);
             viewBefore.DiaryContents[0].Text = "";
             viewBefore.DiaryContents[1].Text = "modified content";
 
             await _diaryService.UpdateDiaryAsync(_user, _diary, viewBefore.DiaryContents);
 
-            var viewAfter = await _diaryService.GetDiaryAsync(_user, _diary, date);
+            var viewAfter = await _diaryService.GetDiaryViewAsync(_user, _diary, date);
 
             Assert.Single(viewAfter.DiaryContents);
             Assert.Equal(viewBefore.DiaryContents[1].Text, viewAfter.DiaryContents[0].Text);

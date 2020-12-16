@@ -11,11 +11,21 @@ namespace Common.FileSystem
     {
         private readonly Dictionary<string, string> _files = new();
 
+        public Task<bool> CreateDirectoryAsync(string path, CancellationToken ct = default)
+        {
+            return Task.FromResult(true);
+        }
+
         public Task<bool> DeleteFileAsync(string path, CancellationToken ct = default)
         {
             if (_files.ContainsKey(path))
                 _files.Remove(path);
 
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> DirExistsAsync(string path, CancellationToken ct = default)
+        {
             return Task.FromResult(true);
         }
 

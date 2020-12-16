@@ -1,0 +1,25 @@
+﻿@inherits JkwPageBase
+@page "/diary/write/{DiaryName}"
+
+<div>
+    <RadzenDatePicker @bind-Value="Date" DateFormat="yyyy.MM.dd (ddd)" />
+    @if (LastDiary?.DiaryContents?.Any() ?? false)
+    {
+        var culture = new System.Globalization.CultureInfo("ko-KR");
+        var lastDate = LastDiary.DiaryContents[0].Date;
+    <span>
+        마지막 일기:
+        @lastDate.ToString("yyyy.MM.dd")
+        (@culture.DateTimeFormat.GetDayName(lastDate.DayOfWeek))
+    </span>
+    <button @onclick="SelectNextDayOfLastDay" >다음날 선택</button>
+    }
+</div>
+
+<div>
+    <RadzenTextArea @bind-Value="Content" Style="max-width: 95vw; width: 700px; height: 50vh;" />
+</div>
+
+<div>
+    <RadzenButton Click="@(async () => await WriteDiaryAsync())" Text="저장"/>
+</div>

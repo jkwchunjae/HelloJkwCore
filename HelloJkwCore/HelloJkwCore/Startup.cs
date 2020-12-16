@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProjectDiary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,8 +106,6 @@ namespace HelloJkwCore
                     options.CallbackPath = kakaoAuthOption?.Callback;
                 });
 
-            services.AddSingleton(_fileSystem);
-
             services.AddHttpContextAccessor();
             services.AddScoped<HttpContextAccessor>();
             //// Required for HttpClient support in the Blazor Client project
@@ -118,6 +117,9 @@ namespace HelloJkwCore
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+
+            services.AddSingleton(_fileSystem);
+            services.AddDiaryService(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

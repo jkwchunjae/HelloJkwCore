@@ -49,6 +49,12 @@ namespace ProjectDiary
             }
 
             var diaryPath = DiaryPath.Diary(diaryName);
+
+            if (!(await _fs.DirExistsAsync(diaryPath)))
+            {
+                await _fs.CreateDirectoryAsync(diaryPath);
+            }
+
             var files = await _fs.GetFilesAsync(diaryPath, ".diary");
 
             var diaryFileNameList = files
@@ -72,7 +78,7 @@ namespace ProjectDiary
             return await _fs.ReadJsonAsync<DiaryContent>(diaryContentPath);
         }
 
-        public async Task<DiaryInfo> CreateDiaryAsync(AppUser user, string diaryName, bool isSecret)
+        public async Task<DiaryInfo> CreateDiaryInfoAsync(AppUser user, string diaryName, bool isSecret)
         {
             var diaryList = await GetDiaryInfosAsync();
 
@@ -86,14 +92,21 @@ namespace ProjectDiary
             return newDiary;
         }
 
-        public async Task<DiaryInfo> GetUserDiaryAsync(AppUser user)
+        public async Task<DiaryInfo> GetUserDiaryInfoAsync(AppUser user)
         {
             var diaryList = await GetDiaryInfosAsync();
 
             return diaryList.FirstOrDefault(x => x.Owner == user.Email);
         }
 
-        public async Task<List<DiaryInfo>> GetWritableDiaryAsync(AppUser user)
+        public async Task<DiaryInfo> GetDiaryInfoAsync(AppUser user, string diaryName)
+        {
+            var diaryList = await GetViewableDiaryInfoAsync(user);
+
+            return diaryList.FirstOrDefault(x => x.DiaryName == diaryName);
+        }
+
+        public async Task<List<DiaryInfo>> GetWritableDiaryInfoAsync(AppUser user)
         {
             var diaryList = await GetDiaryInfosAsync();
 
@@ -108,7 +121,7 @@ namespace ProjectDiary
                 .ToList();
         }
 
-        public async Task<List<DiaryInfo>> GetViewableDiaryAsync(AppUser user)
+        public async Task<List<DiaryInfo>> GetViewableDiaryInfoAsync(AppUser user)
         {
             var diaryList = await GetDiaryInfosAsync();
 
@@ -125,21 +138,21 @@ namespace ProjectDiary
                 .ToList();
         }
 
-        public async Task<DiaryView> GetLastDiaryAsync(AppUser user, DiaryInfo diary)
+        public async Task<DiaryView> GetLastDiaryViewAsync(AppUser user, DiaryInfo diary)
         {
             var list = await GetDiaryListAsync(diary.DiaryName);
 
             if (list.Empty())
             {
-                return null;
+                return default;
             }
 
             DateTime lastDate = list.Last().Date;
 
-            return await GetDiaryAsync(user, diary, lastDate);
+            return await GetDiaryViewAsync(user, diary, lastDate);
         }
 
-        public async Task<DiaryView> GetDiaryAsync(AppUser user, DiaryInfo diary, DateTime date)
+        public async Task<DiaryView> GetDiaryViewAsync(AppUser user, DiaryInfo diary, DateTime date)
         {
             var list = await GetDiaryListAsync(diary.DiaryName);
 
@@ -156,8 +169,8 @@ namespace ProjectDiary
 
             var todayContents = await Task.WhenAll(list
                 .Where(x => x.Date == date.Date)
-                .Select(async x => await GetDiaryContentAsync(DiaryPath.Content(diary.DiaryName, x.FileName)))
-                .ToList());
+                .Select(x => DiaryPath.Content(diary.DiaryName, x.FileName))
+                .Select(async path => await GetDiaryContentAsync(path)));
 
             return new DiaryView
             {
@@ -174,13 +187,24 @@ namespace ProjectDiary
 
         public async Task<DiaryContent> WriteDiaryAsync(AppUser user, DiaryInfo diary, DateTime date, string text)
         {
+            return await WriteDiaryAsync(user, diary, date, text, false);
+        }
+
+        public async Task<DiaryContent> WriteDiaryAsync(AppUser user, DiaryInfo diary, DateTime date, string text, string password)
+        {
+            var cipherText = text.Encrypt(password);
+            return await WriteDiaryAsync(user, diary, date, cipherText, true);
+        }
+
+        private async Task<DiaryContent> WriteDiaryAsync(AppUser user, DiaryInfo diary, DateTime date, string text, bool isSecret)
+        {
             var list = await GetDiaryListAsync(diary.DiaryName);
 
             var content = new DiaryContent
             {
                 Date = date,
                 Text = text,
-                IsSecret = false,
+                IsSecret = isSecret,
                 RegDate = DateTime.Now,
                 LastModifyDate = DateTime.Now,
                 Index = MakeNewIndex(list, date),
@@ -196,11 +220,7 @@ namespace ProjectDiary
             SaveDiaryCache(diary.DiaryName, list);
 
             return content;
-        }
 
-        public Task<DiaryContent> WriteDiaryAsync(AppUser user, DiaryInfo diary, DateTime date, string text, string password)
-        {
-            throw new NotImplementedException();
         }
 
         private int MakeNewIndex(List<DiaryFileName> fileList, DateTime date)
@@ -239,6 +259,16 @@ namespace ProjectDiary
             SaveDiaryCache(diary.DiaryName, list);
 
             return updateFiles;
+        }
+
+        public async Task<List<DiaryContent>> UpdateDiaryAsync(AppUser user, DiaryInfo diary, List<DiaryContent> contents, string password)
+        {
+            foreach (var content in contents.Where(x => x.IsSecret))
+            {
+                content.Text = content.Text.Encrypt(password);
+            }
+
+            return await UpdateDiaryAsync(user, diary, contents);
         }
     }
 }
