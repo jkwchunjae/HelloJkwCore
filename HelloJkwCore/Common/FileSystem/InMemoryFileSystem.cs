@@ -34,7 +34,7 @@ namespace Common.FileSystem
             return Task.FromResult(_files.ContainsKey(path));
         }
 
-        public Task<List<string>> GetFilesAsync(string path, string extension = null)
+        public Task<List<string>> GetFilesAsync(string path, string extension = null, CancellationToken ct = default)
         {
             if (!path.EndsWith("/"))
                 path += "/";

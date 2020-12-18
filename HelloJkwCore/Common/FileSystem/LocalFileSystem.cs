@@ -40,7 +40,7 @@ namespace Common.FileSystem
             return Task.FromResult(File.Exists(path));
         }
 
-        public Task<List<string>> GetFilesAsync(string path, string extension = null)
+        public Task<List<string>> GetFilesAsync(string path, string extension = null, CancellationToken ct = default)
         {
             var list = Directory.GetFiles(path)
                 .Select(x => Path.GetFileName(x))

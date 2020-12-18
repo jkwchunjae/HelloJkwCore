@@ -81,7 +81,7 @@ namespace Common.FileSystem
             }
         }
 
-        public async Task<List<string>> GetFilesAsync(string path, string extension = null)
+        public async Task<List<string>> GetFilesAsync(string path, string extension = null, CancellationToken ct = default)
         {
             var fileMetadataList = new List<Metadata>();
 
