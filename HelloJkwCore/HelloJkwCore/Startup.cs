@@ -4,7 +4,6 @@ using Common.FileSystem;
 using Common.User;
 using Dropbox.Api;
 using HelloJkwCore.Authentication;
-using HelloJkwCore.Data;
 using HelloJkwCore.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -116,7 +115,6 @@ namespace HelloJkwCore
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
 
             services.AddSingleton(_fileSystem);
             services.AddDiaryService(Configuration);
