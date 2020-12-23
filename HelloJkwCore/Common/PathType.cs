@@ -3,7 +3,7 @@
     public enum PathType
     {
         DropboxRoot,
-        UserListFile,
+        UsersPath,
         OAuthOption,
         DiaryRootPath,
         DiaryListFile,

@@ -16,19 +16,18 @@ namespace HelloJkwCore.User
 {
     public class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUser>
     {
-        private string _userListPath;
+        private readonly string _usersPath;
 
         private readonly ILogger _logger;
         private readonly IFileSystem _fs;
 
         public UserStore(
-            IConfiguration configuration,
             ILoggerFactory loggerFactory,
             IFileSystem fileSystem
             )
         {
             _logger = loggerFactory.CreateLogger<UserStore>();
-            _userListPath = PathType.UserListFile.GetPath();
+            _usersPath = PathType.UsersPath.GetPath();
             _fs = fileSystem;
         }
 
@@ -36,18 +35,64 @@ namespace HelloJkwCore.User
         {
         }
 
-        private async Task<List<AppUser>> LoadUserListAsync(CancellationToken ct)
+        private string UserFilePath(string userId) => $"{_usersPath}/user.{userId}.json";
+
+        private async Task<List<AppUser>> LoadUserListAsync(CancellationToken ct = default)
         {
-            if (!await _fs.FileExistsAsync(_userListPath, ct))
-            {
-                return new List<AppUser>();
-            }
-            return await _fs.ReadJsonAsync<List<AppUser>>(_userListPath, ct);
+            var files = await _fs.GetFilesAsync(_usersPath, ".json", ct);
+            var users = await files.Select(async file =>
+                {
+                    try
+                    {
+                        return await _fs.ReadJsonAsync<AppUser>($"{_usersPath}/{file}");
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                })
+                .WhenAll();
+
+            return users
+                .Where(user => user != null)
+                .ToList();
         }
 
-        private async Task SaveUserList(List<AppUser> userList, CancellationToken ct)
+        private async Task CreateUsersDirectoryAsync(CancellationToken ct = default)
         {
-            await _fs.WriteJsonAsync(_userListPath, userList, ct);
+            if (await _fs.DirExistsAsync(_usersPath, ct))
+            {
+                return;
+            }
+
+            await _fs.CreateDirectoryAsync(_usersPath, ct);
+        }
+
+        private async Task<AppUser> GetUserAsync(string userId, CancellationToken ct = default)
+        {
+            await CreateUsersDirectoryAsync(ct);
+
+            var userPath = UserFilePath(userId);
+            if (await _fs.FileExistsAsync(userPath))
+            {
+                return await _fs.ReadJsonAsync<AppUser>(userPath);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private async Task SaveUserAsync(AppUser user, CancellationToken ct = default)
+        {
+            await CreateUsersDirectoryAsync(ct);
+
+            await _fs.WriteJsonAsync(UserFilePath(user.Id), user, ct);
+        }
+
+        private async Task<bool> ExistsUserAsync(string userId, CancellationToken ct = default)
+        {
+            return await _fs.FileExistsAsync(UserFilePath(userId), ct);
         }
 
         public Task AddLoginAsync(AppUser user, UserLoginInfo login, CancellationToken ct)
@@ -59,12 +104,14 @@ namespace HelloJkwCore.User
         {
             try
             {
-                var userList = await LoadUserListAsync(ct);
-                if (userList.Empty(x => x.Id == user.Id))
+                var exists = await ExistsUserAsync(user.Id);
+
+                if (exists)
                 {
-                    userList.Add(user);
-                    await SaveUserList(userList, ct);
+                    return IdentityResult.Failed(new[] { new IdentityError { Code = "AlreadyExists" } });
                 }
+
+                await SaveUserAsync(user);
 
                 return IdentityResult.Success;
             }
@@ -79,13 +126,9 @@ namespace HelloJkwCore.User
         {
             try
             {
-                var userList = await LoadUserListAsync(ct);
-                if (userList.Any(x => x.Id == user.Id))
+                if (await ExistsUserAsync(user.Id))
                 {
-                    userList = userList
-                        .Where(x => x.Id != user.Id)
-                        .ToList();
-                    await SaveUserList(userList, ct);
+                    await _fs.DeleteFileAsync(UserFilePath(user.Id));
                     return IdentityResult.Success;
                 }
                 else
@@ -114,7 +157,7 @@ namespace HelloJkwCore.User
 
         public async Task<AppUser> FindByIdAsync(string userId, CancellationToken ct)
         {
-            return await FindByAsync(x => x.Id == userId, ct);
+            return await GetUserAsync(userId, ct);
         }
 
         public async Task<AppUser> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken ct)
@@ -200,18 +243,14 @@ namespace HelloJkwCore.User
         {
             try
             {
-                var userList = await LoadUserListAsync(ct);
-                var userIndex = userList.FindIndex(x => x.Id == user.Id);
-                if (userIndex == -1)
+                if (await ExistsUserAsync(user.Id, ct))
                 {
-                    return IdentityResult.Failed();
+                    await SaveUserAsync(user, ct);
+                    return IdentityResult.Success;
                 }
                 else
                 {
-                    userList[userIndex] = user;
-                    await SaveUserList(userList, ct);
-
-                    return IdentityResult.Success;
+                    return IdentityResult.Failed();
                 }
             }
             catch (Exception ex)

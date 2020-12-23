@@ -350,4 +350,4 @@ MigrationBackup/
 .ionide/
 HelloJkwCore/HelloJkwServer/userList.json
 /HelloJkwCore/HelloJkwCore/user-list.json
-
+/HelloJkwCore/HelloJkwCore/users/

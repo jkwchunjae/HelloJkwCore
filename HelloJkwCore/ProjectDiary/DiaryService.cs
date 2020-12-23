@@ -96,7 +96,7 @@ namespace ProjectDiary
         {
             var diaryList = await GetDiaryInfosAsync();
 
-            return diaryList.FirstOrDefault(x => x.Owner == user.Email);
+            return diaryList.FirstOrDefault(x => x.Owner == user?.Email);
         }
 
         public async Task<DiaryInfo> GetDiaryInfoAsync(AppUser user, string diaryName)
