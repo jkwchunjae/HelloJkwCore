@@ -28,8 +28,13 @@ namespace Tests.Diary
                 [PathType.DiaryRootPath] = "/diary",
             });
 
-            var fs = new InMemoryFileSystem();
-            _diaryService = new DiaryService(fs);
+            var diaryOption = new DiaryOption
+            {
+                MainFileSystem = FileSystemType.InMemory,
+                UseBackup = false,
+            };
+            var fileSystemService = new FileSystemService(new FileSystemOption());
+            _diaryService = new DiaryService(diaryOption, fileSystemService);
 
             _user = new AppUser("Test", "1234")
             {

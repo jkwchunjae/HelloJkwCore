@@ -23,19 +23,19 @@ namespace HelloJkwCore.User
 
         public UserStore(
             ILoggerFactory loggerFactory,
-            IFileSystem fileSystem
+            FileSystemService fsService
             )
         {
             _logger = loggerFactory.CreateLogger<UserStore>();
             _usersPath = PathType.UsersPath.GetPath();
-            _fs = fileSystem;
+            _fs = fsService.GetFileSystem(FileSystemType.Dropbox);
         }
 
         public void Dispose()
         {
         }
 
-        private string UserFilePath(string userId) => $"{_usersPath}/user.{userId}.json";
+        private string UserFilePath(string userId) => $"{_usersPath}/user.{userId}.json".ToLower();
 
         private async Task<List<AppUser>> LoadUserListAsync(CancellationToken ct = default)
         {

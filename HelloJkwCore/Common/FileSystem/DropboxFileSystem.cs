@@ -1,7 +1,6 @@
 ﻿using Common.Extensions;
 using Dropbox.Api;
 using Dropbox.Api.Files;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static Dropbox.Api.Files.WriteMode;
 
 namespace Common.FileSystem
 {

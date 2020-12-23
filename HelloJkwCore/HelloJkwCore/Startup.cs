@@ -1,9 +1,10 @@
 using Common;
+using Common.Authentication;
+using Common.Dropbox;
 using Common.Extensions;
 using Common.FileSystem;
 using Common.User;
 using Dropbox.Api;
-using HelloJkwCore.Authentication;
 using HelloJkwCore.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -32,7 +33,7 @@ namespace HelloJkwCore
 
         readonly AuthUtil _authUtil;
 
-        readonly IFileSystem _fileSystem;
+        readonly FileSystemService _fileSystemService;
 
         public Startup(IConfiguration configuration)
         {
@@ -46,17 +47,10 @@ namespace HelloJkwCore
 
             _coreOption = CoreOption.Create(Configuration);
 
-            if (_coreOption.UseLocalDropbox)
-            {
-                _fileSystem = new LocalFileSystem();
-                _authUtil = new AuthUtil(_fileSystem);
-            }
-            else
-            {
-                var dropboxClient = GetDropboxClient(_coreOption.UseLocalDropbox);
-                _fileSystem = new DropboxFileSystem(dropboxClient);
-                _authUtil = new AuthUtil(_fileSystem);
-            }
+            var fsOption = new FileSystemOption();
+            Configuration.GetSection("FileSystem").Bind(fsOption);
+            _fileSystemService = new FileSystemService(fsOption);
+            _authUtil = new AuthUtil(_fileSystemService.GetFileSystem(FileSystemType.Dropbox));
         }
 
         public IConfiguration Configuration { get; }
@@ -65,6 +59,8 @@ namespace HelloJkwCore
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Authentication
+
             var googleAuthOption = _authUtil.GetAuthOption(AuthProvider.Google);
             var kakaoAuthOption = _authUtil.GetAuthOption(AuthProvider.KakaoTalk);
 
@@ -105,18 +101,24 @@ namespace HelloJkwCore
                     options.CallbackPath = kakaoAuthOption?.Callback;
                 });
 
+            #endregion
+
             services.AddHttpContextAccessor();
             services.AddScoped<HttpContextAccessor>();
-            //// Required for HttpClient support in the Blazor Client project
             services.AddHttpClient();
             services.AddScoped<HttpClient>();
-            // Pass settings to other components
+
             services.AddSingleton(Configuration);
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.AddSingleton(_fileSystem);
+            #region FileSystem
+
+            services.AddSingleton(_fileSystemService);
+
+            #endregion
+
             services.AddDiaryService(Configuration);
         }
 
@@ -147,28 +149,6 @@ namespace HelloJkwCore
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
-        }
-
-        private DropboxClient GetDropboxClient(bool useLocalDropbox)
-        {
-            if (useLocalDropbox)
-            {
-                var localFileSystem = new LocalFileSystem(new UTF8Encoding(false));
-                var oauthPath = PathType.OAuthOption.GetPath();
-                var task = localFileSystem.ReadJsonAsync<List<OAuthOption>>(oauthPath);
-                task.Wait();
-                var dropboxOption = task.Result.FirstOrDefault(x => x.Provider == AuthProvider.Dropbox);
-
-                return new DropboxClient(dropboxOption.RefreshToken, dropboxOption.ClientId, dropboxOption.ClientSecret);
-            }
-            else
-            {
-                var dropboxRefreshToken = Configuration["Auth:Dropbox:RefreshToken"];
-                var dropboxClientId = Configuration["Auth:Dropbox:ClientId"];
-                var dropboxClientSecret = Configuration["Auth:Dropbox:ClientSecret"];
-
-                return new DropboxClient(dropboxRefreshToken, dropboxClientId, dropboxClientSecret);
-            }
         }
     }
 }

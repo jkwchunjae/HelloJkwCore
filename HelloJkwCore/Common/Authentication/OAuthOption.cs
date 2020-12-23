@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore.Authentication
+namespace Common.Authentication
 {
     public class OAuthOption
     {
