@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Common.FileSystem;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace HelloJkwCore
 {
     public class CoreOption
     {
-        public bool UseLocalDropbox { get; set; }
+        public FileSystemType UserStoreFileSystem { get; set; }
 
         public static CoreOption Create(IConfiguration configuration)
         {

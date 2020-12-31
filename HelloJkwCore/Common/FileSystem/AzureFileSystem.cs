@@ -9,37 +9,49 @@ namespace Common.FileSystem
 {
     public class AzureFileSystem : IFileSystem
     {
-        public Task<bool> CreateDirectoryAsync(string path, CancellationToken ct = default)
+        protected readonly PathOf _pathOf;
+
+        public AzureFileSystem(PathOption pathOption)
+        {
+            _pathOf = new PathOf(pathOption, FileSystemType.Azure);
+        }
+
+        public Task<bool> CreateDirectoryAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteFileAsync(string path, CancellationToken ct = default)
+        public Task<bool> DeleteFileAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DirExistsAsync(string path, CancellationToken ct = default)
+        public Task<bool> DirExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> FileExistsAsync(string path, CancellationToken ct = default)
+        public Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<string>> GetFilesAsync(string path, string extension = null, CancellationToken ct = default)
+        public Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<T> ReadJsonAsync<T>(string path, CancellationToken ct = default)
+        public PathOf GetPathOf()
+        {
+            return _pathOf;
+        }
+
+        public Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> WriteJsonAsync<T>(string path, T obj, CancellationToken ct = default)
+        public Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }

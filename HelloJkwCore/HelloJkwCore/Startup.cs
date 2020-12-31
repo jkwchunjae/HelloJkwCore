@@ -1,29 +1,17 @@
 using Common;
-using Common.Authentication;
-using Common.Dropbox;
-using Common.Extensions;
 using Common.FileSystem;
-using Common.User;
-using Dropbox.Api;
 using HelloJkwCore.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjectDiary;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HelloJkwCore
 {
@@ -33,24 +21,27 @@ namespace HelloJkwCore
 
         readonly AuthUtil _authUtil;
 
-        readonly FileSystemService _fileSystemService;
+        private AuthUtil MakeAuthUtil(IConfiguration configuration)
+        {
+            var pathOption = new PathOption();
+            configuration.GetSection("Path").Bind(pathOption);
+
+            var fsOption = new FileSystemOption();
+            configuration.GetSection("FileSystem").Bind(fsOption);
+
+            var fileSystemService = new FileSystemService(fsOption, pathOption);
+
+            return new AuthUtil(fileSystemService.GetFileSystem(FileSystemType.Dropbox));
+
+        }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
 
-            var pathConfig = new Dictionary<string, string>();
-            configuration.GetSection("Path").Bind(pathConfig);
-            ConfigurationPathExtensions.SetPathConfig(pathConfig
-                .Where(x => Enum.TryParse<PathType>(x.Key, out var _))
-                .ToDictionary(x => Enum.Parse<PathType>(x.Key), x => x.Value));
-
             _coreOption = CoreOption.Create(Configuration);
 
-            var fsOption = new FileSystemOption();
-            Configuration.GetSection("FileSystem").Bind(fsOption);
-            _fileSystemService = new FileSystemService(fsOption);
-            _authUtil = new AuthUtil(_fileSystemService.GetFileSystem(FileSystemType.Dropbox));
+            _authUtil = MakeAuthUtil(configuration);
         }
 
         public IConfiguration Configuration { get; }
@@ -59,6 +50,8 @@ namespace HelloJkwCore
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(_coreOption);
+
             #region Authentication
 
             var googleAuthOption = _authUtil.GetAuthOption(AuthProvider.Google);
@@ -103,6 +96,8 @@ namespace HelloJkwCore
 
             #endregion
 
+            #region ASP.NET
+
             services.AddHttpContextAccessor();
             services.AddScoped<HttpContextAccessor>();
             services.AddHttpClient();
@@ -113,9 +108,23 @@ namespace HelloJkwCore
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
+            //services.AddHostedService<TimedHostedService>();
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+
+            #endregion
+
             #region FileSystem
 
-            services.AddSingleton(_fileSystemService);
+            var pathOption = new PathOption();
+            Configuration.GetSection("Path").Bind(pathOption);
+            services.AddSingleton(pathOption);
+
+            var fsOption = new FileSystemOption();
+            Configuration.GetSection("FileSystem").Bind(fsOption);
+            services.AddSingleton(fsOption);
+
+            services.AddSingleton<IFileSystemService, FileSystemService>();
 
             #endregion
 

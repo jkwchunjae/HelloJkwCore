@@ -1,4 +1,4 @@
-﻿using Common.User;
+﻿using Common;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ namespace ProjectDiary
     {
         #region DiaryInfo
         Task<DiaryInfo> CreateDiaryInfoAsync(AppUser user, string diaryName, bool isSecret);
-        Task<DiaryInfo> GetUserDiaryInfoAsync(AppUser user);
+        Task<UserDiaryInfo> GetUserDiaryInfoAsync(AppUser user);
         Task<DiaryInfo> GetDiaryInfoAsync(AppUser user, string diaryName);
         Task<List<DiaryInfo>> GetWritableDiaryInfoAsync(AppUser user);
         Task<List<DiaryInfo>> GetViewableDiaryInfoAsync(AppUser user);

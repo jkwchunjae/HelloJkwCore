@@ -1,5 +1,4 @@
-﻿using Common.Extensions;
-using Dropbox.Api;
+﻿using Dropbox.Api;
 using Dropbox.Api.Files;
 using System;
 using System.Collections.Generic;
@@ -13,17 +12,21 @@ namespace Common.FileSystem
 {
     public class DropboxFileSystem : IFileSystem
     {
+        protected readonly PathOf _pathOf;
         private readonly DropboxClient _client;
         private readonly Encoding _encoding;
 
-        public DropboxFileSystem(DropboxClient client, Encoding encoding = null)
+        public DropboxFileSystem(PathOption pathOption, DropboxClient client, Encoding encoding = null)
         {
+            _pathOf = new PathOf(pathOption, FileSystemType.Dropbox);
             _client = client;
             _encoding = encoding ?? new UTF8Encoding(false);
         }
 
-        public async Task<bool> CreateDirectoryAsync(string path, CancellationToken ct = default)
+        public async Task<bool> CreateDirectoryAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
+            var path = pathFunc(GetPathOf());
+
             try
             {
                 await _client.Files.CreateFolderV2Async(path);
@@ -39,14 +42,16 @@ namespace Common.FileSystem
             }
         }
 
-        public async Task<bool> DeleteFileAsync(string path, CancellationToken ct = default)
+        public async Task<bool> DeleteFileAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
+            var path = pathFunc(GetPathOf());
             await _client.Files.DeleteV2Async(path);
             return true;
         }
 
-        public async Task<bool> DirExistsAsync(string path, CancellationToken ct = default)
+        public async Task<bool> DirExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
+            var path = pathFunc(GetPathOf());
             try
             {
                 var metadata = await _client.Files.GetMetadataAsync(path);
@@ -62,8 +67,9 @@ namespace Common.FileSystem
             }
         }
 
-        public async Task<bool> FileExistsAsync(string path, CancellationToken ct = default)
+        public async Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
+            var path = pathFunc(GetPathOf());
             try
             {
                 var metadata = await _client.Files.GetMetadataAsync(path);
@@ -79,8 +85,9 @@ namespace Common.FileSystem
             }
         }
 
-        public async Task<List<string>> GetFilesAsync(string path, string extension = null, CancellationToken ct = default)
+        public async Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default)
         {
+            var path = pathFunc(GetPathOf());
             var fileMetadataList = new List<Metadata>();
 
             var result = await _client.Files.ListFolderAsync(path);
@@ -99,8 +106,14 @@ namespace Common.FileSystem
                 .ToList();
         }
 
-        public async Task<T> ReadJsonAsync<T>(string path, CancellationToken ct = default)
+        public PathOf GetPathOf()
         {
+            return _pathOf;
+        }
+
+        public async Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        {
+            var path = pathFunc(GetPathOf());
             try
             {
                 return await _client.ReadJsonAsync<T>(path);
@@ -115,8 +128,9 @@ namespace Common.FileSystem
             }
         }
 
-        public async Task<bool> WriteJsonAsync<T>(string path, T obj, CancellationToken ct = default)
+        public async Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default)
         {
+            var path = pathFunc(GetPathOf());
             try
             {
                 await _client.WriteJsonAsync(path, obj, _encoding);

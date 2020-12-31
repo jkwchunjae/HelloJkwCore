@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Common.Authentication
+namespace Common
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum AuthProvider

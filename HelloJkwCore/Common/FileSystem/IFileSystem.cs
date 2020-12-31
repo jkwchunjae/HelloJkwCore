@@ -9,13 +9,14 @@ namespace Common.FileSystem
 {
     public interface IFileSystem
     {
-        Task<T> ReadJsonAsync<T>(string path, CancellationToken ct = default);
-        Task<bool> WriteJsonAsync<T>(string path, T obj, CancellationToken ct = default);
-        Task<bool> FileExistsAsync(string path, CancellationToken ct = default);
-        Task<bool> DeleteFileAsync(string path, CancellationToken ct = default);
-        Task<List<string>> GetFilesAsync(string path, string extension = null, CancellationToken ct = default);
+        PathOf GetPathOf();
+        Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default);
+        Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default);
+        Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default);
+        Task<bool> DeleteFileAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default);
+        Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default);
 
-        Task<bool> CreateDirectoryAsync(string path, CancellationToken ct = default);
-        Task<bool> DirExistsAsync(string path, CancellationToken ct = default);
+        Task<bool> CreateDirectoryAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default);
+        Task<bool> DirExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default);
     }
 }

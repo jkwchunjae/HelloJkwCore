@@ -1,10 +1,7 @@
 ﻿using Common;
-using Common.Extensions;
 using Common.FileSystem;
-using Common.User;
 using JkwExtensions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -16,19 +13,20 @@ namespace HelloJkwCore.User
 {
     public class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUser>
     {
-        private readonly string _usersPath;
+        private readonly Func<PathOf, string> _usersPath;
 
         private readonly ILogger _logger;
         private readonly IFileSystem _fs;
 
         public UserStore(
+            CoreOption coreOption,
             ILoggerFactory loggerFactory,
-            FileSystemService fsService
+            IFileSystemService fsService
             )
         {
             _logger = loggerFactory.CreateLogger<UserStore>();
-            _usersPath = PathType.UsersPath.GetPath();
-            _fs = fsService.GetFileSystem(FileSystemType.Dropbox);
+            _usersPath = path => path.GetPath(PathType.UsersPath);
+            _fs = fsService.GetFileSystem(coreOption.UserStoreFileSystem);
         }
 
         public void Dispose()
@@ -44,7 +42,7 @@ namespace HelloJkwCore.User
                 {
                     try
                     {
-                        return await _fs.ReadJsonAsync<AppUser>($"{_usersPath}/{file}");
+                        return await _fs.ReadJsonAsync<AppUser>(path => path.UserFilePathByFileName(file));
                     }
                     catch
                     {
@@ -72,7 +70,7 @@ namespace HelloJkwCore.User
         {
             await CreateUsersDirectoryAsync(ct);
 
-            var userPath = UserFilePath(userId);
+            Func<PathOf, string> userPath = path => path.UserFilePathByUserId(userId);
             if (await _fs.FileExistsAsync(userPath))
             {
                 return await _fs.ReadJsonAsync<AppUser>(userPath);
@@ -87,12 +85,12 @@ namespace HelloJkwCore.User
         {
             await CreateUsersDirectoryAsync(ct);
 
-            await _fs.WriteJsonAsync(UserFilePath(user.Id), user, ct);
+            await _fs.WriteJsonAsync(path => path.UserFilePathByUserId(user.Id), user, ct);
         }
 
         private async Task<bool> ExistsUserAsync(string userId, CancellationToken ct = default)
         {
-            return await _fs.FileExistsAsync(UserFilePath(userId), ct);
+            return await _fs.FileExistsAsync(path => path.UserFilePathByUserId(userId), ct);
         }
 
         public Task AddLoginAsync(AppUser user, UserLoginInfo login, CancellationToken ct)
@@ -128,7 +126,7 @@ namespace HelloJkwCore.User
             {
                 if (await ExistsUserAsync(user.Id))
                 {
-                    await _fs.DeleteFileAsync(UserFilePath(user.Id));
+                    await _fs.DeleteFileAsync(path => path.UserFilePathByUserId(user.Id));
                     return IdentityResult.Success;
                 }
                 else

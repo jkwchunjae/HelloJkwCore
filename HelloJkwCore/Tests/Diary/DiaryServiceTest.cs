@@ -1,13 +1,9 @@
 ﻿using Common;
-using Common.Extensions;
 using Common.FileSystem;
-using Common.User;
-using Microsoft.Extensions.Configuration;
 using ProjectDiary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,19 +18,23 @@ namespace Tests.Diary
 
         public DiaryServiceTest()
         {
-            ConfigurationPathExtensions.SetPathConfig(new Dictionary<PathType, string>
+            var pathOption = new PathOption
             {
-                [PathType.DiaryListFile] = "/db/diary-list.json",
-                [PathType.DiaryRootPath] = "/diary",
-            });
+                Default = new Dictionary<PathType, string>
+                {
+                    [PathType.DiaryNameListFile] = "/db/diary/diary-name-list.json",
+                    [PathType.DiaryListPath] = "/db/diary/diary-info",
+                    [PathType.DiaryContentsRootPath] = "/diary",
+                },
+            };
 
             var diaryOption = new DiaryOption
             {
                 MainFileSystem = FileSystemType.InMemory,
                 UseBackup = false,
             };
-            var fileSystemService = new FileSystemService(new FileSystemOption());
-            _diaryService = new DiaryService(diaryOption, fileSystemService);
+            var fileSystemService = new FileSystemService(new FileSystemOption(), pathOption);
+            _diaryService = new DiaryService(diaryOption, fileSystemService, null);
 
             _user = new AppUser("Test", "1234")
             {
@@ -75,9 +75,10 @@ namespace Tests.Diary
             var isSecret = false;
 
             await _diaryService.CreateDiaryInfoAsync(_user, diaryName, isSecret);
-            var diary = await _diaryService.GetUserDiaryInfoAsync(_user);
+            var userDiaryInfo = await _diaryService.GetUserDiaryInfoAsync(_user);
+            var diaryInfo = await _diaryService.GetDiaryInfoAsync(_user, userDiaryInfo.MyDiaryList.First());
 
-            Assert.Equal(diaryName, diary.DiaryName);
+            Assert.Equal(diaryName, diaryInfo.DiaryName);
         }
 
         [Fact]

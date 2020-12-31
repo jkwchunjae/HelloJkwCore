@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Dropbox.Api.Files.WriteMode;
 
-namespace Common.Extensions
+namespace Common
 {
     public static class DropboxExtensions
     {

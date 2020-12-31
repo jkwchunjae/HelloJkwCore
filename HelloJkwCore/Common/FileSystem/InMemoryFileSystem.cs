@@ -9,33 +9,42 @@ namespace Common.FileSystem
 {
     public class InMemoryFileSystem : IFileSystem
     {
+        protected readonly PathOf _pathOf;
         private readonly Dictionary<string, string> _files = new();
 
-        public Task<bool> CreateDirectoryAsync(string path, CancellationToken ct = default)
+        public InMemoryFileSystem(PathOption pathOption)
+        {
+            _pathOf = new PathOf(pathOption, FileSystemType.InMemory);
+        }
+
+        public Task<bool> CreateDirectoryAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
             return Task.FromResult(true);
         }
 
-        public Task<bool> DeleteFileAsync(string path, CancellationToken ct = default)
+        public Task<bool> DeleteFileAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
+            var path = pathFunc(GetPathOf());
             if (_files.ContainsKey(path))
                 _files.Remove(path);
 
             return Task.FromResult(true);
         }
 
-        public Task<bool> DirExistsAsync(string path, CancellationToken ct = default)
+        public Task<bool> DirExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
             return Task.FromResult(true);
         }
 
-        public Task<bool> FileExistsAsync(string path, CancellationToken ct = default)
+        public Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
         {
+            var path = pathFunc(GetPathOf());
             return Task.FromResult(_files.ContainsKey(path));
         }
 
-        public Task<List<string>> GetFilesAsync(string path, string extension = null, CancellationToken ct = default)
+        public Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default)
         {
+            var path = pathFunc(GetPathOf());
             if (!path.EndsWith("/"))
                 path += "/";
 
@@ -50,14 +59,25 @@ namespace Common.FileSystem
             return Task.FromResult(list);
         }
 
-        public Task<T> ReadJsonAsync<T>(string path, CancellationToken ct = default)
+        public PathOf GetPathOf()
         {
+            return _pathOf;
+        }
+
+        public Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        {
+            var path = pathFunc(GetPathOf());
+
+            if (!_files.ContainsKey(path))
+                return Task.FromResult(default(T));
+
             var text = _files[path];
             return Task.FromResult(Json.Deserialize<T>(text));
         }
 
-        public Task<bool> WriteJsonAsync<T>(string path, T obj, CancellationToken ct = default)
+        public Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default)
         {
+            var path = pathFunc(GetPathOf());
             _files[path] = Json.Serialize(obj);
             return Task.FromResult(true);
         }

@@ -67,7 +67,12 @@ namespace HelloJkwCore.Pages.Diary
             }
             else
             {
-                DiaryInfo = await DiaryService.GetUserDiaryInfoAsync(User);
+                var userDiaryInfo = await DiaryService.GetUserDiaryInfoAsync(User);
+                if (userDiaryInfo?.MyDiaryList?.Empty() ?? true)
+                    return;
+
+                var diaryName = userDiaryInfo.MyDiaryList.First();
+                DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, diaryName);
             }
 
             if (DiaryInfo == null)

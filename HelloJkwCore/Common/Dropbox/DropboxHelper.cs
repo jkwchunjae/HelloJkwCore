@@ -1,6 +1,4 @@
-﻿using Common.Authentication;
-using Common.Extensions;
-using Common.FileSystem;
+﻿using Common.FileSystem;
 using Dropbox.Api;
 using Microsoft.Extensions.Configuration;
 using System;
