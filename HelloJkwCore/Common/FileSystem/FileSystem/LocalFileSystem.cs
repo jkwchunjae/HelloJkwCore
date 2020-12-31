@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Common.FileSystem
+namespace Common
 {
     public class LocalFileSystem : IFileSystem
     {

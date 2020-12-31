@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Common.FileSystem
+namespace Common
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum FileSystemType
