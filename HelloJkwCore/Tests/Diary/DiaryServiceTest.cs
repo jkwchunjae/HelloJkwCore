@@ -27,13 +27,26 @@ namespace Tests.Diary
                 },
             };
 
+            var fsOption = new FileSystemOption
+            {
+                MainFileSystem = new MainFileSystemOption
+                {
+                    UseBackup = false,
+                    MainFileSystem = FileSystemType.InMemory,
+                },
+            };
+
             var diaryOption = new DiaryOption
             {
-                MainFileSystem = FileSystemType.InMemory,
-                UseBackup = false,
+                FileSystemSelect = new FileSystemSelectOption
+                {
+                    UseMainFileSystem = true,
+                },
             };
-            var fileSystemService = new FileSystemService(new FileSystemOption(), pathOption);
-            _diaryService = new DiaryService(diaryOption, fileSystemService, null);
+
+            var fileSystemService = new FileSystemService(fsOption, pathOption, null);
+
+            _diaryService = new DiaryService(diaryOption, fileSystemService);
 
             _user = new AppUser("Test", "1234")
             {

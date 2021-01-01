@@ -16,6 +16,5 @@
   <ItemGroup>
     <Folder Include="Authentication\" />
     <Folder Include="FileSystem\FileSystem\" />
-    <Folder Include="FileSystem\Option\" />
   </ItemGroup>
 </Project>

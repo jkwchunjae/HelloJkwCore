@@ -1,4 +1,5 @@
 using Common;
+using Common.Dropbox;
 using HelloJkwCore.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -18,9 +19,7 @@ namespace HelloJkwCore
     {
         readonly CoreOption _coreOption;
 
-        readonly AuthUtil _authUtil;
-
-        private AuthUtil MakeAuthUtil(IConfiguration configuration)
+        private AuthUtil CreateAuthUtil(IConfiguration configuration)
         {
             var pathOption = new PathOption();
             configuration.GetSection("Path").Bind(pathOption);
@@ -28,10 +27,10 @@ namespace HelloJkwCore
             var fsOption = new FileSystemOption();
             configuration.GetSection("FileSystem").Bind(fsOption);
 
-            var fileSystemService = new FileSystemService(fsOption, pathOption);
+            var fsService = new FileSystemService(fsOption, pathOption, null);
+            var fs = fsService.GetFileSystem(_coreOption.AuthFileSystem);
 
-            return new AuthUtil(fileSystemService.GetFileSystem(FileSystemType.Dropbox));
-
+            return new AuthUtil(fs);
         }
 
         public Startup(IConfiguration configuration)
@@ -39,8 +38,6 @@ namespace HelloJkwCore
             Configuration = configuration;
 
             _coreOption = CoreOption.Create(Configuration);
-
-            _authUtil = MakeAuthUtil(configuration);
         }
 
         public IConfiguration Configuration { get; }
@@ -53,8 +50,10 @@ namespace HelloJkwCore
 
             #region Authentication
 
-            var googleAuthOption = _authUtil.GetAuthOption(AuthProvider.Google);
-            var kakaoAuthOption = _authUtil.GetAuthOption(AuthProvider.KakaoTalk);
+            var authUtil = CreateAuthUtil(Configuration);
+
+            var googleAuthOption = authUtil.GetAuthOption(AuthProvider.Google);
+            var kakaoAuthOption = authUtil.GetAuthOption(AuthProvider.KakaoTalk);
 
             services.AddIdentityCore<AppUser>()
                 .AddUserManager<AppUserManager<AppUser>>()

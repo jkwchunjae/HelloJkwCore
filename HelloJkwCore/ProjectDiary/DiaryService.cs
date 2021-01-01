@@ -10,29 +10,14 @@ namespace ProjectDiary
 {
     public class DiaryService : IDiaryService
     {
-        private readonly DiaryOption _option;
-        private readonly IFileSystemService _fsService;
         private readonly IFileSystem _fs;
         private readonly ConcurrentDictionary<string /* DiaryName */, List<DiaryFileName>> _filesCache = new();
 
         public DiaryService(
-            DiaryOption diaryOption,
-            IFileSystemService fsService,
-            IBackgroundTaskQueue backgroundTaskQueue)
+            DiaryOption option,
+            IFileSystemService fsService)
         {
-            _option = diaryOption;
-            _fsService = fsService;
-
-            if (_option.UseBackup)
-            {
-                var fsMain = _fsService.GetFileSystem(_option.MainFileSystem);
-                var fsBackup = _fsService.GetFileSystem(_option.BackupFileSystem);
-                _fs = new BackupFileSystem(fsMain, fsBackup, backgroundTaskQueue);
-            }
-            else
-            {
-                _fs = _fsService.GetFileSystem(_option.MainFileSystem);
-            }
+            _fs = fsService.GetFileSystem(option.FileSystemSelect);
         }
 
         private async Task<List<DiaryFileName>> GetDiaryListAsync(string diaryName)

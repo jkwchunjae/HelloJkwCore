@@ -9,7 +9,8 @@ namespace HelloJkwCore
 {
     public class CoreOption
     {
-        public FileSystemType UserStoreFileSystem { get; set; }
+        public FileSystemSelectOption AuthFileSystem { get; set; }
+        public FileSystemSelectOption UserStoreFileSystem { get; set; }
 
         public static CoreOption Create(IConfiguration configuration)
         {
