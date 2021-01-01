@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore.Authentication
+namespace Common
 {
-    public class OAuthOption
+    public class DropboxOption
     {
-        public AuthProvider Provider { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
-        public string Callback { get; set; }
         public string RefreshToken { get; set; }
     }
 }

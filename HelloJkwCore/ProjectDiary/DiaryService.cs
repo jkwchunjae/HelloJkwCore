@@ -1,7 +1,4 @@
 ﻿using Common;
-using Common.Extensions;
-using Common.FileSystem;
-using Common.User;
 using JkwExtensions;
 using System;
 using System.Collections.Concurrent;
@@ -17,28 +14,10 @@ namespace ProjectDiary
         private readonly ConcurrentDictionary<string /* DiaryName */, List<DiaryFileName>> _filesCache = new();
 
         public DiaryService(
-            IFileSystem fileSystem)
+            DiaryOption option,
+            IFileSystemService fsService)
         {
-            _fs = fileSystem;
-        }
-
-        private async Task<List<DiaryInfo>> GetDiaryInfosAsync()
-        {
-            var path = DiaryPath.DiaryList();
-            if (await _fs.FileExistsAsync(path))
-            {
-                return await _fs.ReadJsonAsync<List<DiaryInfo>>(path);
-            }
-            else
-            {
-                return new List<DiaryInfo>();
-            }
-        }
-
-        private async Task<bool> SaveDiaryInfosAsync(List<DiaryInfo> diaryInfos)
-        {
-            await _fs.WriteJsonAsync(DiaryPath.DiaryList(), diaryInfos);
-            return true;
+            _fs = fsService.GetFileSystem(option.FileSystemSelect);
         }
 
         private async Task<List<DiaryFileName>> GetDiaryListAsync(string diaryName)
@@ -48,7 +27,7 @@ namespace ProjectDiary
                 return list;
             }
 
-            var diaryPath = DiaryPath.Diary(diaryName);
+            Func<PathOf, string> diaryPath = path => path.Diary(diaryName);
 
             if (!(await _fs.DirExistsAsync(diaryPath)))
             {
@@ -73,69 +52,133 @@ namespace ProjectDiary
             _filesCache.AddOrUpdate(diaryName, list, (key, old) => list);
         }
 
-        private async Task<DiaryContent> GetDiaryContentAsync(string diaryContentPath)
+        /// <summary>
+        /// Atomic operation
+        /// </summary>
+        private async Task<bool> CheckAndAddDiaryNameAsync(string diaryName)
         {
-            return await _fs.ReadJsonAsync<DiaryContent>(diaryContentPath);
+            // TODO lock
+            var diaryNameList = await _fs.ReadJsonAsync<List<string>>(path => path.DiaryNameListFile());
+            if (diaryNameList == default(List<string>))
+            {
+                diaryNameList = new List<string>();
+            }
+
+            if (diaryNameList.Contains(diaryName))
+            {
+                return false;
+            }
+
+            diaryNameList.Add(diaryName);
+            await _fs.WriteJsonAsync(path => path.DiaryNameListFile(), diaryNameList);
+
+            return true;
+        }
+
+        private async Task<DiaryContent> GetDiaryContentAsync(string diaryName, string fileName)
+        {
+            return await _fs.ReadJsonAsync<DiaryContent>(path => path.Content(diaryName, fileName));
+        }
+
+        private async Task<UserDiaryInfo> CreateUserDiaryInfoAsync(AppUser user)
+        {
+            Func<PathOf, string> path = pathof => pathof.UserDiaryInfo(user);
+            if (await _fs.FileExistsAsync(path))
+            {
+                return await _fs.ReadJsonAsync<UserDiaryInfo>(path);
+            }
+
+            var userDiaryInfo = new UserDiaryInfo
+            {
+                UserId = user.Id,
+            };
+
+            var success = await _fs.WriteJsonAsync(path, userDiaryInfo);
+
+            if (success)
+            {
+                return userDiaryInfo;
+            }
+            return null;
         }
 
         public async Task<DiaryInfo> CreateDiaryInfoAsync(AppUser user, string diaryName, bool isSecret)
         {
-            var diaryList = await GetDiaryInfosAsync();
+            // 1. 일기장 이름 등록 
+            if (!await CheckAndAddDiaryNameAsync(diaryName))
+            {
+                return null;
+            }
 
-            if (diaryList.Any(x => x.DiaryName == diaryName))
-                throw new DuplicatedDiaryNameException();
+            // 일단 만들자.
+            var userDiaryInfo = await CreateUserDiaryInfoAsync(user);
+            if (userDiaryInfo == null)
+            {
+                // 만들지 못했거나 읽기 실패
+                return null;
+            }
+
+            userDiaryInfo.AddMyDiary(diaryName);
+            await _fs.WriteJsonAsync(path => path.UserDiaryInfo(user), userDiaryInfo);
 
             var newDiary = new DiaryInfo(user.Id, user.Email, diaryName, isSecret);
-            diaryList.Add(newDiary);
-            await SaveDiaryInfosAsync(diaryList);
+            await _fs.WriteJsonAsync(path => path.DiaryInfo(diaryName), newDiary);
 
             return newDiary;
         }
 
-        public async Task<DiaryInfo> GetUserDiaryInfoAsync(AppUser user)
+        public async Task<UserDiaryInfo> GetUserDiaryInfoAsync(AppUser user)
         {
-            var diaryList = await GetDiaryInfosAsync();
+            if (await _fs.FileExistsAsync(path => path.UserDiaryInfo(user)))
+            {
+                return await _fs.ReadJsonAsync<UserDiaryInfo>(path => path.UserDiaryInfo(user));
+            }
 
-            return diaryList.FirstOrDefault(x => x.Owner == user?.Email);
+            return null;
         }
 
         public async Task<DiaryInfo> GetDiaryInfoAsync(AppUser user, string diaryName)
         {
-            var diaryList = await GetViewableDiaryInfoAsync(user);
+            var userDiaryInfo = await GetUserDiaryInfoAsync(user);
 
-            return diaryList.FirstOrDefault(x => x.DiaryName == diaryName);
+            if (userDiaryInfo.IsViewable(diaryName))
+            {
+                if (await _fs.FileExistsAsync(path => path.DiaryInfo(diaryName)))
+                {
+                    return await _fs.ReadJsonAsync<DiaryInfo>(path => path.DiaryInfo(diaryName));
+                }
+            }
+
+            return null;
         }
 
         public async Task<List<DiaryInfo>> GetWritableDiaryInfoAsync(AppUser user)
         {
-            var diaryList = await GetDiaryInfosAsync();
+            var userDiaryInfo = await GetUserDiaryInfoAsync(user);
 
-            return diaryList.Where(x =>
-                {
-                    if (x.Owner == user.Email)
-                        return true;
-                    if (x.Writers.Contains(user.Email))
-                        return true;
-                    return false;
-                })
-                .ToList();
+            var writableList = userDiaryInfo.MyDiaryList
+                .Concat(userDiaryInfo.WriterList);
+
+            var writableDiaryList = await writableList
+                .Select(async diaryName => await GetDiaryInfoAsync(user, diaryName))
+                .WhenAll();
+
+            return writableDiaryList.ToList();
         }
 
         public async Task<List<DiaryInfo>> GetViewableDiaryInfoAsync(AppUser user)
         {
-            var diaryList = await GetDiaryInfosAsync();
+            var userDiaryInfo = await GetUserDiaryInfoAsync(user);
 
-            return diaryList.Where(x =>
-                {
-                    if (x.Owner == user.Email)
-                        return true;
-                    if (x.Writers.Contains(user.Email))
-                        return true;
-                    if (x.Viewers.Contains(user.Email))
-                        return true;
-                    return false;
-                })
-                .ToList();
+            var viewableList = userDiaryInfo.MyDiaryList
+                .Concat(userDiaryInfo.WriterList)
+                .Concat(userDiaryInfo.ViewList);
+
+            var viewableDiaryList = await viewableList
+                .Select(async diaryName => await GetDiaryInfoAsync(user, diaryName))
+                .WhenAll();
+
+            return viewableDiaryList.ToList();
         }
 
         public async Task<DiaryView> GetLastDiaryViewAsync(AppUser user, DiaryInfo diary)
@@ -167,10 +210,10 @@ namespace ProjectDiary
             DateTime? prevDate = before.Any() ? before.Last() : null;
             DateTime? nextDate = after.Any() ? after.First() : null;
 
-            var todayContents = await Task.WhenAll(list
+            var todayContents = await list
                 .Where(x => x.Date == date.Date)
-                .Select(x => DiaryPath.Content(diary.DiaryName, x.FileName))
-                .Select(async path => await GetDiaryContentAsync(path)));
+                .Select(async x => await GetDiaryContentAsync(diary.DiaryName, x.FileName))
+                .WhenAll();
 
             return new DiaryView
             {
@@ -210,7 +253,7 @@ namespace ProjectDiary
                 Index = MakeNewIndex(list, date),
             };
 
-            var diaryPath = DiaryPath.Content(diary.DiaryName, content.GetFileName());
+            Func<PathOf, string> diaryPath = path => path.Content(diary.DiaryName, content.GetFileName());
             await _fs.WriteJsonAsync(diaryPath, content);
 
             list.Add(new DiaryFileName(content.GetFileName()));
@@ -245,15 +288,15 @@ namespace ProjectDiary
 
             foreach (var deleteFile in deleteFiles)
             {
-                var path = DiaryPath.Content(diary.DiaryName, deleteFile.GetFileName());
-                await _fs.DeleteFileAsync(path);
+                Func<PathOf, string> deleteFilePath = path => path.Content(diary.DiaryName, deleteFile.GetFileName());
+                await _fs.DeleteFileAsync(deleteFilePath);
                 list.Remove(new DiaryFileName(deleteFile.GetFileName()));
             }
 
             foreach (var updateFile in updateFiles)
             {
-                var path = DiaryPath.Content(diary.DiaryName, updateFile.GetFileName());
-                await _fs.WriteJsonAsync(path, updateFile);
+                Func<PathOf, string> updateFilePath = path => path.Content(diary.DiaryName, updateFile.GetFileName());
+                await _fs.WriteJsonAsync(updateFilePath, updateFile);
             }
 
             SaveDiaryCache(diary.DiaryName, list);

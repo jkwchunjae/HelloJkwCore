@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.User
+namespace Common
 {
     public class AppUser
     {
@@ -22,7 +22,7 @@ namespace Common.User
 
         public static string UserId(string loginProvider, string providerKey)
         {
-            return $"{loginProvider}.{providerKey}";
+            return $"{loginProvider}.{providerKey}".ToLower();
         }
 
     }

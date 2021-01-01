@@ -348,6 +348,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-HelloJkwCore/HelloJkwServer/userList.json
-/HelloJkwCore/HelloJkwCore/user-list.json
-/HelloJkwCore/HelloJkwCore/users/
+
+# secrets
+HelloJkwCore/HelloJkwCore/appsettings.User.json
+
+# local file system
+HelloJkwCore/HelloJkwCore/fs/

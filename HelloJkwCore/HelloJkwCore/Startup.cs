@@ -1,28 +1,17 @@
 using Common;
-using Common.Extensions;
-using Common.FileSystem;
-using Common.User;
-using Dropbox.Api;
-using HelloJkwCore.Authentication;
+using Common.Dropbox;
 using HelloJkwCore.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjectDiary;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HelloJkwCore
 {
@@ -30,33 +19,25 @@ namespace HelloJkwCore
     {
         readonly CoreOption _coreOption;
 
-        readonly AuthUtil _authUtil;
+        private AuthUtil CreateAuthUtil(IConfiguration configuration)
+        {
+            var pathOption = new PathOption();
+            configuration.GetSection("Path").Bind(pathOption);
 
-        readonly IFileSystem _fileSystem;
+            var fsOption = new FileSystemOption();
+            configuration.GetSection("FileSystem").Bind(fsOption);
+
+            var fsService = new FileSystemService(fsOption, pathOption, null);
+            var fs = fsService.GetFileSystem(_coreOption.AuthFileSystem);
+
+            return new AuthUtil(fs);
+        }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
 
-            var pathConfig = new Dictionary<string, string>();
-            configuration.GetSection("Path").Bind(pathConfig);
-            ConfigurationPathExtensions.SetPathConfig(pathConfig
-                .Where(x => Enum.TryParse<PathType>(x.Key, out var _))
-                .ToDictionary(x => Enum.Parse<PathType>(x.Key), x => x.Value));
-
             _coreOption = CoreOption.Create(Configuration);
-
-            if (_coreOption.UseLocalDropbox)
-            {
-                _fileSystem = new LocalFileSystem();
-                _authUtil = new AuthUtil(_fileSystem);
-            }
-            else
-            {
-                var dropboxClient = GetDropboxClient(_coreOption.UseLocalDropbox);
-                _fileSystem = new DropboxFileSystem(dropboxClient);
-                _authUtil = new AuthUtil(_fileSystem);
-            }
         }
 
         public IConfiguration Configuration { get; }
@@ -65,8 +46,14 @@ namespace HelloJkwCore
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var googleAuthOption = _authUtil.GetAuthOption(AuthProvider.Google);
-            var kakaoAuthOption = _authUtil.GetAuthOption(AuthProvider.KakaoTalk);
+            services.AddSingleton(_coreOption);
+
+            #region Authentication
+
+            var authUtil = CreateAuthUtil(Configuration);
+
+            var googleAuthOption = authUtil.GetAuthOption(AuthProvider.Google);
+            var kakaoAuthOption = authUtil.GetAuthOption(AuthProvider.KakaoTalk);
 
             services.AddIdentityCore<AppUser>()
                 .AddUserManager<AppUserManager<AppUser>>()
@@ -105,18 +92,40 @@ namespace HelloJkwCore
                     options.CallbackPath = kakaoAuthOption?.Callback;
                 });
 
+            #endregion
+
+            #region ASP.NET
+
             services.AddHttpContextAccessor();
             services.AddScoped<HttpContextAccessor>();
-            //// Required for HttpClient support in the Blazor Client project
             services.AddHttpClient();
             services.AddScoped<HttpClient>();
-            // Pass settings to other components
+
             services.AddSingleton(Configuration);
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.AddSingleton(_fileSystem);
+            //services.AddHostedService<TimedHostedService>();
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+
+            #endregion
+
+            #region FileSystem
+
+            var pathOption = new PathOption();
+            Configuration.GetSection("Path").Bind(pathOption);
+            services.AddSingleton(pathOption);
+
+            var fsOption = new FileSystemOption();
+            Configuration.GetSection("FileSystem").Bind(fsOption);
+            services.AddSingleton(fsOption);
+
+            services.AddSingleton<IFileSystemService, FileSystemService>();
+
+            #endregion
+
             services.AddDiaryService(Configuration);
         }
 
@@ -147,28 +156,6 @@ namespace HelloJkwCore
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
-        }
-
-        private DropboxClient GetDropboxClient(bool useLocalDropbox)
-        {
-            if (useLocalDropbox)
-            {
-                var localFileSystem = new LocalFileSystem(new UTF8Encoding(false));
-                var oauthPath = PathType.OAuthOption.GetPath();
-                var task = localFileSystem.ReadJsonAsync<List<OAuthOption>>(oauthPath);
-                task.Wait();
-                var dropboxOption = task.Result.FirstOrDefault(x => x.Provider == AuthProvider.Dropbox);
-
-                return new DropboxClient(dropboxOption.RefreshToken, dropboxOption.ClientId, dropboxOption.ClientSecret);
-            }
-            else
-            {
-                var dropboxRefreshToken = Configuration["Auth:Dropbox:RefreshToken"];
-                var dropboxClientId = Configuration["Auth:Dropbox:ClientId"];
-                var dropboxClientSecret = Configuration["Auth:Dropbox:ClientSecret"];
-
-                return new DropboxClient(dropboxRefreshToken, dropboxClientId, dropboxClientSecret);
-            }
         }
     }
 }

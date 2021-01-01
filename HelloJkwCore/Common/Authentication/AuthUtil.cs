@@ -1,6 +1,4 @@
 ﻿using Common;
-using Common.Extensions;
-using Common.FileSystem;
 using Dropbox.Api;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -8,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore.Authentication
+namespace Common
 {
     public class AuthUtil
     {
@@ -16,7 +14,7 @@ namespace HelloJkwCore.Authentication
 
         public AuthUtil(IFileSystem fs)
         {
-            var task = fs.ReadJsonAsync<List<OAuthOption>>(PathType.OAuthOption.GetPath());
+            var task = fs.ReadJsonAsync<List<OAuthOption>>(path => path.GetPath(PathType.OAuthOption));
             task.Wait();
             _oauthOptions = task.Result;
         }
