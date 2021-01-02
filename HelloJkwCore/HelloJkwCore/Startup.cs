@@ -27,7 +27,7 @@ namespace HelloJkwCore
             var fsOption = new FileSystemOption();
             configuration.GetSection("FileSystem").Bind(fsOption);
 
-            var fsService = new FileSystemService(fsOption, pathOption, null);
+            var fsService = new FileSystemService(fsOption, pathOption, null, null);
             var fs = fsService.GetFileSystem(_coreOption.AuthFileSystem);
 
             return new AuthUtil(fs);

@@ -50,7 +50,7 @@ namespace Common
         {
             var path = pathFunc(GetPathOf());
             var list = Directory.GetFiles(path)
-                .Select(x => System.IO.Path.GetFileName(x))
+                .Select(x => Path.GetFileName(x))
                 .Where(x => extension == null || x.EndsWith(extension))
                 .ToList();
             return Task.FromResult(list);

@@ -11,5 +11,6 @@ namespace Common
     {
         public MainFileSystemOption MainFileSystem { get; set; }
         public DropboxOption Dropbox { get; set; }
+        public AzureOption Azure { get; set; }
     }
 }

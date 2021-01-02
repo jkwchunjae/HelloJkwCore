@@ -32,8 +32,6 @@ namespace HelloJkwCore.User
         {
         }
 
-        private string UserFilePath(string userId) => $"{_usersPath}/user.{userId}.json".ToLower();
-
         private async Task<List<AppUser>> LoadUserListAsync(CancellationToken ct = default)
         {
             var files = await _fs.GetFilesAsync(_usersPath, ".json", ct);
