@@ -61,6 +61,9 @@ namespace HelloJkwCore.Pages.Diary
             DiaryInfo = null;
             View = null;
 
+            if (!IsAuthenticated)
+                return;
+
             if (!string.IsNullOrWhiteSpace(DiaryName))
             {
                 DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, DiaryName);
