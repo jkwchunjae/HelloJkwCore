@@ -1,0 +1,21 @@
+﻿@inherits JkwPageBase
+
+@page "/diary/copy"
+
+<h3>DiaryMigrate</h3>
+
+@foreach (var diaryName in DiaryNameList)
+{
+    <div>
+        <span>@diaryName</span>
+
+        <RadzenButton Click="@(async () => await CheckDiary(diaryName))" Text="Check"/>
+        <RadzenButton Click="@(async () => await Copy(diaryName))" Text="Copy"/>
+
+        <div style="display: block">
+            <span>@copyCount[diaryName]</span>
+            /
+            <span>@diaryList[diaryName].Count</span>
+        </div>
+    </div>
+}
