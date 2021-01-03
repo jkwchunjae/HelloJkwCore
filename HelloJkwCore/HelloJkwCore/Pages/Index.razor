@@ -4,7 +4,7 @@
 
 @using HelloJkwCore.Pages.Diary 
 
-@if (IsAuthenticated)
+@if (IsAuthenticated && User != null)
 {
     <h1> @User.UserName 님 안녕하세요!  </h1>
 
