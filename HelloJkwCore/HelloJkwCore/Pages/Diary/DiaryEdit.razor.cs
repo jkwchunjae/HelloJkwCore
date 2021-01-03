@@ -128,9 +128,13 @@ namespace HelloJkwCore.Pages.Diary
                 content = await DiaryService.UpdateDiaryAsync(User, DiaryInfo, View.DiaryContents);
             }
 
-            if (content != null)
+            if (content?.Any() ?? false)
             {
                 Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, content.First().Date));
+            }
+            else
+            {
+                Navi.NavigateTo(DiaryUrl.Home(DiaryInfo.DiaryName));
             }
         }
     }
