@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Microsoft.Extensions.Logging;
 
 namespace HelloJkwCore.Pages.Diary
 {
@@ -17,11 +18,15 @@ namespace HelloJkwCore.Pages.Diary
         private IDiaryService DiaryService { get; set; }
         [Inject]
         private UserInstantData UserData { get; set; }
+        [Inject]
+        private ILogger<DiaryHome> Logger { get; set; }
 
         [Parameter]
         public string DiaryName { get; set; }
         [Parameter]
         public string Date { get; set; }
+
+        private bool Loading = true;
 
         private DiaryInfo DiaryInfo { get; set; }
         //private List<DiaryInfo> WritableDiary { get; set; }
@@ -44,25 +49,34 @@ namespace HelloJkwCore.Pages.Diary
                 return;
             }
 
+            Loading = true;
             await InitDiary();
+            Loading = false;
 
             StateHasChanged();
         }
 
         protected override async Task HandleLocationChanged(LocationChangedEventArgs e)
         {
+            Loading = true;
             await InitDiary();
+            Loading = false;
 
             StateHasChanged();
         }
 
         private async Task InitDiary()
         {
+            Logger?.LogDebug("InitDiary");
+
             DiaryInfo = null;
             View = null;
 
             if (!IsAuthenticated)
+            {
+                Logger?.LogDebug("Not Authenticated");
                 return;
+            }
 
             if (!string.IsNullOrWhiteSpace(DiaryName))
             {
@@ -79,7 +93,12 @@ namespace HelloJkwCore.Pages.Diary
             }
 
             if (DiaryInfo == null)
+            {
+                Logger?.LogDebug("DiaryInfo is null");
                 return;
+            }
+
+            Logger?.LogDebug("Set DiaryInfo: {diaryInfo}", Json.Serialize(DiaryInfo));
 
             if (DiaryInfo.IsSecret && string.IsNullOrWhiteSpace(UserData.Password))
             {

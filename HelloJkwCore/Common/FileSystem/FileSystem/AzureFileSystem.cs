@@ -31,6 +31,11 @@ namespace Common
             _connectionString = connectionString;
             _encoding = encoding ?? new UTF8Encoding(false);
             _logger = loggerFactory?.CreateLogger<AzureFileSystem>();
+
+            if (_logger != null)
+            {
+                _logger.LogDebug("AzureFileSystem Logger is working.");
+            }
         }
 
         private async Task<BlobContainerClient> GetContainerClient(string containerName)
@@ -94,17 +99,20 @@ namespace Common
         public async Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default(CancellationToken))
         {
             var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+            _logger?.LogDebug("FileExistsAsync. container: {container}, path: {path}", containerName, path);
             var client = await GetContainerClient(containerName);
 
             var blobClient = client.GetBlobClient(path);
             var response = await blobClient.ExistsAsync();
 
+            _logger?.LogDebug("FileExistsAsync. container: {container}, path: {path}, result: {result}", containerName, path, response.Value);
             return response.Value;
         }
 
         public async Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default(CancellationToken))
         {
             var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+            _logger?.LogDebug("GetFilesAsync. container: {container}, path: {path}", containerName, path);
             var client = await GetContainerClient(containerName);
 
             var result = new List<string>();
@@ -116,6 +124,7 @@ namespace Common
             {
                 result.Add(Path.GetFileName(item.Name));
             }
+            _logger?.LogDebug("GetFilesAsync. container: {container}, path: {path}, result: [{result}]", containerName, path, result.StringJoin(","));
             return result;
         }
 
@@ -127,6 +136,7 @@ namespace Common
         public async Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default(CancellationToken))
         {
             var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+            _logger?.LogDebug("ReadJsonAsync. container: {container}, path: {path}", containerName, path);
             try
             {
                 var client = await GetContainerClient(containerName);
@@ -141,31 +151,30 @@ namespace Common
             }
             catch (RequestFailedException ex)
             {
-                _logger.LogError(ex, "ReadJsonAsync. container: {container}, path: {path}", containerName, path);
+                _logger?.LogError(ex, "[Error] ReadJsonAsync. container: {container}, path: {path}", containerName, path);
                 return default(T);
             }
         }
 
         public async Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default(CancellationToken))
         {
+            var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+            _logger?.LogDebug("WriteJsonAsync. container: {container}, path: {path}", containerName, path);
             try
             {
-                var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
                 var client = await GetContainerClient(containerName);
-
                 var blobClient = client.GetBlobClient(path);
-                await blobClient.DeleteIfExistsAsync();
 
                 var data = Json.Serialize(obj);
                 using (var stream = new MemoryStream(_encoding.GetBytes(data)))
                 {
-                    var response = await client.UploadBlobAsync(path, stream);
+                    var response = await blobClient.UploadAsync(stream, overwrite: true, cancellationToken: ct);
                     return true;
                 }
             }
             catch (Exception ex)
             {
-
+                _logger?.LogError(ex, "[Error] WriteJsonAsync. container: {container}, path: {path}", containerName, path);
                 throw;
             }
         }

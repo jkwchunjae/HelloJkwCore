@@ -1,7 +1,11 @@
 ﻿@inherits JkwPageBase
 @page "/diary/{DiaryName?}/{Date?}"
 
-@if (!HasDiaryInfo)
+@if (!IsAuthenticated || Loading)
+{
+    return;
+}
+else if (!HasDiaryInfo)
 {
     <RadzenLink Path="@DiaryUrl.Create()" Text="일기장 만들기"></RadzenLink>
     return;
