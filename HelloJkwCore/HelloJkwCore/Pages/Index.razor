@@ -1,7 +1,23 @@
-﻿@page "/"
+﻿@inherits JkwPageBase
 
-<h1>Hello, world!</h1>
+@page "/"
 
-Welcome to your new app.
+@using HelloJkwCore.Pages.Diary 
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@if (IsAuthenticated)
+{
+    <h1> @User.UserName 님 안녕하세요!  </h1>
+
+    <RadzenButton Click="() => Navi.NavigateTo(DiaryUrl.Home())" Text="일기장" />
+}
+else
+{
+    <h1>안녕하세요!</h1>
+
+    <RadzenButton Click="() => Navi.NavigateTo(loginPath)" Text="로그인" />
+}
+
+@code
+{
+    string loginPath = "/login";
+}
