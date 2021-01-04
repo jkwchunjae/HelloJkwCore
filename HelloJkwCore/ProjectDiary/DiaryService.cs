@@ -1,7 +1,6 @@
 ﻿using Common;
 using JkwExtensions;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ namespace ProjectDiary
     public class DiaryService : IDiaryService
     {
         private readonly IFileSystem _fs;
-        private readonly ConcurrentDictionary<string /* DiaryName */, List<DiaryFileName>> _filesCache = new();
+        private readonly Dictionary<string /* DiaryName */, List<DiaryFileName>> _filesCache = new();
 
         public DiaryService(
             DiaryOption option,
@@ -22,9 +21,12 @@ namespace ProjectDiary
 
         private async Task<List<DiaryFileName>> GetDiaryListAsync(string diaryName)
         {
-            if (_filesCache.TryGetValue(diaryName, out var list))
+            lock (_filesCache)
             {
-                return list;
+                if (_filesCache.TryGetValue(diaryName, out var list))
+                {
+                    return list;
+                }
             }
 
             Func<PathOf, string> diaryPath = path => path.Diary(diaryName);
@@ -42,14 +44,20 @@ namespace ProjectDiary
                 .Select(x => new DiaryFileName(x))
                 .ToList();
 
-            _filesCache.AddOrUpdate(diaryName, diaryFileNameList, (key, old) => diaryFileNameList);
+            lock (_filesCache)
+            {
+                _filesCache[diaryName] = diaryFileNameList;
+            }
 
             return diaryFileNameList;
         }
 
         private void SaveDiaryCache(string diaryName, List<DiaryFileName> list)
         {
-            _filesCache.AddOrUpdate(diaryName, list, (key, old) => list);
+            lock (_filesCache)
+            {
+                _filesCache[diaryName] = list;
+            }
         }
 
         /// <summary>
