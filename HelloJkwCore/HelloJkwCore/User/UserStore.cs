@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HelloJkwCore.User
 {
-    public class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUser>
+    public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUser>, IUserRoleStore<AppUser>
     {
         private readonly Func<PathOf, string> _usersPath;
 
