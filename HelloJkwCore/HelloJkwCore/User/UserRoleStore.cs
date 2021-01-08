@@ -1,4 +1,5 @@
 ﻿using Common;
+using JkwExtensions;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace HelloJkwCore.User
 {
-    public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUser>, IUserRoleStore<AppUser>
+    public partial class UserStore : IUserRoleStore<AppUser>
     {
         public async Task AddToRoleAsync(AppUser user, string roleName, CancellationToken ct)
         {
-            var role = Enum.Parse<UserRole>(roleName);
+            var role = ParseRole(roleName);
             if (user.Roles?.Contains(role) ?? false)
                 return;
 
@@ -25,7 +26,7 @@ namespace HelloJkwCore.User
 
         public async Task RemoveFromRoleAsync(AppUser user, string roleName, CancellationToken ct)
         {
-            var role = Enum.Parse<UserRole>(roleName);
+            var role = ParseRole(roleName);
             if (!user.Roles?.Contains(role) ?? true)
                 return;
 
@@ -41,16 +42,25 @@ namespace HelloJkwCore.User
 
         public Task<bool> IsInRoleAsync(AppUser user, string roleName, CancellationToken ct)
         {
-            var role = Enum.Parse<UserRole>(roleName);
+            var role = ParseRole(roleName);
             return Task.FromResult(user.Roles?.Contains(role) ?? false);
         }
 
         public async Task<IList<AppUser>> GetUsersInRoleAsync(string roleName, CancellationToken ct)
         {
-            var role = Enum.Parse<UserRole>(roleName);
+            var role = ParseRole(roleName);
             var userList = await LoadUserListAsync(ct);
 
             return userList.Where(x => x.Roles?.Contains(role) ?? false).ToList();
+        }
+
+        private UserRole ParseRole(string roleName)
+        {
+            var roles = typeof(UserRole).GetValues<UserRole>()
+                .Select(role => new { RoleName = role.ToString().ToLower(), Role = role })
+                .ToDictionary(x => x.RoleName, x => x.Role);
+
+            return roles[roleName.ToLower()];
         }
     }
 }
