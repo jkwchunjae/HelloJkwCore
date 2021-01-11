@@ -1,15 +1,23 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Common;
+using JkwExtensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HelloJkwCore.User
 {
-    public class AppUserManager<TUser> : UserManager<TUser>
-    where TUser : class
+    public class AppUserManager<TUser> : UserManager<TUser> where TUser : class
     {
-        public AppUserManager(IUserStore<TUser> store,
+        private readonly IFileSystem _fs;
+
+        public AppUserManager(
+            CoreOption coreOption,
+            IFileSystemService fsService,
+            IUserStore<TUser> store,
             IOptions<IdentityOptions> optionsAccessor,
             IPasswordHasher<TUser> passwordHasher,
             IEnumerable<IPasswordValidator<TUser>> passwordValidators,
@@ -27,6 +35,7 @@ namespace HelloJkwCore.User
                   services,
                   logger)
         {
+            _fs = fsService.GetFileSystem(coreOption.UserStoreFileSystem);
         }
     }
 }

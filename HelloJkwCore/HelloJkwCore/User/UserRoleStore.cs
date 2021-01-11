@@ -48,9 +48,12 @@ namespace HelloJkwCore.User
 
         public async Task<IList<AppUser>> GetUsersInRoleAsync(string roleName, CancellationToken ct)
         {
-            var role = ParseRole(roleName);
             var userList = await LoadUserListAsync(ct);
 
+            if (roleName.ToLower() == "all")
+                return userList;
+
+            var role = ParseRole(roleName);
             return userList.Where(x => x.Roles?.Contains(role) ?? false).ToList();
         }
 

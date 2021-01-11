@@ -30,16 +30,14 @@ namespace HelloJkwCore.Pages.Users
             CheckedRolesData = typeof(UserRole).GetValues<UserRole>();
         }
 
-        protected override Task OnPageInitializedAsync()
+        protected override async Task OnPageInitializedAsync()
         {
             if (!User?.HasRole(UserRole.Admin) ?? true)
             {
                 Navi.NavigateTo("/login");
-                return Task.CompletedTask;
+                return;
             }
-            Users = UserManager.Users.ToList();
-
-            return Task.CompletedTask;
+            Users = (await UserManager.GetUsersInRoleAsync("all")).ToList();
         }
 
         private async Task UserRoleChangedAsync(AppUser user, UserRole role, bool check)
