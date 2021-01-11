@@ -25,5 +25,33 @@ namespace ProjectDiary
             DiaryName = diaryName;
             IsSecret = isSecret;
         }
+
+        public bool CanManage(string email)
+        {
+            if (Owner == email)
+                return true;
+
+            return false;
+        }
+
+        public bool CanWrite(string email)
+        {
+            if (Owner == email)
+                return true;
+            if (Writers?.Contains(email) ?? false)
+                return true;
+
+            return false;
+        }
+
+        public bool CanRead(string email)
+        {
+            if (CanWrite(email))
+                return true;
+            if (Viewers?.Contains(email) ?? false)
+                return true;
+
+            return false;
+        }
     }
 }

@@ -1,7 +1,5 @@
 ﻿@inherits JkwPageBase
 
-@using Common
-
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">HelloJkwCore</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -11,40 +9,44 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
-        @if (IsAuthenticated)
-        {
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="logoutexternal">
-                    <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
-                </NavLink>
-            </li>
-        }
-        else
-        {
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="login">
-                    <span class="oi oi-account-login" aria-hidden="true"></span> Login
-                </NavLink>
-            </li>
-        }
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="diary">
-                <span class="oi oi-document" aria-hidden="true"></span> 일기장
-            </NavLink>
-        </li>
-        @if (User?.HasRole(UserRole.Admin) ?? false)
-        {
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="users">
-                <span class="oi oi-people" aria-hidden="true"></span> 유저 관리
-            </NavLink>
-        </li>
-        }
+        <AuthorizeView>
+            <NotAuthorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="login">
+                        <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                    </NavLink>
+                </li>
+            </NotAuthorized>
+            <Authorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="user">
+                        <span class="oi oi-person" aria-hidden="true"></span> @context.User.Identity.Name
+                    </NavLink>
+                </li>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Policy="Diary">
+            <Authorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="diary">
+                        <span class="oi oi-document" aria-hidden="true"></span> 일기장
+                    </NavLink>
+                </li>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="users">
+                        <span class="oi oi-people" aria-hidden="true"></span> 유저 관리
+                    </NavLink>
+                </li>
+            </Authorized>
+        </AuthorizeView>
     </ul>
 </div>
-

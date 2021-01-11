@@ -3,17 +3,28 @@
 
 @if (!IsAuthenticated || Loading)
 {
-    return;
 }
 else if (!HasDiaryInfo)
 {
-    <RadzenLink Path="@DiaryUrl.Create()" Text="일기장 만들기"></RadzenLink>
-    return;
+    <AuthorizeView Roles="DiaryWriter">
+        <Authorized>
+            <RadzenLink Path="@DiaryUrl.Create()" Text="일기장 만들기"></RadzenLink>
+        </Authorized>
+        <NotAuthorized>
+            <span>일기쓰기 권한이 없습니다.</span>
+        </NotAuthorized>
+    </AuthorizeView>
 }
 else if (!HasDiaryContent)
 {
-    <RadzenLink Path="@DiaryUrl.Write(DiaryInfo)" Text="일기 쓰기"></RadzenLink>
-    return;
+    <AuthorizeView Roles="DiaryWriter">
+        <Authorized>
+            <RadzenLink Path="@DiaryUrl.Write(DiaryInfo)" Text="일기 쓰기"></RadzenLink>
+        </Authorized>
+        <NotAuthorized>
+            <span>일기쓰기 권한이 없습니다.</span>
+        </NotAuthorized>
+    </AuthorizeView>
 }
 else if (HasDiaryContent)
 {
@@ -31,8 +42,14 @@ else if (HasDiaryContent)
         }
     </div>
     <div id="button-right-group">
-        <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Write(DiaryInfo)">쓰기</a>
-        <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Edit(DiaryInfo, View.DiaryContents[0].Date)">수정</a>
+        @if (DiaryInfo.CanWrite(User.Email))
+        {
+            <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Write(DiaryInfo)">쓰기</a>
+        }
+        @if (IsMyText(View))
+        {
+            <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Edit(DiaryInfo, View.DiaryContents[0].Date)">수정</a>
+        }
         @if (DiaryInfo.IsSecret)
         {
             <a class="btn btn-sm btn-outline-danger" href="@DiaryUrl.SetPassword()">암호</a>

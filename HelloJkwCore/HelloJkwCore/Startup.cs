@@ -102,6 +102,8 @@ namespace HelloJkwCore
                    .Build();
             });
 
+            services.AddHelloJkwPolicy();
+
             #endregion
 
             #region ASP.NET
