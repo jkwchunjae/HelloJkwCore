@@ -3,6 +3,7 @@ using Common.Dropbox;
 using HelloJkwCore.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -57,7 +58,9 @@ namespace HelloJkwCore
 
             services.AddIdentityCore<AppUser>()
                 .AddUserManager<AppUserManager<AppUser>>()
-                .AddSignInManager<SignInManager<AppUser>>();
+                .AddSignInManager<SignInManager<AppUser>>()
+                .AddRoles<IdentityRole>()
+                .AddRoleStore<RoleStore>();
 
             services.AddSingleton<IUserStore<AppUser>, UserStore>();
 
@@ -91,6 +94,15 @@ namespace HelloJkwCore
                     options.ClientSecret = kakaoAuthOption?.ClientSecret;
                     options.CallbackPath = kakaoAuthOption?.Callback;
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                   .RequireAuthenticatedUser()
+                   .Build();
+            });
+
+            services.AddHelloJkwPolicy();
 
             #endregion
 

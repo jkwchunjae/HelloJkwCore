@@ -4,18 +4,18 @@
 
 @using HelloJkwCore.Pages.Diary 
 
-@if (IsAuthenticated && User != null)
-{
-    <h1> @User.UserName 님 안녕하세요!  </h1>
+<AuthorizeView>
+    <Authorized>
+        <h1>@context.User.Identity.Name 님 안녕하세요!</h1>
 
-    <RadzenButton Click="() => Navi.NavigateTo(DiaryUrl.Home())" Text="일기장" />
-}
-else
-{
-    <h1>안녕하세요!</h1>
+        <RadzenButton Click="() => Navi.NavigateTo(DiaryUrl.Home())" Text="일기장" />
+    </Authorized>
+    <NotAuthorized>
+        <h1>안녕하세요!</h1>
 
-    <RadzenButton Click="() => Navi.NavigateTo(loginPath)" Text="로그인" />
-}
+        <RadzenButton Click="() => Navi.NavigateTo(loginPath)" Text="로그인" />
+    </NotAuthorized>
+</AuthorizeView>
 
 @code
 {

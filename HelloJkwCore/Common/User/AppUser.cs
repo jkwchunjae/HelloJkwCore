@@ -8,10 +8,16 @@ namespace Common
 {
     public class AppUser
     {
+        public static string UserId(string loginProvider, string providerKey)
+        {
+            return $"{loginProvider}.{providerKey}".ToLower();
+        }
+
         public string Id { get; set; }
         public DateTime CreateTime { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
+        public List<UserRole> Roles { get; set; }
 
         public AppUser() { }
 
@@ -20,10 +26,9 @@ namespace Common
             Id = UserId(loginProvider, providerKey);
         }
 
-        public static string UserId(string loginProvider, string providerKey)
+        public bool HasRole(UserRole role)
         {
-            return $"{loginProvider}.{providerKey}".ToLower();
+            return Roles?.Contains(role) ?? false;
         }
-
     }
 }

@@ -135,5 +135,16 @@ namespace HelloJkwCore.Pages.Diary
                 }
             }
         }
+
+        private bool IsMyText(DiaryView view)
+        {
+            if (view.DiaryInfo.Owner == User.Email)
+                return true;
+
+            if (view.DiaryInfo.Writers?.Contains(User.Email) ?? false)
+                return true;
+
+            return false;
+        }
     }
 }
