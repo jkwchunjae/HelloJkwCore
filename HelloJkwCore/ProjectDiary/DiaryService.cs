@@ -321,5 +321,12 @@ namespace ProjectDiary
 
             return await UpdateDiaryAsync(user, diary, contents);
         }
+
+        public async Task<List<DiaryFileName>> GetDiaryFileAllAsync(AppUser user, DiaryInfo diary)
+        {
+            var list = await GetDiaryListAsync(diary.DiaryName);
+
+            return list;
+        }
     }
 }

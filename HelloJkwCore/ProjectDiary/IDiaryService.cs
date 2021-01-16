@@ -18,6 +18,7 @@ namespace ProjectDiary
         #region GetDiaryView
         Task<DiaryView> GetLastDiaryViewAsync(AppUser user, DiaryInfo diary);
         Task<DiaryView> GetDiaryViewAsync(AppUser user, DiaryInfo diary, DateTime date);
+        Task<List<DiaryFileName>> GetDiaryFileAllAsync(AppUser user, DiaryInfo diary);
         #endregion
 
         #region Write modify update diary

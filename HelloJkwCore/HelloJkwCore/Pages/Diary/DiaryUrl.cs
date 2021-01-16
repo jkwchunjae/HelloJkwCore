@@ -35,6 +35,11 @@ namespace HelloJkwCore.Pages.Diary
             return $"/diary/edit/{diaryInfo.DiaryName}/{date:yyyyMMdd}";
         }
 
+        public static string ShowAll(string diaryName)
+        {
+            return $"/diary/showall/{diaryName}";
+        }
+
         public static string DiaryContent(string diaryName, DateTime date)
         {
             return $"/diary/{diaryName}/{date:yyyyMMdd}";

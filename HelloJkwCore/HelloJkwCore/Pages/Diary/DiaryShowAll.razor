@@ -1,0 +1,24 @@
+﻿@inherits JkwPageBase
+@page "/diary/showall/{DiaryName}"
+
+@foreach (var year in DateList?.Select(x => x.Year).Distinct().OrderByDescending(x => x))
+{
+    var yearDates = DateList.Where(x => x.Year == year).Distinct().ToList();
+
+    <div>
+        <h2 class="year">@year</h2>
+        @foreach (var month in yearDates.Select(x => x.Month).Distinct().OrderByDescending(x => x))
+        {
+            var monthDates = yearDates.Where(x => x.Month == month).ToList();
+
+            <div>
+                <h3 class="month">@month</h3>
+                @foreach (var day in monthDates)
+                {
+                    <a class="day" href="@DiaryUrl.DiaryContent(DiaryInfo.DiaryName, day)">@day.Day.ToString("00")</a> 
+                }
+            </div>
+        }
+    </div>
+}
+
