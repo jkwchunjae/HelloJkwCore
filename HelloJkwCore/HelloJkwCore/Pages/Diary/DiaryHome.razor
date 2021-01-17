@@ -43,7 +43,7 @@ else if (HasDiaryContent)
     </div>
     <div id="button-right-group">
             <a class="btn btn-sm btn-outline-primary" href="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)">전체보기</a>
-        @if (DiaryInfo.CanWrite(User.Email))
+        @if (DiaryInfo.IsSecret == false && DiaryInfo.CanWrite(User.Email))
         {
             <a class="btn btn-sm btn-outline-primary" href="@DiaryUrl.Search(DiaryInfo.DiaryName)">검색</a>
         }
