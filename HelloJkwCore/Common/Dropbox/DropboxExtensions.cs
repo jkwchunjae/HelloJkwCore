@@ -13,9 +13,14 @@ namespace Common
         private static readonly Encoding _defaultEncoding = new UTF8Encoding(false);
         public static async Task<T> ReadJsonAsync<T>(this DropboxClient client, string path)
         {
+            var fileText = await client.ReadTextAsync(path);
+            return Json.Deserialize<T>(fileText);
+        }
+        public static async Task<string> ReadTextAsync(this DropboxClient client, string path)
+        {
             var fileMetadata = await client.Files.DownloadAsync(path);
             var fileText = await fileMetadata.GetContentAsStringAsync();
-            return Json.Deserialize<T>(fileText);
+            return fileText;
         }
 
         public static async Task<FileMetadata> WriteTextAsync(this DropboxClient client, string path, string text, Encoding encoding = null)
