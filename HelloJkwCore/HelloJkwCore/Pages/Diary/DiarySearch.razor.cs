@@ -22,7 +22,7 @@ namespace HelloJkwCore.Pages.Diary
         DiaryInfo DiaryInfo { get; set; }
         List<DiaryContent> DiaryContentList { get; set; } = null;
 
-        DiarySearchData searchData = new();
+        DiarySearchData searchData = null;
 
         protected override async Task OnPageInitializedAsync()
         {
@@ -34,13 +34,21 @@ namespace HelloJkwCore.Pages.Diary
 
             DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, DiaryName);
             var list = await DiaryService.GetDiaryFileAllAsync(User, DiaryInfo);
+
+            if (list?.Empty() ?? true)
+            {
+                searchData = null;
+                return;
+            }
+
+            searchData = new DiarySearchData();
             searchData.BeginDate = list.First().Date;
             searchData.EndDate = list.Last().Date;
         }
 
-        private async Task Search(string keyword)
+        private async Task Search(DiarySearchData searchData)
         {
-            var files = await DiarySearchService.Search(DiaryInfo.DiaryName, keyword);
+            var files = await DiarySearchService.SearchAsync(DiaryInfo.DiaryName, searchData) ?? new List<DiaryFileName>();
 
             var contents = await files
                 .Select(async filename => await DiaryService.GetDiaryContentAsync(User, DiaryInfo, filename))
@@ -51,15 +59,7 @@ namespace HelloJkwCore.Pages.Diary
 
         private async Task OnSubmitAsync()
         {
-            await Search(searchData.Keyword);
+            await Search(searchData);
         }
-    }
-
-    class DiarySearchData
-    {
-        public DateTime BeginDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public string DayOfWeek { get; set; }
-        public string Keyword { get; set; }
     }
 }

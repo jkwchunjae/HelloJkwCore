@@ -8,6 +8,11 @@
     return;
 }
 
+@if (searchData == null)
+{
+    <span>검색할 일기가 없습니다.</span>
+}
+
 <div class="search-form">
     <EditForm Model="searchData" OnSubmit="@(async () => await OnSubmitAsync())">
         <div class="row">

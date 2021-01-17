@@ -11,9 +11,16 @@ namespace Common
     public static class Json
     {
         private static JsonSerializerOptions _options;
+        private static JsonSerializerOptions _optionsNoIndent;
         static Json()
         {
             _options = new JsonSerializerOptions
+            {
+                AllowTrailingCommas = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true,
+            };
+            _optionsNoIndent = new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
@@ -28,6 +35,11 @@ namespace Common
         public static string Serialize<T>(T value)
         {
             return JsonSerializer.Serialize<T>(value, _options);
+        }
+
+        public static string SerializeNoIndent<T>(T value)
+        {
+            return JsonSerializer.Serialize<T>(value, _optionsNoIndent);
         }
     }
 }

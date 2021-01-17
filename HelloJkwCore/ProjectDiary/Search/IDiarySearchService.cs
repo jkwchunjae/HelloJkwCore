@@ -8,8 +8,8 @@ namespace ProjectDiary
 {
     public interface IDiarySearchService
     {
-        Task AppendDiaryText(string diaryName, DiaryFileName fileName, string diaryText);
-        Task<IEnumerable<DiaryFileName>> Search(string diaryName, string keyword);
+        Task AppendDiaryTextAsync(string diaryName, DiaryFileName fileName, string diaryText);
+        Task<IEnumerable<DiaryFileName>> SearchAsync(string diaryName, DiarySearchData searchData);
         void RefreshCache(string diaryName);
         void RefreshCacheAll();
     }

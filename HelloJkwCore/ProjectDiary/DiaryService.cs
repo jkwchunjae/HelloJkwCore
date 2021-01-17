@@ -10,12 +10,15 @@ namespace ProjectDiary
     public class DiaryService : IDiaryService
     {
         private readonly IFileSystem _fs;
+        private readonly IDiarySearchService _diarySearchService;
         private readonly Dictionary<string /* DiaryName */, List<DiaryFileName>> _filesCache = new();
 
         public DiaryService(
             DiaryOption option,
+            IDiarySearchService diarySearchService,
             IFileSystemService fsService)
         {
+            _diarySearchService = diarySearchService;
             _fs = fsService.GetFileSystem(option.FileSystemSelect);
         }
 
@@ -272,11 +275,17 @@ namespace ProjectDiary
             Func<PathOf, string> diaryPath = path => path.Content(diary.DiaryName, content.GetFileName());
             await _fs.WriteJsonAsync(diaryPath, content);
 
-            list.Add(new DiaryFileName(content.GetFileName()));
+            var diaryFileName = new DiaryFileName(content.GetFileName());
+            list.Add(diaryFileName);
 
             list = list.OrderBy(x => x).ToList();
 
             SaveDiaryCache(diary.DiaryName, list);
+
+            if (!diary.IsSecret)
+            {
+                await _diarySearchService.AppendDiaryTextAsync(diary.DiaryName, diaryFileName, text);
+            }
 
             return content;
 
