@@ -46,7 +46,7 @@ namespace Tests.Diary
 
             var fileSystemService = new FileSystemService(fsOption, pathOption, null, null);
 
-            _diaryService = new DiaryService(diaryOption, fileSystemService);
+            _diaryService = new DiaryService(diaryOption, null, fileSystemService);
 
             _user = new AppUser("Test", "1234")
             {

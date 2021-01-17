@@ -46,7 +46,7 @@ namespace Common
         public string DiaryTrie(string diaryName)
         {
             var dirPath = _pathDic[PathType.DiaryTriePath];
-            return $"{dirPath}/trie_{diaryName.ToLower()}.json";
+            return $"{dirPath}/trie.{diaryName}.json";
         }
     }
 }
