@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace ProjectDiary
     internal class DiaryTrie
     {
         [JsonPropertyName("r")]
+        [JsonProperty("r")]
         public DiaryTrieNode _root { get; set; }
 
         public DiaryTrie()
