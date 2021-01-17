@@ -23,7 +23,7 @@ namespace ProjectDiary
         [JsonProperty("s")]
         public List<string> SourceList { get; }
 
-        public DiaryTrieNode(char character, int depth, string source)
+        public DiaryTrieNode(char character, int depth)
         {
             Character = character;
             Depth = depth;
@@ -33,10 +33,10 @@ namespace ProjectDiary
 
         public DiaryTrieNode SetChildCharacter(char character, string source)
         {
-            var child = Children.FirstOrDefault(x => x.Character == character);
+            var child = GetChild(character);
             if (child == null)
             {
-                child = new DiaryTrieNode(character, Depth + 1, source);
+                child = new DiaryTrieNode(character, Depth + 1);
                 Children.Add(child);
             }
 
