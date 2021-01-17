@@ -1,0 +1,25 @@
+﻿div.search-form {
+    display: block;
+    max-width: 700px;
+}
+
+div.search-result {
+    display: block;
+    max-width: 700px;
+    margin-top: 20px;
+}
+
+button[type=submit] {
+    width: 100%;
+    margin-top: 5px;
+}
+
+pre {
+    border: 1px solid gray;
+    border-radius: 5px;
+    background-color: #ddd;
+    padding: 10px;
+    font-family: 'Malgun Gothic';
+    max-width: 700px;
+    white-space: pre-wrap;
+}

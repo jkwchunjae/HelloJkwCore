@@ -18,6 +18,7 @@ namespace ProjectDiary
             services.AddScoped<UserInstantData>();
             services.AddSingleton(diaryOption);
             services.AddSingleton<IDiaryService, DiaryService>();
+            services.AddSingleton<IDiarySearchService, DiarySearchService>();
         }
     }
 }

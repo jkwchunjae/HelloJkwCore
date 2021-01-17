@@ -17,7 +17,7 @@ namespace HelloJkwCore.Pages.Diary
         public IDiaryService DiaryService { get; set; }
 
         DiaryInfo DiaryInfo { get; set; }
-        List<DateTime> DateList { get; set; }
+        List<DateTime> DateList { get; set; } = new();
 
         protected override async Task OnPageInitializedAsync()
         {

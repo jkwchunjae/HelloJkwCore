@@ -83,9 +83,17 @@ namespace ProjectDiary
             return true;
         }
 
-        private async Task<DiaryContent> GetDiaryContentAsync(string diaryName, string fileName)
+        private async Task<DiaryContent> GetDiaryContentAsync(string diaryName, DiaryFileName fileName)
         {
-            return await _fs.ReadJsonAsync<DiaryContent>(path => path.Content(diaryName, fileName));
+            return await _fs.ReadJsonAsync<DiaryContent>(path => path.Content(diaryName, fileName.ToString()));
+        }
+
+        public async Task<DiaryContent> GetDiaryContentAsync(AppUser user, DiaryInfo diary, DiaryFileName diaryFileName)
+        {
+            if (!diary.CanRead(user?.Email))
+                return null;
+
+            return await GetDiaryContentAsync(diary.DiaryName, diaryFileName);
         }
 
         private async Task<UserDiaryInfo> CreateUserDiaryInfoAsync(AppUser user)
@@ -220,13 +228,13 @@ namespace ProjectDiary
 
             var todayContents = await list
                 .Where(x => x.Date == date.Date)
-                .Select(async x => await GetDiaryContentAsync(diary.DiaryName, x.FileName))
+                .Select(async fileName => await GetDiaryContentAsync(user, diary, fileName))
                 .WhenAll();
 
             return new DiaryView
             {
                 DiaryInfo = diary,
-                DiaryContents = todayContents.ToList(),
+                DiaryContents = todayContents.Where(x => x != null).ToList(),
                 DiaryNavigationData = new DiaryNavigationData
                 {
                     Today = date.Date,
