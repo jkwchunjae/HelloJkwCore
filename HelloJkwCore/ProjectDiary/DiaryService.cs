@@ -288,7 +288,8 @@ namespace ProjectDiary
 
             if (!diary.IsSecret)
             {
-                await _diarySearchService.AppendDiaryTextAsync(diary.DiaryName, diaryFileName, text);
+                if (_diarySearchService != null)
+                    await _diarySearchService.AppendDiaryTextAsync(diary.DiaryName, diaryFileName, text);
             }
 
             return content;
