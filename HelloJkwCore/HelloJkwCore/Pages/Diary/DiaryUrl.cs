@@ -40,6 +40,11 @@ namespace HelloJkwCore.Pages.Diary
             return $"/diary/showall/{diaryName}";
         }
 
+        public static string Search(string diaryName)
+        {
+            return $"/diary/search/{diaryName}";
+        }
+
         public static string DiaryContent(string diaryName, DateTime date)
         {
             return $"/diary/{diaryName}/{date:yyyyMMdd}";

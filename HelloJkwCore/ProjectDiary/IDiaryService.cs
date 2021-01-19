@@ -16,6 +16,7 @@ namespace ProjectDiary
         #endregion
 
         #region GetDiaryView
+        Task<DiaryContent> GetDiaryContentAsync(AppUser user, DiaryInfo diary, DiaryFileName diaryFileName);
         Task<DiaryView> GetLastDiaryViewAsync(AppUser user, DiaryInfo diary);
         Task<DiaryView> GetDiaryViewAsync(AppUser user, DiaryInfo diary, DateTime date);
         Task<List<DiaryFileName>> GetDiaryFileAllAsync(AppUser user, DiaryInfo diary);
@@ -26,6 +27,10 @@ namespace ProjectDiary
         Task<DiaryContent> WriteDiaryAsync(AppUser user, DiaryInfo diary, DateTime date, string text, string password);
         Task<List<DiaryContent>> UpdateDiaryAsync(AppUser user, DiaryInfo diary, List<DiaryContent> contents);
         Task<List<DiaryContent>> UpdateDiaryAsync(AppUser user, DiaryInfo diary, List<DiaryContent> contents, string password);
+        #endregion
+
+        #region Admin
+        Task<List<DiaryInfo>> GetAllDiaryListAsync(AppUser user);
         #endregion
     }
 }

@@ -75,10 +75,28 @@ namespace Common
             return Task.FromResult(Json.Deserialize<T>(text));
         }
 
+        public Task<string> ReadTextAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        {
+            var path = pathFunc(GetPathOf());
+
+            if (!_files.ContainsKey(path))
+                return Task.FromResult(string.Empty);
+
+            var text = _files[path];
+            return Task.FromResult(text);
+        }
+
         public Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             _files[path] = Json.Serialize(obj);
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> WriteTextAsync(Func<PathOf, string> pathFunc, string text, CancellationToken ct = default)
+        {
+            var path = pathFunc(GetPathOf());
+            _files[path] = text;
             return Task.FromResult(true);
         }
     }

@@ -42,5 +42,11 @@ namespace Common
         {
             return $"{Diary(diaryName)}/{fileName}";
         }
+
+        public string DiaryTrie(string diaryName)
+        {
+            var dirPath = _pathDic[PathType.DiaryTriePath];
+            return $"{dirPath}/trie.{diaryName}.json";
+        }
     }
 }

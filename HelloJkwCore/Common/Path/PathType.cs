@@ -5,8 +5,10 @@
         DropboxRoot,
         UsersPath,
         OAuthOption,
+
         DiaryNameListFile,
         DiaryContentsRootPath,
         DiaryListPath,
+        DiaryTriePath,
     }
 }

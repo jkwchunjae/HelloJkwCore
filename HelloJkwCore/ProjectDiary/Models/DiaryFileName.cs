@@ -19,6 +19,11 @@ namespace ProjectDiary
             Index = arr[1].ToInt();
         }
 
+        public override string ToString()
+        {
+            return FileName;
+        }
+
         public override bool Equals(object obj)
         {
             var fileName = obj as DiaryFileName;

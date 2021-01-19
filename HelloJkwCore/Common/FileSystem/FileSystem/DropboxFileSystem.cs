@@ -128,12 +128,47 @@ namespace Common
             }
         }
 
+        public async Task<string> ReadTextAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        {
+            var path = pathFunc(GetPathOf());
+            try
+            {
+                return await _client.ReadTextAsync(path);
+            }
+            catch (ApiException<DownloadError>)
+            {
+                return default;
+            }
+            catch
+            {
+                return default;
+            }
+        }
+
         public async Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             try
             {
                 await _client.WriteJsonAsync(path, obj, _encoding);
+                return true;
+            }
+            catch (ApiException<UploadError>)
+            {
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> WriteTextAsync(Func<PathOf, string> pathFunc, string text, CancellationToken ct = default)
+        {
+            var path = pathFunc(GetPathOf());
+            try
+            {
+                await _client.WriteTextAsync(path, text, _encoding);
                 return true;
             }
             catch (ApiException<UploadError>)

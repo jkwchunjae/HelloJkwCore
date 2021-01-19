@@ -1,0 +1,59 @@
+﻿@inherits JkwPageBase
+@page "/diary/search/{DiaryName}"
+
+@using JkwExtensions
+
+@if (DiaryInfo == null)
+{
+    return;
+}
+
+@if (searchData == null)
+{
+    <span>검색할 일기가 없습니다.</span>
+}
+
+<div class="search-form">
+    <EditForm Model="searchData" OnSubmit="@(async () => await OnSubmitAsync())">
+        <div class="row">
+            <div class="col-sm">
+                <InputDate class="form-control" @bind-Value="searchData.BeginDate" DisplayName="시작일" />
+            </div>
+            <div class="col-sm">
+                <InputDate class="form-control" @bind-Value="searchData.EndDate" DisplayName="종료일" />
+            </div>
+            <div class="w-100"></div>
+            <div class="col-sm">
+                <InputSelect class="form-control" TValue="string" @bind-Value="searchData.DayOfWeek">
+                    <option value="all">전체</option>
+                    @foreach(DayOfWeek dayOfWeek in typeof(DayOfWeek).GetEnumValues())
+                    {
+                        <option value="@dayOfWeek.ToString("G")">@dayOfWeek.ToString("G")</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-sm">
+                <InputText class="form-control" @bind-Value="searchData.Keyword" DisplayName="검색어" placeholder="검색어"/>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">검색</button>
+    </EditForm>
+</div>
+
+@if (DiaryContentList != null)
+{
+<div class="search-result">
+    <span>총 @DiaryContentList.Count 개가 검색되었습니다.</span>
+
+    <div class="search-list">
+        @foreach (var content in DiaryContentList)
+        {
+            <div class="search-item">
+                <h3 class="search-item-date">@content.Date.ToString("yyyy.MM.dd (ddd)")</h3>
+                <pre class="search-item-text">@content.Text</pre>
+            </div>
+        }
+    </div>
+</div>
+}

@@ -178,5 +178,50 @@ namespace Common
                 throw;
             }
         }
+
+        public async Task<string> ReadTextAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        {
+            var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+            _logger?.LogDebug("ReadTextAsync. container: {container}, path: {path}", containerName, path);
+            try
+            {
+                var client = await GetContainerClient(containerName);
+
+                var blobClient = client.GetBlobClient(path);
+                var response = await blobClient.DownloadAsync(ct);
+
+                var reader = new StreamReader(response.Value.Content);
+                string text = await reader.ReadToEndAsync();
+
+                return text;
+            }
+            catch (RequestFailedException ex)
+            {
+                _logger?.LogError(ex, "[Error] ReadTextAsync. container: {container}, path: {path}", containerName, path);
+                return string.Empty;
+            }
+        }
+
+        public async Task<bool> WriteTextAsync(Func<PathOf, string> pathFunc, string text, CancellationToken ct = default)
+        {
+            var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+            _logger?.LogDebug("WriteTextAsync. container: {container}, path: {path}", containerName, path);
+            try
+            {
+                var client = await GetContainerClient(containerName);
+                var blobClient = client.GetBlobClient(path);
+
+                using (var stream = new MemoryStream(_encoding.GetBytes(text)))
+                {
+                    var response = await blobClient.UploadAsync(stream, overwrite: true, cancellationToken: ct);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "[Error] WriteTextAsync. container: {container}, path: {path}", containerName, path);
+                throw;
+            }
+        }
     }
 }

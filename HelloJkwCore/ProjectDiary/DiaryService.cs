@@ -10,12 +10,15 @@ namespace ProjectDiary
     public class DiaryService : IDiaryService
     {
         private readonly IFileSystem _fs;
+        private readonly IDiarySearchService _diarySearchService;
         private readonly Dictionary<string /* DiaryName */, List<DiaryFileName>> _filesCache = new();
 
         public DiaryService(
             DiaryOption option,
+            IDiarySearchService diarySearchService,
             IFileSystemService fsService)
         {
+            _diarySearchService = diarySearchService;
             _fs = fsService.GetFileSystem(option.FileSystemSelect);
         }
 
@@ -83,9 +86,21 @@ namespace ProjectDiary
             return true;
         }
 
-        private async Task<DiaryContent> GetDiaryContentAsync(string diaryName, string fileName)
+        private async Task<DiaryContent> GetDiaryContentAsync(string diaryName, DiaryFileName fileName)
         {
-            return await _fs.ReadJsonAsync<DiaryContent>(path => path.Content(diaryName, fileName));
+            return await _fs.ReadJsonAsync<DiaryContent>(path => path.Content(diaryName, fileName.ToString()));
+        }
+
+        public async Task<DiaryContent> GetDiaryContentAsync(AppUser user, DiaryInfo diary, DiaryFileName diaryFileName)
+        {
+            var force = false;
+            if (user.HasRole(UserRole.Admin))
+                force = true;
+
+            if (!force && !diary.CanRead(user?.Email))
+                return null;
+
+            return await GetDiaryContentAsync(diary.DiaryName, diaryFileName);
         }
 
         private async Task<UserDiaryInfo> CreateUserDiaryInfoAsync(AppUser user)
@@ -220,13 +235,13 @@ namespace ProjectDiary
 
             var todayContents = await list
                 .Where(x => x.Date == date.Date)
-                .Select(async x => await GetDiaryContentAsync(diary.DiaryName, x.FileName))
+                .Select(async fileName => await GetDiaryContentAsync(user, diary, fileName))
                 .WhenAll();
 
             return new DiaryView
             {
                 DiaryInfo = diary,
-                DiaryContents = todayContents.ToList(),
+                DiaryContents = todayContents.Where(x => x != null).ToList(),
                 DiaryNavigationData = new DiaryNavigationData
                 {
                     Today = date.Date,
@@ -264,11 +279,18 @@ namespace ProjectDiary
             Func<PathOf, string> diaryPath = path => path.Content(diary.DiaryName, content.GetFileName());
             await _fs.WriteJsonAsync(diaryPath, content);
 
-            list.Add(new DiaryFileName(content.GetFileName()));
+            var diaryFileName = new DiaryFileName(content.GetFileName());
+            list.Add(diaryFileName);
 
             list = list.OrderBy(x => x).ToList();
 
             SaveDiaryCache(diary.DiaryName, list);
+
+            if (!diary.IsSecret)
+            {
+                if (_diarySearchService != null)
+                    await _diarySearchService.AppendDiaryTextAsync(diary.DiaryName, diaryFileName, text);
+            }
 
             return content;
 
@@ -327,6 +349,19 @@ namespace ProjectDiary
             var list = await GetDiaryListAsync(diary.DiaryName);
 
             return list;
+        }
+
+        public async Task<List<DiaryInfo>> GetAllDiaryListAsync(AppUser user)
+        {
+            if (!(user?.HasRole(UserRole.Admin) ?? false))
+                return null;
+
+            var diaryNameList = await _fs.ReadJsonAsync<List<string>>(path => path.DiaryNameListFile());
+            var diaryInfoList = await diaryNameList
+                .Select(async diaryName => await _fs.ReadJsonAsync<DiaryInfo>(path => path.DiaryInfo(diaryName)))
+                .WhenAll();
+
+            return diaryInfoList.ToList();
         }
     }
 }

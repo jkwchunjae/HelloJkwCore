@@ -81,6 +81,11 @@ namespace Common
             return await _fs.ReadJsonAsync<T>(pathFunc, ct);
         }
 
+        public async Task<string> ReadTextAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        {
+            return await _fs.ReadTextAsync(pathFunc, ct);
+        }
+
         public async Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default)
         {
             _backgroundQueue.QueueBackgroundWorkItem(async token =>
@@ -88,6 +93,15 @@ namespace Common
                 await _backup.WriteJsonAsync(pathFunc, obj, token);
             });
             return await _fs.WriteJsonAsync(pathFunc, obj, ct);
+        }
+
+        public async Task<bool> WriteTextAsync(Func<PathOf, string> pathFunc, string obj, CancellationToken ct = default)
+        {
+            _backgroundQueue.QueueBackgroundWorkItem(async token =>
+            {
+                await _backup.WriteTextAsync(pathFunc, obj, token);
+            });
+            return await _fs.WriteTextAsync(pathFunc, obj, ct);
         }
     }
 }
