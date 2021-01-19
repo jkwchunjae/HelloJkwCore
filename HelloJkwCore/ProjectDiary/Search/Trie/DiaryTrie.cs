@@ -16,7 +16,7 @@ namespace ProjectDiary
 
         public DiaryTrie()
         {
-            _root = new DiaryTrieNode('.', 0, string.Empty);
+            _root = new DiaryTrieNode('.', 0);
         }
 
         public void AddWord(string text, string source)
