@@ -17,7 +17,7 @@ namespace HelloJkwCore.Pages.Diary
         [Inject]
         IDiarySearchService DiarySearchService { get; set; }
 
-        IEnumerable<DiaryData> DiaryDataList { get; set; }
+        IEnumerable<DiaryData> DiaryDataList { get; set; } = new List<DiaryData>();
 
         Dictionary<string, (bool ProgressOn, int ProgressTotal, int ProgressValue)> ProgressDic = new();
 
