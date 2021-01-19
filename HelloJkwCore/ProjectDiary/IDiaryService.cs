@@ -28,5 +28,9 @@ namespace ProjectDiary
         Task<List<DiaryContent>> UpdateDiaryAsync(AppUser user, DiaryInfo diary, List<DiaryContent> contents);
         Task<List<DiaryContent>> UpdateDiaryAsync(AppUser user, DiaryInfo diary, List<DiaryContent> contents, string password);
         #endregion
+
+        #region Admin
+        Task<List<DiaryInfo>> GetAllDiaryListAsync(AppUser user);
+        #endregion
     }
 }

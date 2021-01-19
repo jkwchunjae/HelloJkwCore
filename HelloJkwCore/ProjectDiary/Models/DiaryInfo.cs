@@ -26,6 +26,16 @@ namespace ProjectDiary
             IsSecret = isSecret;
         }
 
+        public DiaryInfo(DiaryInfo info)
+        {
+            Id = info.Id;
+            Owner = info.Owner;
+            DiaryName = info.DiaryName;
+            IsSecret = info.IsSecret;
+            Writers = info.Writers;
+            Viewers = info.Viewers;
+        }
+
         public bool CanManage(string email)
         {
             if (Owner == email)

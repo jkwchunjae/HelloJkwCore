@@ -93,7 +93,11 @@ namespace ProjectDiary
 
         public async Task<DiaryContent> GetDiaryContentAsync(AppUser user, DiaryInfo diary, DiaryFileName diaryFileName)
         {
-            if (!diary.CanRead(user?.Email))
+            var force = false;
+            if (user.HasRole(UserRole.Admin))
+                force = true;
+
+            if (!force && !diary.CanRead(user?.Email))
                 return null;
 
             return await GetDiaryContentAsync(diary.DiaryName, diaryFileName);
@@ -344,6 +348,19 @@ namespace ProjectDiary
             var list = await GetDiaryListAsync(diary.DiaryName);
 
             return list;
+        }
+
+        public async Task<List<DiaryInfo>> GetAllDiaryListAsync(AppUser user)
+        {
+            if (!(user?.HasRole(UserRole.Admin) ?? false))
+                return null;
+
+            var diaryNameList = await _fs.ReadJsonAsync<List<string>>(path => path.DiaryNameListFile());
+            var diaryInfoList = await diaryNameList
+                .Select(async diaryName => await _fs.ReadJsonAsync<DiaryInfo>(path => path.DiaryInfo(diaryName)))
+                .WhenAll();
+
+            return diaryInfoList.ToList();
         }
     }
 }

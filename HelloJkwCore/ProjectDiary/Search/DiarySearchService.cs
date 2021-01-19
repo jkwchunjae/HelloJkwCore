@@ -26,19 +26,29 @@ namespace ProjectDiary
 
         private async Task<DiarySearchEngine> GetSearchEngineAsync(string diaryName)
         {
-            using (_lock.AcquireWriterLock())
+            var hasEngine = false;
+            lock (_engineDic)
+            {
+                hasEngine = _engineDic.ContainsKey(diaryName);
+            }
+
+            DiarySearchEngine engine = null;
+            if (!hasEngine)
+            {
+                engine = new DiarySearchEngine();
+
+                Func<PathOf, string> triePath = path => path.DiaryTrie(diaryName);
+                if (await _fs.FileExistsAsync(triePath))
+                {
+                    var trie = await _fs.ReadJsonAsync<DiaryTrie>(triePath);
+                    engine.SetTrie(trie);
+                }
+            }
+
+            lock (_engineDic)
             {
                 if (!_engineDic.ContainsKey(diaryName))
                 {
-                    var engine = new DiarySearchEngine();
-
-                    Func<PathOf, string> triePath = path => path.DiaryTrie(diaryName);
-                    if (await _fs.FileExistsAsync(triePath))
-                    {
-                        var trie = await _fs.ReadJsonAsync<DiaryTrie>(triePath);
-                        engine.SetTrie(trie);
-                    }
-
                     _engineDic[diaryName] = engine;
                 }
 
@@ -48,7 +58,7 @@ namespace ProjectDiary
 
         public void RefreshCache(string diaryName)
         {
-            using (_lock.AcquireWriterLock())
+            lock (_engineDic)
             {
                 if (_engineDic.ContainsKey(diaryName))
                 {
@@ -59,7 +69,7 @@ namespace ProjectDiary
 
         public void RefreshCacheAll()
         {
-            using (_lock.AcquireWriterLock())
+            lock (_engineDic)
             {
                 _engineDic.Clear();
             }
@@ -69,10 +79,6 @@ namespace ProjectDiary
         {
             var engine = await GetSearchEngineAsync(diaryName);
             engine.AddText(diaryText, fileName.FileName);
-
-            var trieJsonText = engine.GetTrieJson();
-
-            await _fs.WriteTextAsync(path => path.DiaryTrie(diaryName), trieJsonText);
         }
 
         public async Task<IEnumerable<DiaryFileName>> SearchAsync(string diaryName, DiarySearchData searchData)
@@ -82,6 +88,19 @@ namespace ProjectDiary
             var list = result?.Select(x => new DiaryFileName(x)).ToList();
 
             return list;
+        }
+
+        public async Task ClearTrie(string diaryName)
+        {
+            var engine = await GetSearchEngineAsync(diaryName);
+            engine.SetTrie(new DiaryTrie());
+        }
+
+        public async Task<bool> SaveDiaryTrie(string diaryName)
+        {
+            var engine = await GetSearchEngineAsync(diaryName);
+            var jsonText = engine.GetTrieJson();
+            return await _fs.WriteTextAsync(path => path.DiaryTrie(diaryName), jsonText);
         }
     }
 }
