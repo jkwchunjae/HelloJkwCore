@@ -1,8 +1,10 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace Common
 {
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [System.Text.Json.Serialization.JsonConverter(typeof(JsonStringEnumConverter))]
+    [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
     public enum AuthProvider
     {
         Google,
