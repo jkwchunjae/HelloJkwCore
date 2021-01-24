@@ -3,6 +3,7 @@ using JkwExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ProjectDiary
@@ -68,6 +69,13 @@ namespace ProjectDiary
         /// </summary>
         private async Task<bool> CheckAndAddDiaryNameAsync(string diaryName)
         {
+            if (diaryName.Length < 3)
+                return false;
+            if (diaryName.Length > 30)
+                return false;
+            if (!Regex.IsMatch(diaryName, @"^[a-z]+$"))
+                return false;
+
             // TODO lock
             var diaryNameList = await _fs.ReadJsonAsync<List<string>>(path => path.DiaryNameListFile());
             if (diaryNameList == default(List<string>))
@@ -164,7 +172,7 @@ namespace ProjectDiary
         {
             var userDiaryInfo = await GetUserDiaryInfoAsync(user);
 
-            if (userDiaryInfo.IsViewable(diaryName))
+            if (userDiaryInfo?.IsViewable(diaryName) ?? false)
             {
                 if (await _fs.FileExistsAsync(path => path.DiaryInfo(diaryName)))
                 {
@@ -357,7 +365,7 @@ namespace ProjectDiary
                 return null;
 
             var diaryNameList = await _fs.ReadJsonAsync<List<string>>(path => path.DiaryNameListFile());
-            var diaryInfoList = await diaryNameList
+            var diaryInfoList = await (diaryNameList ?? new List<string>())
                 .Select(async diaryName => await _fs.ReadJsonAsync<DiaryInfo>(path => path.DiaryInfo(diaryName)))
                 .WhenAll();
 

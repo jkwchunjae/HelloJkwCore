@@ -29,6 +29,7 @@ namespace HelloJkwCore.Pages.Diary
         private bool Loading = true;
 
         private DiaryInfo DiaryInfo { get; set; }
+        private DiaryInfo MyDiaryInfo { get; set; }
         //private List<DiaryInfo> WritableDiary { get; set; }
         //private List<DiaryInfo> ViewableDiary { get; set; }
 
@@ -80,16 +81,12 @@ namespace HelloJkwCore.Pages.Diary
 
             if (!string.IsNullOrWhiteSpace(DiaryName))
             {
-                DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, DiaryName);
+                DiaryInfo = await GetDiaryInfo(DiaryName);
+                MyDiaryInfo = await GetMyDiaryInfo();
             }
             else
             {
-                var userDiaryInfo = await DiaryService.GetUserDiaryInfoAsync(User);
-                if (userDiaryInfo?.MyDiaryList?.Empty() ?? true)
-                    return;
-
-                var diaryName = userDiaryInfo.MyDiaryList.First();
-                DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, diaryName);
+                DiaryInfo = MyDiaryInfo = await GetMyDiaryInfo();
             }
 
             if (DiaryInfo == null)
@@ -145,6 +142,24 @@ namespace HelloJkwCore.Pages.Diary
                 return true;
 
             return false;
+        }
+
+        private async Task<DiaryInfo> GetDiaryInfo(string diaryName)
+        {
+            if (string.IsNullOrWhiteSpace(diaryName))
+                return null;
+
+            return await DiaryService.GetDiaryInfoAsync(User, diaryName);
+        }
+
+        private async Task<DiaryInfo> GetMyDiaryInfo()
+        {
+            var userDiaryInfo = await DiaryService.GetUserDiaryInfoAsync(User);
+            if (userDiaryInfo?.MyDiaryList?.Empty() ?? true)
+                return null;
+
+            var diaryName = userDiaryInfo.MyDiaryList.First();
+            return await GetDiaryInfo(diaryName);
         }
     }
 }
