@@ -55,7 +55,7 @@ namespace Tests.Diary
             };
             _diary = new DiaryInfo
             {
-                DiaryName = "test-diary",
+                DiaryName = "testdiary",
                 Id = _user.Id,
                 IsSecret = false,
                 Owner = _user.Email,
@@ -67,7 +67,7 @@ namespace Tests.Diary
         [Fact]
         public async Task CreateDiaryTest()
         {
-            var diaryName = "test-diary";
+            var diaryName = "testdiary";
             var isSecret = false;
 
             var diary = await _diaryService.CreateDiaryInfoAsync(_user, diaryName, isSecret);
@@ -83,7 +83,7 @@ namespace Tests.Diary
         [Fact]
         public async Task GetUserDiaryTest()
         {
-            var diaryName = "test-diary";
+            var diaryName = "testdiary";
             var isSecret = false;
 
             await _diaryService.CreateDiaryInfoAsync(_user, diaryName, isSecret);
