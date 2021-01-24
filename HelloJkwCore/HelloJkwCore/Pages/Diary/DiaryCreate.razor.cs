@@ -4,6 +4,7 @@ using ProjectDiary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace HelloJkwCore.Pages.Diary
@@ -13,19 +14,24 @@ namespace HelloJkwCore.Pages.Diary
         [Inject]
         IDiaryService DiaryService { get; set; }
 
-        private string DiaryName { get; set; }
-        private bool IsSecret { get; set; }
+        DiaryCreateModel _createModel = new DiaryCreateModel();
 
-        private async Task CreateDiaryAsync()
+        private async Task CreateDiaryAsync(DiaryCreateModel model)
         {
             try
             {
-                var diary = await DiaryService.CreateDiaryInfoAsync(User, DiaryName, IsSecret);
+                var diary = await DiaryService.CreateDiaryInfoAsync(User, model.DiaryName, model.IsSecret);
                 Navi.NavigateTo(DiaryUrl.Home(diary.DiaryName));
             }
             catch
             {
             }
         }
+    }
+
+    public class DiaryCreateModel
+    {
+        public string DiaryName { get; set; }
+        public bool IsSecret { get; set; }
     }
 }
