@@ -1,7 +1,7 @@
 ﻿@inherits JkwPageBase
 @page "/diary/create"
 
-<h1>@User.UserName 님의 일기장 만들기</h1>
+<h1>@User?.UserName 님의 일기장 만들기</h1>
 
 <RadzenTemplateForm TItem="DiaryCreateModel" Data="_createModel"
                     Submit="@(async () => await CreateDiaryAsync(_createModel))">
