@@ -1,6 +1,8 @@
 ﻿@inherits JkwPageBase
 @page "/diary/{DiaryName?}/{Date?}"
 
+@using JkwExtensions
+
 @if (!IsAuthenticated || Loading)
 {
 }
@@ -42,7 +44,7 @@ else if (HasDiaryContent)
     <AuthorizeView Policy="Diary">
         <Authorized>
 
-    <h2>@View.DiaryContents[0].Date.ToString("yyyy.MM.dd")</h2>
+    <h2>@View.DiaryContents[0].Date.ToString("yyyy.MM.dd") @View.DiaryContents[0].Date.GetWeekday(DateLanguage.KR, WeekdayFormat.DDD) </h2>
 
     <div class="button-group">
     <div id="button-left-group">
