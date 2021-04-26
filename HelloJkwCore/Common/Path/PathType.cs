@@ -10,5 +10,7 @@
         DiaryContentsRootPath,
         DiaryListPath,
         DiaryTriePath,
+
+        SuFcMemberListFile,
     }
 }

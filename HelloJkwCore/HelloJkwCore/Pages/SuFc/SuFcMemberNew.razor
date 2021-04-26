@@ -1,0 +1,50 @@
+﻿@inherits JkwPageBase
+@page "/sufc/member/new"
+
+@using ProjectSuFc;
+
+@inject ISuFcService SuFcService;
+
+<h1>수FC / 신규회원</h1>
+
+<RadzenTemplateForm TItem="Member" Data="_member"
+                    Submit="@(async () => await AddNewMember(_member))">
+    <RadzenFieldset Text="회원 정보 입력" Style="max-width: 700px;">
+        <div class="row">
+            <div class="col-3">
+                <RadzenLabel Text="이름" />
+            </div>
+            <div class="col">
+                <RadzenTextBox Name="Name" @bind-Value="_member.Name" />
+            </div>
+        </div>
+        @*<div class="row">
+            <div class="col-3">
+                <RadzenLabel Text="등록일" />
+            </div>
+            <div class="col">
+                <RadzenDatePicker Name="RegisterDate" @bind-Value="_member.RegisterDate" />
+            </div>
+        </div>*@
+        @*<div class="row">
+            <div class="col-3">
+                <RadzenLabel Text="생일" />
+            </div>
+            <div class="col">
+                <RadzenDatePicker Name="Birthday" @bind-Value="_member.Birthday" />
+            </div>
+        </div>*@
+        <RadzenButton ButtonType="ButtonType.Submit" Text="등록" />
+    </RadzenFieldset>
+</RadzenTemplateForm>
+
+@code {
+    Member _member = new();
+
+    async Task AddNewMember(Member member)
+    {
+        var result = await SuFcService.AddMember(member);
+
+        Navi.NavigateTo("/sufc/member");
+    }
+}

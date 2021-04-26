@@ -1,0 +1,25 @@
+﻿@inherits JkwPageBase
+@page "/sufc/member"
+
+<h1>수FC / 회원</h1>
+
+<a class="btn btn-outline-success" href="/sufc/member/new">추가</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>이름</th>
+            <th>...</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Players)
+            {
+                <tr>
+                    <td>@player.Name</td>
+                    <td><button class="btn btn-sm btn-outline-danger" @onclick="@(async () => await DeleteMember(player))">삭제</button></td>
+                </tr>
+            }
+    </tbody>
+</table>
+
