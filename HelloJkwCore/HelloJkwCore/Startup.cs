@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjectDiary;
+using ProjectSuFc;
 using System.Net.Http;
 
 namespace HelloJkwCore
@@ -139,6 +140,7 @@ namespace HelloJkwCore
             #endregion
 
             services.AddDiaryService(Configuration);
+            services.AddSuFcService(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

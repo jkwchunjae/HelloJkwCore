@@ -1,0 +1,47 @@
+﻿@inherits JkwPageBase
+@page "/sufc/teammaker"
+
+@using ProjectSuFc;
+
+<h1>수FC / 팀짜기</h1>
+
+<div>
+    <RadzenDropDown TValue="TeamMakerStrategy" Data="@(TeamMakerStrategies.Select(x => new { Value = x.Strategy, Text = x.Name } ).ToList())"
+                    ValueProperty="Value" TextProperty="Text"
+                    @bind-Value="TeamMakerStrategy" />
+</div>
+<div>
+    <RadzenNumeric Min="2" Max="5" @bind-Value="TeamCount" />
+</div>
+<div>
+    <button class="btn btn-info" @onclick="@(async () => await MakeTeam())">팀 만들기</button>
+</div>
+
+@if (TeamResult != null)
+{
+<table class="table" style="width: initial">
+    <thead>
+        <tr>
+            @foreach (var team in TeamResult.TeamNames)
+            {
+                <th>@team</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < TeamResult.MaximumTeamSize; i++)
+        {
+            <tr>
+                @foreach (var team in TeamResult.TeamNames)
+                {
+                    var members = TeamResult.GroupByTeam[team];
+                    <td>
+                        @if (i < members.Count)
+                            @TeamResult.GroupByTeam[team][i].Name
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+}

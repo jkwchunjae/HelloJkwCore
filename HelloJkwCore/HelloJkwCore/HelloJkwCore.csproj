@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\ProjectDiary\ProjectDiary.csproj" />
+    <ProjectReference Include="..\ProjectSuFc\ProjectSuFc.csproj" />
   </ItemGroup>
 
   <ItemGroup>
