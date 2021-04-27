@@ -18,6 +18,7 @@ namespace ProjectSuFc
                 .RandomShuffle()
                 .Select((x, i) => new { Player = x, Team = teams[i % teamCount], })
                 .Select(x => (x.Player, x.Team))
+                .OrderBy(x => x.Player.Name)
                 .ToList();
 
             return new TeamResult

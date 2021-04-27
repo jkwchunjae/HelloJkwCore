@@ -16,6 +16,9 @@ namespace ProjectSuFc
         Task<bool> DeleteMember(Member player);
         #endregion
 
-        Task<TeamResult> MakeTeamAsync(List<Member> players, int teamCount, TeamMakerStrategy strategy);
+        Task<TeamResult> MakeTeam(List<Member> players, int teamCount, TeamMakerStrategy strategy);
+        Task<List<TeamResultSaveFile>> GetAllTeamResult();
+        Task<bool> SaveTeamResult(TeamResultSaveFile saveFile);
+        Task<TeamResultSaveFile> FindTeamResult(string title);
     }
 }

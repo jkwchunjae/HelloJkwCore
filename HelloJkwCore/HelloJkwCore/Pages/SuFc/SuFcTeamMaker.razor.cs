@@ -1,4 +1,5 @@
-﻿using HelloJkwCore.Shared;
+﻿using JkwExtensions;
+using HelloJkwCore.Shared;
 using Microsoft.AspNetCore.Components;
 using ProjectSuFc;
 using System;
@@ -20,12 +21,32 @@ namespace HelloJkwCore.Pages.SuFc
 
         TeamResult TeamResult = null;
         int TeamCount = 3;
+        string Title = string.Empty;
         TeamMakerStrategy TeamMakerStrategy;
 
         async Task MakeTeam()
         {
             var players = await SuFcService.GetMembers();
-            TeamResult = await SuFcService.MakeTeamAsync(players, TeamCount, TeamMakerStrategy);
+            TeamResult = await SuFcService.MakeTeam(players, TeamCount, TeamMakerStrategy);
+        }
+
+        async Task SaveFile()
+        {
+            if (Title.HasInvalidFileNameChar() || Title.Empty())
+            {
+                return;
+            }
+            var saveFile = new TeamResultSaveFile
+            {
+                Title = Title,
+                Result = TeamResult,
+                CreateTime = DateTime.Now,
+                Status = TeamResultStatus.Feature,
+            };
+
+            await SuFcService.SaveTeamResult(saveFile);
+
+            Navi.NavigateTo("/sufc");
         }
     }
 }

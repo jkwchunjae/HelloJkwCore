@@ -61,9 +61,10 @@ namespace ProjectSuFc
         {
             var list = await GetMembers();
 
-            list = list.Where(x => x.Name != member.Name)
-                .Concat(new[] { member })
-                .ToList();
+            var index = list.FindIndex(x => x.No == member.No);
+
+            if (index != -1)
+                list[index] = member;
 
             await SaveMembers(list);
             return member;

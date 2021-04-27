@@ -12,5 +12,6 @@
         DiaryTriePath,
 
         SuFcMemberListFile,
+        SuFcTeamsPath,
     }
 }
