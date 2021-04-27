@@ -16,7 +16,7 @@
     <link href="css/site.css" rel="stylesheet" />
     <link href="HelloJkwCore.styles.css" rel="stylesheet" />
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/default-base.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
 
 </head>
@@ -34,6 +34,13 @@
         <a class="dismiss">🗙</a>
     </div>
 
+    <script>
+        function BlazorFocusElement(element) {
+            if (element instanceof HTMLElement) {
+                element.focus();
+            }
+        }
+    </script>
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
 </body>

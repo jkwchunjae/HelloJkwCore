@@ -1,4 +1,5 @@
-﻿using HelloJkwCore.Shared;
+﻿using Common;
+using HelloJkwCore.Shared;
 using Microsoft.AspNetCore.Components;
 using ProjectSuFc;
 using System;
@@ -12,12 +13,16 @@ namespace HelloJkwCore.Pages.SuFc
     {
         [Inject]
         private ISuFcService SuFcService { get; set; }
-
-        private List<Member> Players { get; set; } = new();
+        private List<Member> Members { get; set; } = new();
+        private bool IsUserSomeoneConnected = false;
 
         private async Task LoadAsync()
         {
-            Players = await SuFcService.GetMembers();
+            Members = await SuFcService.GetAllMember();
+            if (User != null)
+            {
+                IsUserSomeoneConnected = Members.Any(m => m.ConnectIdList.Contains(User.Id));
+            }
         }
 
         protected override async Task OnPageInitializedAsync()
@@ -25,11 +30,24 @@ namespace HelloJkwCore.Pages.SuFc
             await LoadAsync();
         }
 
-        private async Task DeleteMember(Member member)
+        private async Task ConnectId(Member member, AppUser user)
         {
-            await SuFcService.DeleteMember(member);
-            await LoadAsync();
-            StateHasChanged();
+            member.ConnectIdList.Add(user.Id);
+            var result = await SuFcService.SaveMember(member);
+            if (result)
+            {
+                await LoadAsync();
+            }
+        }
+
+        private async Task DisconnectId(Member member, AppUser user)
+        {
+            member.ConnectIdList.Remove(user.Id);
+            var result = await SuFcService.SaveMember(member);
+            if (result)
+            {
+                await LoadAsync();
+            }
         }
     }
 }

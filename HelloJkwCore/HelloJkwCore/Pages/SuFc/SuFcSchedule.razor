@@ -1,0 +1,48 @@
+﻿@inherits JkwPageBase
+@page "/sufc/schedule"
+
+@using ProjectSuFc;
+
+<h1>수FC / 일정관리</h1>
+
+<div>
+    <a class="btn btn-outline-success" href="/sufc/schedule/new">일정 등록</a>
+</div>
+
+@foreach (var schedule in ScheduleList)
+{
+    <div class="schedule-box">
+        <div class="schedule-info">
+            @if (schedule.Status == ScheduleStatus.Active)
+            {
+                <span class="badge badge-danger">이번 모임</span>
+            }
+            else if (schedule.Status == ScheduleStatus.Feature)
+            {
+                <span class="badge badge-primary">예정된 모임</span>
+            }
+            else if (schedule.Status == ScheduleStatus.Done)
+            {
+                <span class="badge badge-warning">끝난 모임</span>
+            }
+            <span class="schedule-info-item schedule-date"><i class="bi-calendar-event"></i> @schedule.Date.ToString("M월 d일 dddd")</span>
+            <span class="schedule-info-item schedule-location"><i class="bi-geo-alt"></i> @schedule.Location</span>
+            <span class="schedule-info-item schedule-time"><i class="bi-smartwatch"></i> @schedule.Time</span>
+        </div>
+        <div class="schedule-vote">
+            @foreach (var scheduleType in ScheduleTypes)
+            {
+                var voteItemClass = $"vote-{scheduleType.MemberStatus.ToString().ToLower()}";
+                <div class="vote-item @voteItemClass">
+                    <span class="vote-title">@scheduleType.Text (  @schedule.Members.Where(x => x.Status == scheduleType.MemberStatus).Count()  )</span>
+                    <div class="vote-member">
+                        @foreach (var member in schedule.Members.Where(x => x.Status == scheduleType.MemberStatus))
+                        {
+                            <span class="member-name">@member.Name</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

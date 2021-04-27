@@ -9,16 +9,20 @@ namespace ProjectSuFc
     public interface ISuFcService
     {
         #region Member
-        Task<List<Member>> GetMembers();
-        Task<Member> FindMember(string name);
-        Task<Member> AddMember(Member player);
-        Task<Member> UpdateMember(Member player);
-        Task<bool> DeleteMember(Member player);
+        Task<List<Member>> GetAllMember();
+        Task<bool> SaveMember(Member player);
         #endregion
 
+        #region Team
         Task<TeamResult> MakeTeam(List<Member> players, int teamCount, TeamMakerStrategy strategy);
         Task<List<TeamResultSaveFile>> GetAllTeamResult();
         Task<bool> SaveTeamResult(TeamResultSaveFile saveFile);
         Task<TeamResultSaveFile> FindTeamResult(string title);
+        #endregion
+
+        #region Schedule
+        Task<List<ScheduleData>> GetAllSchedule();
+        Task<bool> SaveSchedule(ScheduleData schedule);
+        #endregion
     }
 }

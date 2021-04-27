@@ -26,7 +26,7 @@ namespace HelloJkwCore.Pages.SuFc
 
         async Task MakeTeam()
         {
-            var players = await SuFcService.GetMembers();
+            var players = await SuFcService.GetAllMember();
             TeamResult = await SuFcService.MakeTeam(players, TeamCount, TeamMakerStrategy);
         }
 
