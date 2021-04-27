@@ -9,16 +9,16 @@ namespace ProjectSuFc
 {
     public class FullRandomTeamMaker : ITeamMaker
     {
-        public TeamResult MakeTeam(List<Member> members, int teamCount)
+        public TeamResult MakeTeam(List<MemberName> members, int teamCount)
         {
             var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var teams = Enumerable.Range(0, teamCount).Select(x => alpha.Substring(x, 1)).ToList();
+            var teams = Enumerable.Range(0, teamCount).Select(x => new TeamName { Id = alpha.Substring(x, 1) }).ToList();
 
             var shuffled = members
                 .RandomShuffle()
-                .Select((x, i) => new { Player = x, Team = teams[i % teamCount], })
-                .Select(x => (x.Player, x.Team))
-                .OrderBy(x => x.Player.Name)
+                .Select((x, i) => new { Name = x, Team = teams[i % teamCount], })
+                .Select(x => (x.Name, x.Team))
+                .OrderBy(x => x.Name)
                 .ToList();
 
             return new TeamResult

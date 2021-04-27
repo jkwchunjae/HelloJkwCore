@@ -27,7 +27,8 @@ namespace HelloJkwCore.Pages.SuFc
         async Task MakeTeam()
         {
             var players = await SuFcService.GetAllMember();
-            TeamResult = await SuFcService.MakeTeam(players, TeamCount, TeamMakerStrategy);
+            var names = players.Select(x => x.Name).ToList();
+            TeamResult = await SuFcService.MakeTeam(names, TeamCount, TeamMakerStrategy);
         }
 
         async Task SaveFile()
@@ -36,15 +37,9 @@ namespace HelloJkwCore.Pages.SuFc
             {
                 return;
             }
-            var saveFile = new TeamResultSaveFile
-            {
-                Title = Title,
-                Result = TeamResult,
-                CreateTime = DateTime.Now,
-                Status = TeamResultStatus.Feature,
-            };
+            TeamResult.Title = Title;
 
-            await SuFcService.SaveTeamResult(saveFile);
+            await SuFcService.SaveTeamResult(TeamResult);
 
             Navi.NavigateTo("/sufc");
         }

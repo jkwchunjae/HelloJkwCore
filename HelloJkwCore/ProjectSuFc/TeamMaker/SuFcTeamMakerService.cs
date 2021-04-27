@@ -13,7 +13,7 @@ namespace ProjectSuFc
     {
         private readonly Dictionary<TeamMakerStrategy, ITeamMaker> _strategy = new();
 
-        public Task<TeamResult> MakeTeam(List<Member> members, int teamCount, TeamMakerStrategy strategy)
+        public Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy)
         {
             if (_strategy.ContainsKey(strategy))
             {
@@ -25,27 +25,27 @@ namespace ProjectSuFc
             return Task.FromResult((TeamResult)null);
         }
 
-        public async Task<List<TeamResultSaveFile>> GetAllTeamResult()
+        public async Task<List<TeamResult>> GetAllTeamResult()
         {
             var files = await _fs.GetFilesAsync(path => path.GetPath(PathType.SuFcTeamsPath));
 
             var list = await files.Select(async file =>
                 {
-                    return await _fs.ReadJsonAsync<TeamResultSaveFile>(path => path.GetPath(PathType.SuFcTeamsPath) + "/" + file);
+                    return await _fs.ReadJsonAsync<TeamResult>(path => path.GetPath(PathType.SuFcTeamsPath) + "/" + file);
                 })
                 .WhenAll();
 
             return list.ToList();
         }
 
-        public async Task<TeamResultSaveFile> FindTeamResult(string title)
+        public async Task<TeamResult> FindTeamResult(string title)
         {
             var fileName = $"{title}.json";
-            var saveFile = await _fs.ReadJsonAsync<TeamResultSaveFile>(path => path.GetPath(PathType.SuFcTeamsPath) + "/" + fileName);
+            var saveFile = await _fs.ReadJsonAsync<TeamResult>(path => path.GetPath(PathType.SuFcTeamsPath) + "/" + fileName);
             return saveFile;
         }
 
-        public async Task<bool> SaveTeamResult(TeamResultSaveFile saveFile)
+        public async Task<bool> SaveTeamResult(TeamResult saveFile)
         {
             var fileName = $"{saveFile.Title}.json";
 

@@ -7,9 +7,30 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    public class StringId
+    public class StringId : IComparable<StringId>, IComparable<string>
     {
         public string Id { get; set; }
+
+        public StringId() { }
+        public StringId(string id)
+        {
+            Id = id;
+        }
+
+        public override string ToString()
+        {
+            return Id;
+        }
+
+        public int CompareTo(StringId other)
+        {
+            return Id.CompareTo(other.Id);
+        }
+
+        public int CompareTo(string other)
+        {
+            return Id.CompareTo(other);
+        }
     }
 
     public class StringIdJsonConverter<T> : JsonConverter<T> where T : StringId, new()

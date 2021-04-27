@@ -14,10 +14,10 @@ namespace ProjectSuFc
         #endregion
 
         #region Team
-        Task<TeamResult> MakeTeam(List<Member> players, int teamCount, TeamMakerStrategy strategy);
-        Task<List<TeamResultSaveFile>> GetAllTeamResult();
-        Task<bool> SaveTeamResult(TeamResultSaveFile saveFile);
-        Task<TeamResultSaveFile> FindTeamResult(string title);
+        Task<TeamResult> MakeTeam(List<MemberName> players, int teamCount, TeamMakerStrategy strategy);
+        Task<List<TeamResult>> GetAllTeamResult();
+        Task<bool> SaveTeamResult(TeamResult saveFile);
+        Task<TeamResult> FindTeamResult(string title);
         #endregion
 
         #region Schedule

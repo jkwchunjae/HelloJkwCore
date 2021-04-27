@@ -1,4 +1,5 @@
-﻿using JkwExtensions;
+﻿using Common;
+using JkwExtensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -7,34 +8,24 @@ using System.Linq;
 
 namespace ProjectSuFc
 {
+    [JsonConverter(typeof(StringIdJsonConverter<TeamName>))]
+    public class TeamName : StringId
+    {
+    }
+
     public class TeamResult
     {
-        public List<string> TeamNames { get; set; } = new();
-        public List<(Member Player, string TeamName)> Players { get; set; } = new();
+        public string Title { get; set; }
+        public List<TeamName> TeamNames { get; set; } = new();
+        public List<(MemberName MemberName, TeamName TeamName)> Players { get; set; } = new();
 
         [JsonIgnore]
-        public Dictionary<string, List<Member>> GroupByTeam => Players
+        public Dictionary<TeamName, List<MemberName>> GroupByTeam => Players
             .GroupBy(x => x.TeamName)
-            .Select(x => new { TeamName = x.Key, List = x.Select(e => e.Player).ToList() })
+            .Select(x => new { TeamName = x.Key, List = x.Select(e => e.MemberName).ToList() })
             .ToDictionary(x => x.TeamName, x => x.List);
 
         [JsonIgnore]
         public int MaximumTeamSize => GroupByTeam.MaxOrNull(x => x.Value.Count) ?? 0;
-    }
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum TeamResultStatus
-    {
-        Feature,
-        Active,
-        Deprecated,
-    }
-
-    public class TeamResultSaveFile
-    {
-        public string Title { get; set; }
-        public DateTime CreateTime { get; set; }
-        public TeamResultStatus Status { get; set; }
-        public TeamResult Result { get; set; }
     }
 }

@@ -17,7 +17,7 @@
                 <RadzenLabel Text="이름" />
             </div>
             <div class="col">
-                <RadzenTextBox Name="Name" @bind-Value="_member.Name" @ref="MemberNameText"/>
+                <RadzenTextBox Name="Name" @bind-Value="_memberName" @ref="MemberNameText"/>
             </div>
         </div>
         @*<div class="row">
@@ -42,6 +42,7 @@
 
 @code {
     private RadzenTextBox MemberNameText;
+    string _memberName = string.Empty;
     Member _member = new();
 
     protected override async Task OnPageAfterRenderAsync(bool firstRender)
@@ -54,6 +55,7 @@
 
     async Task AddNewMember(Member member)
     {
+        member.Name = new MemberName(_memberName);
         var result = await SuFcService.SaveMember(member);
 
         if (result)

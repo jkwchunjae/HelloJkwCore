@@ -27,12 +27,12 @@ namespace ProjectSuFc
 
     public class ScheduleMember
     {
-        public string Name { get; set; }
+        public MemberName Name { get; set; }
         public ScheduleMemberStatus Status { get; set; } = ScheduleMemberStatus.None;
 
         public ScheduleMember() { }
 
-        public ScheduleMember(string name)
+        public ScheduleMember(MemberName name)
         {
             Name = name;
         }
