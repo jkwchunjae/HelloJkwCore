@@ -26,7 +26,13 @@
                         @if (i < members.Count)
                         {
                             var memberName = TeamResult.GroupByTeam[team][i];
-                            <span>@memberName</span>
+                            <span>
+                                @memberName
+                                @if (MyName != null && memberName == MyName)
+                                {
+                                    <span class="badge badge-info">me</span>
+                                }
+                            </span>
                         }
                     </td>
                 }
@@ -40,4 +46,6 @@
     [Parameter]
     public TeamResult TeamResult { get; set; }
 
+    [Parameter]
+    public MemberName MyName { get; set; }
 }

@@ -35,12 +35,16 @@
     [Parameter]
     public ScheduleData Schedule { get; set; }
 
+    [Parameter]
+    public MemberName MyName { get; set; }
+
     async Task OpenTeamPreviewDialog(string teamTitle)
     {
         var teamResult = await SuFcService.FindTeamResult(teamTitle);
         await DialogService.OpenAsync<SuFcTeamResultTable>(teamTitle, new Dictionary<string, object>
         {
             [nameof(TeamResult)] = teamResult,
+            ["MyName"] = MyName,
         });
     }
 }
