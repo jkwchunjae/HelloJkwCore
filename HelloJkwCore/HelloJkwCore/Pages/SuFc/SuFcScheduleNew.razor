@@ -14,7 +14,7 @@
             <div class="col-3">
                 <RadzenLabel Text="제목" />
             </div>
-            <div class="col">
+            <div class="col" style="width: 50%;">
                 <RadzenTextBox Name="Title" @bind-Value="_schedule.Title" />
             </div>
         </div>
@@ -23,8 +23,8 @@
             <div class="col-3">
                 <RadzenLabel Text="날짜" />
             </div>
-            <div class="col">
-                <RadzenDatePicker Name="RegisterDate" @bind-Value="_schedule.Date" DateFormat="yyyy.MM.dd"/>
+            <div class="col" style="width: 50%;">
+                <RadzenDatePicker Name="RegisterDate" @bind-Value="_schedule.Date" DateFormat="yyyy.MM.dd" />
             </div>
         </div>
 
@@ -32,7 +32,7 @@
             <div class="col-3">
                 <RadzenLabel Text="장소" />
             </div>
-            <div class="col">
+            <div class="col" style="width: 50%;">
                 <RadzenTextBox Name="Location" @bind-Value="_schedule.Location" />
             </div>
         </div>
@@ -41,8 +41,18 @@
             <div class="col-3">
                 <RadzenLabel Text="시간" />
             </div>
-            <div class="col">
+            <div class="col" style="width: 50%;">
                 <RadzenTextBox Name="Time" @bind-Value="_schedule.Time" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-3">
+                <RadzenLabel Text="팀" />
+            </div>
+            <div class="col" style="width: 50%;">
+                <RadzenDropDown TValue="TeamResult" Data="TeamResultList" @bind-Value="SelectedTeamResult"
+                                TextProperty="Title"></RadzenDropDown>
             </div>
         </div>
         <RadzenButton ButtonType="ButtonType.Submit" Text="등록" />
@@ -53,6 +63,13 @@
 @code
 {
     ScheduleData _schedule = new();
+    List<TeamResult> TeamResultList = new();
+    TeamResult SelectedTeamResult;
+
+    protected override async Task OnPageInitializedAsync()
+    {
+        TeamResultList = await SuFcService.GetAllTeamResult();
+    }
 
     async Task AddNewSchedule(ScheduleData scheduleData, bool gotoBack = true)
     {
@@ -60,6 +77,7 @@
         scheduleData.Members = members
             .Select(member => new ScheduleMember(member.Name))
             .ToList();
+        scheduleData.TeamTitle = SelectedTeamResult?.Title ?? string.Empty;
 
         await SuFcService.SaveSchedule(scheduleData);
 

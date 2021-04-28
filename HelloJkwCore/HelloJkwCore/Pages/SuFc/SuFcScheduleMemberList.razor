@@ -1,0 +1,91 @@
+﻿@inherits JkwPageBase
+
+@using ProjectSuFc
+@using JkwExtensions 
+
+<div class="schedule-vote">
+    @foreach (var scheduleType in ScheduleTypes)
+    {
+        var votedMembers = Schedule.Members.Where(x => x.Status == scheduleType.MemberStatus).ToList();
+        var voteItemClass = $"vote-{scheduleType.MemberStatus.ToString().ToLower()}";
+        @if (votedMembers.Any())
+        {
+        <div class="vote-item @voteItemClass">
+            <span class="vote-title">@scheduleType.Text</span>
+            @if (votedMembers.Any())
+            {
+                <span class="vote-count"> @votedMembers.Count() </span>
+            }
+            <div class="vote-member">
+                @if (scheduleType.MemberStatus == ScheduleMemberStatus.Yes && TryGetTeamResult(Schedule.TeamTitle, out var teamResult))
+                {
+                    @foreach (var team in teamResult.TeamNames)
+                    {
+                        var teamMembers = teamResult.Players.Where(x => x.TeamName == team).Select(x => x.MemberName).ToList();
+                        var members = votedMembers.Where(x => teamMembers.Contains(x.Name)).ToList();
+
+                        @if (members.Any())
+                        {
+                            <span class="team-name">@team</span>
+                            <span class="team-count">@members.Count()</span>
+                            <div class="team-member-list">
+                                @foreach (var member in members)
+                                {
+                                    <span class="member-name">@member.Name</span>
+                                }
+                            </div>
+                        }
+                    }
+                    var otherTeamMembers = votedMembers.Where(x => teamResult.Players.Empty(e => e.MemberName == x.Name));
+                    if (otherTeamMembers.Any())
+                    {
+                        <span class="team-name">Z</span>
+                        <span class="team-count">@otherTeamMembers.Count()</span>
+                        <div class="team-member-list">
+                            @foreach (var member in otherTeamMembers)
+                            {
+                                <span class="member-name">@member.Name</span>
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    @foreach (var member in votedMembers)
+                    {
+                        <span class="member-name">@member.Name</span>
+                    }
+                }
+            </div>
+        </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public ScheduleData Schedule { get; set; }
+
+    [Parameter]
+    public List<TeamResult> TeamResultList { get; set; }
+
+    private List<(ScheduleMemberStatus MemberStatus, string Text)> ScheduleTypes = new List<(ScheduleMemberStatus MemberStatus, string Text)>
+    {
+        (ScheduleMemberStatus.Yes, "참석"),
+        (ScheduleMemberStatus.No, "불참"),
+        (ScheduleMemberStatus.NotYet, "미정"),
+        (ScheduleMemberStatus.None, "투표안함"),
+    };
+
+    private bool TryGetTeamResult(string teamTitle, out TeamResult teamResult)
+    {
+        var found = TeamResultList.Find(x => x.Title == teamTitle);
+        if (found != null)
+        {
+            teamResult = found;
+            return true;
+        }
+        teamResult = null;
+        return false;
+    }
+}

@@ -1,0 +1,34 @@
+﻿@inherits JkwPageBase
+
+@using ProjectSuFc
+
+<div class="schedule-info">
+    <h3>
+        @if (Schedule.Status == ScheduleStatus.Active)
+        {
+            <span class="badge badge-success">이번 모임</span>
+        }
+        else if (Schedule.Status == ScheduleStatus.Feature)
+        {
+            <span class="badge badge-primary">예정된 모임</span>
+        }
+        else if (Schedule.Status == ScheduleStatus.Done)
+        {
+            <span class="badge badge-warning">끝난 모임</span>
+        }
+    </h3>
+    <span class="schedule-info-item schedule-date"><i class="bi-calendar-event"></i> @Schedule.Date.ToString("M월 d일 dddd")</span>
+    <span class="schedule-info-item schedule-location"><i class="bi-geo-alt"></i> @Schedule.Location</span>
+    <span class="schedule-info-item schedule-time"><i class="bi-smartwatch"></i> @Schedule.Time</span>
+    @if (!string.IsNullOrEmpty(Schedule.TeamTitle))
+    {
+        <span class="schedule-info-item schedule-team"><i class="bi-people"></i> @Schedule.TeamTitle</span>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public ScheduleData Schedule { get; set; }
+
+}

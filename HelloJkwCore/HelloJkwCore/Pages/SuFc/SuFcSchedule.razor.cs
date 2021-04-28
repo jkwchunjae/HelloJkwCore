@@ -14,6 +14,7 @@ namespace HelloJkwCore.Pages.SuFc
         private ISuFcService SuFcService { get; set; }
 
         private List<ScheduleData> ScheduleList = new();
+        private List<TeamResult> TeamResultList = new();
 
         private List<(ScheduleMemberStatus MemberStatus, string Text)> ScheduleTypes = new List<(ScheduleMemberStatus MemberStatus, string Text)>
         {
@@ -26,6 +27,7 @@ namespace HelloJkwCore.Pages.SuFc
         protected override async Task OnPageInitializedAsync()
         {
             ScheduleList = await SuFcService.GetAllSchedule();
+            TeamResultList = await SuFcService.GetAllTeamResult();
         }
 
         private async Task ChangeScheduleStatus(ScheduleData schedule, ScheduleStatus status)
@@ -33,6 +35,18 @@ namespace HelloJkwCore.Pages.SuFc
             schedule.Status = status;
             await SuFcService.SaveSchedule(schedule);
             StateHasChanged();
+        }
+
+        private bool TryGetTeamResult(string teamTitle, out TeamResult teamResult)
+        {
+            var found = TeamResultList.Find(x => x.Title == teamTitle);
+            if (found != null)
+            {
+                teamResult = found;
+                return true;
+            }
+            teamResult = null;
+            return false;
         }
     }
 }

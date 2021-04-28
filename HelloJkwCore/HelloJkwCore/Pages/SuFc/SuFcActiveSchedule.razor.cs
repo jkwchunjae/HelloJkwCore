@@ -18,22 +18,13 @@ namespace HelloJkwCore.Pages.SuFc
         public ScheduleData Schedule { get; set; }
         [Parameter]
         public EventCallback<ScheduleData> ScheduleChanged { get; set; }
-        private ScheduleData schedule => Schedule;
 
         private MemberName MyName;
-        private bool IsVoted = false;
         private ScheduleMemberStatus MyStatus = ScheduleMemberStatus.None;
         private MemberName SelectedName;
         private List<Member> Members;
         private List<Member> NotConnectedMembers;
-
-        private List<(ScheduleMemberStatus MemberStatus, string Text)> ScheduleTypes = new List<(ScheduleMemberStatus MemberStatus, string Text)>
-        {
-            (ScheduleMemberStatus.Yes, "참석"),
-            (ScheduleMemberStatus.No, "불참"),
-            (ScheduleMemberStatus.NotYet, "미정"),
-            (ScheduleMemberStatus.None, "투표안함"),
-        };
+        private List<TeamResult> TeamResultList = new();
 
         protected override async Task OnPageInitializedAsync()
         {
@@ -42,6 +33,7 @@ namespace HelloJkwCore.Pages.SuFc
 
         private async Task LoadAsync()
         {
+            TeamResultList = await SuFcService.GetAllTeamResult();
             Members = await SuFcService.GetAllMember();
             NotConnectedMembers = Members.Where(x => x.ConnectIdList.Empty()).ToList();
             await LoadMyInfoAsync();
@@ -59,7 +51,6 @@ namespace HelloJkwCore.Pages.SuFc
                 var myVote = Schedule.Members.FirstOrDefault(x => x.Name == MyName);
                 if (myVote != null)
                 {
-                    IsVoted = myVote?.Status != ScheduleMemberStatus.None;
                     MyStatus = myVote.Status;
                 }
             }
@@ -76,14 +67,6 @@ namespace HelloJkwCore.Pages.SuFc
             }
 
             return found;
-        }
-
-        private async Task<List<ScheduleData>> GetActiveSchedulesAsync()
-        {
-            var schedules = await SuFcService.GetAllSchedule();
-            var activeList = schedules.Where(x => x.Status == ScheduleStatus.Active).ToList();
-
-            return activeList;
         }
 
         private async Task VoteAsync(ScheduleMemberStatus memberStatus)
