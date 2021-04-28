@@ -22,7 +22,7 @@ namespace ProjectSuFc
         [JsonIgnore]
         public Dictionary<TeamName, List<MemberName>> GroupByTeam => Players
             .GroupBy(x => x.TeamName)
-            .Select(x => new { TeamName = x.Key, List = x.Select(e => e.MemberName).ToList() })
+            .Select(x => new { TeamName = x.Key, List = x.Select(e => e.MemberName).OrderBy(x => x).ToList() })
             .ToDictionary(x => x.TeamName, x => x.List);
 
         [JsonIgnore]

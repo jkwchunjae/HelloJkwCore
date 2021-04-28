@@ -32,10 +32,18 @@ namespace HelloJkwCore.Pages.SuFc
 
         private Dictionary<MemberName, bool> MemberDeleteButton = new();
 
+        private List<TeamResult> TeamResultList = new();
+
         protected override async Task OnPageInitializedAsync()
         {
             Members = await SuFcService.GetAllMember();
             LeftMembers = Members.Select(x => x.Name).OrderBy(x => x).ToList();
+            await LoadTeamListAsync();
+        }
+
+        async Task LoadTeamListAsync()
+        {
+            TeamResultList = await SuFcService.GetAllTeamResult();
         }
 
         async Task MakeTeam()
@@ -59,7 +67,8 @@ namespace HelloJkwCore.Pages.SuFc
 
             await SuFcService.SaveTeamResult(TeamResult);
 
-            Navi.NavigateTo("/sufc");
+            await LoadTeamListAsync();
+            StateHasChanged();
         }
 
         void StrategyChanged()
