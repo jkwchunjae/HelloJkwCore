@@ -3,7 +3,14 @@
 
 <h1>수FC / 회원</h1>
 
-<a class="btn btn-outline-success" href="/sufc/member/new">추가</a>
+@if (IsUserSomeoneConnected)
+{
+    <a class="btn btn-outline-success" href="/sufc/member/new">추가</a>
+}
+else
+{
+    <div>자신의 이름 옆의 연결 버튼을 눌러주세요.</div>
+}
 
 <table class="table table-striped">
     <thead>
