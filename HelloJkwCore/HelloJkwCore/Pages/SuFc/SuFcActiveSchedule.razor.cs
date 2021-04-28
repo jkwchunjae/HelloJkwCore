@@ -1,4 +1,5 @@
 ﻿using HelloJkwCore.Shared;
+using JkwExtensions;
 using Microsoft.AspNetCore.Components;
 using ProjectSuFc;
 using System;
@@ -24,6 +25,7 @@ namespace HelloJkwCore.Pages.SuFc
         private ScheduleMemberStatus MyStatus = ScheduleMemberStatus.None;
         private MemberName SelectedName;
         private List<Member> Members;
+        private List<Member> NotConnectedMembers;
 
         private List<(ScheduleMemberStatus MemberStatus, string Text)> ScheduleTypes = new List<(ScheduleMemberStatus MemberStatus, string Text)>
         {
@@ -41,6 +43,7 @@ namespace HelloJkwCore.Pages.SuFc
         private async Task LoadAsync()
         {
             Members = await SuFcService.GetAllMember();
+            NotConnectedMembers = Members.Where(x => x.ConnectIdList.Empty()).ToList();
             await LoadMyInfoAsync();
         }
 

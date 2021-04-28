@@ -25,7 +25,7 @@
     <div class="vote-box">
         @if (!IsAuthenticated)
         {
-            <RadzenDropDown TValue="MemberName" @bind-Value="SelectedName" Data="Members.Select(x => x.Name)"></RadzenDropDown>
+            <RadzenDropDown TValue="MemberName" @bind-Value="SelectedName" Data="NotConnectedMembers.Select(x => x.Name)"></RadzenDropDown>
         }
         @if (MyStatus == ScheduleMemberStatus.Yes)
         {
