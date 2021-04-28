@@ -1,0 +1,39 @@
+﻿@inherits JkwPageBase
+
+@using ProjectSuFc
+
+<div class="schedule-box" style="margin-top: 10px; margin-bottom: 15px;">
+    <SuFcScheduleInfo Schedule="Schedule"></SuFcScheduleInfo>
+    <div class="vote-box">
+        @if (!IsAuthenticated)
+        {
+            <RadzenDropDown TValue="MemberName" @bind-Value="SelectedName" Data="NotConnectedMembers.Select(x => x.Name)"></RadzenDropDown>
+        }
+        @if (MyStatus == ScheduleMemberStatus.Yes)
+        {
+            <button class="btn btn-sm btn-success"><i class="bi-check"></i>참석</button>
+        }
+        else
+        {
+            <button class="btn btn-sm btn-outline-success" @onclick="(async () => await VoteAsync(ScheduleMemberStatus.Yes))">참석</button>
+        }
+        @if (MyStatus == ScheduleMemberStatus.No)
+        {
+            <button class="btn btn-sm btn-danger"><i class="bi-check"></i>불참</button>
+        }
+        else
+        {
+            <button class="btn btn-sm btn-outline-danger" @onclick="(async () => await VoteAsync(ScheduleMemberStatus.No))">불참</button>
+        }
+        @if (MyStatus == ScheduleMemberStatus.NotYet)
+        {
+            <button class="btn btn-sm btn-warning"><i class="bi-check"></i>미정</button>
+        }
+        else
+        {
+            <button class="btn btn-sm btn-outline-warning" @onclick="(async () => await VoteAsync(ScheduleMemberStatus.NotYet))">미정</button>
+        }
+    </div>
+    <SuFcScheduleMemberList Schedule="Schedule" TeamResultList="TeamResultList"></SuFcScheduleMemberList>
+</div>
+

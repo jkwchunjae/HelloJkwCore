@@ -139,6 +139,7 @@ namespace HelloJkwCore
 
             #endregion
 
+            services.AddScoped<Radzen.DialogService>();
             services.AddDiaryService(Configuration);
             services.AddSuFcService(Configuration);
         }

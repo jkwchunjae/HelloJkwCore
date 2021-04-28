@@ -6,6 +6,6 @@ namespace ProjectSuFc
 {
     interface ITeamMaker
     {
-        TeamResult MakeTeam(List<Member> members, int teamCount);
+        TeamResult MakeTeam(List<MemberName> members, int teamCount);
     }
 }

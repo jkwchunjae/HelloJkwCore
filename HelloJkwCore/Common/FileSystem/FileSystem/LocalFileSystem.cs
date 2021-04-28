@@ -49,6 +49,12 @@ namespace Common
         public Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
             var list = Directory.GetFiles(path)
                 .Select(x => Path.GetFileName(x))
                 .Where(x => extension == null || x.EndsWith(extension))

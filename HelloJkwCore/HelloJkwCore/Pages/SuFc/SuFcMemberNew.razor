@@ -2,8 +2,10 @@
 @page "/sufc/member/new"
 
 @using ProjectSuFc;
+@using Common;
 
 @inject ISuFcService SuFcService;
+@inject IJSRuntime JSRuntime
 
 <h1>수FC / 신규회원</h1>
 
@@ -15,7 +17,7 @@
                 <RadzenLabel Text="이름" />
             </div>
             <div class="col">
-                <RadzenTextBox Name="Name" @bind-Value="_member.Name" />
+                <RadzenTextBox Name="Name" @bind-Value="_memberName" @ref="MemberNameText"/>
             </div>
         </div>
         @*<div class="row">
@@ -39,12 +41,26 @@
 </RadzenTemplateForm>
 
 @code {
+    private RadzenTextBox MemberNameText;
+    string _memberName = string.Empty;
     Member _member = new();
+
+    protected override async Task OnPageAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.FocusAsync(MemberNameText.Element);
+        }
+    }
 
     async Task AddNewMember(Member member)
     {
-        var result = await SuFcService.AddMember(member);
+        member.Name = new MemberName(_memberName);
+        var result = await SuFcService.SaveMember(member);
 
-        Navi.NavigateTo("/sufc/member");
+        if (result)
+        {
+            Navi.NavigateTo("/sufc/member");
+        }
     }
 }

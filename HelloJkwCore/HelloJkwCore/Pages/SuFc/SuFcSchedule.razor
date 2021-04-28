@@ -1,0 +1,34 @@
+﻿@inherits JkwPageBase
+@page "/sufc/schedule"
+
+@using ProjectSuFc;
+@using JkwExtensions; 
+
+<h1>수FC / 모임 관리</h1>
+
+<div>
+    <a class="btn btn-outline-success" href="/sufc/schedule/new">모임 등록</a>
+</div>
+
+@foreach (var schedule in ScheduleList)
+{
+    <div class="schedule-box" style="margin-top: 10px; margin-bottom: 15px;">
+        <SuFcScheduleInfo Schedule="schedule"></SuFcScheduleInfo>
+        <div class="schedule-action">
+            @if (schedule.Status == ScheduleStatus.Active)
+            {
+                <button class="btn btn-sm btn-outline-warning" @onclick="(() => ChangeScheduleStatus(schedule, ScheduleStatus.Done))">종료하기</button>
+            }
+            else if (schedule.Status == ScheduleStatus.Feature)
+            {
+                <button class="btn btn-sm btn-outline-success" @onclick="(() => ChangeScheduleStatus(schedule, ScheduleStatus.Active))">시작하기</button>
+            }
+            else if (schedule.Status == ScheduleStatus.Done)
+            {
+                <button class="btn btn-sm btn-outline-primary" @onclick="(() => ChangeScheduleStatus(schedule, ScheduleStatus.Feature))">예정된 모임으로 변경</button>
+            }
+            <button class="btn btn-sm btn-outline-dark" @onclick="(() => UpdateSchedule(schedule))">모임 변경</button>
+        </div>
+        <SuFcScheduleMemberList Schedule="schedule" TeamResultList="TeamResultList"></SuFcScheduleMemberList>
+    </div>
+}

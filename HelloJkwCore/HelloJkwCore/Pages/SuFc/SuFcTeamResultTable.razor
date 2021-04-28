@@ -1,0 +1,43 @@
+﻿@inherits JkwPageBase
+
+@using ProjectSuFc
+
+@if (TeamResult != null)
+{
+<h3>@TeamResult.Title</h3>
+
+<table class="table" style="width: initial">
+    <thead>
+        <tr>
+            @foreach (var team in TeamResult.TeamNames)
+            {
+                <th>@team</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < TeamResult.MaximumTeamSize; i++)
+        {
+            <tr>
+                @foreach (var team in TeamResult.TeamNames)
+                {
+                    var members = TeamResult.GroupByTeam.ContainsKey(team) ? TeamResult.GroupByTeam[team] : new List<MemberName>();
+                    <td>
+                        @if (i < members.Count)
+                        {
+                            var memberName = TeamResult.GroupByTeam[team][i];
+                            <span>@memberName</span>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@code {
+    [Parameter]
+    public TeamResult TeamResult { get; set; }
+
+}

@@ -3,5 +3,6 @@
     public enum TeamMakerStrategy
     {
         FullRandom,
+        Manual,
     }
 }
