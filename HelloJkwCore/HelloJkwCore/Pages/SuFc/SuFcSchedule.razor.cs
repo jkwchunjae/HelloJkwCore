@@ -27,5 +27,12 @@ namespace HelloJkwCore.Pages.SuFc
         {
             ScheduleList = await SuFcService.GetAllSchedule();
         }
+
+        private async Task ChangeScheduleStatus(ScheduleData schedule, ScheduleStatus status)
+        {
+            schedule.Status = status;
+            await SuFcService.SaveSchedule(schedule);
+            StateHasChanged();
+        }
     }
 }

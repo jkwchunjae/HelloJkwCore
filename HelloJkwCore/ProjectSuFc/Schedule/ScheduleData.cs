@@ -46,5 +46,6 @@ namespace ProjectSuFc
         public string Time { get; set; }
         public ScheduleStatus Status { get; set; } = ScheduleStatus.Feature;
         public List<ScheduleMember> Members { get; set; } = new();
+        public string TeamTitle { get; set; }
     }
 }

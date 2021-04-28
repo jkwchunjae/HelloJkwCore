@@ -31,6 +31,20 @@
             <span class="schedule-info-item schedule-location"><i class="bi-geo-alt"></i> @schedule.Location</span>
             <span class="schedule-info-item schedule-time"><i class="bi-smartwatch"></i> @schedule.Time</span>
         </div>
+        <div class="schedule-action">
+            @if (schedule.Status == ScheduleStatus.Active)
+            {
+                <button class="btn btn-sm btn-outline-warning" @onclick="(() => ChangeScheduleStatus(schedule, ScheduleStatus.Done))">종료하기</button>
+            }
+            else if (schedule.Status == ScheduleStatus.Feature)
+            {
+                <button class="btn btn-sm btn-outline-success" @onclick="(() => ChangeScheduleStatus(schedule, ScheduleStatus.Active))">시작하기</button>
+            }
+            else if (schedule.Status == ScheduleStatus.Done)
+            {
+                <button class="btn btn-sm btn-outline-primary" @onclick="(() => ChangeScheduleStatus(schedule, ScheduleStatus.Feature))">예정된 모임으로 변경</button>
+            }
+        </div>
         <div class="schedule-vote">
             @foreach (var scheduleType in ScheduleTypes)
             {
