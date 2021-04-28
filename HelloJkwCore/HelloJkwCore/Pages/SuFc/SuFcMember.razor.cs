@@ -36,7 +36,7 @@ namespace HelloJkwCore.Pages.SuFc
             var result = await SuFcService.SaveMember(member);
             if (result)
             {
-                await LoadAsync();
+                Navi.NavigateTo("/sufc");
             }
         }
 
