@@ -26,26 +26,30 @@
 
                         @if (members.Any())
                         {
-                            <span class="team-name">@team</span>
-                            <span class="team-count">@members.Count()</span>
-                            <div class="team-member-list">
-                                @foreach (var member in members)
-                                {
-                                    <span class="member-name">@member.Name</span>
-                                }
+                            <div class="team-group">
+                                <span class="team-name">@team</span>
+                                <span class="team-count">@members.Count()</span>
+                                <div class="team-member-list">
+                                    @foreach (var member in members)
+                                    {
+                                        <span class="member-name">@member.Name</span>
+                                    }
+                                </div>
                             </div>
                         }
                     }
                     var otherTeamMembers = votedMembers.Where(x => teamResult.Players.Empty(e => e.MemberName == x.Name));
                     if (otherTeamMembers.Any())
                     {
-                        <span class="team-name">Z</span>
-                        <span class="team-count">@otherTeamMembers.Count()</span>
-                        <div class="team-member-list">
-                            @foreach (var member in otherTeamMembers)
-                            {
-                                <span class="member-name">@member.Name</span>
-                            }
+                        <div class="team-group">
+                            <span class="team-name">Z</span>
+                            <span class="team-count">@otherTeamMembers.Count()</span>
+                            <div class="team-member-list">
+                                @foreach (var member in otherTeamMembers)
+                                {
+                                    <span class="member-name">@member.Name</span>
+                                }
+                            </div>
                         </div>
                     }
                 }
