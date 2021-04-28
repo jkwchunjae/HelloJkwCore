@@ -20,7 +20,7 @@ namespace ProjectSuFc
                 })
                 .WhenAll();
 
-            return list.ToList();
+            return list.OrderByDescending(x => x.Date).ToList();
         }
 
         public async Task<bool> SaveSchedule(ScheduleData schedule)
@@ -35,6 +35,36 @@ namespace ProjectSuFc
             await _fs.WriteJsonAsync(path => path.GetPath(PathType.SuFcSchedulesPath) + "/" + fileName, schedule);
 
             return true;
+        }
+
+        private async Task<ScheduleData> LoadSchedule(DateTime date, string title)
+        {
+            var fileName = $"{date:yyyyMMdd}-{title}.json";
+
+            if (fileName.HasInvalidFileNameChar())
+            {
+                return null;
+            }
+
+            var schedule = await _fs.ReadJsonAsync<ScheduleData>(path => path.GetPath(PathType.SuFcSchedulesPath) + "/" + fileName);
+
+            return schedule;
+        }
+
+        public async Task<(bool Success, ScheduleData Result)> Vote(ScheduleData prevSchedule, MemberName memberName, ScheduleMemberStatus memberStatus)
+        {
+            var schedule = await LoadSchedule(prevSchedule.Date, prevSchedule.Title);
+            if (schedule == null)
+                return (false, null);
+
+            var memberData = schedule.Members.FirstOrDefault(x => x.Name == memberName);
+            if (memberData == null)
+                return (false, null);
+
+            memberData.Status = memberStatus;
+
+            var result = await SaveSchedule(schedule);
+            return (result, result ? schedule : null);
         }
     }
 }

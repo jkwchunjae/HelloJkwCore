@@ -29,7 +29,7 @@
                     {
                         if (member.ConnectIdList.Contains(User.Id))
                         {
-                            <button class="btn btn-sm btn-outline-warning" @onclick="@(async () => await DisconnectId(member, User))">연결끊기</button>
+                            <button class="btn btn-sm btn-warning" @onclick="@(async () => await DisconnectId(member, User))">연결끊기</button>
                         }
                         else if (IsUserSomeoneConnected == false)
                         {
