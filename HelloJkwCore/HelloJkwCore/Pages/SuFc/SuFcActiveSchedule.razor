@@ -7,8 +7,9 @@
     <div class="vote-box">
         @if (!IsAuthenticated)
         {
-            <RadzenDropDown TValue="MemberName" @bind-Value="SelectedName" Data="NotConnectedMembers.Select(x => x.Name)"></RadzenDropDown>
+            <RadzenDropDown TValue="MemberName" @bind-Value="SelectedName" Data="SelectableMembers.Select(x => x.Name)"></RadzenDropDown>
         }
+        <div style="display: inline-block;">
         @if (MyStatus == ScheduleMemberStatus.Yes)
         {
             <button class="btn btn-sm btn-success"><i class="bi-check"></i>참석</button>
@@ -33,6 +34,7 @@
         {
             <button class="btn btn-sm btn-outline-warning" @onclick="(async () => await VoteAsync(ScheduleMemberStatus.NotYet))">미정</button>
         }
+        </div>
     </div>
     <SuFcScheduleMemberList Schedule="Schedule" TeamResultList="TeamResultList"></SuFcScheduleMemberList>
 </div>
