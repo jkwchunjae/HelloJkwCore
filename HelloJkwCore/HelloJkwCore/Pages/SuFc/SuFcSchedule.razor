@@ -4,10 +4,10 @@
 @using ProjectSuFc;
 @using JkwExtensions; 
 
-<h1>수FC / 일정관리</h1>
+<h1>수FC / 모임 관리</h1>
 
 <div>
-    <a class="btn btn-outline-success" href="/sufc/schedule/new">일정 등록</a>
+    <a class="btn btn-outline-success" href="/sufc/schedule/new">모임 등록</a>
 </div>
 
 @foreach (var schedule in ScheduleList)
@@ -27,6 +27,7 @@
             {
                 <button class="btn btn-sm btn-outline-primary" @onclick="(() => ChangeScheduleStatus(schedule, ScheduleStatus.Feature))">예정된 모임으로 변경</button>
             }
+            <button class="btn btn-sm btn-outline-dark" @onclick="(() => UpdateSchedule(schedule))">모임 변경</button>
         </div>
         <SuFcScheduleMemberList Schedule="schedule" TeamResultList="TeamResultList"></SuFcScheduleMemberList>
     </div>

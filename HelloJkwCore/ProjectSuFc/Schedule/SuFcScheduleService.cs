@@ -25,7 +25,13 @@ namespace ProjectSuFc
 
         public async Task<bool> SaveSchedule(ScheduleData schedule)
         {
-            var fileName = $"{schedule.Date:yyyyMMdd}-{schedule.Title}.json";
+            if (schedule.Id == 0)
+            {
+                var list = await GetAllSchedule();
+                schedule.Id = list.MaxOrNull(x => x.Id) + 1 ?? 1;
+            }
+
+            var fileName = $"sufc-schedule-{schedule.Id}.json";
 
             if (fileName.HasInvalidFileNameChar())
             {
@@ -37,9 +43,9 @@ namespace ProjectSuFc
             return true;
         }
 
-        private async Task<ScheduleData> LoadSchedule(DateTime date, string title)
+        public async Task<ScheduleData> GetSchedule(int scheduleId)
         {
-            var fileName = $"{date:yyyyMMdd}-{title}.json";
+            var fileName = $"sufc-schedule-{scheduleId}.json";
 
             if (fileName.HasInvalidFileNameChar())
             {
@@ -53,7 +59,7 @@ namespace ProjectSuFc
 
         public async Task<(bool Success, ScheduleData Result)> Vote(ScheduleData prevSchedule, MemberName memberName, ScheduleMemberStatus memberStatus)
         {
-            var schedule = await LoadSchedule(prevSchedule.Date, prevSchedule.Title);
+            var schedule = await GetSchedule(prevSchedule.Id);
             if (schedule == null)
                 return (false, null);
 

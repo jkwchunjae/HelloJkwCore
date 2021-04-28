@@ -40,6 +40,7 @@ namespace ProjectSuFc
 
     public class ScheduleData
     {
+        public int Id { get; set; }
         public string Title { get; set; } = "정기모임";
         public DateTime Date { get; set; }
         public string Location { get; set; } = "석수체육공원";

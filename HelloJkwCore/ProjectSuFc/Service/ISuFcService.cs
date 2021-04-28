@@ -23,6 +23,7 @@ namespace ProjectSuFc
         #region Schedule
         Task<List<ScheduleData>> GetAllSchedule();
         Task<bool> SaveSchedule(ScheduleData schedule);
+        Task<ScheduleData> GetSchedule(int scheduleId);
         Task<(bool Success, ScheduleData Result)> Vote(ScheduleData schedule, MemberName memberName, ScheduleMemberStatus memberStatus);
         #endregion
     }

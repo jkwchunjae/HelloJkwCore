@@ -48,5 +48,10 @@ namespace HelloJkwCore.Pages.SuFc
             teamResult = null;
             return false;
         }
+
+        public void UpdateSchedule(ScheduleData schedule)
+        {
+            Navi.NavigateTo($"/sufc/schedule/update/{schedule.Id}");
+        }
     }
 }

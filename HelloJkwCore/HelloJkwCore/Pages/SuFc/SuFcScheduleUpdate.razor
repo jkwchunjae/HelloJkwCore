@@ -1,15 +1,16 @@
 ﻿@inherits JkwPageBase
-@page "/sufc/schedule/new"
+@page "/sufc/schedule/update/{ScheduleId}"
 
-@using ProjectSuFc;
+@using ProjectSuFc
+@using JkwExtensions 
 
-@inject ISuFcService SuFcService;
+@inject ISuFcService SuFcService
 
-<h1>수FC / 모임 등록</h1>
+<h1>수FC / 모임 변경</h1>
 
 <RadzenTemplateForm TItem="ScheduleData" Data="Schedule"
-                    Submit="@(async () => await AddNewSchedule(Schedule))">
-    <RadzenFieldset Text="모임 등록" Style="max-width: 700px;">
+                    Submit="@(async () => await UpdateSchedule(Schedule))">
+    <RadzenFieldset Text="모임 변경" Style="max-width: 700px;">
         <div class="row">
             <div class="col-3">
                 <RadzenLabel Text="제목" />
@@ -55,45 +56,35 @@
                                 TextProperty="Title"></RadzenDropDown>
             </div>
         </div>
-        <RadzenButton ButtonType="ButtonType.Submit" Text="등록" />
-        <RadzenButton ButtonType="ButtonType.Button" Text="연속 등록" Click="@(async () => await AddNewSchedule(Schedule, gotoBack: false))" />
+        <RadzenButton ButtonType="ButtonType.Submit" Text="변경" />
     </RadzenFieldset>
 </RadzenTemplateForm>
 
-@code
-{
-    ScheduleData Schedule = new();
+@code {
+    [Parameter]
+    public string ScheduleId { get; set; }
+
     List<TeamResult> TeamResultList = new();
     TeamResult SelectedTeamResult;
 
-    protected override async Task OnPageInitializedAsync()
+    private ScheduleData Schedule { get; set; }
+
+    protected override async Task OnPageParametersSetAsync()
     {
+        Schedule = await SuFcService.GetSchedule(ScheduleId.ToInt());
         TeamResultList = await SuFcService.GetAllTeamResult();
+        SelectedTeamResult = TeamResultList.Find(x => x.Title == Schedule.TeamTitle);
     }
 
-    async Task AddNewSchedule(ScheduleData scheduleData, bool gotoBack = true)
+    async Task UpdateSchedule(ScheduleData scheduleData)
     {
         var members = await SuFcService.GetAllMember();
-        scheduleData.Members = members
-            .Select(member => new ScheduleMember(member.Name))
-            .ToList();
+        var newMembers = members.Where(x => scheduleData.Members.Empty(e => e.Name == x.Name)).ToList();
+        scheduleData.Members.AddRange(newMembers.Select(x => new ScheduleMember(x.Name)));
         scheduleData.TeamTitle = SelectedTeamResult?.Title ?? string.Empty;
 
         await SuFcService.SaveSchedule(scheduleData);
 
-        if (gotoBack)
-        {
-            Navi.NavigateTo("/sufc/schedule");
-        }
-        else
-        {
-            var newSchedule = new ScheduleData
-            {
-                Title = scheduleData.Title,
-                Location = scheduleData.Location,
-                Time = scheduleData.Time,
-            };
-            Schedule = newSchedule;
-        }
+        Navi.NavigateTo("/sufc/schedule");
     }
 }
