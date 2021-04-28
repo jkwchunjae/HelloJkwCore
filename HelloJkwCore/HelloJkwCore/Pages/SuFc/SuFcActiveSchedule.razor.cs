@@ -22,8 +22,8 @@ namespace HelloJkwCore.Pages.SuFc
         private MemberName MyName;
         private ScheduleMemberStatus MyStatus = ScheduleMemberStatus.None;
         private MemberName SelectedName;
-        private List<Member> Members;
-        private List<Member> NotConnectedMembers;
+        private List<Member> Members = new();
+        private List<Member> NotConnectedMembers = new();
         private List<TeamResult> TeamResultList = new();
 
         protected override async Task OnPageInitializedAsync()
