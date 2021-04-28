@@ -8,7 +8,8 @@
 <div>
     <RadzenDropDown TValue="TeamMakerStrategy" Data="@(TeamMakerStrategies.Select(x => new { Value = x.Strategy, Text = x.Name } ).ToList())"
                     ValueProperty="Value" TextProperty="Text"
-                    @bind-Value="TeamMakerStrategy" />
+                    @bind-Value="TeamMakerStrategy"
+                    Change="(() => StrategyChanged())"/>
 </div>
 <div>
     <RadzenNumeric Min="2" Max="5" @bind-Value="TeamCount" />
@@ -36,15 +37,38 @@
         </tr>
     </thead>
     <tbody>
+        @if (TeamMakerStrategy == TeamMakerStrategy.Manual || LeftMembers.Any())
+        {
+            <tr>
+                <td colspan="3">
+                    <RadzenDropDown TValue="TeamName" Data="TeamResult.TeamNames" @bind-Value="SelectedTeamName" Style="width: 100px;"></RadzenDropDown>
+                    <RadzenDropDown TValue="MemberName" Data="LeftMembers" @bind-Value="SelectedMemberName" Style="width: 150px;"></RadzenDropDown>
+                    <button class="btn btn-outline-dark" @onclick="@(() => AddToTeam(SelectedTeamName, SelectedMemberName))">추가</button>
+                </td>
+            </tr>
+        }
         @for (var i = 0; i < TeamResult.MaximumTeamSize; i++)
         {
             <tr>
                 @foreach (var team in TeamResult.TeamNames)
                 {
-                    var members = TeamResult.GroupByTeam[team];
+                    var members = TeamResult.GroupByTeam.ContainsKey(team) ? TeamResult.GroupByTeam[team] : new List<MemberName>();
                     <td>
                         @if (i < members.Count)
-                            @TeamResult.GroupByTeam[team][i].Name
+                        {
+                            var memberName = TeamResult.GroupByTeam[team][i];
+                            <span @onclick="(() => ChangeDeleteButton(memberName, false))">
+                                @memberName
+                            </span>
+                            @if (MemberDeleteButton.ContainsKey(memberName) ? MemberDeleteButton[memberName] : false)
+                            {
+                                <button class="btn btn-sm btn-danger" @onclick="(() => DeleteFromResult(memberName))"><i class="bi-x"></i></button>
+                            }
+                            else
+                            {
+                                <i class="bi-x btn btn-sm" @onclick="(() => ChangeDeleteButton(memberName, true))" style="cursor: pointer;"></i>
+                            }
+                        }
                     </td>
                 }
             </tr>
