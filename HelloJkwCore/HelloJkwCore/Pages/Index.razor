@@ -9,6 +9,7 @@
         <h1>@context.User.Identity.Name 님 안녕하세요!</h1>
 
         <RadzenButton Click="() => Navi.NavigateTo(DiaryUrl.Home())" Text="일기장" />
+        <RadzenButton Click="() => Navi.NavigateTo(sufc)" Text="수FC" />
     </Authorized>
     <NotAuthorized>
         <h1>안녕하세요!</h1>
@@ -20,4 +21,5 @@
 @code
 {
     string loginPath = "/login";
+    string sufc = "/sufc";
 }
