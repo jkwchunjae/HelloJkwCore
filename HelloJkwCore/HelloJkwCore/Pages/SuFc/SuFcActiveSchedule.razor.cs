@@ -36,8 +36,8 @@ namespace HelloJkwCore.Pages.SuFc
             TeamResultList = await SuFcService.GetAllTeamResult();
             Members = await SuFcService.GetAllMember();
             SelectableMembers = Members
-                .Where(x => x.ConnectIdList.Empty())
-                .Where(x => Schedule.Members.Where(e => e.Status == ScheduleMemberStatus.None).Any(e => e.Name == x.Name))
+                //.Where(x => x.ConnectIdList.Empty())
+                //.Where(x => Schedule.Members.Where(e => e.Status == ScheduleMemberStatus.None).Any(e => e.Name == x.Name))
                 .ToList();
             await LoadMyInfoAsync();
         }
