@@ -17,12 +17,7 @@ namespace ProjectSuFc
         {
             var teamResult = new TeamResult(teamCount);
 
-            var shuffled = members
-                .RandomShuffle()
-                .Select((x, i) => new { Name = x, Team = teamResult.TeamNames[i % teamCount], })
-                .Select(x => (x.Name, x.Team))
-                .OrderBy(x => x.Name)
-                .ToList();
+            var shuffled = RandomShuffle(members, teamResult.TeamNames);
 
             teamResult.Players = shuffled;
             return Task.FromResult(teamResult);

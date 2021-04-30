@@ -18,6 +18,7 @@ namespace ProjectSuFc
         {
             _strategy.Add(TeamMakerStrategy.FullRandom, new FullRandomTeamMaker(this));
             _strategy.Add(TeamMakerStrategy.Manual, new ManualTeamMaker(this));
+            _strategy.Add(TeamMakerStrategy.AttendProb, new AttendProbTeamMaker(this));
         }
 
         public async Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy)
