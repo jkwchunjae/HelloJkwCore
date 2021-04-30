@@ -8,6 +8,9 @@
 
 <h1>수FC / 모임 변경</h1>
 
+@if (Schedule != null)
+{
+
 <RadzenTemplateForm TItem="ScheduleData" Data="Schedule"
                     Submit="@(async () => await UpdateSchedule(Schedule))">
     <RadzenFieldset Text="모임 변경" Style="max-width: 700px;">
@@ -59,6 +62,7 @@
         <RadzenButton ButtonType="ButtonType.Submit" Text="변경" />
     </RadzenFieldset>
 </RadzenTemplateForm>
+}
 
 @code {
     [Parameter]

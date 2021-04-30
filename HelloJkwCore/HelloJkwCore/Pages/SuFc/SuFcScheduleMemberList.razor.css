@@ -4,7 +4,7 @@
 }
 
 .team-member-list {
-    display: inline-block;
+    display: initial;
 }
 
 .member-name {
@@ -12,6 +12,10 @@
     margin-right: 5px;
     color: #888;
     font-size: 14px;
+}
+
+.team-group {
+    display: inline-block;
 }
 
 .team-count {

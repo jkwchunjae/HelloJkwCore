@@ -10,8 +10,13 @@ namespace ProjectSuFc
 {
     public partial class SuFcService : ISuFcService
     {
+        private List<ScheduleData> _scheduleList = null;
         public async Task<List<ScheduleData>> GetAllSchedule()
         {
+            var cache = _scheduleList;
+            if (cache != null)
+                return cache;
+
             var files = await _fs.GetFilesAsync(path => path.GetPath(PathType.SuFcSchedulesPath));
 
             var list = await files.Select(async file =>
@@ -20,7 +25,10 @@ namespace ProjectSuFc
                 })
                 .WhenAll();
 
-            return list.OrderByDescending(x => x.Date).ToList();
+            cache = list.OrderByDescending(x => x.Date).ToList();
+            _scheduleList = cache;
+
+            return cache;
         }
 
         public async Task<bool> SaveSchedule(ScheduleData schedule)
@@ -40,11 +48,17 @@ namespace ProjectSuFc
 
             await _fs.WriteJsonAsync(path => path.GetPath(PathType.SuFcSchedulesPath) + "/" + fileName, schedule);
 
+            _scheduleList = null;
+
             return true;
         }
 
         public async Task<ScheduleData> GetSchedule(int scheduleId)
         {
+            var found = _scheduleList?.Find(x => x.Id == scheduleId);
+            if (found != null)
+                return found;
+
             var fileName = $"sufc-schedule-{scheduleId}.json";
 
             if (fileName.HasInvalidFileNameChar())

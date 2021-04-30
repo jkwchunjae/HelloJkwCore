@@ -8,10 +8,18 @@
     margin-left: 10px;
 }
 
+.view-mobile {
+    display: none;
+}
+
 @media( max-width: 500px ) {
     .schedule-info-item {
         display: block;
         margin-left: 0px;
+    }
+
+    .view-wide {
+        display: none;
     }
 }
 

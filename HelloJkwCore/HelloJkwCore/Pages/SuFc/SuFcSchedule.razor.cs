@@ -16,37 +16,30 @@ namespace HelloJkwCore.Pages.SuFc
         private List<ScheduleData> ScheduleList = new();
         private List<TeamResult> TeamResultList = new();
 
-        private List<(ScheduleMemberStatus MemberStatus, string Text)> ScheduleTypes = new List<(ScheduleMemberStatus MemberStatus, string Text)>
-        {
-            (ScheduleMemberStatus.Yes, "참석"),
-            (ScheduleMemberStatus.No, "불참"),
-            (ScheduleMemberStatus.NotYet, "미정"),
-            (ScheduleMemberStatus.None, "투표안함"),
-        };
-
         protected override async Task OnPageInitializedAsync()
         {
             ScheduleList = await SuFcService.GetAllSchedule();
+            ScheduleList = ReorderingSchedlue(ScheduleList);
             TeamResultList = await SuFcService.GetAllTeamResult();
+        }
+
+        private List<ScheduleData> ReorderingSchedlue(List<ScheduleData> schedules)
+        {
+            schedules = schedules.OrderBy(x => x.Date).ToList();
+            var active = schedules.Where(x => x.Status == ScheduleStatus.Active).ToList();
+            var feature = schedules.Where(x => x.Status == ScheduleStatus.Feature).ToList();
+            var done = schedules.Where(x => x.Status == ScheduleStatus.Done).ToList();
+
+            schedules = active.Concat(feature).Concat(done).ToList();
+            return schedules;
         }
 
         private async Task ChangeScheduleStatus(ScheduleData schedule, ScheduleStatus status)
         {
             schedule.Status = status;
+            ScheduleList = ReorderingSchedlue(ScheduleList);
             await SuFcService.SaveSchedule(schedule);
             StateHasChanged();
-        }
-
-        private bool TryGetTeamResult(string teamTitle, out TeamResult teamResult)
-        {
-            var found = TeamResultList.Find(x => x.Title == teamTitle);
-            if (found != null)
-            {
-                teamResult = found;
-                return true;
-            }
-            teamResult = null;
-            return false;
         }
 
         public void UpdateSchedule(ScheduleData schedule)

@@ -12,9 +12,12 @@ namespace ProjectSuFc
     public partial class SuFcService : ISuFcService
     {
         private readonly Dictionary<TeamMakerStrategy, ITeamMaker> _strategy = new();
+        private List<TeamResult> _teamResultList = null;
 
         public Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy)
         {
+            _teamResultList = null;
+
             if (_strategy.ContainsKey(strategy))
             {
                 var teamMaker = _strategy[strategy];
@@ -27,6 +30,10 @@ namespace ProjectSuFc
 
         public async Task<List<TeamResult>> GetAllTeamResult()
         {
+            var cache = _teamResultList;
+            if (cache != null)
+                return cache;
+
             var files = await _fs.GetFilesAsync(path => path.GetPath(PathType.SuFcTeamsPath));
 
             var list = await files.Select(async file =>
@@ -35,11 +42,17 @@ namespace ProjectSuFc
                 })
                 .WhenAll();
 
-            return list.ToList();
+            cache = list.ToList();
+            _teamResultList = cache;
+            return cache;
         }
 
         public async Task<TeamResult> FindTeamResult(string title)
         {
+            var found = _teamResultList?.Find(x => x.Title == title);
+            if (found != null)
+                return found;
+
             var fileName = $"{title}.json";
             var saveFile = await _fs.ReadJsonAsync<TeamResult>(path => path.GetPath(PathType.SuFcTeamsPath) + "/" + fileName);
             return saveFile;
@@ -55,6 +68,8 @@ namespace ProjectSuFc
             }
 
             await _fs.WriteJsonAsync(path => path.GetPath(PathType.SuFcTeamsPath) + "/" + fileName, saveFile);
+
+            _teamResultList = null;
 
             return true;
         }

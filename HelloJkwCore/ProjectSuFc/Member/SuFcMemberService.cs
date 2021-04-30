@@ -10,8 +10,13 @@ namespace ProjectSuFc
 {
     public partial class SuFcService : ISuFcService
     {
+        private List<Member> _memberList = null;
         public async Task<List<Member>> GetAllMember()
         {
+            var cache = _memberList;
+            if (cache != null)
+                return cache;
+
             var files = await _fs.GetFilesAsync(path => path.GetPath(PathType.SuFcMembersPath));
 
             var list = await files.Select(async file =>
@@ -20,7 +25,10 @@ namespace ProjectSuFc
                 })
                 .WhenAll();
 
-            return list.ToList();
+            cache = list.ToList();
+            _memberList = cache;
+
+            return cache;
         }
 
         public async Task<bool> SaveMember(Member member)
@@ -39,6 +47,8 @@ namespace ProjectSuFc
             }
 
             var result = await _fs.WriteJsonAsync(path => path.GetPath(PathType.SuFcMembersPath) + "/" + fileName, member);
+
+            _memberList = null;
 
             return result;
         }

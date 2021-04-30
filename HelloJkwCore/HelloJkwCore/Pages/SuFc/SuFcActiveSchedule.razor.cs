@@ -22,8 +22,8 @@ namespace HelloJkwCore.Pages.SuFc
         private MemberName MyName;
         private ScheduleMemberStatus MyStatus = ScheduleMemberStatus.None;
         private MemberName SelectedName;
-        private List<Member> Members;
-        private List<Member> NotConnectedMembers;
+        private List<Member> Members = new();
+        private List<Member> SelectableMembers = new();
         private List<TeamResult> TeamResultList = new();
 
         protected override async Task OnPageInitializedAsync()
@@ -35,7 +35,10 @@ namespace HelloJkwCore.Pages.SuFc
         {
             TeamResultList = await SuFcService.GetAllTeamResult();
             Members = await SuFcService.GetAllMember();
-            NotConnectedMembers = Members.Where(x => x.ConnectIdList.Empty()).ToList();
+            SelectableMembers = Members
+                //.Where(x => x.ConnectIdList.Empty())
+                //.Where(x => Schedule.Members.Where(e => e.Status == ScheduleMemberStatus.None).Any(e => e.Name == x.Name))
+                .ToList();
             await LoadMyInfoAsync();
         }
 
