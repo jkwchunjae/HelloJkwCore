@@ -1,6 +1,11 @@
 ﻿.vote-count {
     color: #666;
     font-size: 14px;
+    margin-right: 5px;
+}
+
+.vote-member {
+    display: inline-block;
 }
 
 .team-member-list {
