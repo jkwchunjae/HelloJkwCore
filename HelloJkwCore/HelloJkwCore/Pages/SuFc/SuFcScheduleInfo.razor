@@ -24,7 +24,10 @@
     <span class="schedule-info-item schedule-time"><i class="bi-smartwatch"></i> @Schedule.Time</span>
     @if (!string.IsNullOrEmpty(Schedule.TeamTitle))
     {
-        <span class="schedule-info-item schedule-team" @onclick="(async () => await OpenTeamPreviewDialog(Schedule.TeamTitle))" style="cursor: pointer; text-decoration: underline;">
+        <span class="schedule-info-item schedule-team view-wide" @onclick="(async () => await OpenTeamPreviewDialog(Schedule.TeamTitle))" style="cursor: pointer; text-decoration: underline;">
+            <i class="bi-people"></i> @Schedule.TeamTitle
+        </span>
+        <span class="schedule-info-item schedule-team view-mobile" @onclick="(() => GotoTeamPreviewPage(Schedule.TeamTitle))" style="cursor: pointer; text-decoration: underline;">
             <i class="bi-people"></i> @Schedule.TeamTitle
         </span>
     }
@@ -46,5 +49,11 @@
             [nameof(TeamResult)] = teamResult,
             ["MyName"] = MyName,
         });
+    }
+
+    void GotoTeamPreviewPage(string teamTitle)
+    {
+        var myNameStr = MyName?.Name ?? "none";
+        Navi.NavigateTo($"/sufc/team/{teamTitle}/{myNameStr}");
     }
 }

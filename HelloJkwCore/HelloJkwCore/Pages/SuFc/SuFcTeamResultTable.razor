@@ -1,10 +1,15 @@
 ﻿@inherits JkwPageBase
+@page "/sufc/team/{TeamTitle}/{MyNameStr}"
 
 @using ProjectSuFc
+@inject ISuFcService SuFcService
 
 @if (TeamResult != null)
 {
-<h3>@TeamResult.Title</h3>
+    @if (MyNameStr != null)
+    {
+        <h3>@TeamResult.Title</h3>
+    }
 
 <table class="table" style="width: initial">
     <thead>
@@ -48,4 +53,23 @@
 
     [Parameter]
     public MemberName MyName { get; set; }
+
+    [Parameter]
+    public string TeamTitle { get; set; }
+
+    [Parameter]
+    public string MyNameStr { get; set; }
+
+    protected override async Task OnPageInitializedAsync()
+    {
+        if (MyName == null && !string.IsNullOrEmpty(MyNameStr))
+        {
+            MyName = new MemberName(MyNameStr);
+        }
+
+        if (TeamResult == null && !string.IsNullOrEmpty(TeamTitle))
+        {
+            TeamResult = await SuFcService.FindTeamResult(TeamTitle);
+        }
+    }
 }
