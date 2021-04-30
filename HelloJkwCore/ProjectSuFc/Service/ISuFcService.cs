@@ -10,6 +10,7 @@ namespace ProjectSuFc
     {
         #region Member
         Task<List<Member>> GetAllMember();
+        Task<Member> FindMember(MemberName memberName);
         Task<bool> SaveMember(Member player);
         #endregion
 

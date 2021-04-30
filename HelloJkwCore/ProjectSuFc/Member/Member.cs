@@ -1,8 +1,10 @@
 ﻿using Common;
+using JkwExtensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProjectSuFc
 {
@@ -19,12 +21,6 @@ namespace ProjectSuFc
         }
     }
 
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum MemberSpecType
-    {
-        AttendProb,
-    }
-
     public class Member
     {
         public int No { get; set; }
@@ -35,10 +31,9 @@ namespace ProjectSuFc
         public List<SeasonId> JoinedSeason { get; set; } = new();
         public Dictionary<MemberSpecType, double> Spec { get; set; } = new();
 
-        private static Dictionary<MemberSpecType, double> DefaultSpecValue = new Dictionary<MemberSpecType, double>
-        {
-            [MemberSpecType.AttendProb] = 0.7,
-        };
+        private static Dictionary<MemberSpecType, SpecConfigAttribute> SpecConfig = typeof(MemberSpecType).GetValues<MemberSpecType>()
+            .Select(x => new { SpecType = x, SpecConfig = typeof(MemberSpecType).GetMember(x.ToString()).First().GetAttribute<SpecConfigAttribute>() })
+            .ToDictionary(x => x.SpecType, x => x.SpecConfig);
 
         public double GetSpecValue(MemberSpecType specType)
         {
@@ -46,9 +41,9 @@ namespace ProjectSuFc
             {
                 return value;
             }
-            else if (DefaultSpecValue.TryGetValue(specType, out var defaultValue))
+            else if (SpecConfig.TryGetValue(specType, out var config))
             {
-                return defaultValue;
+                return config.Default;
             }
             else
             {

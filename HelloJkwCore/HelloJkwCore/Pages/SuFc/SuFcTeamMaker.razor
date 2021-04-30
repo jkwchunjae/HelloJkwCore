@@ -20,7 +20,7 @@
 @if (TeamResult != null)
 {
 <div>
-    <RadzenTextBox @bind-Value="Title" Placeholder="제목을 입력하세요"/>
+    <RadzenTextBox @bind-Value="Title" Placeholder="제목을 입력하세요" Style="width: 150px;"/>
     <button class="btn btn-outline-success" @onclick="@(async () => await SaveFile())">결과 저장</button>
 </div>
 }
@@ -57,18 +57,40 @@
                         @if (i < members.Count)
                         {
                             var memberName = TeamResult.GroupByTeam[team][i];
-                            <span @onclick="(() => ChangeDeleteButton(memberName, false))">
+                            <span class="member-name" @onclick="(() => ChangeDeleteButton(memberName, false))">
                                 @memberName
                             </span>
-                            @if (MemberDeleteButton.ContainsKey(memberName) ? MemberDeleteButton[memberName] : false)
+                            @if (TeamResult.Score.Any())
                             {
-                                <button class="btn btn-sm btn-danger" @onclick="(() => DeleteFromResult(memberName))"><i class="bi-x"></i></button>
+                                <span class="member-score">
+                                    @TeamResult.Score[memberName]
+                                </span>
                             }
-                            else
+                            @if (TeamMakerStrategy == TeamMakerStrategy.Manual)
                             {
-                                <i class="bi-x btn btn-sm" @onclick="(() => ChangeDeleteButton(memberName, true))" style="cursor: pointer;"></i>
+                                @if (MemberDeleteButton.ContainsKey(memberName) ? MemberDeleteButton[memberName] : false)
+                                {
+                                    <button class="btn btn-sm btn-danger" @onclick="(() => DeleteFromResult(memberName))"><i class="bi-x"></i></button>
+                                }
+                                else
+                                {
+                                    <i class="bi-x btn btn-sm" @onclick="(() => ChangeDeleteButton(memberName, true))" style="cursor: pointer;"></i>
+                                }
                             }
                         }
+                    </td>
+                }
+            </tr>
+        }
+        @if (TeamResult.Score.Any())
+        {
+            <tr>
+                @foreach (var team in TeamResult.TeamNames)
+                {
+                    var members = TeamResult.GroupByTeam.ContainsKey(team) ? TeamResult.GroupByTeam[team] : new List<MemberName>();
+                    var sum = TeamResult.Score.Where(x => members.Contains(x.Key)).Sum(x => x.Value);
+                    <td class="score-summary">
+                        @sum.ToString("#.00")
                     </td>
                 }
             </tr>

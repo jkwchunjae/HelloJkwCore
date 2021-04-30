@@ -34,7 +34,7 @@ namespace ProjectSuFc
                         .ToList();
                     var avgByTeam = teamedUsers
                         .GroupBy(x => x.Team)
-                        .Select(x => new { Team = x.Key, Avg = x.Average(e => e.AttendProp) })
+                        .Select(x => new { Team = x.Key, Avg = x.Sum(e => e.AttendProp) })
                         .ToList();
                     var sd = avgByTeam.Select(x => x.Avg).StandardDeviation();
                     return new { Users = teamedUsers, AvgByTeam = avgByTeam, Score = sd };
@@ -46,6 +46,9 @@ namespace ProjectSuFc
             var best = list.First();
 
             var teamResult = new TeamResult(teamCount);
+            teamResult.Score = best.Users
+                .ToDictionary(x => x.Name, x => x.AttendProp);
+
             teamResult.Players = best.Users
                 .Select(x => (x.Name, x.Team))
                 .ToList();

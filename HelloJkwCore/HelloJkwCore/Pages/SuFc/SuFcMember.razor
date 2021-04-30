@@ -15,8 +15,12 @@ else
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>이름</th>
+            <th class="sortable" @onclick="(() => SortName())">이름</th>
             <th>ID 연결</th>
+            @foreach (var specInfo in SpecList)
+            {
+                <th class="sortable" @onclick="(() => SortSpec(specInfo.SpecType))">@specInfo.SpecName</th>
+            }
             <th>...</th>
         </tr>
     </thead>
@@ -44,6 +48,14 @@ else
                         }
                     }
                 </td>
+                @foreach (var specInfo in SpecList)
+                {
+                    <td>
+                        <input type="number" min="@specInfo.Min" max="@specInfo.Max" step="@specInfo.Step" class="spec-value" value="@member.GetSpecValue(specInfo.SpecType)"
+                               @oninput="(async (ChangeEventArgs args) => await ChangeSpecValue(member, specInfo.SpecType, args))"
+                               />
+                    </td>
+                }
                 <td>
                 </td>
             </tr>

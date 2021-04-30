@@ -18,6 +18,7 @@ namespace ProjectSuFc
         public string Title { get; set; }
         public List<TeamName> TeamNames { get; set; } = new();
         public List<(MemberName MemberName, TeamName TeamName)> Players { get; set; } = new();
+        public Dictionary<MemberName, double> Score { get; set; } = new();
 
         [JsonIgnore]
         public Dictionary<TeamName, List<MemberName>> GroupByTeam => Players
