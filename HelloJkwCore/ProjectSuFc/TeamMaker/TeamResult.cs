@@ -27,5 +27,16 @@ namespace ProjectSuFc
 
         [JsonIgnore]
         public int MaximumTeamSize => GroupByTeam.MaxOrNull(x => x.Value.Count) ?? 0;
+
+        public TeamResult()
+        {
+        }
+
+        public TeamResult(int teamCount)
+        {
+            var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var teams = Enumerable.Range(0, teamCount).Select(x => new TeamName { Id = alpha.Substring(x, 1) }).ToList();
+            TeamNames = teams;
+        }
     }
 }

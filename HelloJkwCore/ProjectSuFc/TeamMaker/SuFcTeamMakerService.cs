@@ -14,18 +14,24 @@ namespace ProjectSuFc
         private readonly Dictionary<TeamMakerStrategy, ITeamMaker> _strategy = new();
         private List<TeamResult> _teamResultList = null;
 
-        public Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy)
+        private void InitTeamMaker()
+        {
+            _strategy.Add(TeamMakerStrategy.FullRandom, new FullRandomTeamMaker(this));
+            _strategy.Add(TeamMakerStrategy.Manual, new ManualTeamMaker(this));
+        }
+
+        public async Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy)
         {
             _teamResultList = null;
 
             if (_strategy.ContainsKey(strategy))
             {
                 var teamMaker = _strategy[strategy];
-                var result = teamMaker.MakeTeam(members, teamCount);
-                return Task.FromResult(result);
+                var result = await teamMaker.MakeTeamAsync(members, teamCount);
+                return result;
             }
 
-            return Task.FromResult((TeamResult)null);
+            return null;
         }
 
         public async Task<List<TeamResult>> GetAllTeamResult()
