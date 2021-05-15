@@ -80,5 +80,10 @@ namespace ProjectSuFc
 
             return true;
         }
+
+        public Task<TeamSettingOption> GetTeamSettingOption()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

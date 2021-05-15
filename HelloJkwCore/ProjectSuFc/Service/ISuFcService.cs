@@ -27,5 +27,9 @@ namespace ProjectSuFc
         Task<ScheduleData> GetSchedule(int scheduleId);
         Task<(bool Success, ScheduleData Result)> Vote(ScheduleData schedule, MemberName memberName, ScheduleMemberStatus memberStatus);
         #endregion
+
+        #region TeamSettingOption
+        Task<TeamSettingOption> GetTeamSettingOption();
+        #endregion
     }
 }
