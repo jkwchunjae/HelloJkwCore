@@ -1,0 +1,9 @@
+﻿@inherits JkwPageBase
+
+@page "/tetris"
+
+<h3>TetrisHome</h3>
+
+<RadzenButton Text="연결" Click="@(async () => await ConnectAsync())"></RadzenButton>
+
+<RadzenTextArea @bind-Value="Log" Rows="20" Cols="100"></RadzenTextArea>
