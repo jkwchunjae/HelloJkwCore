@@ -1,19 +1,25 @@
 ﻿@inherits JkwPageBase
 @page "/sufc/schedule"
 
+@using Common;
 @using ProjectSuFc;
 @using JkwExtensions; 
 
 <h1>수FC / 모임 관리</h1>
 
+@if (User?.Roles?.Contains(UserRole.SuFcAdmin) ?? false)
+{
 <div>
     <a class="btn btn-outline-success" href="/sufc/schedule/new">모임 등록</a>
 </div>
+}
 
 @foreach (var schedule in ScheduleList)
 {
     <div class="schedule-box" style="margin-top: 10px; margin-bottom: 15px;">
         <SuFcScheduleInfo Schedule="schedule"></SuFcScheduleInfo>
+        @if (User?.Roles?.Contains(UserRole.SuFcAdmin) ?? false)
+        {
         <div class="schedule-action">
             @if (schedule.Status == ScheduleStatus.Active)
             {
@@ -29,6 +35,7 @@
             }
             <button class="btn btn-sm btn-outline-dark" @onclick="(() => UpdateSchedule(schedule))">모임 변경</button>
         </div>
+        }
         <SuFcScheduleMemberList Schedule="schedule" TeamResultList="TeamResultList"></SuFcScheduleMemberList>
     </div>
 }

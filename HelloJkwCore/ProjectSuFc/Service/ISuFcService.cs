@@ -10,11 +10,12 @@ namespace ProjectSuFc
     {
         #region Member
         Task<List<Member>> GetAllMember();
+        Task<Member> FindMember(MemberName memberName);
         Task<bool> SaveMember(Member player);
         #endregion
 
         #region Team
-        Task<TeamResult> MakeTeam(List<MemberName> players, int teamCount, TeamMakerStrategy strategy);
+        Task<TeamResult> MakeTeam(List<MemberName> players, int teamCount, TeamMakerStrategy strategy, TeamSettingOption option);
         Task<List<TeamResult>> GetAllTeamResult();
         Task<bool> SaveTeamResult(TeamResult saveFile);
         Task<TeamResult> FindTeamResult(string title);
@@ -25,6 +26,11 @@ namespace ProjectSuFc
         Task<bool> SaveSchedule(ScheduleData schedule);
         Task<ScheduleData> GetSchedule(int scheduleId);
         Task<(bool Success, ScheduleData Result)> Vote(ScheduleData schedule, MemberName memberName, ScheduleMemberStatus memberStatus);
+        #endregion
+
+        #region TeamSettingOption
+        Task<TeamSettingOption> GetTeamSettingOption();
+        Task SaveTeamSettingOption(TeamSettingOption option);
         #endregion
     }
 }

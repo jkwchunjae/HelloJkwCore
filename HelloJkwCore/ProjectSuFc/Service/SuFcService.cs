@@ -17,8 +17,7 @@ namespace ProjectSuFc
         {
             _fs = fsService.GetFileSystem(option.FileSystemSelect);
 
-            _strategy.Add(TeamMakerStrategy.FullRandom, new FullRandomTeamMaker());
-            _strategy.Add(TeamMakerStrategy.Manual, new ManualTeamMaker());
+            InitTeamMaker();
         }
     }
 }

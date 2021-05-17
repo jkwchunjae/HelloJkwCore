@@ -31,6 +31,15 @@ namespace ProjectSuFc
             return cache;
         }
 
+        public async Task<Member> FindMember(MemberName memberName)
+        {
+            var fileName = $"{memberName}.json";
+
+            var member = await _fs.ReadJsonAsync<Member>(path => path.GetPath(PathType.SuFcMembersPath) + "/" + fileName);
+
+            return member;
+        }
+
         public async Task<bool> SaveMember(Member member)
         {
             var fileName = $"{member.Name}.json";

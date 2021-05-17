@@ -14,5 +14,6 @@
         SuFcMembersPath,
         SuFcTeamsPath,
         SuFcSchedulesPath,
+        SuFcTeamSettingFile,
     }
 }

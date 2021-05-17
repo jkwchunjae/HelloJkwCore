@@ -7,18 +7,15 @@ using System.Threading.Tasks;
 
 namespace ProjectSuFc
 {
-    public class ManualTeamMaker : ITeamMaker
+    public class ManualTeamMaker : TeamMaker
     {
-        public TeamResult MakeTeam(List<MemberName> members, int teamCount)
+        public ManualTeamMaker(ISuFcService service) : base(service)
         {
-            var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var teams = Enumerable.Range(0, teamCount).Select(x => new TeamName { Id = alpha.Substring(x, 1) }).ToList();
+        }
 
-            return new TeamResult
-            {
-                TeamNames = teams,
-                Players = new(),
-            };
+        public override Task<TeamResult> MakeTeamAsync(List<MemberName> members, int teamCount, TeamSettingOption option)
+        {
+            return Task.FromResult(new TeamResult(teamCount));
         }
     }
 }

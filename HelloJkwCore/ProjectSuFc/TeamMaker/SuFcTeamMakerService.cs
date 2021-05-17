@@ -14,18 +14,26 @@ namespace ProjectSuFc
         private readonly Dictionary<TeamMakerStrategy, ITeamMaker> _strategy = new();
         private List<TeamResult> _teamResultList = null;
 
-        public Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy)
+        private void InitTeamMaker()
+        {
+            _strategy.Add(TeamMakerStrategy.FullRandom, new FullRandomTeamMaker(this));
+            _strategy.Add(TeamMakerStrategy.Manual, new ManualTeamMaker(this));
+            _strategy.Add(TeamMakerStrategy.AttendProb, new AttendProbTeamMaker(this));
+            _strategy.Add(TeamMakerStrategy.TeamSetting, new SettingOptionTeamMaker(this));
+        }
+
+        public async Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy, TeamSettingOption option)
         {
             _teamResultList = null;
 
             if (_strategy.ContainsKey(strategy))
             {
                 var teamMaker = _strategy[strategy];
-                var result = teamMaker.MakeTeam(members, teamCount);
-                return Task.FromResult(result);
+                var result = await teamMaker.MakeTeamAsync(members, teamCount, option);
+                return result;
             }
 
-            return Task.FromResult((TeamResult)null);
+            return null;
         }
 
         public async Task<List<TeamResult>> GetAllTeamResult()
@@ -72,6 +80,21 @@ namespace ProjectSuFc
             _teamResultList = null;
 
             return true;
+        }
+
+        public async Task<TeamSettingOption> GetTeamSettingOption()
+        {
+            if (await _fs.FileExistsAsync(path => path.GetPath(PathType.SuFcTeamSettingFile)))
+            {
+                var option = await _fs.ReadJsonAsync<TeamSettingOption>(path => path.GetPath(PathType.SuFcTeamSettingFile));
+                return option ?? new();
+            }
+            return new();
+        }
+
+        public async Task SaveTeamSettingOption(TeamSettingOption option)
+        {
+            await _fs.WriteJsonAsync(path => path.GetPath(PathType.SuFcTeamSettingFile), option);
         }
     }
 }

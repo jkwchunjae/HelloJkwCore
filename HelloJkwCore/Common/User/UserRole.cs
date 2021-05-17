@@ -13,5 +13,6 @@ namespace Common
     {
         Admin,
         DiaryWriter,
+        SuFcAdmin,
     }
 }
