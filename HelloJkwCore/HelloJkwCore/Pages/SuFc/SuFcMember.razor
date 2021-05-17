@@ -1,11 +1,16 @@
 ﻿@inherits JkwPageBase
 @page "/sufc/member"
 
+@using Common; 
+
 <h1>수FC / 회원</h1>
 
 @if (IsUserSomeoneConnected)
 {
+    if (User.Roles.Contains(UserRole.SuFcAdmin))
+    {
     <a class="btn btn-outline-success" href="/sufc/member/new">추가</a>
+    }
 }
 else
 {

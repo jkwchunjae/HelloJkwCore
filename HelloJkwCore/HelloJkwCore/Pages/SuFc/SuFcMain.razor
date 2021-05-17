@@ -1,6 +1,8 @@
 ﻿@inherits JkwPageBase
 @page "/sufc"
 
+@using Common; 
+
 <h1>수FC</h1>
 
 @if (!IsAuthenticated)
@@ -10,7 +12,10 @@
 else
 {
     <a class="btn btn-outline-primary" href="/sufc/member">회원</a>
+    @if (User.Roles.Contains(UserRole.SuFcAdmin))
+    {
     <a class="btn btn-outline-primary" href="/sufc/teammaker">팀짜기</a>
+    }
     <a class="btn btn-outline-primary" href="/sufc/schedule">모임관리</a>
 }
 
