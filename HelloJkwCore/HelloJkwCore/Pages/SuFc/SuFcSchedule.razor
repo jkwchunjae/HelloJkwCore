@@ -7,7 +7,7 @@
 
 <h1>수FC / 모임 관리</h1>
 
-@if (User.Roles.Contains(UserRole.SuFcAdmin))
+@if (User?.Roles?.Contains(UserRole.SuFcAdmin) ?? false)
 {
 <div>
     <a class="btn btn-outline-success" href="/sufc/schedule/new">모임 등록</a>
@@ -18,7 +18,7 @@
 {
     <div class="schedule-box" style="margin-top: 10px; margin-bottom: 15px;">
         <SuFcScheduleInfo Schedule="schedule"></SuFcScheduleInfo>
-        @if (User.Roles.Contains(UserRole.SuFcAdmin))
+        @if (User?.Roles?.Contains(UserRole.SuFcAdmin) ?? false)
         {
         <div class="schedule-action">
             @if (schedule.Status == ScheduleStatus.Active)

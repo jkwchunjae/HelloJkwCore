@@ -12,7 +12,7 @@
 else
 {
     <a class="btn btn-outline-primary" href="/sufc/member">회원</a>
-    @if (User.Roles.Contains(UserRole.SuFcAdmin))
+    @if (User?.Roles?.Contains(UserRole.SuFcAdmin) ?? false)
     {
     <a class="btn btn-outline-primary" href="/sufc/teammaker">팀짜기</a>
     }

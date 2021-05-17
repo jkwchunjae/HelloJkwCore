@@ -7,7 +7,7 @@
 
 @if (IsUserSomeoneConnected)
 {
-    if (User.Roles.Contains(UserRole.SuFcAdmin))
+    if (User?.Roles?.Contains(UserRole.SuFcAdmin) ?? false)
     {
     <a class="btn btn-outline-success" href="/sufc/member/new">추가</a>
     }
