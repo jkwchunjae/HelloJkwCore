@@ -18,13 +18,14 @@ namespace HelloJkwCore.Pages.SuFc
         {
             (TeamMakerStrategy.FullRandom, "완전 랜덤"),
             (TeamMakerStrategy.AttendProb, "출석 확률만 반영"),
+            (TeamMakerStrategy.TeamSetting, "분리 조건"),
             (TeamMakerStrategy.Manual, "직접 입력"),
         };
 
         TeamResult TeamResult = null;
         int TeamCount = 3;
         string Title = string.Empty;
-        TeamMakerStrategy TeamMakerStrategy;
+        TeamMakerStrategy TeamMakerStrategy = TeamMakerStrategy.TeamSetting;
 
         private List<Member> Members;
         private List<MemberName> LeftMembers = new();
@@ -51,7 +52,8 @@ namespace HelloJkwCore.Pages.SuFc
         {
             var players = await SuFcService.GetAllMember();
             var names = players.Select(x => x.Name).ToList();
-            TeamResult = await SuFcService.MakeTeam(names, TeamCount, TeamMakerStrategy);
+            var option = await SuFcService.GetTeamSettingOption();
+            TeamResult = await SuFcService.MakeTeam(names, TeamCount, TeamMakerStrategy, option);
             LeftMembers = Members.Select(x => x.Name)
                 .OrderBy(x => x)
                 .Where(x => TeamResult.Players.Empty(e => e.MemberName == x))

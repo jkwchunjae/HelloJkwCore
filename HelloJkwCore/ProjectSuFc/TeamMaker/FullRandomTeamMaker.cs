@@ -13,7 +13,7 @@ namespace ProjectSuFc
         {
         }
 
-        public override Task<TeamResult> MakeTeamAsync(List<MemberName> members, int teamCount)
+        public override Task<TeamResult> MakeTeamAsync(List<MemberName> members, int teamCount, TeamSettingOption option)
         {
             var teamResult = new TeamResult(teamCount);
 

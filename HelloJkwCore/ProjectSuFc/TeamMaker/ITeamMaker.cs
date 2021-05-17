@@ -9,14 +9,14 @@ namespace ProjectSuFc
 {
     interface ITeamMaker
     {
-        Task<TeamResult> MakeTeamAsync(List<MemberName> names, int teamCount);
+        Task<TeamResult> MakeTeamAsync(List<MemberName> names, int teamCount, TeamSettingOption option);
     }
 
     public abstract class TeamMaker : ITeamMaker
     {
         protected ISuFcService SuFcService { get; }
 
-        public abstract Task<TeamResult> MakeTeamAsync(List<MemberName> names, int teamCount);
+        public abstract Task<TeamResult> MakeTeamAsync(List<MemberName> names, int teamCount, TeamSettingOption option);
 
         public TeamMaker(ISuFcService service)
         {

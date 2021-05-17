@@ -13,7 +13,8 @@ namespace ProjectSuFc
     }
     public class TeamSettingOption
     {
-        public List<MergeSplitOption> SplitOptions { get; set; }
-        public List<MergeSplitOption> MergeOptions { get; set; }
+        public List<(MemberName Name, double AttendProb)> MemberAttends { get; set; } = new();
+        public List<MergeSplitOption> SplitOptions { get; set; } = new();
+        public List<MergeSplitOption> MergeOptions { get; set; } = new();
     }
 }

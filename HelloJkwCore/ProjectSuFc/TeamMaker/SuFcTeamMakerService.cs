@@ -19,16 +19,17 @@ namespace ProjectSuFc
             _strategy.Add(TeamMakerStrategy.FullRandom, new FullRandomTeamMaker(this));
             _strategy.Add(TeamMakerStrategy.Manual, new ManualTeamMaker(this));
             _strategy.Add(TeamMakerStrategy.AttendProb, new AttendProbTeamMaker(this));
+            _strategy.Add(TeamMakerStrategy.TeamSetting, new SettingOptionTeamMaker(this));
         }
 
-        public async Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy)
+        public async Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy, TeamSettingOption option)
         {
             _teamResultList = null;
 
             if (_strategy.ContainsKey(strategy))
             {
                 var teamMaker = _strategy[strategy];
-                var result = await teamMaker.MakeTeamAsync(members, teamCount);
+                var result = await teamMaker.MakeTeamAsync(members, teamCount, option);
                 return result;
             }
 
@@ -81,9 +82,19 @@ namespace ProjectSuFc
             return true;
         }
 
-        public Task<TeamSettingOption> GetTeamSettingOption()
+        public async Task<TeamSettingOption> GetTeamSettingOption()
         {
-            throw new NotImplementedException();
+            if (await _fs.FileExistsAsync(path => path.GetPath(PathType.SuFcTeamSettingFile)))
+            {
+                var option = await _fs.ReadJsonAsync<TeamSettingOption>(path => path.GetPath(PathType.SuFcTeamSettingFile));
+                return option ?? new();
+            }
+            return new();
+        }
+
+        public async Task SaveTeamSettingOption(TeamSettingOption option)
+        {
+            await _fs.WriteJsonAsync(path => path.GetPath(PathType.SuFcTeamSettingFile), option);
         }
     }
 }

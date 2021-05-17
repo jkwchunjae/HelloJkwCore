@@ -15,7 +15,7 @@ namespace ProjectSuFc
         #endregion
 
         #region Team
-        Task<TeamResult> MakeTeam(List<MemberName> players, int teamCount, TeamMakerStrategy strategy);
+        Task<TeamResult> MakeTeam(List<MemberName> players, int teamCount, TeamMakerStrategy strategy, TeamSettingOption option);
         Task<List<TeamResult>> GetAllTeamResult();
         Task<bool> SaveTeamResult(TeamResult saveFile);
         Task<TeamResult> FindTeamResult(string title);
@@ -30,6 +30,7 @@ namespace ProjectSuFc
 
         #region TeamSettingOption
         Task<TeamSettingOption> GetTeamSettingOption();
+        Task SaveTeamSettingOption(TeamSettingOption option);
         #endregion
     }
 }

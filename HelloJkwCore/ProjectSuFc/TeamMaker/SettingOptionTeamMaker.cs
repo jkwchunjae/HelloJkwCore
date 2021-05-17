@@ -13,26 +13,26 @@ namespace ProjectSuFc
         {
         }
 
-        public override async Task<TeamResult> MakeTeamAsync(List<MemberName> names, int teamCount)
+        public override Task<TeamResult> MakeTeamAsync(List<MemberName> names, int teamCount, TeamSettingOption option)
         {
-            var teamSetting = await SuFcService.GetTeamSettingOption();
-            return MakeTeam_Internal(names, teamCount, teamSetting);
+            var result = MakeTeam_Internal(names, teamCount, option);
+            return Task.FromResult(result);
         }
 
-        public TeamResult MakeTeam_Internal(List<MemberName> names, int teamCount, TeamSettingOption teamSetting)
+        public TeamResult MakeTeam_Internal(List<MemberName> names, int teamCount, TeamSettingOption option)
         {
             var teamResult = new TeamResult(teamCount);
 
-            foreach (var splitOption in teamSetting.SplitOptions)
+            foreach (var splitOption in option.SplitOptions)
             {
                 var remainNames = splitOption.Names.Where(x => teamResult.Players.Empty(e => e.MemberName == x)).ToList();
                 var userCount = remainNames.Count; // count = 5, teamCount = 3
                 var teamSetCount = userCount / teamCount + (userCount % teamCount == 0 ? 0 : 1); // teamSetCount = 2
                 var teamNames = Enumerable.Range(1, teamSetCount)
-                    .Select((_, i) => MakeTeamNameList(teamCount).Take(i == teamSetCount - 1 ? userCount % teamCount : teamCount))
+                    .Select((_, i) => MakeTeamNameList(teamCount))
                     .SelectMany(x => x)
-                    .RandomShuffle()
                     .Take(userCount)
+                    .RandomShuffle()
                     .ToList(); // ABCCB (random)
 
                 var splitResult = remainNames.Zip(teamNames, (n, t) => (n, t)).ToList();
@@ -51,6 +51,9 @@ namespace ProjectSuFc
 
                 teamResult.Players.Add((name, newTeam));
             }
+
+            teamResult.Score = teamResult.Players
+                .ToDictionary(x => x.MemberName, x => WhereIs(option.SplitOptions, x.MemberName));
 
             return teamResult;
         }
@@ -77,6 +80,14 @@ namespace ProjectSuFc
                 var result = ordered.First().TeamName;
                 return result;
             }
+        }
+
+        private double WhereIs(List<MergeSplitOption> options, MemberName name)
+        {
+            return options.Select((x, i) => new { Option = x, Index = i + 1 })
+                .FirstOrDefault(x => x.Option.Names.Contains(name))
+                ?.Index ?? 0;
+
         }
     }
 }
