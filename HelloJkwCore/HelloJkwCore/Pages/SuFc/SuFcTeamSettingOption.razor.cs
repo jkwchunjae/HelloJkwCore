@@ -37,6 +37,7 @@ namespace HelloJkwCore.Pages.SuFc
         async Task SaveSettingOption()
         {
             await SuFcService.SaveTeamSettingOption(Option);
+            Navi.NavigateTo("/sufc/teammaker");
         }
 
         void OnTeamSettingOptionUpdated()
