@@ -31,6 +31,7 @@ namespace HelloJkwCore.Pages.SuFc
         private List<MemberName> LeftMembers = new();
         private TeamName SelectedTeamName;
         private MemberName SelectedMemberName;
+        private bool VisibleScore = false;
 
         private Dictionary<MemberName, bool> MemberDeleteButton = new();
 

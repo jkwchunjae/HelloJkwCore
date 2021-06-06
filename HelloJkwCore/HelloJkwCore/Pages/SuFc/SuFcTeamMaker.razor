@@ -13,6 +13,8 @@
 </div>
 <div>
     <RadzenNumeric Min="2" Max="5" @bind-Value="TeamCount" />
+</div>
+<div>
     <RadzenLink Text="팀 세팅 조건 설정" Path="/sufc/team-setting-option" />
 </div>
 <div>
@@ -23,6 +25,10 @@
 <div>
     <RadzenTextBox @bind-Value="Title" Placeholder="제목을 입력하세요" Style="width: 150px;"/>
     <button class="btn btn-outline-success" @onclick="@(async () => await SaveFile())">결과 저장</button>
+</div>
+<div>
+    <RadzenCheckBox @bind-Value="VisibleScore" TValue="bool" Name="VisibleScoreCheckBox"/>
+    <RadzenLabel Text="숫자 보기" Component="VisibleScoreCheckBox" @onclick="(() => VisibleScore = !VisibleScore)"/>
 </div>
 }
 
@@ -61,7 +67,7 @@
                             <span class="member-name" @onclick="(() => ChangeDeleteButton(memberName, false))">
                                 @memberName
                             </span>
-                            @if (TeamResult.Score.Any())
+                            @if (TeamResult.Score.Any() && VisibleScore)
                             {
                                 <span class="member-score">
                                     @TeamResult.Score[memberName]
@@ -83,7 +89,7 @@
                 }
             </tr>
         }
-        @if (TeamResult.Score.Any())
+        @if (TeamResult.Score.Any() && VisibleScore)
         {
             <tr>
                 @foreach (var team in TeamResult.TeamNames)
