@@ -36,7 +36,7 @@ namespace Tests.SuFc
         [Fact]
         public void SplitOptionTest_분리조건_사람수가_팀_수보다_적은경우()
         {
-            var teamMaker = new SettingOptionTeamMaker(null);
+            var teamMaker = new SettingOptionTeamMaker();
 
             var teamCount = 3;
             var settingOption = new TeamSettingOption()
@@ -62,7 +62,7 @@ namespace Tests.SuFc
         [Fact]
         public void SplitOptionTest_분리조건_사람수가_팀_수보다_많은경우()
         {
-            var teamMaker = new SettingOptionTeamMaker(null);
+            var teamMaker = new SettingOptionTeamMaker();
 
             var teamCount = 3;
             var splitNames = new List<MemberName> { _names[2], _names[3], _names[4], _names[5] };
@@ -89,7 +89,7 @@ namespace Tests.SuFc
         [Fact]
         public void SplitOptionTest_분리조건이_여러가지인_경우()
         {
-            var teamMaker = new SettingOptionTeamMaker(null);
+            var teamMaker = new SettingOptionTeamMaker();
 
             var teamCount = 3;
             var splitNames = new List<MemberName> { _names[2], _names[3], _names[4], _names[5] };

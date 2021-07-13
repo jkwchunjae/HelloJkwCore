@@ -9,10 +9,6 @@ namespace ProjectSuFc
 {
     public class FullRandomTeamMaker : TeamMaker
     {
-        public FullRandomTeamMaker(ISuFcService service) : base(service)
-        {
-        }
-
         public override Task<TeamResult> MakeTeamAsync(List<MemberName> members, int teamCount, TeamSettingOption option)
         {
             var teamResult = new TeamResult(teamCount);

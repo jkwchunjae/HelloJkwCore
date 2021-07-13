@@ -17,7 +17,7 @@ namespace HelloJkwCore.Pages.SuFc
         private readonly List<(TeamMakerStrategy Strategy, string Name)> TeamMakerStrategies = new List<(TeamMakerStrategy, string)>
         {
             (TeamMakerStrategy.FullRandom, "완전 랜덤"),
-            (TeamMakerStrategy.AttendProb, "출석 확률만 반영"),
+            //(TeamMakerStrategy.AttendProb, "출석 확률만 반영"),
             (TeamMakerStrategy.TeamSetting, "분리 조건"),
             (TeamMakerStrategy.Manual, "직접 입력"),
         };

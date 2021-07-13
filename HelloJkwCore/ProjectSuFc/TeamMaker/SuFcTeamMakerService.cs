@@ -16,10 +16,10 @@ namespace ProjectSuFc
 
         private void InitTeamMaker()
         {
-            _strategy.Add(TeamMakerStrategy.FullRandom, new FullRandomTeamMaker(this));
-            _strategy.Add(TeamMakerStrategy.Manual, new ManualTeamMaker(this));
-            _strategy.Add(TeamMakerStrategy.AttendProb, new AttendProbTeamMaker(this));
-            _strategy.Add(TeamMakerStrategy.TeamSetting, new SettingOptionTeamMaker(this));
+            _strategy.Add(TeamMakerStrategy.FullRandom, new FullRandomTeamMaker());
+            _strategy.Add(TeamMakerStrategy.Manual, new ManualTeamMaker());
+            //_strategy.Add(TeamMakerStrategy.AttendProb, new AttendProbTeamMaker());
+            _strategy.Add(TeamMakerStrategy.TeamSetting, new SettingOptionTeamMaker());
         }
 
         public async Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy, TeamSettingOption option)

@@ -14,14 +14,7 @@ namespace ProjectSuFc
 
     public abstract class TeamMaker : ITeamMaker
     {
-        protected ISuFcService SuFcService { get; }
-
         public abstract Task<TeamResult> MakeTeamAsync(List<MemberName> names, int teamCount, TeamSettingOption option);
-
-        public TeamMaker(ISuFcService service)
-        {
-            SuFcService = service;
-        }
 
         protected List<(MemberName Name, TeamName Team)> RandomShuffle(List<MemberName> names, List<TeamName> teams)
         {

@@ -9,10 +9,6 @@ namespace ProjectSuFc
 {
     public class SettingOptionTeamMaker : TeamMaker
     {
-        public SettingOptionTeamMaker(ISuFcService service) : base(service)
-        {
-        }
-
         public override Task<TeamResult> MakeTeamAsync(List<MemberName> names, int teamCount, TeamSettingOption option)
         {
             var result = MakeTeam_Internal(names, teamCount, option);
@@ -26,16 +22,17 @@ namespace ProjectSuFc
             foreach (var splitOption in option.SplitOptions)
             {
                 var remainNames = splitOption.Names.Where(x => teamResult.Players.Empty(e => e.MemberName == x)).ToList();
-                var userCount = remainNames.Count; // count = 5, teamCount = 3
-                var teamSetCount = userCount / teamCount + (userCount % teamCount == 0 ? 0 : 1); // teamSetCount = 2
+                var userCount = remainNames.Count; // userCount = 5, teamCount = 3
+                var teamSetCount = userCount / teamCount; // teamSetCount = 1
                 var teamNames = Enumerable.Range(1, teamSetCount)
-                    .Select((_, i) => MakeTeamNameList(teamCount))
-                    .SelectMany(x => x)
-                    .Take(userCount)
+                    .SelectMany(_ => MakeTeamNameList(teamCount))
+                    .ToList(); // ABC
+                var additionalTeamNames = MakeTeamNameList(teamCount)
                     .RandomShuffle()
-                    .ToList(); // ABCCB (random)
+                    .Take(userCount % teamCount); // BC
+                teamNames.AddRange(additionalTeamNames); // ABCBC
 
-                var splitResult = remainNames.Zip(teamNames, (n, t) => (n, t)).ToList();
+                var splitResult = remainNames.Zip(teamNames.RandomShuffle(), (n, t) => (n, t)).ToList();
 
                 teamResult.Players.AddRange(splitResult);
             }
