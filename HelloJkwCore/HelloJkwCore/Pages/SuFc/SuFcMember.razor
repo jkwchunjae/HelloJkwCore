@@ -7,7 +7,7 @@
 
 @if (IsUserSomeoneConnected)
 {
-    if (User?.Roles?.Contains(UserRole.SuFcAdmin) ?? false)
+    if (HasSuFcAdmin)
     {
     <a class="btn btn-outline-success" href="/sufc/member/new">추가</a>
     }
@@ -22,9 +22,12 @@ else
         <tr>
             <th class="sortable" @onclick="(() => SortName())">이름</th>
             <th>ID 연결</th>
+            @if (HasSuFcAdmin)
+            {
             @foreach (var specInfo in SpecList)
             {
                 <th class="sortable" @onclick="(() => SortSpec(specInfo.SpecType))">@specInfo.SpecName</th>
+            }
             }
             <th>...</th>
         </tr>
@@ -53,6 +56,8 @@ else
                         }
                     }
                 </td>
+                @if (HasSuFcAdmin)
+                {
                 @foreach (var specInfo in SpecList)
                 {
                     <td>
@@ -60,6 +65,7 @@ else
                                @oninput="(async (ChangeEventArgs args) => await ChangeSpecValue(member, specInfo.SpecType, args))"
                                />
                     </td>
+                }
                 }
                 <td>
                 </td>

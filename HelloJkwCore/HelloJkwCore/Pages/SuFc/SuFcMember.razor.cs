@@ -18,6 +18,9 @@ namespace HelloJkwCore.Pages.SuFc
         private ISuFcService SuFcService { get; set; }
         [Inject]
         ILoggerFactory LoggerFactory { get; set; }
+
+        private bool HasSuFcAdmin => User?.Roles?.Contains(UserRole.SuFcAdmin) ?? false;
+
         private List<Member> Members { get; set; } = new();
         private bool IsUserSomeoneConnected = false;
 
@@ -47,6 +50,7 @@ namespace HelloJkwCore.Pages.SuFc
 
             await LoadAsync();
         }
+
 
         private async Task ConnectId(Member member, AppUser user)
         {
