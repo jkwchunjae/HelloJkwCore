@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\HelloJkwCore\HelloJkwCore.csproj" />
+    <ProjectReference Include="..\ProjectBaduk\ProjectBaduk.csproj" />
     <ProjectReference Include="..\ProjectDiary\ProjectDiary.csproj" />
   </ItemGroup>
 
