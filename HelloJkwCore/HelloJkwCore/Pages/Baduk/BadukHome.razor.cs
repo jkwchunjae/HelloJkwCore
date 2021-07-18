@@ -19,11 +19,11 @@ namespace HelloJkwCore.Pages.Baduk
             [9] = new() { 5 },
         };
         private BadukBoard Board { get; set; } = new BadukBoard(19);
+        private string IndexText => $"{Board.Size} / {Board.Size}";
 
         protected override Task OnPageInitializedAsync()
         {
             return Task.CompletedTask;
         }
-
     }
 }

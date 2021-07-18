@@ -9,13 +9,21 @@ namespace ProjectBaduk
 {
     public class BadukBoard
     {
-        public int Size { get; init; }
+        public int Size { get; private set; }
+        public StoneChangeMode ChangeMode { get; set; } = StoneChangeMode.Auto;
+        public StoneColor CurrentColor { get; set; } = StoneColor.Black;
 
         private List<StoneLogData> _stones = new();
 
         public BadukBoard(int size)
         {
             Size = size;
+        }
+
+        public void ChangeSize(int size)
+        {
+            Size = size;
+            _stones.Clear();
         }
 
         public bool SetStone(int row, int column, StoneColor color)

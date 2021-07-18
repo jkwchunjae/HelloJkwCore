@@ -13,3 +13,10 @@ img.image-cell {
 img.image-stone {
     position: absolute;
 }
+
+input.index-text {
+    width: 80px;
+    text-align: center;
+    background: #ccc;
+    border: 1px solid gray;
+}
