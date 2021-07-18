@@ -1,0 +1,15 @@
+﻿tr.baduk {
+
+}
+
+td.board-cell {
+    padding: 0;
+    line-height: initial;
+}
+
+img.image-cell {
+}
+
+img.image-stone {
+    position: absolute;
+}
