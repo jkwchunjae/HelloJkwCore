@@ -65,23 +65,23 @@
                 var flagPointColumn = PointArray[Size].Any(num => num == column);
                 var flagBoard = flagLeft + flagTop + flagRight + flagBottom;
                 var flagPoint = flagPointRow && flagPointColumn ? "_point" : "";
-                var boardImg = $"/images/baduk/baduk_board_{flagBoard}{flagPoint}.png";
+                var cellImageSrc = $"/images/baduk/baduk_board_{flagBoard}{flagPoint}.png";
                 var hasStone = Board.FindLastStone(row, column, out var stone);
                 var blackDisplay = hasStone && stone?.Color == StoneColor.Black ? "block" : "none";
                 var whiteDisplay = hasStone && stone?.Color == StoneColor.White ? "block" : "none";
                 <td class="board-cell">
                     <img class="image-stone" src="/images/baduk/black-go-stone24.png" style="display: @blackDisplay"/>
                     <img class="image-stone" src="/images/baduk/white-go-stone24.png" style="display: @whiteDisplay"/>
-                    <img class="image-cell" src="@boardImg"/>
+                    <img class="image-cell" src="@cellImageSrc"/>
                 </td>
             }
         </tr>
     }
 </table>
 <div class="btn-group" role="group">
-    <button type="button" class="btn btn-outline-secondary">&lt;</button>
-    <button type="button" class="btn btn-outline-secondary">&lt; 5</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(-1))">&lt;</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(-5))">&lt; 5</button>
     <input type="text" class="index-text" value="@IndexText" readonly="readonly"/>
-    <button type="button" class="btn btn-outline-secondary">5 &gt;</button>
-    <button type="button" class="btn btn-outline-secondary">&gt;</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(5))">5 &gt;</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(1))">&gt;</button>
 </div>

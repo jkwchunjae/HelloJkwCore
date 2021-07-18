@@ -15,6 +15,9 @@ namespace ProjectBaduk
 
         private List<StoneLogData> _stones = new();
 
+        public int CurrentIndex { get; set; } = 0;
+        public int LastIndex { get; set; } = 0;
+
         public BadukBoard(int size)
         {
             Size = size;
@@ -24,6 +27,8 @@ namespace ProjectBaduk
         {
             Size = size;
             _stones.Clear();
+            CurrentIndex = 0;
+            LastIndex = 0;
         }
 
         public bool SetStone(int row, int column, StoneColor color)
@@ -63,7 +68,9 @@ namespace ProjectBaduk
 
         public bool FindLastStone(int row, int column, out StoneLogData stone)
         {
-            var lastStone = _stones.LastOrDefault(x => x.Row == row && x.Column == column);
+            var lastStone = _stones
+                .Take(CurrentIndex)
+                .LastOrDefault(x => x.Row == row && x.Column == column);
             if (lastStone?.Action == StoneAction.Set)
             {
                 stone = lastStone;
@@ -71,6 +78,11 @@ namespace ProjectBaduk
             }
             stone = null;
             return false;
+        }
+
+        public void ChangeCurrentIndex(int offset)
+        {
+            CurrentIndex = Math.Max(0, Math.Min(LastIndex, CurrentIndex + offset));
         }
     }
 }
