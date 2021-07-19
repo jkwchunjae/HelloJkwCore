@@ -31,6 +31,11 @@ namespace ProjectBaduk
             LastIndex = 0;
         }
 
+        public void ClickCell(int row, int column)
+        {
+
+        }
+
         public bool SetStone(int row, int column, StoneColor color)
         {
             if (FindLastStone(row, column, out var _))
