@@ -1,4 +1,7 @@
-﻿using HelloJkwCore.Shared;
+﻿using Common;
+using HelloJkwCore.Shared;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using ProjectBaduk;
 using System;
 using System.Collections.Generic;
@@ -9,6 +12,9 @@ namespace HelloJkwCore.Pages.Baduk
 {
     public partial class BadukHome : JkwPageBase
     {
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; }
+
         private int Size => Board?.Size ?? 19;
 
         private Dictionary<int, List<int>> PointArray = new()
@@ -24,6 +30,13 @@ namespace HelloJkwCore.Pages.Baduk
         protected override Task OnPageInitializedAsync()
         {
             return Task.CompletedTask;
+        }
+
+        private void ClickCell(int row, int column)
+        {
+            JsRuntime.ConsoleLogAsync("log", Board, row, column);
+            Board.ClickCell(row, column);
+            StateHasChanged();
         }
     }
 }

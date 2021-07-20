@@ -52,24 +52,26 @@
 </div>
 
 <table>
-    @for (var row = 1; row <= Size; row++)
+    @for (var roww = 1; roww <= Size; roww++)
     {
-        var flagTop = row == 1 ? "1" : "0";
-        var flagBottom = row == Size ? "1" : "0";
+        var row = roww;
+        var flagTop = row == 1 ? 1 : 0;
+        var flagBottom = row == Size ? 1 : 0;
         var flagPointRow = PointArray[Size].Any(num => num == row);
         <tr class="baduk">
-            @for (var column = 1; column <= Size; column++)
+            @for (var columnn = 1; columnn <= Size; columnn++)
             {
-                var flagLeft = column == 1 ? "1" : "0";
-                var flagRight = column == Size ? "1" : "0";
+                var column = columnn;
+                var flagLeft = column == 1 ? 1 : 0;
+                var flagRight = column == Size ? 1 : 0;
+                var flagBoard = $"{flagLeft}{flagTop}{flagRight}{flagBottom}";
                 var flagPointColumn = PointArray[Size].Any(num => num == column);
-                var flagBoard = flagLeft + flagTop + flagRight + flagBottom;
                 var flagPoint = flagPointRow && flagPointColumn ? "_point" : "";
                 var cellImageSrc = $"/images/baduk/baduk_board_{flagBoard}{flagPoint}.png";
                 var hasStone = Board.FindLastStone(row, column, out var stone);
                 var blackDisplay = hasStone && stone?.Color == StoneColor.Black ? "block" : "none";
                 var whiteDisplay = hasStone && stone?.Color == StoneColor.White ? "block" : "none";
-                <td class="board-cell">
+                <td class="board-cell" @onclick="(() => ClickCell(row, column))">
                     <img class="image-stone" src="/images/baduk/black-go-stone24.png" style="display: @blackDisplay"/>
                     <img class="image-stone" src="/images/baduk/white-go-stone24.png" style="display: @whiteDisplay"/>
                     <img class="image-cell" src="@cellImageSrc"/>

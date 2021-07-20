@@ -13,11 +13,10 @@ namespace ProjectBaduk
         public StoneChangeMode ChangeMode { get; set; } = StoneChangeMode.Auto;
         public StoneColor CurrentColor { get; set; } = StoneColor.Black;
 
-        private List<StoneLogData> _stones = new();
+        public List<StoneLogData> _stones = new();
 
         public int CurrentIndex { get; set; } = 0;
-        public int LastIndex { get; set; } = 0;
-
+        public int LastIndex => _stones.Count;
         public BadukBoard(int size)
         {
             Size = size;
@@ -28,7 +27,27 @@ namespace ProjectBaduk
             Size = size;
             _stones.Clear();
             CurrentIndex = 0;
-            LastIndex = 0;
+        }
+
+        public void ClickCell(int row, int column)
+        {
+            if (CurrentIndex < LastIndex)
+            {
+                _stones.RemoveRange(CurrentIndex, LastIndex - CurrentIndex);
+            }
+            if (TryRemoveStone(row, column))
+            {
+            }
+            else
+            {
+                if (SetStone(row, column, CurrentColor))
+                {
+                    if (ChangeMode == StoneChangeMode.Auto)
+                    {
+                        CurrentColor = CurrentColor == StoneColor.Black ? StoneColor.White : StoneColor.Black;
+                    }
+                }
+            }
         }
 
         public bool SetStone(int row, int column, StoneColor color)
@@ -37,7 +56,7 @@ namespace ProjectBaduk
             {
                 return false;
             }
-            if (row.Between(0, Size) && column.Between(0, Size))
+            if (row.Between(1, Size + 1) && column.Between(1, Size + 1))
             {
                 _stones.Add(new StoneLogData
                 {
@@ -46,6 +65,7 @@ namespace ProjectBaduk
                     Action = StoneAction.Set,
                     Color = color,
                 });
+                CurrentIndex++;
                 return true;
             }
             return false;
@@ -62,6 +82,8 @@ namespace ProjectBaduk
                     Action = StoneAction.Remove,
                     Color = lastStone.Color,
                 });
+                CurrentIndex++;
+                return true;
             }
             return false;
         }
