@@ -105,6 +105,23 @@ namespace ProjectBaduk
         public void ChangeCurrentIndex(int offset)
         {
             CurrentIndex = Math.Max(0, Math.Min(LastIndex, CurrentIndex + offset));
+            if (ChangeMode == StoneChangeMode.Auto)
+            {
+                if (CurrentIndex == 0)
+                {
+                    CurrentColor = StoneColor.Black;
+                }
+                else
+                {
+                    var lastSet = _stones.Take(CurrentIndex)
+                        .Where(x => x.Action == StoneAction.Set)
+                        .LastOrDefault();
+                    if (lastSet != null)
+                    {
+                        CurrentColor = lastSet.Color == StoneColor.Black ? StoneColor.White : StoneColor.Black;
+                    }
+                }
+            }
         }
     }
 }
