@@ -1,4 +1,5 @@
 ﻿using Common;
+using JkwExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,17 @@ namespace ProjectBaduk
         public StoneChangeMode ChangeMode { get; set; } = StoneChangeMode.Auto;
         public StoneColor CurrentColor { get; set; } = StoneColor.Black;
 
-        public List<StoneLogData> _stones = new();
+        private List<StoneLogData> _stones = new();
 
         public int CurrentIndex { get; set; } = 0;
         public int LastIndex => _stones.Count;
+
+        public DefaultDictionary<StoneColor, int> RemovedCount => _stones.Take(CurrentIndex)
+            .Where(x => x.Action == StoneAction.Remove)
+            .GroupBy(x => x.Color)
+            .ToDictionary(x => x.Key, x => x.Count())
+            .ToDefaultDictionary();
+
         public BadukBoard(int size)
         {
             Size = size;
