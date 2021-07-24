@@ -49,6 +49,18 @@
             </button>
         }
     </div>
+    <div class="btn-group" role="group">
+        @if (Board.VisibleStoneIndex)
+        {
+            <button type="button" class="btn btn-success">번호</button>
+            <button type="button" class="btn btn-outline-success" @onclick="(() => Board.VisibleStoneIndex = false)">OFF</button>
+        }
+        else
+        {
+            <button type="button" class="btn btn-outline-success" @onclick="(() => Board.VisibleStoneIndex = true)">번호</button>
+            <button type="button" class="btn btn-success">OFF</button>
+        }
+    </div>
 </div>
 
 <table>
@@ -68,12 +80,15 @@
                 var flagPointColumn = PointArray[Size].Any(num => num == column);
                 var flagPoint = flagPointRow && flagPointColumn ? "_point" : "";
                 var cellImageSrc = $"/images/baduk/baduk_board_{flagBoard}{flagPoint}.png";
-                var hasStone = Board.FindLastStone(row, column, out var stone);
+                var hasStone = Board.FindLastStone(row, column, out var stone, out var index);
                 var blackDisplay = hasStone && stone?.Color == StoneColor.Black ? "block" : "none";
                 var whiteDisplay = hasStone && stone?.Color == StoneColor.White ? "block" : "none";
+                var indexColorClass = !hasStone || !Board.VisibleStoneIndex ? "stone-index-none" :
+                    stone?.Color == StoneColor.Black ? "stone-index-black" : "stone-index-white";
                 <td class="board-cell" @onclick="(() => ClickCell(row, column))">
                     <img class="image-stone" src="/images/baduk/black-go-stone24.png" style="display: @blackDisplay"/>
                     <img class="image-stone" src="/images/baduk/white-go-stone24.png" style="display: @whiteDisplay"/>
+                    <span class="stone-index @indexColorClass">@index</span>
                     <img class="image-cell" src="@cellImageSrc"/>
                 </td>
             }

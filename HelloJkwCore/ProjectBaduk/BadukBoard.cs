@@ -13,6 +13,7 @@ namespace ProjectBaduk
         public int Size { get; private set; }
         public StoneChangeMode ChangeMode { get; set; } = StoneChangeMode.Auto;
         public StoneColor CurrentColor { get; set; } = StoneColor.Black;
+        public bool VisibleStoneIndex { get; set; } = true;
 
         private List<StoneLogData> _stones = new();
 
@@ -28,6 +29,12 @@ namespace ProjectBaduk
         public BadukBoard(int size)
         {
             Size = size;
+        }
+
+        public BadukBoard(int size, List<StoneLogData> stoneLogs)
+            : this(size)
+        {
+            _stones = stoneLogs;
         }
 
         public void ChangeSize(int size)
@@ -60,7 +67,7 @@ namespace ProjectBaduk
 
         public bool SetStone(int row, int column, StoneColor color)
         {
-            if (FindLastStone(row, column, out var _))
+            if (FindLastStone(row, column, out var _, out var _))
             {
                 return false;
             }
@@ -81,7 +88,7 @@ namespace ProjectBaduk
 
         public bool TryRemoveStone(int row, int column)
         {
-            if (FindLastStone(row, column, out var lastStone))
+            if (FindLastStone(row, column, out var lastStone, out var _))
             {
                 _stones.Add(new StoneLogData
                 {
@@ -96,17 +103,23 @@ namespace ProjectBaduk
             return false;
         }
 
-        public bool FindLastStone(int row, int column, out StoneLogData stone)
+        public bool FindLastStone(int row, int column, out StoneLogData stone, out int index)
         {
+            stone = null;
+            index = 0;
             var lastStone = _stones
                 .Take(CurrentIndex)
                 .LastOrDefault(x => x.Row == row && x.Column == column);
             if (lastStone?.Action == StoneAction.Set)
             {
                 stone = lastStone;
+                for (var i = 0; i < _stones.Count; i++)
+                {
+                    if (_stones[i] == lastStone)
+                        index = i + 1;
+                }
                 return true;
             }
-            stone = null;
             return false;
         }
 
