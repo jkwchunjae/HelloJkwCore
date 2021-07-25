@@ -18,48 +18,40 @@
         }
     </div>
     <div class="btn-group" role="group">
-        @if (Board.ChangeMode == StoneChangeMode.Auto)
-        {
-            <button type="button" class="btn btn-info">자동</button>
-            <button type="button" class="btn btn-outline-info" @onclick="(() => Board.ChangeMode = StoneChangeMode.Menual)">수동</button>
+        @{ 
+            var modeClass = Board.ChangeMode == StoneChangeMode.Auto ? "btn-info" : "btn-outline-info";
+            var modeOffClass = Board.ChangeMode == StoneChangeMode.Auto ? "btn-outline-info" : "btn-info";
         }
-        else
-        {
-            <button type="button" class="btn btn-outline-info" @onclick="(() => Board.ChangeMode = StoneChangeMode.Auto)">자동</button>
-            <button type="button" class="btn btn-info">수동</button>
-        }
+        <button type="button" class="btn @modeClass" @onclick="(() => Board.ChangeMode = StoneChangeMode.Auto)">
+            자동
+        </button>
+        <button type="button" class="btn @modeOffClass" @onclick="(() => Board.ChangeMode = StoneChangeMode.Menual)">
+            수동
+        </button>
     </div>
     <div class="btn-group" role="group">
-        @if (Board.CurrentColor == StoneColor.Black)
-        {
-            <button type="button" class="btn btn-dark">
-                <img src="/images/baduk/black-go-stone24.png" />
-            </button>
-            <button type="button" class="btn btn-outline-dark" @onclick="(() => Board.CurrentColor = StoneColor.White)">
-                <img src="/images/baduk/white-go-stone24.png" />
-            </button>
+        @{
+            var colorClass = Board.CurrentColor == StoneColor.Black ? "btn-dark" : "btn-outline-dark";
+            var colorOffClass = Board.CurrentColor == StoneColor.Black ? "btn-outline-dark" : "btn-dark";
         }
-        else
-        {
-            <button type="button" class="btn btn-outline-dark" @onclick="(() => Board.CurrentColor = StoneColor.Black)">
-                <img src="/images/baduk/black-go-stone24.png" />
-            </button>
-            <button type="button" class="btn btn-dark">
-                <img src="/images/baduk/white-go-stone24.png" />
-            </button>
-        }
+        <button type="button" class="btn @colorClass" @onclick="(() => Board.CurrentColor = StoneColor.Black)">
+            <img src="/images/baduk/black-go-stone24.png" />
+        </button>
+        <button type="button" class="btn @colorOffClass" @onclick="(() => Board.CurrentColor = StoneColor.White)">
+            <img src="/images/baduk/white-go-stone24.png" />
+        </button>
     </div>
     <div class="btn-group" role="group">
-        @if (Board.VisibleStoneIndex)
-        {
-            <button type="button" class="btn btn-success">번호</button>
-            <button type="button" class="btn btn-outline-success" @onclick="(() => Board.VisibleStoneIndex = false)">OFF</button>
+        @{
+            var numberClass = Board.VisibleStoneIndex ? "btn-success" : "btn-outline-success";
+            var numberOffClass = Board.VisibleStoneIndex ? "btn-outline-success" : "btn-success";
         }
-        else
-        {
-            <button type="button" class="btn btn-outline-success" @onclick="(() => Board.VisibleStoneIndex = true)">번호</button>
-            <button type="button" class="btn btn-success">OFF</button>
-        }
+        <button type="button" class="btn @numberClass" @onclick="(() => Board.VisibleStoneIndex = true)">
+            번호
+        </button>
+        <button type="button" class="btn @numberOffClass" @onclick="(() => Board.VisibleStoneIndex = false)">
+            OFF
+        </button>
     </div>
 </div>
 
