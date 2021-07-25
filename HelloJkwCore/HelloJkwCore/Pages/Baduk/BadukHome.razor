@@ -3,6 +3,18 @@
 
 @using ProjectBaduk;
 
+@{
+    Dictionary<int, List<int>> PointArray = new()
+    {
+        [19] = new() { 4, 10, 16 },
+        [15] = new() { 4, 8, 12 },
+        [13] = new() { 4, 7, 10 },
+        [9] = new() { 5 },
+    };
+    string IndexText = $"{Board.CurrentIndex} / {Board.LastIndex}";
+    var Size = Board?.Size ?? 19;
+}
+
 <div>
     <div class="btn-group" role="group">
         @foreach (var size in PointArray.Select(x => x.Key))
@@ -18,7 +30,7 @@
         }
     </div>
     <div class="btn-group" role="group">
-        @{ 
+        @{
             var modeClass = Board.ChangeMode == StoneChangeMode.Auto ? "btn-info" : "btn-outline-info";
             var modeOffClass = Board.ChangeMode == StoneChangeMode.Auto ? "btn-outline-info" : "btn-info";
         }
@@ -78,10 +90,10 @@
                 var indexColorClass = !hasStone || !Board.VisibleStoneIndex ? "stone-index-none" :
                     stone?.Color == StoneColor.Black ? "stone-index-black" : "stone-index-white";
                 <td class="board-cell" @onclick="(() => ClickCell(row, column))">
-                    <img class="image-stone" src="/images/baduk/black-go-stone24.png" style="display: @blackDisplay"/>
-                    <img class="image-stone" src="/images/baduk/white-go-stone24.png" style="display: @whiteDisplay"/>
+                    <img class="image-stone" src="/images/baduk/black-go-stone24.png" style="display: @blackDisplay" />
+                    <img class="image-stone" src="/images/baduk/white-go-stone24.png" style="display: @whiteDisplay" />
                     <span class="stone-index @indexColorClass">@index</span>
-                    <img class="image-cell" src="@cellImageSrc"/>
+                    <img class="image-cell" src="@cellImageSrc" />
                 </td>
             }
         </tr>
@@ -90,7 +102,7 @@
 <div class="btn-group" role="group">
     <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(-1))">&lt;</button>
     <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(-5))">&lt; 5</button>
-    <input type="text" class="index-text" value="@IndexText" readonly="readonly"/>
+    <input type="text" class="index-text" value="@IndexText" readonly="readonly" />
     <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(5))">5 &gt;</button>
     <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(1))">&gt;</button>
 </div>
