@@ -14,13 +14,12 @@ namespace ProjectBaduk
         public StoneChangeMode ChangeMode { get; set; } = StoneChangeMode.Auto;
         public StoneColor CurrentColor { get; set; } = StoneColor.Black;
         public bool VisibleStoneIndex { get; set; } = true;
-
-        private List<StoneLogData> _stones = new();
+        public List<StoneLogData> StoneLog { get; private set; } = new();
 
         public int CurrentIndex { get; set; } = 0;
-        public int LastIndex => _stones.Count;
+        public int LastIndex => StoneLog.Count;
 
-        public DefaultDictionary<StoneColor, int> RemovedCount => _stones.Take(CurrentIndex)
+        public DefaultDictionary<StoneColor, int> RemovedCount => StoneLog.Take(CurrentIndex)
             .Where(x => x.Action == StoneAction.Remove)
             .GroupBy(x => x.Color)
             .ToDictionary(x => x.Key, x => x.Count())
@@ -34,13 +33,13 @@ namespace ProjectBaduk
         public BadukBoard(int size, List<StoneLogData> stoneLogs)
             : this(size)
         {
-            _stones = stoneLogs;
+            StoneLog = stoneLogs;
         }
 
         public void ChangeSize(int size)
         {
             Size = size;
-            _stones.Clear();
+            StoneLog.Clear();
             CurrentIndex = 0;
         }
 
@@ -48,7 +47,7 @@ namespace ProjectBaduk
         {
             if (CurrentIndex < LastIndex)
             {
-                _stones.RemoveRange(CurrentIndex, LastIndex - CurrentIndex);
+                StoneLog.RemoveRange(CurrentIndex, LastIndex - CurrentIndex);
             }
             if (TryRemoveStone(row, column))
             {
@@ -73,7 +72,7 @@ namespace ProjectBaduk
             }
             if (row.Between(1, Size + 1) && column.Between(1, Size + 1))
             {
-                _stones.Add(new StoneLogData
+                StoneLog.Add(new StoneLogData
                 {
                     Row = row,
                     Column = column,
@@ -90,7 +89,7 @@ namespace ProjectBaduk
         {
             if (FindLastStone(row, column, out var lastStone, out var _))
             {
-                _stones.Add(new StoneLogData
+                StoneLog.Add(new StoneLogData
                 {
                     Row = row,
                     Column = column,
@@ -107,15 +106,15 @@ namespace ProjectBaduk
         {
             stone = null;
             index = 0;
-            var lastStone = _stones
+            var lastStone = StoneLog
                 .Take(CurrentIndex)
                 .LastOrDefault(x => x.Row == row && x.Column == column);
             if (lastStone?.Action == StoneAction.Set)
             {
                 stone = lastStone;
-                for (var i = 0; i < _stones.Count; i++)
+                for (var i = 0; i < StoneLog.Count; i++)
                 {
-                    if (_stones[i] == lastStone)
+                    if (StoneLog[i] == lastStone)
                         index = i + 1;
                 }
                 return true;
@@ -134,7 +133,7 @@ namespace ProjectBaduk
                 }
                 else
                 {
-                    var lastSet = _stones.Take(CurrentIndex)
+                    var lastSet = StoneLog.Take(CurrentIndex)
                         .Where(x => x.Action == StoneAction.Set)
                         .LastOrDefault();
                     if (lastSet != null)

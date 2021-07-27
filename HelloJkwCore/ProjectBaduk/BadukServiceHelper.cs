@@ -12,7 +12,11 @@ namespace ProjectBaduk
     {
         public static void AddBadukService(this IServiceCollection services, IConfiguration configuration)
         {
+            var badukOption = new BadukOption();
+            configuration.GetSection("BadukService").Bind(badukOption);
+
             services.AddSingleton<IBadukService, BadukService>();
+            services.AddSingleton(badukOption);
         }
     }
 }

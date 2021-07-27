@@ -25,7 +25,7 @@
             }
             else
             {
-                <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeSize(size))">@size 칸 </button>
+                <button type="button" class="btn btn-outline-secondary" @onclick="(() => ChangeSize(size))">@size 칸 </button>
             }
         }
     </div>
@@ -113,3 +113,23 @@
     <img src="/images/baduk/white-go-stone24.png" />
     <span class="badge badge-dark">@Board.RemovedCount[StoneColor.White]</span>
 </div>
+
+@if (IsAuthenticated)
+{
+<div style="max-width: 400px;">
+    <div class="input-group">
+        <input class="form-control" @bind-value="SaveFileName" placeholder="저장할 파일 이름을 입력하세요"/>
+        <div class="input-group-append">
+            <button class="btn btn-outline-dark input-group-text" @onclick="(async () => await SaveBoard())">저장</button>
+        </div>
+    </div>
+    <select class="form-control" @onchange="((args) => ChangeLoadFileName(args))">
+        <option value=""></option>
+        @for (var i = 0; i < GameDataList.Count; i++)
+        {
+            var ii = i;
+            <option value="@ii">@GameDataList[ii].Subject</option>
+        }
+    </select>
+</div>
+}

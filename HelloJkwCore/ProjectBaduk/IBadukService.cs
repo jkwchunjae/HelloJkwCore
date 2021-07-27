@@ -9,11 +9,9 @@ namespace ProjectBaduk
 {
     public interface IBadukService
     {
-        Task<List<SummaryData>> GetBadukSummaryList(AppUser user);
-        Task<BadukGameData> GetBadukGameData(AppUser user, SummaryData summaryData);
+        Task<List<BadukGameData>> GetBadukSummaryList(AppUser user);
         Task<BadukGameData> GetBadukGameData(AppUser user, string subject);
         Task SaveBadukGameData(AppUser user, BadukGameData badukGameData);
-        Task DeleteBadukGameData(AppUser user, SummaryData summaryData);
         Task DeleteBadukGameData(AppUser user, string subject);
     }
 }

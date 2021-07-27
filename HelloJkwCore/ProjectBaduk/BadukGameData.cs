@@ -18,7 +18,7 @@ namespace ProjectBaduk
         public StoneChangeMode ChangeMode { get; set; }
         public StoneColor CurrentColor { get; set; }
         public int CurrentIndex { get; set; }
-        public int LastIndex { get; set; }
+        public bool VisibleStoneIndex { get; set; }
         public string Memo { get; set; }
         public List<StoneLogData> StoneLog { get; set; }
     }

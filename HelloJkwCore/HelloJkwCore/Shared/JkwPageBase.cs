@@ -17,7 +17,7 @@ namespace HelloJkwCore.Shared
     public class JkwPageBase : ComponentBase, IDisposable
     {
         [Inject]
-        private IJSRuntime JsRuntime { get; set; }
+        protected IJSRuntime JsRuntime { get; set; }
         [Inject]
         protected IUserStore<AppUser> UserStore { get; set; }
         [Inject]
