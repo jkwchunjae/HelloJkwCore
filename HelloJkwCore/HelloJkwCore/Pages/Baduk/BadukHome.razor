@@ -120,15 +120,21 @@
     <div class="input-group">
         <input class="form-control" @bind-value="SaveFileName" placeholder="저장할 파일 이름을 입력하세요"/>
         <div class="input-group-append">
-            <button class="btn btn-outline-dark input-group-text" @onclick="(async () => await SaveBoard())">저장</button>
+            <button class="btn btn-outline-dark" @onclick="(async () => await SaveBoard())">저장</button>
+            <button class="btn btn-outline-danger" @onclick="(() => DeleteFlag = !DeleteFlag)">삭제</button>
         </div>
     </div>
+    @if (DeleteFlag)
+    {
+        <button class="btn btn-danger" @onclick="(() => DeleteBoard())">
+            (삭제 확인) 정말 삭제하시겠습니까?
+        </button>
+    }
     <select class="form-control" @onchange="((args) => ChangeLoadFileName(args))">
         <option value=""></option>
         @for (var i = 0; i < GameDataList.Count; i++)
         {
-            var ii = i;
-            <option value="@ii">@GameDataList[ii].Subject</option>
+            <option value="@i">@GameDataList[i].Subject</option>
         }
     </select>
 </div>

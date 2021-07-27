@@ -20,6 +20,7 @@ namespace HelloJkwCore.Pages.Baduk
         private List<BadukGameData> GameDataList = new();
 
         private string SaveFileName = string.Empty;
+        private bool DeleteFlag = false;
 
         protected override async Task OnPageInitializedAsync()
         {
@@ -33,6 +34,7 @@ namespace HelloJkwCore.Pages.Baduk
         {
             Board = new BadukBoard(size);
             SaveFileName = string.Empty;
+            DeleteFlag = false;
         }
 
         private void ClickCell(int row, int column)
@@ -65,6 +67,19 @@ namespace HelloJkwCore.Pages.Baduk
 
             await BadukService.SaveBadukGameData(User, gameData);
             GameDataList = await BadukService.GetBadukSummaryList(User);
+            DeleteFlag = false;
+        }
+
+        private async Task DeleteBoard()
+        {
+            if (GameDataList.Any(x => x.Subject == SaveFileName))
+            {
+                await BadukService.DeleteBadukGameData(User, SaveFileName);
+                GameDataList = await BadukService.GetBadukSummaryList(User);
+                Board = new BadukBoard(Board.Size);
+                SaveFileName = string.Empty;
+                DeleteFlag = false;
+            }
         }
 
         private void ChangeLoadFileName(ChangeEventArgs args)
@@ -73,6 +88,7 @@ namespace HelloJkwCore.Pages.Baduk
             {
                 Board = new BadukBoard(Board.Size);
                 SaveFileName = string.Empty;
+                DeleteFlag = false;
             }
             else if (int.TryParse((string)args.Value, out var index))
             {
@@ -88,6 +104,7 @@ namespace HelloJkwCore.Pages.Baduk
                 };
 
                 SaveFileName = gameData.Subject;
+                DeleteFlag = false;
             }
         }
     }
