@@ -16,6 +16,7 @@
         SuFcSchedulesPath,
         SuFcTeamSettingFile,
 
+        BadukDiaryPath,
         BadukSavePath,
     }
 }
