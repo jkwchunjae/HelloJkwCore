@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace HelloJkwCore.Shared
 {
     public class JkwPageBase : ComponentBase, IDisposable
     {
+        [Inject]
+        protected IJSRuntime JsRuntime { get; set; }
         [Inject]
         protected IUserStore<AppUser> UserStore { get; set; }
         [Inject]

@@ -14,5 +14,6 @@ namespace Common
         Admin,
         DiaryWriter,
         SuFcAdmin,
+        BadukCreator,
     }
 }

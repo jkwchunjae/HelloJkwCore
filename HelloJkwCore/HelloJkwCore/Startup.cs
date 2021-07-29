@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProjectBaduk;
 using ProjectDiary;
 using ProjectSuFc;
 using System.Net.Http;
@@ -142,6 +143,7 @@ namespace HelloJkwCore
             services.AddScoped<Radzen.DialogService>();
             services.AddDiaryService(Configuration);
             services.AddSuFcService(Configuration);
+            services.AddBadukService(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

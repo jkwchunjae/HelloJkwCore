@@ -40,6 +40,9 @@
                 element.focus();
             }
         }
+        function ConsoleLog(level, ...args) {
+            console[level](...args);
+        }
     </script>
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
