@@ -1,0 +1,92 @@
+﻿@inherits JkwPageBase
+
+@using ProjectBaduk;
+
+<div>
+    <div class="btn-group" role="group">
+        @foreach (var size in PointArray.Select(x => x.Key))
+        {
+            if (size == (Board?.Size ?? 19))
+            {
+                <button type="button" class="btn btn-secondary">@size 칸 </button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeSize(size))">@size 칸 </button>
+            }
+        }
+    </div>
+    <div class="btn-group" role="group">
+        @{
+            var modeClass = Board.ChangeMode == StoneChangeMode.Auto ? "btn-info" : "btn-outline-info";
+            var modeOffClass = Board.ChangeMode == StoneChangeMode.Auto ? "btn-outline-info" : "btn-info";
+        }
+        <button type="button" class="btn @modeClass" @onclick="(async () => await ChangeChangeMode(StoneChangeMode.Auto))">
+            자동
+        </button>
+        <button type="button" class="btn @modeOffClass" @onclick="(async () => await ChangeChangeMode(StoneChangeMode.Menual))">
+            수동
+        </button>
+    </div>
+    <div class="btn-group" role="group">
+        @{
+            var colorClass = Board.CurrentColor == StoneColor.Black ? "btn-dark" : "btn-outline-dark";
+            var colorOffClass = Board.CurrentColor == StoneColor.Black ? "btn-outline-dark" : "btn-dark";
+        }
+        <button type="button" class="btn @colorClass" @onclick="(async () => await ChangeColor(StoneColor.Black))">
+            <img src="/images/baduk/black-go-stone24.png" />
+        </button>
+        <button type="button" class="btn @colorOffClass" @onclick="(async () => await ChangeColor(StoneColor.White))">
+            <img src="/images/baduk/white-go-stone24.png" />
+        </button>
+    </div>
+    <div class="btn-group" role="group">
+        @{
+            var numberClass = Board.VisibleStoneIndex ? "btn-success" : "btn-outline-success";
+            var numberOffClass = Board.VisibleStoneIndex ? "btn-outline-success" : "btn-success";
+        }
+        <button type="button" class="btn @numberClass" @onclick="(() => Board.VisibleStoneIndex = true)">
+            번호
+        </button>
+        <button type="button" class="btn @numberOffClass" @onclick="(() => Board.VisibleStoneIndex = false)">
+            OFF
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public BadukBoard Board { get; set; }
+
+    [Parameter]
+    public EventCallback<BadukBoard> BoardChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnChangeSize { get; set; }
+
+    [Parameter]
+    public Dictionary<int, List<int>> PointArray { get; set; }
+
+    private async Task ChangeSize(int size)
+    {
+        await OnChangeSize.InvokeAsync(size);
+    }
+
+    private async Task ChangeChangeMode(StoneChangeMode changeMode)
+    {
+        Board.ChangeMode = changeMode;
+        await BoardChanged.InvokeAsync(Board);
+    }
+
+    private async Task ChangeColor(StoneColor color)
+    {
+        Board.CurrentColor = color;
+        await BoardChanged.InvokeAsync(Board);
+    }
+
+    private async Task ChangeVisibleIndex(bool visibleStoneIndex)
+    {
+        Board.VisibleStoneIndex = visibleStoneIndex;
+        await BoardChanged.InvokeAsync(Board);
+    }
+}
