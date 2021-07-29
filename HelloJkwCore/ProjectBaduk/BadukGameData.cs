@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,16 +39,19 @@ namespace ProjectBaduk
         public StoneColor Color { get; set; }
     }
 
+    [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
     public enum StoneColor
     {
         None, Black, White
     }
 
+    [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
     public enum StoneAction
     {
         Set, Remove
     }
 
+    [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
     public enum StoneChangeMode
     {
         Auto, Menual
