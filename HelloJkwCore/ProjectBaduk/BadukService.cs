@@ -33,6 +33,10 @@ namespace ProjectBaduk
 
         public async Task<List<BadukGameData>> GetBadukSummaryList(DiaryName diaryName)
         {
+            if (!await _fs.DirExistsAsync(path => GameDataSavePath(path, diaryName)))
+            {
+                await _fs.CreateDirectoryAsync(path => GameDataSavePath(path, diaryName));
+            }
             var list = await _fs.GetFilesAsync(path => GameDataSavePath(path, diaryName));
 
             var gameDataList = await list
@@ -54,6 +58,10 @@ namespace ProjectBaduk
 
         public async Task<List<BadukDiary>> GetBadukDiaryList(AppUser user)
         {
+            if (!await _fs.DirExistsAsync(path => path.GetPath(PathType.BadukDiaryPath)))
+            {
+                await _fs.CreateDirectoryAsync(path => path.GetPath(PathType.BadukDiaryPath));
+            }
             var list = await _fs.GetFilesAsync(path => path.GetPath(PathType.BadukDiaryPath));
 
             var diaryList = await list
