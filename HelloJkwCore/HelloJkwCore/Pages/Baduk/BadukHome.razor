@@ -114,7 +114,7 @@
     <span class="badge badge-dark">@Board.RemovedCount[StoneColor.White]</span>
 </div>
 
-@if (IsAuthenticated)
+@if (IsAuthenticated && Diary != null)
 {
 <div style="max-width: 400px;">
     <div class="input-group">

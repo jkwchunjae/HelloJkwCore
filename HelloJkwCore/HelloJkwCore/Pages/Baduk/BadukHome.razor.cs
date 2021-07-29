@@ -17,6 +17,8 @@ namespace HelloJkwCore.Pages.Baduk
         private IBadukService BadukService { get; set; }
         private BadukBoard Board { get; set; } = new BadukBoard(19);
 
+        private BadukDiary Diary = null;
+        private List<BadukDiary> DiaryList = new();
         private List<BadukGameData> GameDataList = new();
 
         private string SaveFileName = string.Empty;
@@ -26,7 +28,12 @@ namespace HelloJkwCore.Pages.Baduk
         {
             if (IsAuthenticated)
             {
-                GameDataList = await BadukService.GetBadukSummaryList(User);
+                DiaryList = await BadukService.GetBadukDiaryList(User);
+                if (DiaryList.Any())
+                {
+                    Diary = DiaryList.First();
+                    GameDataList = await BadukService.GetBadukSummaryList(Diary.Name);
+                }
             }
         }
 
@@ -49,6 +56,10 @@ namespace HelloJkwCore.Pages.Baduk
             {
                 return;
             }
+            if (Diary is null)
+            {
+                return;
+            }
 
             var prevGameData = GameDataList.Find(x => x.Subject == SaveFileName);
 
@@ -68,8 +79,8 @@ namespace HelloJkwCore.Pages.Baduk
                 StoneLog = Board.StoneLog,
             };
 
-            await BadukService.SaveBadukGameData(User, gameData);
-            GameDataList = await BadukService.GetBadukSummaryList(User);
+            await BadukService.SaveBadukGameData(Diary.Name, gameData);
+            GameDataList = await BadukService.GetBadukSummaryList(Diary.Name);
             DeleteFlag = false;
         }
 
@@ -77,8 +88,8 @@ namespace HelloJkwCore.Pages.Baduk
         {
             if (GameDataList.Any(x => x.Subject == SaveFileName))
             {
-                await BadukService.DeleteBadukGameData(User, SaveFileName);
-                GameDataList = await BadukService.GetBadukSummaryList(User);
+                await BadukService.DeleteBadukGameData(Diary.Name, SaveFileName);
+                GameDataList = await BadukService.GetBadukSummaryList(Diary.Name);
                 Board = new BadukBoard(Board.Size);
                 SaveFileName = string.Empty;
                 DeleteFlag = false;

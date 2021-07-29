@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Converters;
+﻿using Common;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,13 +26,6 @@ namespace ProjectBaduk
         public List<StoneLogData> StoneLog { get; set; }
     }
 
-    public class SummaryData
-    {
-        public string Subject { get; set; }
-        public bool Favorite { get; set; }
-        public DateTime CreateTime { get; set; }
-    }
-
     public class StoneLogData
     {
         public int Row { get; set; }
@@ -39,19 +34,31 @@ namespace ProjectBaduk
         public StoneColor Color { get; set; }
     }
 
-    [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(StringIdJsonConverter<DiaryName>))]
+    public class DiaryName : StringName
+    {
+    }
+
+    public class BadukDiary
+    {
+        public DiaryName Name { get; set; }
+        public string OwnerUserId { get; set; }
+        public List<string> ConnectUserIdList { get; set; }
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum StoneColor
     {
         None, Black, White
     }
 
-    [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum StoneAction
     {
         Set, Remove
     }
 
-    [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum StoneChangeMode
     {
         Auto, Menual

@@ -9,9 +9,12 @@ namespace ProjectBaduk
 {
     public interface IBadukService
     {
-        Task<List<BadukGameData>> GetBadukSummaryList(AppUser user);
-        Task<BadukGameData> GetBadukGameData(AppUser user, string subject);
-        Task SaveBadukGameData(AppUser user, BadukGameData badukGameData);
-        Task DeleteBadukGameData(AppUser user, string subject);
+        Task<List<BadukGameData>> GetBadukSummaryList(DiaryName diaryName);
+        Task<BadukGameData> GetBadukGameData(DiaryName diaryName, string subject);
+        Task SaveBadukGameData(DiaryName diaryName, BadukGameData badukGameData);
+        Task DeleteBadukGameData(DiaryName diaryName, string subject);
+
+        Task<List<BadukDiary>> GetBadukDiaryList(AppUser user);
+        Task CreateBadukDiary(AppUser user, DiaryName diaryName);
     }
 }
