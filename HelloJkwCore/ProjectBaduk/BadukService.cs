@@ -69,7 +69,12 @@ namespace ProjectBaduk
                 .Select(async file => await _fs.ReadJsonAsync<BadukDiary>(path => DiaryFilePath(path, file)))
                 .WhenAll();
 
-            return diaryList.OrderBy(x => x.Name).ToList();
+            var result = diaryList
+                .Where(x => x.ConnectUserIdList.Contains(user.Id))
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return result;
         }
 
         public async Task CreateBadukDiary(AppUser user, DiaryName diaryName)
