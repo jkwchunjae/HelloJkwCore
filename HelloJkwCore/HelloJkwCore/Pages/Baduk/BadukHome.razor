@@ -140,7 +140,7 @@
             (삭제 확인) 정말 삭제하시겠습니까?
         </button>
     }
-    <select class="form-control" @onchange="((args) => ChangeLoadFileName(args))">
+    <select class="form-control" @onchange="((args) => ChangeGameData(args))">
         <option value=""></option>
         @for (var i = 0; i < GameDataList.Count; i++)
         {

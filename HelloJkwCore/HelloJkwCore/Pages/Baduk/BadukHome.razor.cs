@@ -104,7 +104,7 @@ namespace HelloJkwCore.Pages.Baduk
             }
         }
 
-        private void ChangeLoadFileName(ChangeEventArgs args)
+        private void ChangeGameData(ChangeEventArgs args)
         {
             if (string.IsNullOrEmpty((string)args.Value))
             {
