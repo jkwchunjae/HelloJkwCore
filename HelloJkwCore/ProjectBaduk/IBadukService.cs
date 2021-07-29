@@ -16,5 +16,6 @@ namespace ProjectBaduk
 
         Task<List<BadukDiary>> GetBadukDiaryList(AppUser user);
         Task CreateBadukDiary(AppUser user, DiaryName diaryName);
+        Task DeleteBadukDiary(AppUser user, DiaryName diaryName);
     }
 }

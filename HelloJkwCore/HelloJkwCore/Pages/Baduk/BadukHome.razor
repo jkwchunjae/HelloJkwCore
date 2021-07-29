@@ -2,6 +2,7 @@
 @inherits JkwPageBase
 
 @using ProjectBaduk;
+@using Common;
 
 @{
     Dictionary<int, List<int>> PointArray = new()
@@ -114,9 +115,18 @@
     <span class="badge badge-dark">@Board.RemovedCount[StoneColor.White]</span>
 </div>
 
+<div style="max-width: 400px;">
+@if (IsAuthenticated && (DiaryList?.Count ?? 0) >= 2)
+{
+    <select class="form-control" @onchange="((args) => ChangeDiaryInfo(args))">
+        @for (var i = 0; i < DiaryList.Count; i++)
+        {
+            <option value="@i">@DiaryList[i].Name</option>
+        }
+    </select>
+}
 @if (IsAuthenticated && Diary != null)
 {
-<div style="max-width: 400px;">
     <div class="input-group">
         <input class="form-control" @bind-value="SaveFileName" placeholder="저장할 파일 이름을 입력하세요"/>
         <div class="input-group-append">
@@ -137,5 +147,25 @@
             <option value="@i">@GameDataList[i].Subject</option>
         }
     </select>
-</div>
 }
+
+@if (User?.HasRole(UserRole.BadukCreator) ?? false)
+{
+    <div class="input-group">
+        <input class="form-control" @bind-value="NewDiaryName" placeholder="바둑기록 이름" />
+        <div class="input-group-append">
+            <button class="btn btn-outline-dark" @onclick="(async () => await CreateDiary())">생성</button>
+            @if (Diary.OwnerUserId == User.Id)
+            {
+            <button class="btn btn-outline-danger" @onclick="(() => DiaryDeleteFlag = !DiaryDeleteFlag)">삭제</button>
+            }
+        </div>
+    </div>
+    @if (DiaryDeleteFlag)
+    {
+        <button class="btn btn-danger" @onclick="(() => DeleteDiary())">
+            (삭제 확인) 정말 삭제하시겠습니까?
+        </button>
+    }
+}
+</div>

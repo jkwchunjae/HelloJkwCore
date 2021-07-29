@@ -37,6 +37,8 @@ namespace ProjectBaduk
     [JsonConverter(typeof(StringIdJsonConverter<DiaryName>))]
     public class DiaryName : StringName
     {
+        public DiaryName() { }
+        public DiaryName(string name) : base(name) { }
     }
 
     public class BadukDiary

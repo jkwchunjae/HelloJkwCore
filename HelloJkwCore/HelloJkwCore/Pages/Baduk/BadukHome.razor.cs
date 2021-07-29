@@ -24,16 +24,24 @@ namespace HelloJkwCore.Pages.Baduk
         private string SaveFileName = string.Empty;
         private bool DeleteFlag = false;
 
+        private string NewDiaryName = string.Empty;
+        private bool DiaryDeleteFlag = false;
+
         protected override async Task OnPageInitializedAsync()
         {
             if (IsAuthenticated)
             {
-                DiaryList = await BadukService.GetBadukDiaryList(User);
-                if (DiaryList.Any())
-                {
-                    Diary = DiaryList.First();
-                    GameDataList = await BadukService.GetBadukSummaryList(Diary.Name);
-                }
+                await Init();
+            }
+        }
+
+        private async Task Init()
+        {
+            DiaryList = await BadukService.GetBadukDiaryList(User);
+            if (DiaryList.Any())
+            {
+                Diary = DiaryList.First();
+                GameDataList = await BadukService.GetBadukSummaryList(Diary.Name);
             }
         }
 
@@ -118,6 +126,42 @@ namespace HelloJkwCore.Pages.Baduk
                 };
 
                 SaveFileName = gameData.Subject;
+                DeleteFlag = false;
+            }
+        }
+
+        private async Task CreateDiary()
+        {
+            if (string.IsNullOrEmpty(NewDiaryName.Trim()))
+                return;
+
+            if (NewDiaryName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                return;
+
+            await BadukService.CreateBadukDiary(User, new DiaryName(NewDiaryName));
+            await Init();
+        }
+
+        private async Task DeleteDiary()
+        {
+            if (string.IsNullOrEmpty(NewDiaryName.Trim()))
+                return;
+
+            var diaryName = new DiaryName(NewDiaryName.Trim());
+            if (DiaryList.Any(x => x.Name == diaryName))
+            {
+                await BadukService.DeleteBadukDiary(User, diaryName);
+            }
+        }
+
+        private async Task ChangeDiaryInfo(ChangeEventArgs args)
+        {
+            if (int.TryParse((string)args.Value, out var index))
+            {
+                Diary = DiaryList[index];
+                GameDataList = await BadukService.GetBadukSummaryList(Diary.Name);
+                Board = new BadukBoard(Board.Size);
+                SaveFileName = string.Empty;
                 DeleteFlag = false;
             }
         }

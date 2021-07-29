@@ -45,6 +45,10 @@ namespace ProjectBaduk
 
         public async Task SaveBadukGameData(DiaryName diaryName, BadukGameData badukGameData)
         {
+            if (string.IsNullOrEmpty(badukGameData.Subject.Trim()))
+            {
+                return;
+            }
             await _fs.WriteJsonAsync(path => GameDataFilePath(path, diaryName, badukGameData.Subject), badukGameData);
         }
 
@@ -62,6 +66,11 @@ namespace ProjectBaduk
 
         public async Task CreateBadukDiary(AppUser user, DiaryName diaryName)
         {
+            var duplicated = await _fs.FileExistsAsync(path => DiaryFilePath(path, diaryName.Name));
+            if (duplicated)
+            {
+                return;
+            }
             var diaryData = new BadukDiary
             {
                 Name = diaryName,
@@ -69,6 +78,18 @@ namespace ProjectBaduk
                 ConnectUserIdList = new() { user.Id },
             };
             await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName.Name), diaryData);
+        }
+
+        public async Task DeleteBadukDiary(AppUser user, DiaryName diaryName)
+        {
+            var diaryList = await GetBadukDiaryList(user);
+
+            var deleteDiary = diaryList?.Find(x => x.OwnerUserId == user.Id && x.Name == diaryName);
+
+            if (deleteDiary != null)
+            {
+                await _fs.DeleteFileAsync(path => DiaryFilePath(path, diaryName.Name));
+            }
         }
 
         private string GameDataSavePath(PathOf path, DiaryName diaryName)
@@ -84,7 +105,7 @@ namespace ProjectBaduk
 
         private string DiaryFilePath(PathOf path, string diaryFileName)
         {
-            return $"${path.GetPath(PathType.BadukDiaryPath)}/{diaryFileName}";
+            return $"{path.GetPath(PathType.BadukDiaryPath)}/{diaryFileName}.json";
         }
     }
 }
