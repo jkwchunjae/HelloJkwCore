@@ -49,11 +49,14 @@ namespace HelloJkwCore.Pages.Baduk
             {
                 return;
             }
+
+            var prevGameData = GameDataList.Find(x => x.Subject == SaveFileName);
+
             var gameData = new BadukGameData
             {
                 Subject = SaveFileName,
-                Favorite = false,
-                CreateTime = DateTime.Now,
+                Favorite = prevGameData?.Favorite ?? false,
+                CreateTime = prevGameData?.CreateTime ?? DateTime.Now,
                 LastModifyTime = DateTime.Now,
                 OwnerEmail = User.Email,
                 Size = Board.Size,
@@ -61,7 +64,7 @@ namespace HelloJkwCore.Pages.Baduk
                 CurrentColor = Board.CurrentColor,
                 CurrentIndex = Board.CurrentIndex,
                 VisibleStoneIndex = Board.VisibleStoneIndex,
-                Memo = string.Empty,
+                Memo = prevGameData?.Memo ?? string.Empty,
                 StoneLog = Board.StoneLog,
             };
 
