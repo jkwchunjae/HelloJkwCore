@@ -26,57 +26,12 @@
                      PointArray=PointArray
                      ></BadukBoardComponent>
 
-<div style="max-width: 400px;">
-@if (IsAuthenticated && (DiaryList?.Count ?? 0) >= 2)
+@if (IsAuthenticated)
 {
-    <select class="form-control" @onchange="((args) => ChangeDiaryInfo(args))">
-        @for (var i = 0; i < DiaryList.Count; i++)
-        {
-            <option value="@i">@DiaryList[i].Name</option>
-        }
-    </select>
+<BadukSaveDataComponent
+                        Board=Board
+                        OnChangeGameData="((gameData) => ChangeGameData(gameData))"
+                        OnSaveBadukData="((gameData) => OnGameDataSaved(gameData))"
+                        OnDeleteGameData="(() => OnGameDataDeleted())"
+                        ></BadukSaveDataComponent>
 }
-@if (IsAuthenticated && Diary != null)
-{
-    <div class="input-group">
-        <input class="form-control" @bind-value="SaveFileName" placeholder="저장할 파일 이름을 입력하세요"/>
-        <div class="input-group-append">
-            <button class="btn btn-outline-dark" @onclick="(async () => await SaveBoard())">저장</button>
-            <button class="btn btn-outline-danger" @onclick="(() => DeleteFlag = !DeleteFlag)">삭제</button>
-        </div>
-    </div>
-    @if (DeleteFlag)
-    {
-        <button class="btn btn-danger" @onclick="(() => DeleteBoard())">
-            (삭제 확인) 정말 삭제하시겠습니까?
-        </button>
-    }
-    <select class="form-control" @onchange="((args) => ChangeGameData(args))">
-        <option value=""></option>
-        @for (var i = 0; i < GameDataList.Count; i++)
-        {
-            <option value="@i">@GameDataList[i].Subject</option>
-        }
-    </select>
-}
-
-@if (User?.HasRole(UserRole.BadukCreator) ?? false)
-{
-    <div class="input-group">
-        <input class="form-control" @bind-value="NewDiaryName" placeholder="바둑기록 이름" />
-        <div class="input-group-append">
-            <button class="btn btn-outline-dark" @onclick="(async () => await CreateDiary())">생성</button>
-            @if (Diary.OwnerUserId == User.Id)
-            {
-            <button class="btn btn-outline-danger" @onclick="(() => DiaryDeleteFlag = !DiaryDeleteFlag)">삭제</button>
-            }
-        </div>
-    </div>
-    @if (DiaryDeleteFlag)
-    {
-        <button class="btn btn-danger" @onclick="(() => DeleteDiary())">
-            (삭제 확인) 정말 삭제하시겠습니까?
-        </button>
-    }
-}
-</div>
