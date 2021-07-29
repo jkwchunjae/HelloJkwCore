@@ -1,0 +1,65 @@
+﻿@inherits JkwPageBase
+
+@using ProjectBaduk;
+
+<table>
+    @for (var roww = 1; roww <= Size; roww++)
+    {
+        var row = roww;
+        var flagTop = row == 1 ? 1 : 0;
+        var flagBottom = row == Size ? 1 : 0;
+        var flagPointRow = PointArray[Size].Any(num => num == row);
+        <tr class="baduk">
+            @for (var columnn = 1; columnn <= Size; columnn++)
+            {
+                var column = columnn;
+                var flagLeft = column == 1 ? 1 : 0;
+                var flagRight = column == Size ? 1 : 0;
+                var flagBoard = $"{flagLeft}{flagTop}{flagRight}{flagBottom}";
+                var flagPointColumn = PointArray[Size].Any(num => num == column);
+                var flagPoint = flagPointRow && flagPointColumn ? "_point" : "";
+                var cellImageSrc = $"/images/baduk/baduk_board_{flagBoard}{flagPoint}.png";
+                var hasStone = Board.FindLastStone(row, column, out var stone, out var index);
+                var blackDisplay = hasStone && stone?.Color == StoneColor.Black ? "block" : "none";
+                var whiteDisplay = hasStone && stone?.Color == StoneColor.White ? "block" : "none";
+                var indexColorClass = !hasStone || !Board.VisibleStoneIndex ? "stone-index-none" :
+                    stone?.Color == StoneColor.Black ? "stone-index-black" : "stone-index-white";
+                <td class="board-cell" @onclick="(() => Board.ClickCell(row, column))">
+                    <img class="image-stone" src="/images/baduk/black-go-stone24.png" style="display: @blackDisplay" />
+                    <img class="image-stone" src="/images/baduk/white-go-stone24.png" style="display: @whiteDisplay" />
+                    <span class="stone-index @indexColorClass">@index</span>
+                    <img class="image-cell" src="@cellImageSrc" />
+                </td>
+            }
+        </tr>
+    }
+</table>
+<div class="btn-group" role="group">
+    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(-1))">&lt;</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(-5))">&lt; 5</button>
+    <input type="text" class="index-text" value="@IndexText" readonly="readonly" />
+    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(5))">5 &gt;</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(1))">&gt;</button>
+</div>
+
+<div>
+    <img src="/images/baduk/black-go-stone24.png" />
+    <span class="badge badge-dark">@Board.RemovedCount[StoneColor.Black]</span>
+    <img src="/images/baduk/white-go-stone24.png" />
+    <span class="badge badge-dark">@Board.RemovedCount[StoneColor.White]</span>
+</div>
+
+
+@code {
+    [Parameter]
+    public BadukBoard Board { get; set; }
+
+    [Parameter]
+    public EventCallback<BadukBoard> BoardChanged { get; set; }
+
+    [Parameter]
+    public Dictionary<int, List<int>> PointArray { get; set; }
+
+    private int Size => Board?.Size ?? 19;
+    private string IndexText => $"{Board?.CurrentIndex} / {Board?.LastIndex}";
+}

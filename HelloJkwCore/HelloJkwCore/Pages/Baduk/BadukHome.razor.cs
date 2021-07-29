@@ -52,12 +52,6 @@ namespace HelloJkwCore.Pages.Baduk
             DeleteFlag = false;
         }
 
-        private void ClickCell(int row, int column)
-        {
-            Board.ClickCell(row, column);
-            StateHasChanged();
-        }
-
         private async Task SaveBoard()
         {
             if (SaveFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
