@@ -1,11 +1,5 @@
 ﻿@inherits JkwPageBase
 
-@using ProjectBaduk;
-@using Common;
-@using System.IO;
-
-@inject IBadukService BadukService;
-
 <div style="max-width: 400px;">
 @if (IsAuthenticated && Diary != null)
 {
@@ -24,9 +18,9 @@
     }
     <select class="form-control" @onchange="((args) => ChangeGameData(args))">
         <option value=""></option>
-        @for (var i = 0; i < GameDataList.Count; i++)
+        @foreach (var gameName in Diary.GameDataList)
         {
-            <option value="@i">@GameDataList[i].Subject</option>
+            <option value="@gameName">@gameName</option>
         }
     </select>
 }
@@ -39,7 +33,7 @@
         }
     </select>
 }
-@if (User?.HasRole(UserRole.BadukCreator) ?? false)
+@if (IsDiaryCreator)
 {
     <div class="input-group">
         <input class="form-control" @bind-value="NewDiaryName" placeholder="바둑기록 이름" />
@@ -60,144 +54,3 @@
 }
 </div>
 
-
-@code {
-    [Parameter]
-    public BadukBoard Board { get; set; }
-
-    [Parameter]
-    public EventCallback<BadukGameData> OnChangeGameData { get; set; }
-
-    [Parameter]
-    public EventCallback<BadukGameData> OnSaveBadukData { get; set; }
-
-    [Parameter]
-    public EventCallback OnDeleteGameData { get; set; }
-
-    private BadukDiary Diary = new();
-    private string SaveFileName = string.Empty;
-    private string NewDiaryName = string.Empty;
-    private bool DeleteFlag = false;
-    private bool DiaryDeleteFlag = false;
-
-    private List<BadukDiary> DiaryList = new();
-    private List<BadukGameData> GameDataList = new();
-
-    protected override async Task OnPageInitializedAsync()
-    {
-        if (IsAuthenticated)
-        {
-            await Init();
-        }
-    }
-
-    private async Task Init()
-    {
-        DiaryList = await BadukService.GetBadukDiaryList(User);
-        if (DiaryList.Any())
-        {
-            Diary = DiaryList.First();
-            GameDataList = await BadukService.GetBadukSummaryList(Diary.Name);
-        }
-    }
-
-    private async Task ChangeGameData(ChangeEventArgs args)
-    {
-        if (int.TryParse((string)args.Value, out var index))
-        {
-            var gameData = GameDataList[index];
-            await OnChangeGameData.InvokeAsync(gameData);
-            SaveFileName = gameData.Subject;
-        }
-        else
-        {
-            await OnChangeGameData.InvokeAsync(null);
-            SaveFileName = string.Empty;
-        }
-    }
-
-    private async Task CreateDiary()
-    {
-        if (string.IsNullOrEmpty(NewDiaryName.Trim()))
-            return;
-
-        if (NewDiaryName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-            return;
-
-        await BadukService.CreateBadukDiary(User, new DiaryName(NewDiaryName));
-        await Init();
-    }
-
-    private async Task DeleteDiary()
-    {
-        if (string.IsNullOrEmpty(NewDiaryName.Trim()))
-            return;
-
-        var diaryName = new DiaryName(NewDiaryName.Trim());
-        if (DiaryList.Any(x => x.Name == diaryName))
-        {
-            await BadukService.DeleteBadukDiary(User, diaryName);
-        }
-    }
-
-    private async Task ChangeDiaryInfo(ChangeEventArgs args)
-    {
-        if (int.TryParse((string)args.Value, out var index))
-        {
-            Diary = DiaryList[index];
-            GameDataList = await BadukService.GetBadukSummaryList(Diary.Name);
-            SaveFileName = string.Empty;
-            DeleteFlag = false;
-        }
-    }
-
-    private async Task SaveBoard()
-    {
-        if (SaveFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-        {
-            return;
-        }
-        if (Diary is null)
-        {
-            return;
-        }
-
-        var prevGameData = GameDataList.Find(x => x.Subject == SaveFileName);
-
-        var gameData = new BadukGameData
-        {
-            Subject = SaveFileName,
-            Favorite = prevGameData?.Favorite ?? false,
-            CreateTime = prevGameData?.CreateTime ?? DateTime.Now,
-            LastModifyTime = DateTime.Now,
-            OwnerEmail = User.Email,
-            Size = Board.Size,
-            ChangeMode = Board.ChangeMode,
-            CurrentColor = Board.CurrentColor,
-            CurrentIndex = Board.CurrentIndex,
-            VisibleStoneIndex = Board.VisibleStoneIndex,
-            Memo = prevGameData?.Memo ?? string.Empty,
-            StoneLog = Board.StoneLog,
-        };
-
-        await BadukService.SaveBadukGameData(Diary.Name, gameData);
-
-        await OnSaveBadukData.InvokeAsync(gameData);
-
-        GameDataList = await BadukService.GetBadukSummaryList(Diary.Name);
-        DeleteFlag = false;
-    }
-
-    private async Task DeleteBoard()
-    {
-        if (GameDataList.Any(x => x.Subject == SaveFileName))
-        {
-            await BadukService.DeleteBadukGameData(Diary.Name, SaveFileName);
-            GameDataList = await BadukService.GetBadukSummaryList(Diary.Name);
-            await OnDeleteGameData.InvokeAsync();
-            SaveFileName = string.Empty;
-            DeleteFlag = false;
-        }
-    }
-
-}

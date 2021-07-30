@@ -46,6 +46,8 @@ namespace ProjectBaduk
         public DiaryName Name { get; set; }
         public string OwnerUserId { get; set; }
         public List<string> ConnectUserIdList { get; set; }
+        /// <summary> 최근것이 위에있음.  </summary>
+        public List<string> GameDataList { get; set; }
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
