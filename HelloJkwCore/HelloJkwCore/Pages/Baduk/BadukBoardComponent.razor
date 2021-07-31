@@ -24,7 +24,7 @@
                 var whiteDisplay = hasStone && stone?.Color == StoneColor.White ? "block" : "none";
                 var indexColorClass = !hasStone || !Board.VisibleStoneIndex ? "stone-index-none" :
                     stone?.Color == StoneColor.Black ? "stone-index-black" : "stone-index-white";
-                <td class="board-cell" @onclick="(() => Board.ClickCell(row, column))">
+                <td class="board-cell" @onclick="(async () => await ClickCell(row, column))">
                     <img class="image-stone" src="/images/baduk/black-go-stone24.png" style="display: @blackDisplay" />
                     <img class="image-stone" src="/images/baduk/white-go-stone24.png" style="display: @whiteDisplay" />
                     <span class="stone-index @indexColorClass">@index</span>
@@ -35,11 +35,11 @@
     }
 </table>
 <div class="btn-group" role="group">
-    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(-1))">&lt;</button>
-    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(-5))">&lt; 5</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(-1))">&lt;</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(-5))">&lt; 5</button>
     <input type="text" class="index-text" value="@IndexText" readonly="readonly" />
-    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(5))">5 &gt;</button>
-    <button type="button" class="btn btn-outline-secondary" @onclick="(() => Board.ChangeCurrentIndex(1))">&gt;</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(5))">5 &gt;</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(1))">&gt;</button>
 </div>
 
 <div>
@@ -57,9 +57,26 @@
     [Parameter]
     public EventCallback<BadukBoard> BoardChanged { get; set; }
 
-    [Parameter]
-    public Dictionary<int, List<int>> PointArray { get; set; }
-
     private int Size => Board?.Size ?? 19;
     private string IndexText => $"{Board?.CurrentIndex} / {Board?.LastIndex}";
+
+    Dictionary<int, List<int>> PointArray = new()
+    {
+        [19] = new() { 4, 10, 16 },
+        [15] = new() { 4, 8, 12 },
+        [13] = new() { 4, 7, 10 },
+        [9] = new() { 5 },
+    };
+
+    private async Task ClickCell(int row, int column)
+    {
+        Board.ClickCell(row, column);
+        await BoardChanged.InvokeAsync(Board);
+    }
+
+    private async Task ChangeCurrentIndex(int diff)
+    {
+        Board.ChangeCurrentIndex(diff);
+        await BoardChanged.InvokeAsync(Board);
+    }
 }

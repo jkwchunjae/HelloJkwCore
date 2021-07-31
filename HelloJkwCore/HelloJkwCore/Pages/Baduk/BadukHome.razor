@@ -1,29 +1,12 @@
 ﻿@page "/baduk"
 @inherits JkwPageBase
 
-@using ProjectBaduk;
-@using Common;
-
-@{
-    Dictionary<int, List<int>> PointArray = new()
-    {
-        [19] = new() { 4, 10, 16 },
-        [15] = new() { 4, 8, 12 },
-        [13] = new() { 4, 7, 10 },
-        [9] = new() { 5 },
-    };
-    var Size = Board?.Size ?? 19;
-}
-
 <BadukSettingBoxComponent
                           @bind-Board=Board
-                          OnChangeSize=ChangeSize
-                          PointArray=PointArray
                           ></BadukSettingBoxComponent>
 
 <BadukBoardComponent
                      @bind-Board=Board
-                     PointArray=PointArray
                      ></BadukBoardComponent>
 
 @if (IsAuthenticated)

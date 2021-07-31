@@ -45,10 +45,10 @@
             var numberClass = Board.VisibleStoneIndex ? "btn-success" : "btn-outline-success";
             var numberOffClass = Board.VisibleStoneIndex ? "btn-outline-success" : "btn-success";
         }
-        <button type="button" class="btn @numberClass" @onclick="(() => Board.VisibleStoneIndex = true)">
+        <button type="button" class="btn @numberClass" @onclick="(async () => await ChangeVisibleIndex(true))">
             번호
         </button>
-        <button type="button" class="btn @numberOffClass" @onclick="(() => Board.VisibleStoneIndex = false)">
+        <button type="button" class="btn @numberOffClass" @onclick="(async () => await ChangeVisibleIndex(false))">
             OFF
         </button>
     </div>
@@ -64,12 +64,19 @@
     [Parameter]
     public EventCallback<int> OnChangeSize { get; set; }
 
-    [Parameter]
-    public Dictionary<int, List<int>> PointArray { get; set; }
+    Dictionary<int, List<int>> PointArray = new()
+    {
+        [19] = new() { 4, 10, 16 },
+        [15] = new() { 4, 8, 12 },
+        [13] = new() { 4, 7, 10 },
+        [9] = new() { 5 },
+    };
+
 
     private async Task ChangeSize(int size)
     {
-        await OnChangeSize.InvokeAsync(size);
+        Board = new BadukBoard(size);
+        await BoardChanged.InvokeAsync(Board);
     }
 
     private async Task ChangeChangeMode(StoneChangeMode changeMode)

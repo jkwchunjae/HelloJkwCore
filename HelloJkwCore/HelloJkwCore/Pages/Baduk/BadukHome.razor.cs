@@ -13,16 +13,7 @@ namespace HelloJkwCore.Pages.Baduk
 {
     public partial class BadukHome : JkwPageBase
     {
-        [Inject]
-        private IBadukService BadukService { get; set; }
         private BadukBoard Board { get; set; } = new BadukBoard(19);
-
-        private List<BadukDiary> DiaryList = new();
-
-        private void ChangeSize(int size)
-        {
-            Board = new BadukBoard(size);
-        }
 
         private ValueTask OnGameDataSaved(BadukGameData saveGameData)
         {
