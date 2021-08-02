@@ -35,6 +35,7 @@ namespace HelloJkwCore.Pages.Baduk
         private string NewDiaryName = string.Empty;
         private bool DeleteFlag = false;
         private bool DiaryDeleteFlag = false;
+        private bool ShowAllSaveData = false;
 
         private List<BadukDiary> DiaryList = new();
 
@@ -59,13 +60,25 @@ namespace HelloJkwCore.Pages.Baduk
         {
             if (string.IsNullOrEmpty(((string)args.Value).Trim()))
             {
+                await ClickGameData(null);
+            }
+            else
+            {
+                var gameName = (string)args.Value;
+                await ClickGameData(gameName);
+            }
+        }
+
+        private async Task ClickGameData(string gameName)
+        {
+            if (string.IsNullOrEmpty(gameName?.Trim()))
+            {
                 await OnChangeGameData.InvokeAsync(null);
                 Memo = string.Empty;
                 SaveFileName = string.Empty;
             }
             else
             {
-                var gameName = (string)args.Value;
                 var gameData = await BadukService.GetBadukGameData(Diary.Name, gameName);
                 await OnChangeGameData.InvokeAsync(gameData);
                 Memo = gameData.Memo;
