@@ -35,19 +35,23 @@
         </tr>
     }
 </table>
-<div class="btn-group" role="group">
-    <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(-1))">&lt;</button>
-    <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(-5))">&lt; 5</button>
-    <input type="text" class="index-text" value="@IndexText" readonly="readonly" />
-    <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(5))">5 &gt;</button>
-    <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(1))">&gt;</button>
-</div>
-
 <div>
-    <img src="/images/baduk/black-go-stone24.png" />
-    <span class="badge badge-dark">@Board.RemovedCount[StoneColor.Black]</span>
-    <img src="/images/baduk/white-go-stone24.png" />
-    <span class="badge badge-dark">@Board.RemovedCount[StoneColor.White]</span>
+    <div class="board-info">
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(-1))">&lt;</button>
+        <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(-5))">&lt; 5</button>
+        <input type="text" class="index-text" value="@IndexText" readonly="readonly" />
+        <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(5))">5 &gt;</button>
+        <button type="button" class="btn btn-outline-secondary" @onclick="(async () => await ChangeCurrentIndex(1))">&gt;</button>
+    </div>
+    </div>
+
+    <div class="board-info">
+        <img src="/images/baduk/black-go-stone24.png" />
+        <span class="badge badge-dark">@Board.RemovedCount[StoneColor.Black]</span>
+        <img src="/images/baduk/white-go-stone24.png" />
+        <span class="badge badge-dark">@Board.RemovedCount[StoneColor.White]</span>
+    </div>
 </div>
 
 

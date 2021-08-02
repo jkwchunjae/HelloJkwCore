@@ -40,3 +40,7 @@ input.index-text {
     background: #ccc;
     border: 1px solid gray;
 }
+
+.board-info {
+    display: inline-block;
+}
