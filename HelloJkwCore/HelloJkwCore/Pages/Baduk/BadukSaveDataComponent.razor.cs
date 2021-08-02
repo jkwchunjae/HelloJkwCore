@@ -30,6 +30,7 @@ namespace HelloJkwCore.Pages.Baduk
         private bool IsDiaryCreator => User?.HasRole(UserRole.BadukCreator) ?? false;
 
         private BadukDiary Diary = new() { GameDataList = new() };
+        private string Memo = string.Empty;
         private string SaveFileName = string.Empty;
         private string NewDiaryName = string.Empty;
         private bool DeleteFlag = false;
@@ -59,6 +60,7 @@ namespace HelloJkwCore.Pages.Baduk
             if (string.IsNullOrEmpty(((string)args.Value).Trim()))
             {
                 await OnChangeGameData.InvokeAsync(null);
+                Memo = string.Empty;
                 SaveFileName = string.Empty;
             }
             else
@@ -66,6 +68,7 @@ namespace HelloJkwCore.Pages.Baduk
                 var gameName = (string)args.Value;
                 var gameData = await BadukService.GetBadukGameData(Diary.Name, gameName);
                 await OnChangeGameData.InvokeAsync(gameData);
+                Memo = gameData.Memo;
                 SaveFileName = gameData.Subject;
             }
         }
@@ -99,6 +102,7 @@ namespace HelloJkwCore.Pages.Baduk
             if (int.TryParse((string)args.Value, out var index))
             {
                 Diary = DiaryList[index];
+                Memo = string.Empty;
                 SaveFileName = string.Empty;
                 DeleteFlag = false;
             }
@@ -129,7 +133,7 @@ namespace HelloJkwCore.Pages.Baduk
                 CurrentColor = Board.CurrentColor,
                 CurrentIndex = Board.CurrentIndex,
                 VisibleStoneIndex = Board.VisibleStoneIndex,
-                Memo = prevGameData?.Memo ?? string.Empty,
+                Memo = Memo,
                 StoneLog = Board.StoneLog,
             };
 
@@ -146,6 +150,7 @@ namespace HelloJkwCore.Pages.Baduk
             {
                 Diary = await BadukService.DeleteBadukGameData(Diary.Name, SaveFileName);
                 await OnDeleteGameData.InvokeAsync();
+                Memo = string.Empty;
                 SaveFileName = string.Empty;
                 DeleteFlag = false;
             }

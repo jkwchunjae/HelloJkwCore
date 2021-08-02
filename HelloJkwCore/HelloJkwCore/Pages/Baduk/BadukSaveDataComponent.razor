@@ -3,6 +3,9 @@
 <div style="max-width: 400px;">
 @if (IsAuthenticated && Diary != null)
 {
+    <div>
+        <textarea @bind="Memo" style="width: 100%;" placeholder="메모" oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+    </div>
     <div class="input-group">
         <input class="form-control" @bind-value="SaveFileName" placeholder="저장할 파일 이름을 입력하세요"/>
         <div class="input-group-append">
