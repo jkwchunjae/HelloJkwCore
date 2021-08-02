@@ -64,7 +64,10 @@ namespace ProjectBaduk
 
             var diary = await GetBadukDiary(diaryName);
             var gameDataList = diary.GameDataList ?? new();
-            gameDataList.Insert(0, badukGameData.Subject);
+            if (!gameDataList.Contains(badukGameData.Subject))
+            {
+                gameDataList.Insert(0, badukGameData.Subject);
+            }
             diary.GameDataList = gameDataList;
 
             await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName.Name), diary);
