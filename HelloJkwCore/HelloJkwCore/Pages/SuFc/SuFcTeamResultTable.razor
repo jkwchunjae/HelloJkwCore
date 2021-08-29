@@ -33,7 +33,7 @@
                             var memberName = TeamResult.GroupByTeam[team][i];
                             <span>
                                 @memberName
-                                @if (MyName != null && memberName == MyName)
+                                @if (memberName == MyName)
                                 {
                                     <span class="badge badge-info">me</span>
                                 }
@@ -62,7 +62,7 @@
 
     protected override async Task OnPageInitializedAsync()
     {
-        if (MyName == null && !string.IsNullOrEmpty(MyNameStr))
+        if (!string.IsNullOrEmpty(MyNameStr))
         {
             MyName = new MemberName(MyNameStr);
         }
