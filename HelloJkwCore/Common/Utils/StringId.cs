@@ -46,6 +46,14 @@ namespace Common
         {
             return !(obj1 == obj2);
         }
+        public static bool operator ==(StringId obj1, string obj2)
+        {
+            return obj1.Id == obj2;
+        }
+        public static bool operator !=(StringId obj1, string obj2)
+        {
+            return !(obj1 == obj2);
+        }
         public bool Equals(StringId other)
         {
             if (ReferenceEquals(other, null))
