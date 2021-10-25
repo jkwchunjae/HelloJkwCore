@@ -85,7 +85,10 @@ namespace ProjectDiary
         {
             var engine = await GetSearchEngineAsync(diaryName);
             var result = engine.Search(searchData.Keyword);
-            var list = result?.Select(x => new DiaryFileName(x)).ToList();
+            var list = result?.Select(x => new DiaryFileName(x))
+                .Where(x => x.Date >= searchData.BeginDate)
+                .Where(x => x.Date <= searchData.EndDate)
+                .ToList();
 
             return list;
         }
