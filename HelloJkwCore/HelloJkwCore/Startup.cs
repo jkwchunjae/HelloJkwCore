@@ -15,6 +15,7 @@ using ProjectBaduk;
 using ProjectDiary;
 using ProjectSuFc;
 using System.Net.Http;
+using MudBlazor.Services;
 
 namespace HelloJkwCore
 {
@@ -50,6 +51,7 @@ namespace HelloJkwCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(_coreOption);
+            services.AddMudServices();
 
             #region Authentication
 
@@ -140,7 +142,6 @@ namespace HelloJkwCore
 
             #endregion
 
-            services.AddScoped<Radzen.DialogService>();
             services.AddDiaryService(Configuration);
             services.AddSuFcService(Configuration);
             services.AddBadukService(Configuration);

@@ -17,7 +17,7 @@
     <PackageReference Include="Jkw.Extensions" Version="1.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="5.0.9" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.9.2" />
-    <PackageReference Include="Radzen.Blazor" Version="3.9.5" />
+    <PackageReference Include="MudBlazor" Version="5.2.0" />
   </ItemGroup>
 
   <ItemGroup>
