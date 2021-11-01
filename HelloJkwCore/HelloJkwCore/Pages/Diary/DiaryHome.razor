@@ -66,6 +66,7 @@ else if (HasDiaryContent)
         @if (DiaryInfo.CanWrite(User.Email))
         {
             <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Write(DiaryInfo)">쓰기</a>
+            <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Write(DiaryInfo, View.DiaryContents[0].Date.AddDays(1))">다음날 쓰기</a>
         }
         @if (IsMyText(View))
         {

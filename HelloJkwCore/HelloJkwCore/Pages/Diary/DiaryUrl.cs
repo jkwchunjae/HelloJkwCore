@@ -30,6 +30,11 @@ namespace HelloJkwCore.Pages.Diary
             return $"/diary/write/{diaryInfo.DiaryName}";
         }
 
+        public static string Write(DiaryInfo diaryInfo, DateTime date)
+        {
+            return $"/diary/write/{diaryInfo.DiaryName}/{date:yyyyMMdd}";
+        }
+
         public static string Edit(DiaryInfo diaryInfo, DateTime date)
         {
             return $"/diary/edit/{diaryInfo.DiaryName}/{date:yyyyMMdd}";

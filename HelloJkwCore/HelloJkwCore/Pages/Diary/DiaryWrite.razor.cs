@@ -1,4 +1,5 @@
 ﻿using HelloJkwCore.Shared;
+using JkwExtensions;
 using Microsoft.AspNetCore.Components;
 using ProjectDiary;
 using System;
@@ -17,6 +18,8 @@ namespace HelloJkwCore.Pages.Diary
 
         [Parameter]
         public string DiaryName { get; set; }
+        [Parameter]
+        public string DiaryDate { get; set; }
 
         private DiaryInfo DiaryInfo { get; set; }
         private DateTime Date { get; set; }
@@ -47,6 +50,14 @@ namespace HelloJkwCore.Pages.Diary
 
             LastDiary = await DiaryService.GetLastDiaryViewAsync(User, DiaryInfo);
             Date = DateTime.Today;
+
+            if (!string.IsNullOrWhiteSpace(DiaryDate))
+            {
+                if (DiaryDate.TryToDate(out var parsedDate))
+                {
+                    Date = parsedDate;
+                }
+            }
         }
 
         async Task WriteDiaryAsync()
