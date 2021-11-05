@@ -8,13 +8,13 @@
     <Authorized>
         <h1>@context.User.Identity.Name 님 안녕하세요!</h1>
 
-        <RadzenButton Click="() => Navi.NavigateTo(DiaryUrl.Home())" Text="일기장" />
-        <RadzenButton Click="() => Navi.NavigateTo(sufc)" Text="수FC" />
+        <MudButton OnClick="() => Navi.NavigateTo(DiaryUrl.Home())">일기장</MudButton>
+        <MudButton OnClick="() => Navi.NavigateTo(sufc)">수FC</MudButton>
     </Authorized>
     <NotAuthorized>
         <h1>안녕하세요!</h1>
 
-        <RadzenButton Click="() => Navi.NavigateTo(loginPath)" Text="로그인" />
+        <MudButton OnClick="() => Navi.NavigateTo(loginPath)">로그인</MudButton>
     </NotAuthorized>
 </AuthorizeView>
 
