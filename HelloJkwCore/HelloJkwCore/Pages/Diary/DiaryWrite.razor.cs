@@ -24,7 +24,6 @@ namespace HelloJkwCore.Pages.Diary
         private DiaryInfo DiaryInfo { get; set; }
         private DateTime Date { get; set; }
         private string Content { get; set; }
-        private DiaryView LastDiary { get; set; }
 
         protected override async Task OnPageInitializedAsync()
         {
@@ -48,7 +47,6 @@ namespace HelloJkwCore.Pages.Diary
                 return;
             }
 
-            LastDiary = await DiaryService.GetLastDiaryViewAsync(User, DiaryInfo);
             Date = DateTime.Today;
 
             if (!string.IsNullOrWhiteSpace(DiaryDate))
@@ -81,14 +79,6 @@ namespace HelloJkwCore.Pages.Diary
             if (content != null)
             {
                 Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, Date));
-            }
-        }
-
-        void SelectNextDayOfLastDay()
-        {
-            if (LastDiary?.DiaryContents?.Any() ?? false)
-            {
-                Date = LastDiary.DiaryContents[0].Date.AddDays(1);
             }
         }
     }

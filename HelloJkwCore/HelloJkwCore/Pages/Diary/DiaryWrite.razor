@@ -4,28 +4,21 @@
 
 <AuthorizeView Roles="DiaryWriter">
     <Authorized>
-        <div>
-            <RadzenDatePicker @bind-Value="Date" DateFormat="yyyy.MM.dd (ddd)" />
-            @if (LastDiary?.DiaryContents?.Any() ?? false)
-            {
-                var culture = new System.Globalization.CultureInfo("ko-KR");
-                var lastDate = LastDiary.DiaryContents[0].Date;
-                <span>
-                    마지막 일기:
-                    @lastDate.ToString("yyyy.MM.dd")
-                    (@culture.DateTimeFormat.GetDayName(lastDate.DayOfWeek))
-                </span>
-                <button @onclick="SelectNextDayOfLastDay">다음날 선택</button>
-            }
-        </div>
-
-        <div>
-            <RadzenTextArea @bind-Value="Content" Style="max-width: 95vw; max-width: 700px; height: 50vh; width: 100%" />
-        </div>
-
-        <div>
-            <RadzenButton Click="@(async () => await WriteDiaryAsync())" Text="저장" />
-        </div>
+        <MudGrid>
+            <MudItem Style="max-width: 200px;">
+                <MudDatePicker Date="Date" DateFormat="yyyy.MM.dd (ddd)" TitleDateFormat="yyyy.MM.dd dddd"></MudDatePicker>
+            </MudItem>
+        </MudGrid>
+        <MudGrid>
+            <MudItem xs="12" sm="12" md="12" lg="12">
+                <MudTextField T="string" @bind-Value="Content" Lines="15" Style="line-height: 30px;"/>
+            </MudItem>
+            <MudItem xs="12" sm="12" md="12" lg="12">
+                <MudButton OnClick="(async () => await WriteDiaryAsync())" StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info">
+                    저장
+                </MudButton>
+            </MudItem>
+        </MudGrid>
     </Authorized>
     <NotAuthorized>
         <span>로그인하세요.</span>
