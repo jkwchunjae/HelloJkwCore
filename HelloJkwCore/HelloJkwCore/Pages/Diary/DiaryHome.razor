@@ -1,0 +1,89 @@
+﻿@inherits JkwPageBase
+@page "/diary/{DiaryName?}/{Date?}"
+
+@using JkwExtensions
+
+@if (!IsAuthenticated || Loading)
+{
+}
+else if (MyDiaryInfo != null && !HasDiaryInfo)
+{
+    <AuthorizeView Policy="Diary">
+        <Authorized>
+            <span>없는 일기장입니다.</span>
+        </Authorized>
+        <NotAuthorized>
+            <span>일기장 권한이 없습니다.</span>
+        </NotAuthorized>
+    </AuthorizeView>
+}
+else if (MyDiaryInfo == null && !HasDiaryInfo)
+{
+    <AuthorizeView Roles="DiaryWriter">
+        <Authorized>
+            <RadzenLink Path="@DiaryUrl.Create()" Text="일기장 만들기"></RadzenLink>
+        </Authorized>
+        <NotAuthorized>
+            <span>일기쓰기 권한이 없습니다.</span>
+        </NotAuthorized>
+    </AuthorizeView>
+}
+else if (!HasDiaryContent)
+{
+    <AuthorizeView Roles="DiaryWriter">
+        <Authorized>
+            <RadzenLink Path="@DiaryUrl.Write(DiaryInfo)" Text="일기 쓰기"></RadzenLink>
+        </Authorized>
+        <NotAuthorized>
+            <span>일기쓰기 권한이 없습니다.</span>
+        </NotAuthorized>
+    </AuthorizeView>
+}
+else if (HasDiaryContent)
+{
+    <AuthorizeView Policy="Diary">
+        <Authorized>
+
+    <h2>@View.DiaryContents[0].Date.ToString("yyyy.MM.dd") @View.DiaryContents[0].Date.GetWeekday(DateLanguage.KR, WeekdayFormat.DDD) </h2>
+
+    <div class="button-group">
+    <div id="button-left-group">
+        @if (View.DiaryNavigationData.HasPrev)
+        {
+            <a class="btn btn-sm btn-outline-secondary" href="@DiaryUrl.PrevDate(View)">이전</a>
+        }
+        @if (View.DiaryNavigationData.HasNext)
+        {
+            <a class="btn btn-sm btn-outline-secondary" href="@DiaryUrl.NextDate(View)">다음</a>
+        }
+    </div>
+    <div id="button-right-group">
+            <a class="btn btn-sm btn-outline-primary" href="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)">전체보기</a>
+        @if (DiaryInfo.IsSecret == false && DiaryInfo.CanWrite(User.Email))
+        {
+            <a class="btn btn-sm btn-outline-primary" href="@DiaryUrl.Search(DiaryInfo.DiaryName)">검색</a>
+        }
+        @if (DiaryInfo.CanWrite(User.Email))
+        {
+            <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Write(DiaryInfo)">쓰기</a>
+            <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Write(DiaryInfo, View.DiaryContents[0].Date.AddDays(1))">다음날 쓰기</a>
+        }
+        @if (IsMyText(View))
+        {
+            <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Edit(DiaryInfo, View.DiaryContents[0].Date)">수정</a>
+        }
+        @if (DiaryInfo.IsSecret)
+        {
+            <a class="btn btn-sm btn-outline-danger" href="@DiaryUrl.SetPassword()">암호</a>
+        }
+    </div>
+    </div>
+
+    @foreach (var content in View.DiaryContents)
+    {
+        <pre style="white-space: pre-wrap">@content.Text</pre>
+    }
+
+        </Authorized>
+    </AuthorizeView>
+}
