@@ -21,7 +21,7 @@ else if (MyDiaryInfo == null && !HasDiaryInfo)
 {
     <AuthorizeView Roles="DiaryWriter">
         <Authorized>
-            <RadzenLink Path="@DiaryUrl.Create()" Text="일기장 만들기"></RadzenLink>
+            <MudLink Href="@DiaryUrl.Create()">일기장 만들기</MudLink>
         </Authorized>
         <NotAuthorized>
             <span>일기쓰기 권한이 없습니다.</span>
@@ -32,7 +32,7 @@ else if (!HasDiaryContent)
 {
     <AuthorizeView Roles="DiaryWriter">
         <Authorized>
-            <RadzenLink Path="@DiaryUrl.Write(DiaryInfo)" Text="일기 쓰기"></RadzenLink>
+            <MudLink Href="@DiaryUrl.Write(DiaryInfo)">일기 쓰기</MudLink>
         </Authorized>
         <NotAuthorized>
             <span>일기쓰기 권한이 없습니다.</span>
