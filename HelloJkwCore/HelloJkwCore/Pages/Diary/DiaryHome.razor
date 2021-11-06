@@ -50,31 +50,47 @@ else if (HasDiaryContent)
     <div id="button-left-group">
         @if (View.DiaryNavigationData.HasPrev)
         {
-            <a class="btn btn-sm btn-outline-secondary" href="@DiaryUrl.PrevDate(View)">이전</a>
+            <MudButton Link="@DiaryUrl.PrevDate(View)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Surface">
+                이전
+            </MudButton>
         }
         @if (View.DiaryNavigationData.HasNext)
         {
-            <a class="btn btn-sm btn-outline-secondary" href="@DiaryUrl.NextDate(View)">다음</a>
+            <MudButton Link="@DiaryUrl.NextDate(View)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Surface">
+                다음
+            </MudButton>
         }
     </div>
     <div id="button-right-group">
-            <a class="btn btn-sm btn-outline-primary" href="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)">전체보기</a>
+            <MudButton Link="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
+                전체보기
+            </MudButton>
         @if (DiaryInfo.IsSecret == false && DiaryInfo.CanWrite(User.Email))
         {
-            <a class="btn btn-sm btn-outline-primary" href="@DiaryUrl.Search(DiaryInfo.DiaryName)">검색</a>
+            <MudButton Link="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
+                검색
+            </MudButton>
         }
         @if (DiaryInfo.CanWrite(User.Email))
         {
-            <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Write(DiaryInfo)">쓰기</a>
-            <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Write(DiaryInfo, View.DiaryContents[0].Date.AddDays(1))">다음날 쓰기</a>
+            <MudButton Link="@DiaryUrl.Write(DiaryInfo)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Success">
+                쓰기
+            </MudButton>
+            <MudButton Link="@DiaryUrl.Write(DiaryInfo, View.DiaryContents[0].Date.AddDays(1))" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Success">
+                다음날 쓰기
+            </MudButton>
         }
         @if (IsMyText(View))
         {
-            <a class="btn btn-sm btn-outline-info" href="@DiaryUrl.Edit(DiaryInfo, View.DiaryContents[0].Date)">수정</a>
+            <MudButton Link="@DiaryUrl.Edit(DiaryInfo, View.DiaryContents[0].Date)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Tertiary">
+                수정
+            </MudButton>
         }
         @if (DiaryInfo.IsSecret)
         {
-            <a class="btn btn-sm btn-outline-danger" href="@DiaryUrl.SetPassword()">암호</a>
+            <MudButton Link="@DiaryUrl.SetPassword()" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Tertiary">
+                암호
+            </MudButton>
         }
     </div>
     </div>
