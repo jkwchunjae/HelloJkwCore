@@ -3,16 +3,26 @@
 
 @if (HasDiaryContent)
 {
-<h2>@View.DiaryContents[0].Date.ToString("yyyy.MM.dd")</h2>
-
-<div>
-    @foreach (var content in View.DiaryContents)
-    {
-        <textarea @bind="content.Text" rows="@Rows[content.Index]" oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
-    }
-</div>
-
-<div>
-    <RadzenButton Click="EditDiary" Text="수정"/>
-</div>
+    <MudGrid>
+        <MudItem>
+            <MudText Typo="Typo.h4">
+                @View.DiaryContents[0].Date.ToString("yyyy.MM.dd dddd")
+            </MudText>
+        </MudItem>
+    </MudGrid>
+    <MudGrid>
+        @foreach (var content in View.DiaryContents)
+        {
+        <MudItem Style="width: 100%">
+            <MudTextField T="string" @bind-Value="content.Text" Lines="15" Style="line-height: 30px;"/>
+        </MudItem>
+        }
+    </MudGrid>
+    <MudGrid>
+        <MudItem>
+            <MudButton OnClick="EditDiary" StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info">
+                수정
+            </MudButton>
+        </MudItem>
+    </MudGrid>
 }
