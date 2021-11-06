@@ -15,7 +15,11 @@
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
-        @Body
+        <MudPaper Elevation="0">
+            <MudContainer>
+                @Body
+            </MudContainer>
+        </MudPaper>
     </MudMainContent>
 </MudLayout>
 
@@ -66,6 +70,7 @@
             DrawerIcon = "rgba(255,255,255, 0.50)",
             AppbarBackground = "#27272f",
             AppbarText = "rgba(255,255,255, 0.70)",
+            Primary = "rgba(255,255,255, 0.70)",
             TextPrimary = "rgba(255,255,255, 0.70)",
             TextSecondary = "rgba(255,255,255, 0.50)",
             ActionDefault = "#adadb1",
