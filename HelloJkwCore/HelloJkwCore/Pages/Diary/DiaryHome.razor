@@ -44,7 +44,7 @@ else if (HasDiaryContent)
     <AuthorizeView Policy="Diary">
         <Authorized>
 
-    <h2>@View.DiaryContents[0].Date.ToString("yyyy.MM.dd") @View.DiaryContents[0].Date.GetWeekday(DateLanguage.KR, WeekdayFormat.DDD) </h2>
+    <span class="diary-date">@View.DiaryContents[0].Date.ToString("yyyy.MM.dd dddd")</span>
 
     <div class="button-group">
     <div id="button-left-group">

@@ -16,6 +16,7 @@ using ProjectDiary;
 using ProjectSuFc;
 using System.Net.Http;
 using MudBlazor.Services;
+using System.Globalization;
 
 namespace HelloJkwCore
 {
@@ -50,6 +51,12 @@ namespace HelloJkwCore
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var culture = new CultureInfo("ko-KR");
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+
             services.AddSingleton(_coreOption);
             services.AddMudServices();
 
