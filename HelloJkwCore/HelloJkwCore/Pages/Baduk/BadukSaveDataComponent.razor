@@ -24,10 +24,12 @@
             var showAll = ShowAllSaveData || Diary.GameDataList.Count < 10;
             var gameList = showAll ? Diary.GameDataList : Diary.GameDataList.Take(10);
         }
-        <button class="btn btn-sm btn-outline-success" @onclick="(() => ClickGameData(null))">새 게임</button>
+        <button class="btn btn-sm btn-success" @onclick="(() => ClickGameData(null))">새 게임</button>
         @foreach (var gameName in gameList)
         {
-            <button class="btn btn-sm btn-outline-dark" @onclick="(() => ClickGameData(gameName))">@gameName</button>
+            <MudButton OnClick="(() => ClickGameData(gameName))" Variant="Variant.Outlined" Color="Color.Default" Size="Size.Small" Style="display: flex;">
+                @gameName
+            </MudButton>
         }
         @if (!showAll)
         {
