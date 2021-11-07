@@ -57,12 +57,20 @@ namespace HelloJkwCore.Pages.Diary
 
         public static string PrevDate(DiaryView view)
         {
-            return DiaryContent(view.DiaryInfo.DiaryName, view.DiaryNavigationData.PrevDate.Value);
+            if (view.DiaryNavigationData.HasPrev)
+            {
+                return DiaryContent(view.DiaryInfo.DiaryName, view.DiaryNavigationData.PrevDate.Value);
+            }
+            return string.Empty;
         }
 
         public static string NextDate(DiaryView view)
         {
-            return DiaryContent(view.DiaryInfo.DiaryName, view.DiaryNavigationData.NextDate.Value);
+            if (view.DiaryNavigationData.HasNext)
+            {
+                return DiaryContent(view.DiaryInfo.DiaryName, view.DiaryNavigationData.NextDate.Value);
+            }
+            return string.Empty;
         }
 
         public static string SetPassword()

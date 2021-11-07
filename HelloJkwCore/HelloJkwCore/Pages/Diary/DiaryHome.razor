@@ -48,18 +48,12 @@ else if (HasDiaryContent)
 
     <div class="button-group">
     <div id="button-left-group">
-        @if (View.DiaryNavigationData.HasPrev)
-        {
-            <MudButton Link="@DiaryUrl.PrevDate(View)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Surface">
-                이전
-            </MudButton>
-        }
-        @if (View.DiaryNavigationData.HasNext)
-        {
-            <MudButton Link="@DiaryUrl.NextDate(View)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Surface">
-                다음
-            </MudButton>
-        }
+        <MudButton Link="@DiaryUrl.PrevDate(View)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Surface" Disabled="!View.DiaryNavigationData.HasPrev">
+            이전
+        </MudButton>
+        <MudButton Link="@DiaryUrl.NextDate(View)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Surface" Disabled="!View.DiaryNavigationData.HasNext">
+            다음
+        </MudButton>
     </div>
     <div id="button-right-group">
             <MudButton Link="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
