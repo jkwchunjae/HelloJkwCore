@@ -67,7 +67,7 @@ else if (HasDiaryContent)
             </MudButton>
         @if (DiaryInfo.IsSecret == false && DiaryInfo.CanWrite(User.Email))
         {
-            <MudButton Link="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
+            <MudButton Link="@DiaryUrl.Search(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
                 검색
             </MudButton>
         }
