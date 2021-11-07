@@ -1,0 +1,46 @@
+﻿tr.baduk {
+}
+
+td.board-cell {
+    padding: 0;
+    line-height: initial;
+}
+
+img.image-cell {
+}
+
+img.image-stone {
+    position: absolute;
+    cursor: pointer;
+}
+
+span.stone-index {
+    position: absolute;
+    width: 24px;
+    text-align: center;
+    padding-top: 2px;
+    cursor: pointer;
+}
+
+span.stone-index-none {
+    display: none;
+}
+
+span.stone-index-black {
+    color: white;
+}
+
+span.stone-index-white {
+    color: black;
+}
+
+input.index-text {
+    width: 80px;
+    text-align: center;
+    background: #ccc;
+    border: 1px solid gray;
+}
+
+.board-info {
+    display: inline-block;
+}

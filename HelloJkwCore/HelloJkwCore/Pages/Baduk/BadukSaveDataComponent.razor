@@ -1,0 +1,67 @@
+﻿@inherits JkwPageBase
+
+<div style="max-width: 400px;">
+@if (IsAuthenticated && Diary != null)
+{
+    <div>
+        <textarea @bind="Memo" style="width: 100%;" placeholder="메모" oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+    </div>
+    <div class="input-group">
+        <input class="form-control" @bind-value="SaveFileName" placeholder="저장할 파일 이름을 입력하세요"/>
+        <div class="input-group-append">
+            <button class="btn btn-outline-dark" @onclick="(async () => await SaveBoard())">저장</button>
+            <button class="btn btn-outline-danger" @onclick="(() => DeleteFlag = !DeleteFlag)">삭제</button>
+        </div>
+    </div>
+    @if (DeleteFlag)
+    {
+        <button class="btn btn-danger" @onclick="(() => DeleteBoard())">
+            (삭제 확인) 정말 삭제하시겠습니까?
+        </button>
+    }
+    <div class="game-list">
+        @{
+            var showAll = ShowAllSaveData || Diary.GameDataList.Count < 10;
+            var gameList = showAll ? Diary.GameDataList : Diary.GameDataList.Take(10);
+        }
+        <button class="btn btn-sm btn-outline-success" @onclick="(() => ClickGameData(null))">새 게임</button>
+        @foreach (var gameName in gameList)
+        {
+            <button class="btn btn-sm btn-outline-dark" @onclick="(() => ClickGameData(gameName))">@gameName</button>
+        }
+        @if (!showAll)
+        {
+            <button class="btn btn-sm btn-light" @onclick="(() => ShowAllSaveData = true)">전체 불러오기</button>
+        }
+    </div>
+}
+@if (IsAuthenticated && (DiaryList?.Count ?? 0) >= 2)
+{
+    <select class="form-control" @onchange="((args) => ChangeDiaryInfo(args))">
+        @for (var i = 0; i < DiaryList.Count; i++)
+        {
+            <option value="@i">@DiaryList[i].Name</option>
+        }
+    </select>
+}
+@if (IsDiaryCreator)
+{
+    <div class="input-group">
+        <input class="form-control" @bind-value="NewDiaryName" placeholder="바둑기록 이름" />
+        <div class="input-group-append">
+            <button class="btn btn-outline-dark" @onclick="(async () => await CreateDiary())">생성</button>
+            @if (Diary.OwnerUserId == User.Id)
+            {
+            <button class="btn btn-outline-danger" @onclick="(() => DiaryDeleteFlag = !DiaryDeleteFlag)">삭제</button>
+            }
+        </div>
+    </div>
+    @if (DiaryDeleteFlag)
+    {
+        <button class="btn btn-danger" @onclick="(() => DeleteDiary())">
+            (삭제 확인) 정말 삭제하시겠습니까?
+        </button>
+    }
+}
+</div>
+
