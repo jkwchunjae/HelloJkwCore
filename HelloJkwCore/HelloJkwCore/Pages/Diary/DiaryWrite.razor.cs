@@ -22,9 +22,8 @@ namespace HelloJkwCore.Pages.Diary
         public string DiaryDate { get; set; }
 
         private DiaryInfo DiaryInfo { get; set; }
-        private DateTime Date { get; set; }
+        private DateTime? Date { get; set; }
         private string Content { get; set; }
-        private DiaryView LastDiary { get; set; }
 
         protected override async Task OnPageInitializedAsync()
         {
@@ -48,7 +47,6 @@ namespace HelloJkwCore.Pages.Diary
                 return;
             }
 
-            LastDiary = await DiaryService.GetLastDiaryViewAsync(User, DiaryInfo);
             Date = DateTime.Today;
 
             if (!string.IsNullOrWhiteSpace(DiaryDate))
@@ -71,24 +69,16 @@ namespace HelloJkwCore.Pages.Diary
             DiaryContent content;
             if (DiaryInfo.IsSecret)
             {
-                content = await DiaryService.WriteDiaryAsync(User, DiaryInfo, Date, Content, UserData.Password);
+                content = await DiaryService.WriteDiaryAsync(User, DiaryInfo, Date.Value, Content, UserData.Password);
             }
             else
             {
-                content = await DiaryService.WriteDiaryAsync(User, DiaryInfo, Date, Content);
+                content = await DiaryService.WriteDiaryAsync(User, DiaryInfo, Date.Value, Content);
             }
 
             if (content != null)
             {
-                Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, Date));
-            }
-        }
-
-        void SelectNextDayOfLastDay()
-        {
-            if (LastDiary?.DiaryContents?.Any() ?? false)
-            {
-                Date = LastDiary.DiaryContents[0].Date.AddDays(1);
+                Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, Date.Value));
             }
         }
     }

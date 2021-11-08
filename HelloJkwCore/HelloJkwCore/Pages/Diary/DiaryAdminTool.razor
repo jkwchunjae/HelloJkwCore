@@ -3,50 +3,32 @@
 
 <AuthorizeView Roles="Admin">
     <Authorized>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>일기장</th>
-            <th>이메일</th>
-            <th>글 수</th>
-            <th>...</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var diaryData in DiaryDataList)
-        {
-            <tr>
-                <td>@diaryData.DiaryName</td>
-                <td>@diaryData.Owner</td>
-                <td>@diaryData.DiaryFileList.Count</td>
-                <td>
-                    <RadzenButton Click="@(async () => await CreateTrie(diaryData))" Text="Trie만들기"/>
-                </td>
-            </tr>
-            if (diaryData.Progress.On)
-            {
-                var progress = diaryData.Progress;
-                var val = (int)(100.0 * progress.Value / progress.Total);
-                var valText = $"{val}%";
-                var greenBar = progress.Total == progress.Value ? "progress-bar-success" : "";
-            <tr>
-                <td colspan="4">
-                    <div class="progress">
-                        <div class="progress-bar @greenBar" role="progressbar"
-                             aria-valuenow="@progress.Value"
-                             aria-valuemin="0"
-                             aria-valuemax="@progress.Total"
-                             style="width: @valText">
-                            <span class="sr-only"></span>
-                        </div>
-                    </div>
-
-                </td>
-            </tr>
-            }
-        }
-    </tbody>
-</table>
+        <MudTable Items="DiaryDataList" Hover="true" >
+            <HeaderContent>
+                <MudTh>일기장</MudTh>
+                <MudTh>이메일</MudTh>
+                <MudTh>글 수</MudTh>
+                <MudTh>...</MudTh>
+            </HeaderContent>
+            <RowTemplate Context="diaryData">
+                <MudTd DataLabel="일기장">@diaryData.DiaryName</MudTd>
+                <MudTd DataLabel="이메일">@diaryData.Owner</MudTd>
+                <MudTd DataLabel="글 수">@diaryData.DiaryFileList.Count</MudTd>
+                <MudTd>
+                    <MudButton OnClick="(async () => await CreateTrie(diaryData))" Disabled="@diaryData.Progress.On">
+                        Trie만들기
+                    </MudButton>
+                    @if (diaryData.Progress.On)
+                    {
+                    var progress = diaryData.Progress;
+                    var val = (int)(100.0 * progress.Value / progress.Total);
+                    var valText = $"{val}%";
+                    var greenBar = progress.Total == progress.Value ? "progress-bar-success" : "";
+                        <MudText Style="display: inline-flex;">@valText</MudText>
+                    }
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
     </Authorized>
 </AuthorizeView>
 

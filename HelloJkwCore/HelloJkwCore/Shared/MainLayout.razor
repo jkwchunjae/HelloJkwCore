@@ -1,18 +1,25 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits JkwLayoutBase
 
-<RadzenDialog />
+<MudThemeProvider Theme="currentTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-<div class="page">
-    <div class="sidebar">
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="ml-3" Style="font-family: 'Kaushan Script'; color: #fed136;">Hello JKW!</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Filled.Brightness4" Color="Color.Inherit" Edge="Edge.End" OnClick="() => ToggleTheme()" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
-    </div>
+    </MudDrawer>
+    <MudMainContent>
+        <MudPaper Elevation="0" Style="background-color: inherit;">
+            <MudContainer Style="padding-top: 15px;">
+                @Body
+            </MudContainer>
+        </MudPaper>
+    </MudMainContent>
+</MudLayout>
 
-    <div class="main">
-        @*<div class="top-row px-4">
-        </div>*@
-
-        <div class="content px-4">
-            @Body
-        </div>
-    </div>
-</div>

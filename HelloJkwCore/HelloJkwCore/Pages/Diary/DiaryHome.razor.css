@@ -1,4 +1,12 @@
-﻿div.button-group {
+﻿span.diary-date {
+    display: block;
+    font-family: 'Roboto';
+    font-size: 27px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+div.button-group {
     max-width: 700px;
     display: inline-block;
     margin-bottom: 10px;
@@ -20,8 +28,8 @@ div#button-right-group {
 pre {
     border: 1px solid gray;
     border-radius: 5px;
-    background-color: #ddd;
     padding: 10px;
     font-family: 'Malgun Gothic';
+    font-size: larger;
     max-width: 700px;
 }
