@@ -1,0 +1,29 @@
+﻿.vote-count {
+    color: #666;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.vote-member {
+    display: inline-block;
+}
+
+.team-member-list {
+    display: initial;
+}
+
+.member-name {
+    display: inline-block;
+    margin-right: 5px;
+    color: #888;
+    font-size: 14px;
+}
+
+.team-group {
+    display: block;
+}
+
+.team-count {
+    color: #777;
+    font-size: 12px;
+}
