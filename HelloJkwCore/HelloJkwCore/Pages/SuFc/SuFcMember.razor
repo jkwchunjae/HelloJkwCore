@@ -1,0 +1,76 @@
+﻿@inherits JkwPageBase
+@page "/sufc/member"
+
+@using Common; 
+
+<h1>수FC / 회원</h1>
+
+@if (IsUserSomeoneConnected)
+{
+    if (HasSuFcAdmin)
+    {
+    <a class="btn btn-outline-success" href="/sufc/member/new">추가</a>
+    }
+}
+else
+{
+    <div>자신의 이름 옆의 연결 버튼을 눌러주세요.</div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th class="sortable" @onclick="(() => SortName())">이름</th>
+            <th>ID 연결</th>
+            @if (HasSuFcAdmin)
+            {
+            @foreach (var specInfo in SpecList)
+            {
+                <th class="sortable" @onclick="(() => SortSpec(specInfo.SpecType))">@specInfo.SpecName</th>
+            }
+            }
+            <th>...</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var member in Members)
+        {
+            <tr>
+                <td>
+                    @member.Name
+                    @if (User != null && member.ConnectIdList.Contains(User.Id))
+                    {
+                        <span class="badge badge-info">me</span>
+                    }
+                </td>
+                <td>
+                    @if (User != null)
+                    {
+                        if (member.ConnectIdList.Contains(User.Id))
+                        {
+                            <button class="btn btn-sm btn-warning" @onclick="@(async () => await DisconnectId(member, User))">연결끊기</button>
+                        }
+                        else if (IsUserSomeoneConnected == false)
+                        {
+                            <button class="btn btn-sm btn-outline-success" @onclick="@(async () => await ConnectId(member, User))">연결</button>
+                        }
+                    }
+                </td>
+                @if (HasSuFcAdmin)
+                {
+                @foreach (var specInfo in SpecList)
+                {
+                    <td>
+                        <input type="number" min="@specInfo.Min" max="@specInfo.Max" step="@specInfo.Step" class="spec-value" value="@member.GetSpecValue(specInfo.SpecType)"
+                               @oninput="(async (ChangeEventArgs args) => await ChangeSpecValue(member, specInfo.SpecType, args))"
+                               />
+                    </td>
+                }
+                }
+                <td>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

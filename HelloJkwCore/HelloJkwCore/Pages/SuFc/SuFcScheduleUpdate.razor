@@ -1,0 +1,94 @@
+﻿@inherits JkwPageBase
+@page "/sufc/schedule/update/{ScheduleId}"
+
+@using ProjectSuFc
+@using JkwExtensions 
+
+@inject ISuFcService SuFcService
+
+<h1>수FC / 모임 변경</h1>
+
+@if (Schedule != null)
+{
+
+<RadzenTemplateForm TItem="ScheduleData" Data="Schedule"
+                    Submit="@(async () => await UpdateSchedule(Schedule))">
+    <RadzenFieldset Text="모임 변경" Style="max-width: 700px;">
+        <div class="row">
+            <div class="col-3">
+                <RadzenLabel Text="제목" />
+            </div>
+            <div class="col" style="width: 50%;">
+                <RadzenTextBox Name="Title" @bind-Value="Schedule.Title" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-3">
+                <RadzenLabel Text="날짜" />
+            </div>
+            <div class="col" style="width: 50%;">
+                <RadzenDatePicker Name="RegisterDate" @bind-Value="Schedule.Date" DateFormat="yyyy.MM.dd" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-3">
+                <RadzenLabel Text="장소" />
+            </div>
+            <div class="col" style="width: 50%;">
+                <RadzenTextBox Name="Location" @bind-Value="Schedule.Location" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-3">
+                <RadzenLabel Text="시간" />
+            </div>
+            <div class="col" style="width: 50%;">
+                <RadzenTextBox Name="Time" @bind-Value="Schedule.Time" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-3">
+                <RadzenLabel Text="팀" />
+            </div>
+            <div class="col" style="width: 50%;">
+                <RadzenDropDown TValue="TeamResult" Data="TeamResultList" @bind-Value="SelectedTeamResult"
+                                TextProperty="Title"></RadzenDropDown>
+            </div>
+        </div>
+        <RadzenButton ButtonType="ButtonType.Submit" Text="변경" />
+    </RadzenFieldset>
+</RadzenTemplateForm>
+}
+
+@code {
+    [Parameter]
+    public string ScheduleId { get; set; }
+
+    List<TeamResult> TeamResultList = new();
+    TeamResult SelectedTeamResult;
+
+    private ScheduleData Schedule { get; set; }
+
+    protected override async Task OnPageParametersSetAsync()
+    {
+        Schedule = await SuFcService.GetSchedule(ScheduleId.ToInt());
+        TeamResultList = await SuFcService.GetAllTeamResult();
+        SelectedTeamResult = TeamResultList.Find(x => x.Title == Schedule.TeamTitle);
+    }
+
+    async Task UpdateSchedule(ScheduleData scheduleData)
+    {
+        var members = await SuFcService.GetAllMember();
+        var newMembers = members.Where(x => scheduleData.Members.Empty(e => e.Name == x.Name)).ToList();
+        scheduleData.Members.AddRange(newMembers.Select(x => new ScheduleMember(x.Name)));
+        scheduleData.TeamTitle = SelectedTeamResult?.Title ?? string.Empty;
+
+        await SuFcService.SaveSchedule(scheduleData);
+
+        Navi.NavigateTo("/sufc/schedule");
+    }
+}

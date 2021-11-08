@@ -11,6 +11,7 @@
         <MudButton Link="@DiaryUrl.Home()" Variant="Variant.Filled">
             일기장
         </MudButton>
+        <MudButton Variant="Variant.Filled" OnClick="() => Navi.NavigateTo(sufc)">수FC</MudButton>
     </Authorized>
     <NotAuthorized>
         <h1>안녕하세요!</h1>
@@ -21,3 +22,7 @@
     </NotAuthorized>
 </AuthorizeView>
 
+@code
+{
+    string sufc = "/sufc";
+}

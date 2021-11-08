@@ -1,0 +1,37 @@
+﻿@inherits JkwPageBase
+@page "/sufc/team-setting-option"
+@using ProjectSuFc
+
+<h3>팀 조건 설정</h3>
+
+<div>
+    <div style="display: inline-block; border: 1px solid black; border-radius: 10px; padding: 10px;">
+        <span>조건 추가</span>
+        <div>
+            <RadzenDropDown TValue="MemberName" @bind-Value="SelectedName" Data="SelectableMembers.Select(x => x.Name)" />
+            <button class="btn btn-sm btn-outline-dark" @onclick="(() => AddName(SelectedName.Name))">1. 이름 추가</button>
+        </div>
+        <div>
+            <RadzenTextBox @bind-Value="SplitAddNames" />
+            <button class="btn btn-sm btn-outline-dark" @onclick="(() => AddSplitOption(SplitAddNames))">2. 조건 추가</button>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div style="display: inline-block; border: 1px solid black; border-radius: 10px; padding: 10px;">
+        <span>분리 조건</span>
+        <ul>
+            @foreach (var i in splitOptions.Select((x, i) => i))
+            {
+                <li class="merge-split-option">
+                    <span>@splitOptions[i]</span>
+                    <button class="btn btn-sm btn-outline-danger" @onclick="(() => DeleteSplitOption(i))">삭제</button>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<button class="btn btn-success" @onclick="(async () => await SaveSettingOption())">3. 세팅 저장</button>
+
