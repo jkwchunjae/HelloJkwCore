@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -28,15 +29,13 @@ namespace Common
 
             using MemoryStream msEncrypt = new MemoryStream();
             using CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
-            using StreamWriter swEncrypt = new StreamWriter(csEncrypt);
-
-            swEncrypt.Write(plainText);
-            swEncrypt.Close();
+            using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+            {
+                swEncrypt.Write(plainText);
+            }
 
             var encrypted = msEncrypt.ToArray();
-            var cipherText = encrypted
-                .Aggregate(new StringBuilder(), (builder, x) => builder.Append($"{x:x2}"))
-                .ToString();
+            var cipherText = Convert.ToHexString(encrypted).ToLower();
             return cipherText;
         }
 
@@ -47,9 +46,7 @@ namespace Common
             if (password == null || password.Length <= 0)
                 throw new ArgumentNullException("password");
 
-            var cipherData = Enumerable.Range(0, cipherText.Length / 2)
-                .Select(i => byte.Parse(cipherText.Substring(i * 2, 2), NumberStyles.HexNumber))
-                .ToArray();
+            var cipherData = Convert.FromHexString(cipherText);
 
             password = Enumerable.Range(0, 16).Select(x => password).StringJoin("");
             var key = password.Take(16).Select(x => (byte)x).ToArray();
