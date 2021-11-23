@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,92 +13,54 @@ namespace Common
 {
     public static class Encryptor
     {
-        public static string Encrypt(this string plainText, string key)
+        public static string Encrypt(this string plainText, string password)
         {
-            // Check arguments.
             if (plainText == null || plainText.Length <= 0)
                 throw new ArgumentNullException("plainText");
-            if (key == null || key.Length <= 0)
-                throw new ArgumentNullException("Key");
+            if (password == null || password.Length <= 0)
+                throw new ArgumentNullException("password");
 
-            key = Enumerable.Range(0, 16).Select(x => key).StringJoin("");
+            password = Enumerable.Range(0, 16).Select(x => password).StringJoin("");
+            var key = password.Take(16).Select(x => (byte)x).ToArray();
+            var iv = password.Take(16).Select(x => (byte)x).ToArray();
 
-            byte[] encrypted;
-            // Create an RijndaelManaged object
-            // with the specified key and IV.
-            using (RijndaelManaged rijAlg = new RijndaelManaged())
+            using Aes aes = Aes.Create();
+            ICryptoTransform encryptor = aes.CreateEncryptor(key, iv);
+
+            using MemoryStream msEncrypt = new MemoryStream();
+            using CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
+            using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
             {
-                rijAlg.Key = key.Take(16).Select(x => (byte)x).ToArray();
-                rijAlg.IV = key.Take(16).Select(x => (byte)x).ToArray();
-
-                // Create an encryptor to perform the stream transform.
-                ICryptoTransform encryptor = rijAlg.CreateEncryptor(rijAlg.Key, rijAlg.IV);
-
-                // Create the streams used for encryption.
-                using (MemoryStream msEncrypt = new MemoryStream())
-                {
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                    {
-                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-                        {
-
-                            //Write all data to the stream.
-                            swEncrypt.Write(plainText);
-                        }
-                        encrypted = msEncrypt.ToArray();
-                    }
-                }
+                swEncrypt.Write(plainText);
             }
 
-            //return HttpUtility.UrlEncode(encrypted);
-            return encrypted.Select(x => x.ToString("x2")).StringJoin("");
+            var encrypted = msEncrypt.ToArray();
+            var cipherText = Convert.ToHexString(encrypted).ToLower();
+            return cipherText;
         }
 
-        public static string Decrypt(this string cipherText, string key)
+        public static string Decrypt(this string cipherText, string password)
         {
-
-            // Check arguments.
             if (cipherText == null || cipherText.Length <= 0)
                 throw new ArgumentNullException("cipherText");
-            if (key == null || key.Length <= 0)
-                throw new ArgumentNullException("Key");
+            if (password == null || password.Length <= 0)
+                throw new ArgumentNullException("password");
 
-            key = Enumerable.Range(0, 16).Select(x => key).StringJoin("");
+            var cipherData = Convert.FromHexString(cipherText);
 
-            // Declare the string used to hold
-            // the decrypted text.
-            string plaintext = null;
+            password = Enumerable.Range(0, 16).Select(x => password).StringJoin("");
+            var key = password.Take(16).Select(x => (byte)x).ToArray();
+            var iv = password.Take(16).Select(x => (byte)x).ToArray();
 
-            // Create an RijndaelManaged object
-            // with the specified key and IV.
-            using (RijndaelManaged rijAlg = new RijndaelManaged())
-            {
-                rijAlg.Key = key.Take(16).Select(x => (byte)x).ToArray();
-                rijAlg.IV = key.Take(16).Select(x => (byte)x).ToArray();
+            using Aes aes = Aes.Create();
+            ICryptoTransform decryptor = aes.CreateDecryptor(key, iv);
 
-                // Create a decryptor to perform the stream transform.
-                ICryptoTransform decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
+            using MemoryStream msDecrypt = new MemoryStream(cipherData);
+            using CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
+            using StreamReader srDecrypt = new StreamReader(csDecrypt);
 
-                // Create the streams used for decryption.
-                //var cipherData = HttpUtility.UrlDecodeToBytes(cipherText);
-                var cipherData = Enumerable.Range(0, cipherText.Length / 2)
-                    .Select(i => byte.Parse(cipherText.Substring(i * 2, 2), NumberStyles.HexNumber))
-                    .ToArray();
-                using (MemoryStream msDecrypt = new MemoryStream(cipherData))
-                {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                    {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                        {
-                            // Read the decrypted bytes from the decrypting stream
-                            // and place them in a string.
-                            plaintext = srDecrypt.ReadToEnd();
-                        }
-                    }
-                }
-            }
-
-            return plaintext;
+            var plainText = srDecrypt.ReadToEnd();
+            return plainText;
         }
     }
 }

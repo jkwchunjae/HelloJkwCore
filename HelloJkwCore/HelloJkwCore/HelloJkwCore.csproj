@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>3f3a2065-dd51-4cf6-9af5-94b95114243b</UserSecretsId>
   </PropertyGroup>
 
@@ -13,11 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNet.Security.OAuth.KakaoTalk" Version="5.0.11" />
+    <PackageReference Include="AspNet.Security.OAuth.KakaoTalk" Version="6.0.0" />
     <PackageReference Include="Jkw.Extensions" Version="1.0.12" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="5.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.0" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.9.2" />
-    <PackageReference Include="MudBlazor" Version="5.2.0" />
+    <PackageReference Include="MudBlazor" Version="6.0.2" />
   </ItemGroup>
 
   <ItemGroup>
