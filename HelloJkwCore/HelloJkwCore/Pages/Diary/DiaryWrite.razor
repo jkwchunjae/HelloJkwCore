@@ -14,9 +14,10 @@
                 <MudTextField T="string" @bind-Value="Content" Lines="15" Style="line-height: 30px;" AutoFocus="true"/>
             </MudItem>
             <MudItem xs="12" sm="12" md="12" lg="12">
-                <MudButton OnClick="(async () => await WriteDiaryAsync())" StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info">
+                <OneClickButton OnClick="(async () => await WriteDiaryAsync())" 
+                                StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info">
                     저장
-                </MudButton>
+                </OneClickButton>
             </MudItem>
         </MudGrid>
     </Authorized>
