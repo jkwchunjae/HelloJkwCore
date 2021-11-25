@@ -1,0 +1,57 @@
+﻿@namespace HelloJkwCore
+@inherits MudButton
+
+<MudButton OnClick="Click"
+           Disabled="_clicked"
+
+            ButtonType="ButtonType"
+            Link="@Link"
+            Target="@Target"
+            DisableElevation="DisableElevation"
+            DisableRipple="DisableRipple"
+            Command="Command"
+            CommandParameter="CommandParameter"
+
+            StartIcon="@StartIcon"
+            EndIcon="@EndIcon"
+            IconColor="IconColor"
+            IconClass="@IconClass"
+            Color="Color"
+            Size="Size"
+            Variant="Variant"
+            FullWidth="FullWidth"
+
+            Class="@Class"
+            Style="@Style"
+            Tag="Tag"
+            UserAttributes="UserAttributes"
+>
+    @if (_clicked)
+    {
+        <MudProgressCircular Color="ProgressColor" Indeterminate="true" Size="ProgressSize" />
+    }
+    else
+    {
+        @ChildContent
+    }
+</MudButton>
+
+@code {
+    private bool _clicked = false;
+
+    [Parameter] public Color ProgressColor { get; set; } = Color.Default;
+    [Parameter] public Size ProgressSize { get; set; } = Size.Small;
+    [Parameter] public bool Reusable { get; set; } = false;
+
+    protected async Task Click(MouseEventArgs ev)
+    {
+        _clicked = true;
+
+        await OnClick.InvokeAsync(ev);
+
+        if (Reusable)
+        {
+            _clicked = false;
+        }
+    }
+}
