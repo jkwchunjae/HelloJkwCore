@@ -1,0 +1,15 @@
+﻿@inherits JkwPageBase
+
+@page "/worldcup"
+
+<h3>본선진출국</h3>
+
+<ul>
+    @foreach (var team in QualifiedTeams)
+    {
+        <li>
+            <img src="@team.Flag.Src" />
+            <span>@team.Name</span>
+        </li>
+    }
+</ul>
