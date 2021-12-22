@@ -19,5 +19,10 @@ namespace ProjectWorldCup
         {
             return _fifa.GetQualifiedTeamsAsync();
         }
+
+        public Task<List<RankingTeamData>> GetLastRankingTeamDataAsync(Gender gender)
+        {
+            return _fifa.GetLastRankingAsync(gender);
+        }
     }
 }

@@ -9,5 +9,6 @@ namespace ProjectWorldCup
     public interface IFifa
     {
         Task<List<QualifiedTeam>> GetQualifiedTeamsAsync();
+        Task<List<RankingTeamData>> GetLastRankingAsync(Gender gender);
     }
 }

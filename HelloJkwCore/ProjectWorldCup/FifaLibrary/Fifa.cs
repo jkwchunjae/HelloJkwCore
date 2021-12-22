@@ -12,6 +12,7 @@ namespace ProjectWorldCup
     {
         private static HttpClient _httpClient = new();
 
+        /// <summary> FIFA 는 __NEXT_DATA__ id 스크립트 안에 페이지에 포함될 json을 넣어놓는다. 그걸 가져와서 쓰자.  </summary>
         private async Task<JObject?> GetPageData(Uri uri)
         {
             var res = await _httpClient.GetAsync(uri);

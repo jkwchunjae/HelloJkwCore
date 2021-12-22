@@ -9,5 +9,6 @@ namespace ProjectWorldCup
     public interface IWorldCupService
     {
         Task<List<QualifiedTeam>> Get2022QualifiedTeamsAsync();
+        Task<List<RankingTeamData>> GetLastRankingTeamDataAsync(Gender gender);
     }
 }

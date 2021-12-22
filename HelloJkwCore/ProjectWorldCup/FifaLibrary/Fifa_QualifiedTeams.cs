@@ -8,14 +8,6 @@ using System.Threading.Tasks;
 
 namespace ProjectWorldCup
 {
-    public class TeamFlag
-    {
-        public string Src { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string Title { get; set; }
-        public string Alt { get; set; }
-    }
     public class QualifiedTeam
     {
         public string Id { get; set; }
