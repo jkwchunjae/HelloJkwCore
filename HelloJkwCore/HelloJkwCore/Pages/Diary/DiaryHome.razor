@@ -8,6 +8,7 @@
 }
 else if (MyDiaryInfo != null && !HasDiaryInfo)
 {
+    <PageTitle>일기장</PageTitle>
     <AuthorizeView Policy="Diary">
         <Authorized>
             <span>없는 일기장입니다.</span>
@@ -19,6 +20,7 @@ else if (MyDiaryInfo != null && !HasDiaryInfo)
 }
 else if (MyDiaryInfo == null && !HasDiaryInfo)
 {
+    <PageTitle>일기장</PageTitle>
     <AuthorizeView Roles="DiaryWriter">
         <Authorized>
             <MudLink Href="@DiaryUrl.Create()">일기장 만들기</MudLink>
@@ -30,6 +32,7 @@ else if (MyDiaryInfo == null && !HasDiaryInfo)
 }
 else if (!HasDiaryContent)
 {
+    <PageTitle>일기장</PageTitle>
     <AuthorizeView Roles="DiaryWriter">
         <Authorized>
             <MudLink Href="@DiaryUrl.Write(DiaryInfo)">일기 쓰기</MudLink>
@@ -44,6 +47,7 @@ else if (HasDiaryContent)
     <AuthorizeView Policy="Diary">
         <Authorized>
 
+    <PageTitle>@User.UserName 님의 일기장 </PageTitle>
     <span class="diary-date">@View.DiaryContents[0].Date.ToString("yyyy.MM.dd dddd")</span>
 
     <div class="button-group">

@@ -1,6 +1,8 @@
 ﻿@inherits JkwPageBase
 @page "/diary/admintool"
 
+<PageTitle>일기장 관리</PageTitle>
+
 <AuthorizeView Roles="Admin">
     <Authorized>
         <MudTable Items="DiaryDataList" Hover="true" >

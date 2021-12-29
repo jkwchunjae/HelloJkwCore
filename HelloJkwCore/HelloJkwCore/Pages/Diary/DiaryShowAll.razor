@@ -1,6 +1,8 @@
 ﻿@inherits JkwPageBase
 @page "/diary/showall/{DiaryName}"
 
+<PageTitle>일기장 전체보기</PageTitle>
+
 @foreach (var year in DateList?.Select(x => x.Year).Distinct().OrderByDescending(x => x))
 {
     var yearDates = DateList.Where(x => x.Year == year).Distinct().ToList();
