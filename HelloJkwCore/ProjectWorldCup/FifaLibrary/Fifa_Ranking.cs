@@ -12,7 +12,8 @@ namespace ProjectWorldCup
     {
         public RankingItem RankingItem { get; set; }
         public double PreviousPoints { get; set; }
-        public TeamTag Tag { get; set; }
+        [JsonProperty("tag")]
+        public TeamTag Region { get; set; }
     }
     public class RankingItem
     {
@@ -27,22 +28,39 @@ namespace ProjectWorldCup
     }
     public partial class Fifa : IFifa
     {
+        private Dictionary<Gender, List<RankingTeamData>> _lastRanking = new();
+
         public async Task<List<RankingTeamData>> GetLastRankingAsync(Gender gender)
         {
-            var rankInfoUrl = $"https://www.fifa.com/fifa-world-ranking/{gender}".ToLower();
-            var pageData = await GetPageData(new Uri(rankInfoUrl));
-            var dates = pageData?["ranking"]?["dates"]?
-                .Select(x => new { Id = x.Value<string>("id"), Text = x.Value<string>("text") })
-                .ToList();
+            try
+            {
+                var rankInfoUrl = $"https://www.fifa.com/fifa-world-ranking/{gender}".ToLower();
+                var pageData = await GetPageData(new Uri(rankInfoUrl));
+                var dates = pageData?["ranking"]?["dates"]?
+                    .Select(x => new { Id = x.Value<string>("id"), Text = x.Value<string>("text") })
+                    .ToList();
 
-            var lastDateId = dates?.FirstOrDefault()?.Id ?? string.Empty;
-            var url = $@"https://www.fifa.com/api/ranking-overview?locale=en&dateId={lastDateId}";
-            var res = await _httpClient.GetAsync(url);
-            var text = await res.Content.ReadAsStringAsync();
-            var obj = JObject.Parse(text);
+                var lastDateId = dates?.FirstOrDefault()?.Id ?? string.Empty;
+                var url = $@"https://www.fifa.com/api/ranking-overview?locale=en&dateId={lastDateId}";
+                var res = await _httpClient.GetAsync(url);
+                var text = await res.Content.ReadAsStringAsync();
+                var obj = JObject.Parse(text);
 
-            var ranking = obj["rankings"]?.ToObject<List<RankingTeamData>>() ?? new();
-            return ranking;
+                var ranking = obj["rankings"]?.ToObject<List<RankingTeamData>>() ?? new();
+                if (ranking.Any())
+                {
+                    _lastRanking[gender] = ranking;
+                }
+                return ranking;
+            }
+            catch
+            {
+                if (_lastRanking.ContainsKey(gender))
+                {
+                    return _lastRanking[gender];
+                }
+                throw;
+            }
         }
     }
 }

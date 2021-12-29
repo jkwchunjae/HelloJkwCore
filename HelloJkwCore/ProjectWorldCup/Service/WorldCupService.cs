@@ -15,9 +15,22 @@ namespace ProjectWorldCup
             _fifa = fifa;
         }
 
-        public Task<List<QualifiedTeam>> Get2022QualifiedTeamsAsync()
+        public async Task<List<QualifiedTeam>> Get2022QualifiedTeamsAsync()
         {
-            return _fifa.GetQualifiedTeamsAsync();
+            var teams = await _fifa.GetQualifiedTeamsAsync();
+            var rankings = await _fifa.GetLastRankingAsync(Gender.Men);
+
+            foreach (var team in teams)
+            {
+                var r = rankings.FirstOrDefault(x => x.RankingItem.Name == team.Name);
+
+                if (r != null)
+                {
+                    team.Ranking = r;
+                }
+            }
+
+            return teams;
         }
 
         public Task<List<RankingTeamData>> GetLastRankingTeamDataAsync(Gender gender)

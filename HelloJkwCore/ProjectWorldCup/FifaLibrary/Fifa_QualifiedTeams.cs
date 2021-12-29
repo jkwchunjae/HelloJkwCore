@@ -14,10 +14,15 @@ namespace ProjectWorldCup
         public string Name { get; set; }
         public TeamFlag Flag { get; set; }
         public string Status { get; set; }
+        public RankingTeamData Ranking { get; set; }
+
+        public int Rank => Ranking?.RankingItem?.Rank ?? 0;
     }
 
     public partial class Fifa : IFifa
     {
+        private List<QualifiedTeam> _qualifiedTeams = new();
+
         public async Task<List<QualifiedTeam>> GetQualifiedTeamsAsync()
         {
             try
@@ -34,11 +39,20 @@ namespace ProjectWorldCup
                     .Where(x => x?.Status == "Q")
                     .ToList();
 
+                if (result?.Any() ?? false)
+                {
+                    _qualifiedTeams = result ?? new();
+                }
+
                 return result ?? new();
             }
             catch
             {
-                return new();
+                if (_qualifiedTeams.Any())
+                {
+                    return _qualifiedTeams;
+                }
+                throw;
             }
         }
     }

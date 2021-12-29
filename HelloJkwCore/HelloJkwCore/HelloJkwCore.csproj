@@ -30,7 +30,6 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
-    <Folder Include="Pages\WorldCup\" />
   </ItemGroup>
 
 </Project>
