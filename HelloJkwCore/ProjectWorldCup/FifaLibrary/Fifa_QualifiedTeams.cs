@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -21,16 +22,14 @@ namespace ProjectWorldCup
 
     public partial class Fifa : IFifa
     {
-        private List<QualifiedTeam> _qualifiedTeams = new();
+        private readonly string QualifiedTeamCacheKey = nameof(QualifiedTeamCacheKey);
 
         public async Task<List<QualifiedTeam>> GetQualifiedTeamsAsync()
         {
-            try
+            return await GetFromCacheOrAsync<List<QualifiedTeam>>(QualifiedTeamCacheKey, async () =>
             {
                 var url = @"https://www.fifa.com/tournaments/mens/worldcup/qatar2022/qualifiers";
-
                 var pageData = await GetPageData(new Uri(url));
-
                 var list = pageData?["tournamentQualificationTeamsProps"]?["teams"]?.AsEnumerable() ?? null;
 
                 var result = list?
@@ -39,21 +38,8 @@ namespace ProjectWorldCup
                     .Where(x => x?.Status == "Q")
                     .ToList();
 
-                if (result?.Any() ?? false)
-                {
-                    _qualifiedTeams = result ?? new();
-                }
-
                 return result ?? new();
-            }
-            catch
-            {
-                if (_qualifiedTeams.Any())
-                {
-                    return _qualifiedTeams;
-                }
-                throw;
-            }
+            });
         }
     }
 }

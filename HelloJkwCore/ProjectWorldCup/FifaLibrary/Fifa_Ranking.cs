@@ -28,11 +28,11 @@ namespace ProjectWorldCup
     }
     public partial class Fifa : IFifa
     {
-        private Dictionary<Gender, List<RankingTeamData>> _lastRanking = new();
+        private readonly string RankingCacheKey = nameof(RankingCacheKey);
 
         public async Task<List<RankingTeamData>> GetLastRankingAsync(Gender gender)
         {
-            try
+            return await GetFromCacheOrAsync<List<RankingTeamData>>($"{RankingCacheKey}{gender}", async () =>
             {
                 var rankInfoUrl = $"https://www.fifa.com/fifa-world-ranking/{gender}".ToLower();
                 var pageData = await GetPageData(new Uri(rankInfoUrl));
@@ -46,21 +46,9 @@ namespace ProjectWorldCup
                 var text = await res.Content.ReadAsStringAsync();
                 var obj = JObject.Parse(text);
 
-                var ranking = obj["rankings"]?.ToObject<List<RankingTeamData>>() ?? new();
-                if (ranking.Any())
-                {
-                    _lastRanking[gender] = ranking;
-                }
-                return ranking;
-            }
-            catch
-            {
-                if (_lastRanking.ContainsKey(gender))
-                {
-                    return _lastRanking[gender];
-                }
-                throw;
-            }
+                var ranking = obj["rankings"]?.ToObject<List<RankingTeamData>>();
+                return ranking ?? new();
+            });
         }
     }
 }
