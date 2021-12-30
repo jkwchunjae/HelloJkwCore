@@ -12,7 +12,7 @@
         </NotAuthorized>
         <Authorized>
             <MudNavLink Href="user" Icon="@Icons.Material.Filled.Person">
-                @context.User.Identity.Name
+                @User?.DisplayName
             </MudNavLink>
         </Authorized>
     </AuthorizeView>

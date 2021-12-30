@@ -47,7 +47,7 @@ else if (HasDiaryContent)
     <AuthorizeView Policy="Diary">
         <Authorized>
 
-    <PageTitle>@User.UserName 님의 일기장 </PageTitle>
+    <PageTitle>@User.DisplayName 님의 일기장 </PageTitle>
     <span class="diary-date">@View.DiaryContents[0].Date.ToString("yyyy.MM.dd dddd")</span>
 
     <div class="button-group">

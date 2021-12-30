@@ -1,9 +1,9 @@
 ﻿@inherits JkwPageBase
 @page "/diary/create"
 
-<PageTitle>@User?.UserName 님의 일기장 만들기</PageTitle>
+<PageTitle>@User?.DisplayName 님의 일기장 만들기</PageTitle>
 
-<h1>@User?.UserName 님의 일기장 만들기</h1>
+<h1>@User?.DisplayName 님의 일기장 만들기</h1>
 
 <MudForm @bind-IsValid="@success" Style="max-width: 500px;">
     <MudCard>

@@ -4,6 +4,7 @@
 
 <AuthorizeView Roles="DiaryWriter">
     <Authorized>
+        <PageTitle>일기 쓰기</PageTitle>
         <MudGrid>
             <MudItem Style="max-width: 200px;">
                 <MudDatePicker @bind-Date="Date" DateFormat="yyyy.MM.dd (ddd)" TitleDateFormat="yyyy.MM.dd dddd"></MudDatePicker>
