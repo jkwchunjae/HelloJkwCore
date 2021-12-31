@@ -1,0 +1,19 @@
+﻿div.team {
+    padding: 6px;
+    display: inline-block;
+}
+
+div.team-inner {
+    /*padding: 6px;*/
+    /*background: #edf4ff;*/
+    /*border-radius: 6px;*/
+}
+
+img.team-img {
+    margin-right: 5px;
+}
+
+span.team-name {
+    font-size: medium;
+    font-weight: bold;
+}

@@ -15,20 +15,22 @@ namespace ProjectWorldCup
             _fifa = fifa;
         }
 
-        public async Task<List<QualifiedTeam>> Get2022QualifiedTeamsAsync()
+        public async Task<List<Team>> Get2022QualifiedTeamsAsync()
         {
-            var teams = await _fifa.GetQualifiedTeamsAsync();
+            var qualifiedTeams = await _fifa.GetQualifiedTeamsAsync();
             var rankings = await _fifa.GetLastRankingAsync(Gender.Men);
 
-            foreach (var team in teams)
-            {
-                var r = rankings.FirstOrDefault(x => x.RankingItem.Name == team.Name);
-
-                if (r != null)
+            var teams = qualifiedTeams
+                .Select(team => new { Team = team, Ranking = rankings.FirstOrDefault(x => x.RankingItem.Name == team.Name) })
+                .Select(x => new Team
                 {
-                    team.Ranking = r;
-                }
-            }
+                    Id = x.Team.Id,
+                    Name = x.Team.Name,
+                    Flag = x.Team.Flag?.Src,
+                    FifaRank = x.Ranking?.RankingItem.Rank ?? 0,
+                    Region = x.Ranking?.Region.Text,
+                })
+                .ToList();
 
             return teams;
         }

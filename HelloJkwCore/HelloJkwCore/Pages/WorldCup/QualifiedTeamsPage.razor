@@ -6,21 +6,21 @@
 
 <h3>본선진출국 (@QualifiedTeams.Count / 32)</h3>
 
-@foreach (var region in Regions)
+@foreach (var data in TeamByRegion)
 {
     <div class="region">
         <div class="region-title">
-            <span class="region-name">@region.Region.Text</span>
-            <span class="region-count">(@region.Teams.Count)</span>
+            <span class="region-name">@data.Region</span>
+            <span class="region-count">(@data.Teams.Count)</span>
         </div>
         <div class="qualified-list row">
-            @foreach (var team in region.Teams)
+            @foreach (var team in data.Teams)
             {
                 <div class="team col-md-3">
                     <MudPaper Class="team-inner" Style="padding: 6px; border-radius: 6px;">
-                        <img class="team-img" src="@team.Flag.Src"/>
+                        <img class="team-img" src="@team.Flag"/>
                         <span class="team-name">@team.Name</span>
-                        <span>(@team.Rank)</span>
+                        <span>(@team.FifaRank)</span>
                     </MudPaper>
                 </div>
             }
