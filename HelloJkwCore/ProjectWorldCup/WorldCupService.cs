@@ -35,6 +35,25 @@ namespace ProjectWorldCup
             return teams;
         }
 
+        public async Task<List<Group>> GetGroupsAsync()
+        {
+            var dummy = await CreateDummyGroupsAsync();
+            return dummy;
+        }
+
+        private async Task<List<Group>> CreateDummyGroupsAsync()
+        {
+            var groupNames = new string[] { "A", "B", "C", "D", "E", "F", "G", "H" };
+            var teams = await Get2022QualifiedTeamsAsync();
+            return teams.Concat(teams).Concat(teams).Take(32).Chunk(4)
+                .Zip(groupNames, (teams, groupName) => new Group
+                {
+                    Name = groupName,
+                    Teams = teams.ToList(),
+                })
+                .ToList();
+        }
+
         public Task<List<RankingTeamData>> GetLastRankingTeamDataAsync(Gender gender)
         {
             return _fifa.GetLastRankingAsync(gender);
