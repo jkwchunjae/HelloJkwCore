@@ -1,0 +1,22 @@
+﻿@inherits JkwPageBase
+
+@page "/worldcup/2022/group-stage"
+
+<WcTitle>조별 리그</WcTitle>
+
+<div>
+    @foreach (var group in Groups)
+    {
+        <div class="row" style="padding-bottom: 5px;">
+            <div class="col-md-1 group-name" style="font-size: 30px;">@group.Name</div>
+            <div class="col-md-11">
+                <div class="row">
+                    @foreach (var team in group.Teams)
+                    {
+                        <TeamScore Team="team" Class="col-md-3" Style="padding-bottom: 2px;"></TeamScore>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

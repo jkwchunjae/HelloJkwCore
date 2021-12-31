@@ -1,0 +1,23 @@
+﻿@inherits JkwPageBase
+
+@page "/worldcup/2022/knockout"
+
+<WcTitle>결승 토너먼트</WcTitle>
+
+@foreach (var round in KnockoutRounds)
+{
+<div class="round">
+    <div class="row round-title">
+        <span class="col-md-6 round-title" style="font-size: 24px;">@round.RoundName</span>
+    </div>
+    <div class="row">
+        @foreach (var match in round.Matches)
+        {
+            <div class="col-md-3 match" style="margin-bottom: 15px; border-left: 5px solid; border-radius: 5px; padding-left: 5px; margin-left: 0px;">
+                <TeamScore Team="@match?.HomeTeam" Score="@match?.HomeScore" Style="width: 100%; padding-bottom: 2px;"></TeamScore>
+                <TeamScore Team="@match?.AwayTeam" Score="@match?.AwayScore" Style="width: 100%; padding-bottom: 2px;"></TeamScore>
+            </div>
+        }
+    </div>
+</div>
+}

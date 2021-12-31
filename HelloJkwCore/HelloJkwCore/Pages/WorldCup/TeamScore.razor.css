@@ -1,14 +1,5 @@
-﻿div.region {
-    margin-top: 15px;
-}
-
-div.region-title {
-    font-size: 25px;
-    font-weight: bold;
-}
-
-div.team {
-    padding: 6px;
+﻿div.team {
+    /*padding: 6px;*/
     display: inline-block;
 }
 
