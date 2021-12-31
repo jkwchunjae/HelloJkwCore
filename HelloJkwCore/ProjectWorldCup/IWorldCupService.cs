@@ -10,7 +10,7 @@ namespace ProjectWorldCup
     {
         Task<List<Team>> Get2022QualifiedTeamsAsync();
         Task<List<RankingTeamData>> GetLastRankingTeamDataAsync(Gender gender);
-        Task<List<Group>> GetGroupsAsync();
+        Task<List<League>> GetGroupsAsync();
         Task<KnockoutStageData> GetKnockoutStageDataAsync();
     }
 }

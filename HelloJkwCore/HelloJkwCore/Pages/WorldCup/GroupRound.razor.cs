@@ -11,7 +11,7 @@ namespace HelloJkwCore.Pages.WorldCup
         [Inject]
         private IWorldCupService Service { get; set; }
 
-        private List<Group> Groups { get; set; } = new();
+        private List<League> Groups { get; set; } = new();
 
         protected override async Task OnPageInitializedAsync()
         {
