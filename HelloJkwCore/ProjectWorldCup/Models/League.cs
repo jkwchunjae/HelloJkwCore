@@ -32,7 +32,7 @@ namespace ProjectWorldCup
         {
             var list = Teams.Select(team => new TeamStanding { Team = team }).ToList();
 
-            foreach (var match in Matches)
+            foreach (var match in Matches.Where(x => x.Status == MatchStatus.Done))
             {
                 if (match.IsDraw)
                 {

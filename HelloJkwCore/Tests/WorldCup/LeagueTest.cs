@@ -511,7 +511,14 @@ namespace Tests.WorldCup
 
         public static void AddMatch(this League league, string homeId, string awayId, int homeScore, int awayScore)
         {
-            league.Matches.Add(new Match { HomeTeam = league.FindTeam(homeId), AwayTeam = league.FindTeam(awayId), HomeScore = homeScore, AwayScore = awayScore, });
+            league.Matches.Add(new Match
+            {
+                Status = MatchStatus.Done,
+                HomeTeam = league.FindTeam(homeId),
+                AwayTeam = league.FindTeam(awayId),
+                HomeScore = homeScore,
+                AwayScore = awayScore,
+            });
         }
     }
 }
