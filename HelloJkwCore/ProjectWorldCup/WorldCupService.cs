@@ -37,26 +37,63 @@ namespace ProjectWorldCup
 
         public async Task<List<Group>> GetGroupsAsync()
         {
-            var dummy = await CreateDummyGroupsAsync();
-            return dummy;
+            return await CreateDummyGroupsAsync();
         }
 
         private async Task<List<Group>> CreateDummyGroupsAsync()
         {
             var groupNames = new string[] { "A", "B", "C", "D", "E", "F", "G", "H" };
             var teams = await Get2022QualifiedTeamsAsync();
-            return teams.Concat(teams).Concat(teams).Take(32).Chunk(4)
+            var Qatar = teams.First(x => x.Name == "Qatar");
+            var result = teams.Concat(teams).Concat(teams).Take(32).Chunk(4)
                 .Zip(groupNames, (teams, groupName) => new Group
                 {
                     Name = groupName,
-                    Teams = teams.ToList(),
+                    // Teams = teams.ToList(),
+                    Teams = teams.Select(x => new Team()).ToList(),
                 })
                 .ToList();
+
+            result[0].Teams[0] = Qatar;
+            return result;
         }
 
         public Task<List<RankingTeamData>> GetLastRankingTeamDataAsync(Gender gender)
         {
             return _fifa.GetLastRankingAsync(gender);
+        }
+
+        public Task<KnockoutStageData> GetKnockoutStageDataAsync()
+        {
+            return CreateDummyKnockoutDataAsync();
+        }
+
+        private async Task<KnockoutStageData> CreateDummyKnockoutDataAsync()
+        {
+            var teams = await Get2022QualifiedTeamsAsync();
+
+            teams = teams.Concat(teams).Concat(teams).ToList();
+            var index = 0;
+            Func<Match> createMatch = () =>
+            {
+                return new Match
+                {
+                    //HomeTeam = teams[index++],
+                    //AwayTeam = teams[index++],
+                    HomeTeam = null,
+                    AwayTeam = null,
+                };
+            };
+            var data = new KnockoutStageData
+            {
+                Final = createMatch(),
+                ThirdPlacePlayOff = createMatch(),
+                SemiFinals = new List<Match> { createMatch(), createMatch() },
+                QuarterFinals = new List<Match> { createMatch(), createMatch(), createMatch(), createMatch() },
+                Round16 = new List<Match> { createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch() },
+            };
+
+            return data;
         }
     }
 }
