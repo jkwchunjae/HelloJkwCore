@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HelloJkwCore.Pages.WorldCup
 {
-    public partial class GroupRound : JkwPageBase
+    public partial class GroupStage : JkwPageBase
     {
         [Inject]
         private IWorldCupService Service { get; set; }
