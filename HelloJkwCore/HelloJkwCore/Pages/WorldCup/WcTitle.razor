@@ -1,0 +1,12 @@
+﻿
+<PageTitle>월드컵 @ChildContent</PageTitle>
+
+<h3 style="font-size: 35px;">
+    <img src="https://cloudinary.fifa.com/api/v1/picture/tournaments-sq-4/255711" style="height: 70px;"/>
+    @ChildContent
+</h3>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}
