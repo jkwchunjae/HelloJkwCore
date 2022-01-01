@@ -43,12 +43,16 @@ namespace ProjectWorldCup
         private async Task<List<League>> CreateDummyGroupsAsync()
         {
             var groupNames = new string[] { "A", "B", "C", "D", "E", "F", "G", "H" };
-            var teams = await Get2022QualifiedTeamsAsync();
-            var Qatar = teams.First(x => x.Name == "Qatar");
-            var result = teams.Concat(teams).Concat(teams).Take(32).Chunk(4)
-                .Zip(groupNames, (teams, groupName) =>
+            var qTeams = await Get2022QualifiedTeamsAsync();
+            var Qatar = qTeams.First(x => x.Name == "Qatar");
+            var result = Enumerable.Range(0, 32).Select(x => x % 4 + 1)
+                .Chunk(4)
+                .Zip(groupNames, (teamNumbers, groupName) =>
                 {
                     var group = new League { Name = groupName };
+                    var teams = teamNumbers.Select(index => new Team { Id = $"{groupName}{index}", Name = $"{groupName}{index}" }).ToList();
+                    if (groupName == "A")
+                        teams[0] = Qatar;
                     foreach (var team in teams)
                         group.AddTeam(team);
                     return group;
