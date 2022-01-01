@@ -10,8 +10,8 @@ namespace ProjectWorldCup
     public class League
     {
         public string Name { get; set; }
-        public List<Team> Teams { get; set; }
-        public List<Match> Matches { get; set; }
+        public IReadOnlyList<Team> Teams => _teams;
+        public IReadOnlyList<Match> Matches => _matches;
         [JsonIgnore]
         public List<TeamStanding> Stands
         {
@@ -26,6 +26,8 @@ namespace ProjectWorldCup
             }
         }
 
+        private List<Team> _teams = new();
+        private List<Match> _matches = new();
         private List<TeamStanding> _standings;
 
         private List<TeamStanding> CalcStandings()
@@ -80,6 +82,29 @@ namespace ProjectWorldCup
             }
 
             return list;
+        }
+
+        public bool AddTeam(Team team)
+        {
+            if (_teams.Any(x => x.Id == team.Id))
+            {
+                return false;
+            }
+            _teams.Add(team);
+            return true;
+        }
+
+        public bool AddMatch(Match match)
+        {
+            var homeTeam = Teams.FirstOrDefault(x => x.Id == match.HomeTeam.Id);
+            var awayTeam = Teams.FirstOrDefault(x => x.Id == match.AwayTeam.Id);
+
+            if (homeTeam != null && awayTeam != null)
+            {
+                _matches.Add(match);
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -15,6 +15,14 @@ namespace ProjectWorldCup
         Playing,
         Done,
     }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum MatchInfoType
+    {
+        GroupName,
+        MatchNumber,
+    }
+
     public class Match
     {
         /// <summary> 매치 시작 시간 </summary>
@@ -28,6 +36,7 @@ namespace ProjectWorldCup
         public int HomePenaltyScore { get; set; }
         /// <summary> 원정팀 승부차기 득점 </summary>
         public int AwayPenaltyScore { get; set; }
+        public Dictionary<MatchInfoType, string> Info { get; set; } = new();
 
         public bool IsDraw => HomeScore == AwayScore && HomePenaltyScore == AwayPenaltyScore;
         public (Team Team, int Score, int PenaltyScore) Winner => HomeScore != AwayScore
@@ -36,5 +45,21 @@ namespace ProjectWorldCup
         public (Team Team, int Score, int PenaltyScore) Looser => HomeScore != AwayScore
             ? (HomeScore < AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))
             : (HomePenaltyScore < AwayPenaltyScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore));
+
+
+        public static Match CreateFromFifaMatchData(FifaMatchData fifaMatchData)
+        {
+            return new Match
+            {
+                Time = fifaMatchData.Date,
+                Status = MatchStatus.Before,
+                HomeTeam = new Team { Id = fifaMatchData.PlaceholderA, Name = fifaMatchData.PlaceholderA },
+                AwayTeam = new Team { Id = fifaMatchData.PlaceholderB, Name = fifaMatchData.PlaceholderB },
+                Info = new()
+                {
+                    [MatchInfoType.MatchNumber] = fifaMatchData.MatchNumber.ToString(),
+                },
+            };
+        }
     }
 }

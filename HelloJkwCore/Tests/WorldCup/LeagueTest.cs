@@ -16,31 +16,29 @@ namespace Tests.WorldCup
             var league = new League
             {
                 Name = "PremierLeague 2020-2021",
-                Teams = new(),
-                Matches = new(),
             };
 
             #region Teams
-            league.Teams.Add(new Team { Id = "MCI", Name = "Manchester City" });
-            league.Teams.Add(new Team { Id = "MUN", Name = "Manchester United" });
-            league.Teams.Add(new Team { Id = "LIV", Name = "Liverpool" });
-            league.Teams.Add(new Team { Id = "CHE", Name = "Chelsea" });
-            league.Teams.Add(new Team { Id = "LEI", Name = "Leicester City" });
-            league.Teams.Add(new Team { Id = "WHU", Name = "West Ham United" });
-            league.Teams.Add(new Team { Id = "TOT", Name = "Tottenham Hotspur" });
-            league.Teams.Add(new Team { Id = "ARS", Name = "Arsenal" });
-            league.Teams.Add(new Team { Id = "LEE", Name = "Leeds United" });
-            league.Teams.Add(new Team { Id = "EVE", Name = "Everton" });
-            league.Teams.Add(new Team { Id = "AVL", Name = "Aston Villa" });
-            league.Teams.Add(new Team { Id = "NEW", Name = "Newcastle United" });
-            league.Teams.Add(new Team { Id = "WOL", Name = "Wolverhampton Wanderers" });
-            league.Teams.Add(new Team { Id = "CRY", Name = "Crystal Palace" });
-            league.Teams.Add(new Team { Id = "SOU", Name = "Southampton" });
-            league.Teams.Add(new Team { Id = "BHA", Name = "Brighton and Hove Albion" });
-            league.Teams.Add(new Team { Id = "BUR", Name = "Burnley" });
-            league.Teams.Add(new Team { Id = "FUL", Name = "Fulham" });
-            league.Teams.Add(new Team { Id = "WBA", Name = "West Bromwich Albion" });
-            league.Teams.Add(new Team { Id = "SHU", Name = "Sheffield United" });
+            league.AddTeam(new Team { Id = "MCI", Name = "Manchester City" });
+            league.AddTeam(new Team { Id = "MUN", Name = "Manchester United" });
+            league.AddTeam(new Team { Id = "LIV", Name = "Liverpool" });
+            league.AddTeam(new Team { Id = "CHE", Name = "Chelsea" });
+            league.AddTeam(new Team { Id = "LEI", Name = "Leicester City" });
+            league.AddTeam(new Team { Id = "WHU", Name = "West Ham United" });
+            league.AddTeam(new Team { Id = "TOT", Name = "Tottenham Hotspur" });
+            league.AddTeam(new Team { Id = "ARS", Name = "Arsenal" });
+            league.AddTeam(new Team { Id = "LEE", Name = "Leeds United" });
+            league.AddTeam(new Team { Id = "EVE", Name = "Everton" });
+            league.AddTeam(new Team { Id = "AVL", Name = "Aston Villa" });
+            league.AddTeam(new Team { Id = "NEW", Name = "Newcastle United" });
+            league.AddTeam(new Team { Id = "WOL", Name = "Wolverhampton Wanderers" });
+            league.AddTeam(new Team { Id = "CRY", Name = "Crystal Palace" });
+            league.AddTeam(new Team { Id = "SOU", Name = "Southampton" });
+            league.AddTeam(new Team { Id = "BHA", Name = "Brighton and Hove Albion" });
+            league.AddTeam(new Team { Id = "BUR", Name = "Burnley" });
+            league.AddTeam(new Team { Id = "FUL", Name = "Fulham" });
+            league.AddTeam(new Team { Id = "WBA", Name = "West Bromwich Albion" });
+            league.AddTeam(new Team { Id = "SHU", Name = "Sheffield United" });
             #endregion
 
             #region Matches
@@ -511,7 +509,7 @@ namespace Tests.WorldCup
 
         public static void AddMatch(this League league, string homeId, string awayId, int homeScore, int awayScore)
         {
-            league.Matches.Add(new Match
+            league.AddMatch(new Match
             {
                 Status = MatchStatus.Done,
                 HomeTeam = league.FindTeam(homeId),

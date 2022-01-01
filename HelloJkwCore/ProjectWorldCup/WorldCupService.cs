@@ -46,15 +46,15 @@ namespace ProjectWorldCup
             var teams = await Get2022QualifiedTeamsAsync();
             var Qatar = teams.First(x => x.Name == "Qatar");
             var result = teams.Concat(teams).Concat(teams).Take(32).Chunk(4)
-                .Zip(groupNames, (teams, groupName) => new League
+                .Zip(groupNames, (teams, groupName) =>
                 {
-                    Name = groupName,
-                    // Teams = teams.ToList(),
-                    Teams = teams.Select(x => new Team()).ToList(),
+                    var group = new League { Name = groupName };
+                    foreach (var team in teams)
+                        group.AddTeam(team);
+                    return group;
                 })
                 .ToList();
 
-            result[0].Teams[0] = Qatar;
             return result;
         }
 
@@ -63,9 +63,17 @@ namespace ProjectWorldCup
             return _fifa.GetLastRankingAsync(gender);
         }
 
-        public Task<KnockoutStageData> GetKnockoutStageDataAsync()
+        public async Task<KnockoutStageData> GetKnockoutStageDataAsync()
         {
-            return CreateDummyKnockoutDataAsync();
+            var knockoutMatches = await _fifa.GetKnockoutStageMatchesAsync();
+            return new KnockoutStageData
+            {
+                Round16 = knockoutMatches.Where(x => x.StageName == "Round of 16").Select(x => Match.CreateFromFifaMatchData(x)).ToList(),
+                QuarterFinals = knockoutMatches.Where(x => x.StageName == "Quarter-finals").Select(x => Match.CreateFromFifaMatchData(x)).ToList(),
+                SemiFinals = knockoutMatches.Where(x => x.StageName == "Semi-finals").Select(x => Match.CreateFromFifaMatchData(x)).ToList(),
+                ThirdPlacePlayOff = knockoutMatches.Where(x => x.StageName == "Play-off for third place").Select(x => Match.CreateFromFifaMatchData(x)).First(),
+                Final = knockoutMatches.Where(x => x.StageName == "Final").Select(x => Match.CreateFromFifaMatchData(x)).First(),
+            };
         }
 
         private async Task<KnockoutStageData> CreateDummyKnockoutDataAsync()
@@ -94,6 +102,20 @@ namespace ProjectWorldCup
             };
 
             return data;
+        }
+
+        public async Task<List<Match>> GetGroupStageMatchesAsync()
+        {
+            var matches = await _fifa.GetGroupStageMatchesAsync();
+
+            return matches.Select(x => Match.CreateFromFifaMatchData(x)).ToList();
+        }
+
+        public async Task<List<Match>> GetKnockOutStageMatchesAsync()
+        {
+            var matches = await _fifa.GetKnockoutStageMatchesAsync();
+
+            return matches.Select(x => Match.CreateFromFifaMatchData(x)).ToList();
         }
     }
 }
