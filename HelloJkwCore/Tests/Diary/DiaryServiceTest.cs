@@ -17,13 +17,13 @@ namespace Tests.Diary
 
         public DiaryServiceTest()
         {
-            var pathOption = new PathOption
+            var pathOption = new PathMap
             {
-                Default = new Dictionary<PathType, string>
+                Default = new Dictionary<string, string>
                 {
-                    [PathType.DiaryNameListFile] = "/db/diary/diary-name-list.json",
-                    [PathType.DiaryListPath] = "/db/diary/diary-info",
-                    [PathType.DiaryContentsRootPath] = "/diary",
+                    [DiaryPathType.DiaryNameListFile] = "/db/diary/diary-name-list.json",
+                    [DiaryPathType.DiaryListPath] = "/db/diary/diary-info",
+                    [DiaryPathType.DiaryContentsRootPath] = "/diary",
                 },
             };
 
@@ -42,9 +42,10 @@ namespace Tests.Diary
                 {
                     UseMainFileSystem = true,
                 },
+                Path = pathOption,
             };
 
-            var fileSystemService = new FileSystemService(fsOption, pathOption, null, null);
+            var fileSystemService = new FileSystemService(fsOption, null, null);
 
             _diaryService = new DiaryService(diaryOption, null, fileSystemService);
 
