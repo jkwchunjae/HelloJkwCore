@@ -17,11 +17,11 @@ namespace ProjectSuFc
             if (cache != null)
                 return cache;
 
-            var files = await _fs.GetFilesAsync(path => path.GetPath(PathType.SuFcSchedulesPath));
+            var files = await _fs.GetFilesAsync(path => path[SuFcPathType.SuFcSchedulesPath]);
 
             var list = await files.Select(async file =>
                 {
-                    return await _fs.ReadJsonAsync<ScheduleData>(path => path.GetPath(PathType.SuFcSchedulesPath) + "/" + file);
+                    return await _fs.ReadJsonAsync<ScheduleData>(path => path[SuFcPathType.SuFcSchedulesPath] + "/" + file);
                 })
                 .WhenAll();
 
@@ -46,7 +46,7 @@ namespace ProjectSuFc
                 return false;
             }
 
-            await _fs.WriteJsonAsync(path => path.GetPath(PathType.SuFcSchedulesPath) + "/" + fileName, schedule);
+            await _fs.WriteJsonAsync(path => path[SuFcPathType.SuFcSchedulesPath] + "/" + fileName, schedule);
 
             _scheduleList = null;
 
@@ -66,7 +66,7 @@ namespace ProjectSuFc
                 return null;
             }
 
-            var schedule = await _fs.ReadJsonAsync<ScheduleData>(path => path.GetPath(PathType.SuFcSchedulesPath) + "/" + fileName);
+            var schedule = await _fs.ReadJsonAsync<ScheduleData>(path => path[SuFcPathType.SuFcSchedulesPath] + "/" + fileName);
 
             return schedule;
         }
