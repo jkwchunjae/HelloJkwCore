@@ -10,43 +10,43 @@ namespace Common
 {
     public class LocalFileSystem : IFileSystem
     {
-        protected readonly PathOf _pathOf;
+        protected readonly Paths _pathOf;
         private readonly Encoding _encoding;
 
-        public LocalFileSystem(PathOption pathOption, Encoding encoding = null)
+        public LocalFileSystem(PathMap pathOption, Encoding encoding = null)
         {
-            _pathOf = new PathOf(pathOption, FileSystemType.Local);
+            _pathOf = new Paths(pathOption, FileSystemType.Local);
             _encoding = encoding ?? new UTF8Encoding(false);
         }
 
-        public Task<bool> CreateDirectoryAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             Directory.CreateDirectory(path);
             return Task.FromResult(true);
         }
 
-        public Task<bool> DeleteFileAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             File.Delete(path);
             return Task.FromResult(true);
         }
 
-        public Task<bool> DirExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             var exists = Directory.Exists(path);
             return Task.FromResult(exists);
         }
 
-        public Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             return Task.FromResult(File.Exists(path));
         }
 
-        public Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default)
+        public Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
 
@@ -62,12 +62,12 @@ namespace Common
             return Task.FromResult(list);
         }
 
-        public PathOf GetPathOf()
+        public Paths GetPathOf()
         {
             return _pathOf;
         }
 
-        public async Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             if (!File.Exists(path))
@@ -77,7 +77,7 @@ namespace Common
             return Json.Deserialize<T>(text);
         }
 
-        public async Task<string> ReadTextAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             if (!File.Exists(path))
@@ -87,7 +87,7 @@ namespace Common
             return text;
         }
 
-        public async Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default)
+        public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             var dir = Directory.GetParent(path);
@@ -99,7 +99,7 @@ namespace Common
             return true;
         }
 
-        public async Task<bool> WriteTextAsync(Func<PathOf, string> pathFunc, string text, CancellationToken ct = default)
+        public async Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string text, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             var dir = Directory.GetParent(path);

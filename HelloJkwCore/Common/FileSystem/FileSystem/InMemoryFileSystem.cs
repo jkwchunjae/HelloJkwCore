@@ -9,20 +9,20 @@ namespace Common
 {
     public class InMemoryFileSystem : IFileSystem
     {
-        protected readonly PathOf _pathOf;
+        protected readonly Paths _pathOf;
         private readonly Dictionary<string, string> _files = new();
 
-        public InMemoryFileSystem(PathOption pathOption)
+        public InMemoryFileSystem(PathMap pathOption)
         {
-            _pathOf = new PathOf(pathOption, FileSystemType.InMemory);
+            _pathOf = new Paths(pathOption, FileSystemType.InMemory);
         }
 
-        public Task<bool> CreateDirectoryAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             return Task.FromResult(true);
         }
 
-        public Task<bool> DeleteFileAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             if (_files.ContainsKey(path))
@@ -31,18 +31,18 @@ namespace Common
             return Task.FromResult(true);
         }
 
-        public Task<bool> DirExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             return Task.FromResult(true);
         }
 
-        public Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             return Task.FromResult(_files.ContainsKey(path));
         }
 
-        public Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default)
+        public Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             if (!path.EndsWith("/"))
@@ -59,12 +59,12 @@ namespace Common
             return Task.FromResult(list);
         }
 
-        public PathOf GetPathOf()
+        public Paths GetPathOf()
         {
             return _pathOf;
         }
 
-        public Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
 
@@ -75,7 +75,7 @@ namespace Common
             return Task.FromResult(Json.Deserialize<T>(text));
         }
 
-        public Task<string> ReadTextAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
 
@@ -86,14 +86,14 @@ namespace Common
             return Task.FromResult(text);
         }
 
-        public Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default)
+        public Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             _files[path] = Json.Serialize(obj);
             return Task.FromResult(true);
         }
 
-        public Task<bool> WriteTextAsync(Func<PathOf, string> pathFunc, string text, CancellationToken ct = default)
+        public Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string text, CancellationToken ct = default)
         {
             var path = pathFunc(GetPathOf());
             _files[path] = text;

@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    public class PathOption
+    public class PathMap
     {
-        public Dictionary<PathType, string> Default { get; set; } = new();
-        public Dictionary<PathType, string> Dropbox { get; set; } = new();
-        public Dictionary<PathType, string> Azure { get; set; } = new();
-        public Dictionary<PathType, string> Local { get; set; } = new();
+        public Dictionary<string, string> Default { get; set; } = new();
+        public Dictionary<string, string> Dropbox { get; set; } = new();
+        public Dictionary<string, string> Azure { get; set; } = new();
+        public Dictionary<string, string> Local { get; set; } = new();
 
-        public Dictionary<PathType, string> this[FileSystemType type]
+        public Dictionary<string, string> this[FileSystemType type]
         {
             get
             {

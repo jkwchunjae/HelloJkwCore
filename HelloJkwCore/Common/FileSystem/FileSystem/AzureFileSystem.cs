@@ -14,7 +14,7 @@ namespace Common
 {
     public class AzureFileSystem : IFileSystem
     {
-        private PathOf _pathOf;
+        private Paths _pathOf;
         private string _connectionString;
         private Encoding _encoding;
         private ILogger<AzureFileSystem> _logger;
@@ -22,12 +22,12 @@ namespace Common
         private Dictionary<string, BlobContainerClient> _containerClients = new();
 
         public AzureFileSystem(
-            PathOption pathOption,
+            PathMap pathOption,
             string connectionString,
             ILoggerFactory loggerFactory,
             Encoding encoding = null)
         {
-            _pathOf = new PathOf(pathOption, FileSystemType.Azure);
+            _pathOf = new Paths(pathOption, FileSystemType.Azure);
             _connectionString = connectionString;
             _encoding = encoding ?? new UTF8Encoding(false);
             _logger = loggerFactory?.CreateLogger<AzureFileSystem>();
@@ -77,12 +77,12 @@ namespace Common
         }
 
 
-        public Task<bool> CreateDirectoryAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default(CancellationToken))
+        public Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default(CancellationToken))
         {
             return Task.FromResult(true);
         }
 
-        public async Task<bool> DeleteFileAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default(CancellationToken))
+        public async Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default(CancellationToken))
         {
             var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
             var client = await GetContainerClient(containerName);
@@ -91,12 +91,12 @@ namespace Common
             return true;
         }
 
-        public Task<bool> DirExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default(CancellationToken))
+        public Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default(CancellationToken))
         {
             return Task.FromResult(true);
         }
 
-        public async Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default(CancellationToken))
+        public async Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default(CancellationToken))
         {
             var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
             _logger?.LogDebug("FileExistsAsync. container: {container}, path: {path}", containerName, path);
@@ -109,7 +109,7 @@ namespace Common
             return response.Value;
         }
 
-        public async Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default(CancellationToken))
+        public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default(CancellationToken))
         {
             var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
             _logger?.LogDebug("GetFilesAsync. container: {container}, path: {path}", containerName, path);
@@ -128,12 +128,12 @@ namespace Common
             return result;
         }
 
-        public PathOf GetPathOf()
+        public Paths GetPathOf()
         {
             return _pathOf;
         }
 
-        public async Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default(CancellationToken))
+        public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default(CancellationToken))
         {
             var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
             _logger?.LogDebug("ReadJsonAsync. container: {container}, path: {path}", containerName, path);
@@ -156,7 +156,7 @@ namespace Common
             }
         }
 
-        public async Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default(CancellationToken))
+        public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, CancellationToken ct = default(CancellationToken))
         {
             var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
             _logger?.LogDebug("WriteJsonAsync. container: {container}, path: {path}", containerName, path);
@@ -179,7 +179,7 @@ namespace Common
             }
         }
 
-        public async Task<string> ReadTextAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
             _logger?.LogDebug("ReadTextAsync. container: {container}, path: {path}", containerName, path);
@@ -202,7 +202,7 @@ namespace Common
             }
         }
 
-        public async Task<bool> WriteTextAsync(Func<PathOf, string> pathFunc, string text, CancellationToken ct = default)
+        public async Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string text, CancellationToken ct = default)
         {
             var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
             _logger?.LogDebug("WriteTextAsync. container: {container}, path: {path}", containerName, path);

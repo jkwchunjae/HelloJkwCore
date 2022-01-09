@@ -7,11 +7,11 @@ using JkwExtensions;
 
 namespace Common
 {
-    public partial class PathOf
+    public class Paths
     {
-        private readonly Dictionary<PathType, string> _pathDic;
+        private readonly Dictionary<string, string> _pathDic;
 
-        public PathOf(PathOption option, FileSystemType fsType)
+        public Paths(PathMap option, FileSystemType fsType)
         {
             _pathDic = option.Default.Select(x => x.Key)
                 .Concat(option[fsType].Select(x => x.Key))
@@ -24,23 +24,9 @@ namespace Common
                 .ToDictionary(x => x.Key, x => x.Value);
         }
 
-        public string GetPath(PathType pathType)
+        public string this[string key]
         {
-            return _pathDic[pathType];
+            get => _pathDic[key];
         }
-
-        #region User
-
-        public string UserFilePathByUserId(string userId)
-        {
-            return $"{GetPath(PathType.UsersPath)}/user.{userId}.json".ToLower();
-        }
-
-        public string UserFilePathByFileName(string fileName)
-        {
-            return $"{GetPath(PathType.UsersPath)}/{fileName}";
-        }
-
-        #endregion
     }
 }

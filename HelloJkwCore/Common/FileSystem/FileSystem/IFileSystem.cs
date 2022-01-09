@@ -9,16 +9,15 @@ namespace Common
 {
     public interface IFileSystem
     {
-        PathOf GetPathOf();
-        Task<string> ReadTextAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default);
-        Task<bool> WriteTextAsync(Func<PathOf, string> pathFunc, string text, CancellationToken ct = default);
-        Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default);
-        Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default);
-        Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default);
-        Task<bool> DeleteFileAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default);
-        Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default);
+        Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
+        Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string text, CancellationToken ct = default);
+        Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default);
+        Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, CancellationToken ct = default);
+        Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
+        Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
+        Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default);
 
-        Task<bool> CreateDirectoryAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default);
-        Task<bool> DirExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default);
+        Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
+        Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
     }
 }
