@@ -6,13 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="fs\**" />
-    <Content Remove="fs\**" />
-    <EmbeddedResource Remove="fs\**" />
-    <None Remove="fs\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.KakaoTalk" Version="6.0.0" />
     <PackageReference Include="Jkw.Extensions" Version="1.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.0" />
@@ -27,9 +20,4 @@
     <ProjectReference Include="..\ProjectSuFc\ProjectSuFc.csproj" />
     <ProjectReference Include="..\ProjectWorldCup\ProjectWorldCup.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Configuration\" />
-  </ItemGroup>
-
 </Project>

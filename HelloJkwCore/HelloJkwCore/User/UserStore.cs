@@ -12,7 +12,7 @@ namespace HelloJkwCore.User
 {
     public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUser>
     {
-        private readonly Func<PathOf, string> _usersPath;
+        private readonly Func<Paths, string> _usersPath;
 
         private readonly ILogger _logger;
         private readonly IFileSystem _fs;
@@ -24,8 +24,9 @@ namespace HelloJkwCore.User
             )
         {
             _logger = loggerFactory.CreateLogger<UserStore>();
-            _usersPath = path => path.GetPath(PathType.UsersPath);
-            _fs = fsService.GetFileSystem(coreOption.UserStoreFileSystem);
+            _fs = fsService.GetFileSystem(coreOption.UserStoreFileSystem, coreOption.Path);
+
+            _usersPath = path => path[UserPathType.UsersPath];
         }
 
         public void Dispose()
@@ -67,7 +68,7 @@ namespace HelloJkwCore.User
         {
             await CreateUsersDirectoryAsync(ct);
 
-            Func<PathOf, string> userPath = path => path.UserFilePathByUserId(userId);
+            Func<Paths, string> userPath = path => path.UserFilePathByUserId(userId);
             if (await _fs.FileExistsAsync(userPath))
             {
                 return await _fs.ReadJsonAsync<AppUser>(userPath);

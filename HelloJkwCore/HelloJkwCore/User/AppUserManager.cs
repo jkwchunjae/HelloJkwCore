@@ -35,7 +35,7 @@ namespace HelloJkwCore.User
                   services,
                   logger)
         {
-            _fs = fsService.GetFileSystem(coreOption.UserStoreFileSystem);
+            _fs = fsService.GetFileSystem(coreOption.UserStoreFileSystem, coreOption.Path);
         }
     }
 }
