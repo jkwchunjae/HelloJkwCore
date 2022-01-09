@@ -6,5 +6,6 @@ namespace ProjectDiary
     {
         public FileSystemSelectOption FileSystemSelect { get; set; }
         public FileSystemSelectOption SearchEngineFileSystem { get; set; }
+        public PathMap Path { get; set; }
     }
 }

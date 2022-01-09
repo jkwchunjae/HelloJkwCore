@@ -15,7 +15,7 @@ namespace ProjectSuFc
             SuFcOption option,
             IFileSystemService fsService)
         {
-            _fs = fsService.GetFileSystem(option.FileSystemSelect);
+            _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
 
             InitTeamMaker();
         }

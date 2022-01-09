@@ -12,20 +12,20 @@ namespace Common
 {
     public class DropboxFileSystem : IFileSystem
     {
-        protected readonly PathOf _pathOf;
+        protected readonly Paths _paths;
         private readonly DropboxClient _client;
         private readonly Encoding _encoding;
 
-        public DropboxFileSystem(PathOption pathOption, DropboxClient client, Encoding encoding = null)
+        public DropboxFileSystem(PathMap pathOption, DropboxClient client, Encoding encoding = null)
         {
-            _pathOf = new PathOf(pathOption, FileSystemType.Dropbox);
+            _paths = new Paths(pathOption, FileSystemType.Dropbox);
             _client = client;
             _encoding = encoding ?? new UTF8Encoding(false);
         }
 
-        public async Task<bool> CreateDirectoryAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
-            var path = pathFunc(GetPathOf());
+            var path = pathFunc(_paths);
 
             try
             {
@@ -42,16 +42,16 @@ namespace Common
             }
         }
 
-        public async Task<bool> DeleteFileAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
-            var path = pathFunc(GetPathOf());
+            var path = pathFunc(_paths);
             await _client.Files.DeleteV2Async(path);
             return true;
         }
 
-        public async Task<bool> DirExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
-            var path = pathFunc(GetPathOf());
+            var path = pathFunc(_paths);
             try
             {
                 var metadata = await _client.Files.GetMetadataAsync(path);
@@ -67,9 +67,9 @@ namespace Common
             }
         }
 
-        public async Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
-            var path = pathFunc(GetPathOf());
+            var path = pathFunc(_paths);
             try
             {
                 var metadata = await _client.Files.GetMetadataAsync(path);
@@ -85,9 +85,9 @@ namespace Common
             }
         }
 
-        public async Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default)
+        public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default)
         {
-            var path = pathFunc(GetPathOf());
+            var path = pathFunc(_paths);
             var fileMetadataList = new List<Metadata>();
 
             var result = await _client.Files.ListFolderAsync(path);
@@ -106,14 +106,9 @@ namespace Common
                 .ToList();
         }
 
-        public PathOf GetPathOf()
+        public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
-            return _pathOf;
-        }
-
-        public async Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default)
-        {
-            var path = pathFunc(GetPathOf());
+            var path = pathFunc(_paths);
             try
             {
                 return await _client.ReadJsonAsync<T>(path);
@@ -128,9 +123,9 @@ namespace Common
             }
         }
 
-        public async Task<string> ReadTextAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
-            var path = pathFunc(GetPathOf());
+            var path = pathFunc(_paths);
             try
             {
                 return await _client.ReadTextAsync(path);
@@ -145,9 +140,9 @@ namespace Common
             }
         }
 
-        public async Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default)
+        public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, CancellationToken ct = default)
         {
-            var path = pathFunc(GetPathOf());
+            var path = pathFunc(_paths);
             try
             {
                 await _client.WriteJsonAsync(path, obj, _encoding);
@@ -163,9 +158,9 @@ namespace Common
             }
         }
 
-        public async Task<bool> WriteTextAsync(Func<PathOf, string> pathFunc, string text, CancellationToken ct = default)
+        public async Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string text, CancellationToken ct = default)
         {
-            var path = pathFunc(GetPathOf());
+            var path = pathFunc(_paths);
             try
             {
                 await _client.WriteTextAsync(path, text, _encoding);

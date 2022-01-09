@@ -42,11 +42,11 @@ namespace ProjectSuFc
             if (cache != null)
                 return cache;
 
-            var files = await _fs.GetFilesAsync(path => path.GetPath(PathType.SuFcTeamsPath));
+            var files = await _fs.GetFilesAsync(path => path[SuFcPathType.SuFcTeamsPath]);
 
             var list = await files.Select(async file =>
                 {
-                    return await _fs.ReadJsonAsync<TeamResult>(path => path.GetPath(PathType.SuFcTeamsPath) + "/" + file);
+                    return await _fs.ReadJsonAsync<TeamResult>(path => path[SuFcPathType.SuFcTeamsPath] + "/" + file);
                 })
                 .WhenAll();
 
@@ -62,7 +62,7 @@ namespace ProjectSuFc
                 return found;
 
             var fileName = $"{title}.json";
-            var saveFile = await _fs.ReadJsonAsync<TeamResult>(path => path.GetPath(PathType.SuFcTeamsPath) + "/" + fileName);
+            var saveFile = await _fs.ReadJsonAsync<TeamResult>(path => path[SuFcPathType.SuFcTeamsPath] + "/" + fileName);
             return saveFile;
         }
 
@@ -75,7 +75,7 @@ namespace ProjectSuFc
                 return false;
             }
 
-            await _fs.WriteJsonAsync(path => path.GetPath(PathType.SuFcTeamsPath) + "/" + fileName, saveFile);
+            await _fs.WriteJsonAsync(path => path[SuFcPathType.SuFcTeamsPath] + "/" + fileName, saveFile);
 
             _teamResultList = null;
 
@@ -84,9 +84,9 @@ namespace ProjectSuFc
 
         public async Task<TeamSettingOption> GetTeamSettingOption()
         {
-            if (await _fs.FileExistsAsync(path => path.GetPath(PathType.SuFcTeamSettingFile)))
+            if (await _fs.FileExistsAsync(path => path[SuFcPathType.SuFcTeamSettingFile]))
             {
-                var option = await _fs.ReadJsonAsync<TeamSettingOption>(path => path.GetPath(PathType.SuFcTeamSettingFile));
+                var option = await _fs.ReadJsonAsync<TeamSettingOption>(path => path[SuFcPathType.SuFcTeamSettingFile]);
                 return option ?? new();
             }
             return new();
@@ -94,7 +94,7 @@ namespace ProjectSuFc
 
         public async Task SaveTeamSettingOption(TeamSettingOption option)
         {
-            await _fs.WriteJsonAsync(path => path.GetPath(PathType.SuFcTeamSettingFile), option);
+            await _fs.WriteJsonAsync(path => path[SuFcPathType.SuFcTeamSettingFile], option);
         }
     }
 }

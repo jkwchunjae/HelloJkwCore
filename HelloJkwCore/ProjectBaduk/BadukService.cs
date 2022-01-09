@@ -16,7 +16,7 @@ namespace ProjectBaduk
             BadukOption option,
             IFileSystemService fsService)
         {
-            _fs = fsService.GetFileSystem(option.FileSystemSelect);
+            _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
         }
 
         public async Task<BadukDiary> DeleteBadukGameData(DiaryName diaryName, string subject)
@@ -95,11 +95,11 @@ namespace ProjectBaduk
 
         public async Task<List<BadukDiary>> GetBadukDiaryList(AppUser user)
         {
-            if (!await _fs.DirExistsAsync(path => path.GetPath(PathType.BadukDiaryPath)))
+            if (!await _fs.DirExistsAsync(path => path[BadukPathType.BadukDiaryPath]))
             {
-                await _fs.CreateDirectoryAsync(path => path.GetPath(PathType.BadukDiaryPath));
+                await _fs.CreateDirectoryAsync(path => path[BadukPathType.BadukDiaryPath]);
             }
-            var list = await _fs.GetFilesAsync(path => path.GetPath(PathType.BadukDiaryPath));
+            var list = await _fs.GetFilesAsync(path => path[BadukPathType.BadukDiaryPath]);
 
             var diaryList = await list
                 .Select(fileName => Path.GetFileNameWithoutExtension(fileName))
@@ -142,20 +142,20 @@ namespace ProjectBaduk
             }
         }
 
-        private string GameDataSavePath(PathOf path, DiaryName diaryName)
+        private string GameDataSavePath(Paths path, DiaryName diaryName)
         {
-            return path.GetPath(PathType.BadukSavePath) + "/" + diaryName;
+            return path[BadukPathType.BadukSavePath] + "/" + diaryName;
         }
 
-        private string GameDataFilePath(PathOf path, DiaryName diaryName, string fileName)
+        private string GameDataFilePath(Paths path, DiaryName diaryName, string fileName)
         {
-            var badukSavePath = path.GetPath(PathType.BadukSavePath);
+            var badukSavePath = path[BadukPathType.BadukSavePath];
             return $"{badukSavePath}/{diaryName}/{fileName}.json";
         }
 
-        private string DiaryFilePath(PathOf path, string diaryFileName)
+        private string DiaryFilePath(Paths path, string diaryFileName)
         {
-            return $"{path.GetPath(PathType.BadukDiaryPath)}/{diaryFileName}.json";
+            return $"{path[BadukPathType.BadukDiaryPath]}/{diaryFileName}.json";
         }
     }
 }

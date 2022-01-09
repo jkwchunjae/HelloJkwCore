@@ -27,14 +27,11 @@ namespace HelloJkwCore
 
         private AuthUtil CreateAuthUtil(IConfiguration configuration)
         {
-            var pathOption = new PathOption();
-            configuration.GetSection("Path").Bind(pathOption);
-
             var fsOption = new FileSystemOption();
             configuration.GetSection("FileSystem").Bind(fsOption);
 
-            var fsService = new FileSystemService(fsOption, pathOption, null, null);
-            var fs = fsService.GetFileSystem(_coreOption.AuthFileSystem);
+            var fsService = new FileSystemService(fsOption, null, null);
+            var fs = fsService.GetFileSystem(_coreOption.AuthFileSystem, _coreOption.Path);
 
             return new AuthUtil(fs);
         }
@@ -138,7 +135,7 @@ namespace HelloJkwCore
 
             #region FileSystem
 
-            var pathOption = new PathOption();
+            var pathOption = new PathMap();
             Configuration.GetSection("Path").Bind(pathOption);
             services.AddSingleton(pathOption);
 

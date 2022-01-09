@@ -11,6 +11,7 @@ namespace HelloJkwCore
     {
         public FileSystemSelectOption AuthFileSystem { get; set; }
         public FileSystemSelectOption UserStoreFileSystem { get; set; }
+        public PathMap Path { get; set; }
 
         public static CoreOption Create(IConfiguration configuration)
         {

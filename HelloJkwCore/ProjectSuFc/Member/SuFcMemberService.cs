@@ -17,11 +17,11 @@ namespace ProjectSuFc
             if (cache != null)
                 return cache;
 
-            var files = await _fs.GetFilesAsync(path => path.GetPath(PathType.SuFcMembersPath));
+            var files = await _fs.GetFilesAsync(path => path[SuFcPathType.SuFcMembersPath]);
 
             var list = await files.Select(async file =>
                 {
-                    return await _fs.ReadJsonAsync<Member>(path => path.GetPath(PathType.SuFcMembersPath) + "/" + file);
+                    return await _fs.ReadJsonAsync<Member>(path => path[SuFcPathType.SuFcMembersPath] + "/" + file);
                 })
                 .WhenAll();
 
@@ -35,7 +35,7 @@ namespace ProjectSuFc
         {
             var fileName = $"{memberName}.json";
 
-            var member = await _fs.ReadJsonAsync<Member>(path => path.GetPath(PathType.SuFcMembersPath) + "/" + fileName);
+            var member = await _fs.ReadJsonAsync<Member>(path => path[SuFcPathType.SuFcMembersPath] + "/" + fileName);
 
             return member;
         }
@@ -55,7 +55,7 @@ namespace ProjectSuFc
                 member.No = list.MaxOrNull(x => x.No) + 1 ?? 1;
             }
 
-            var result = await _fs.WriteJsonAsync(path => path.GetPath(PathType.SuFcMembersPath) + "/" + fileName, member);
+            var result = await _fs.WriteJsonAsync(path => path[SuFcPathType.SuFcMembersPath] + "/" + fileName, member);
 
             _memberList = null;
 

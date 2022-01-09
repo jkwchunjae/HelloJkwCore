@@ -22,7 +22,7 @@ namespace Common
             _backup = fsBackup;
         }
 
-        public async Task<bool> CreateDirectoryAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             _backgroundQueue.QueueBackgroundWorkItem(async token =>
             {
@@ -31,7 +31,7 @@ namespace Common
             return await _fs.CreateDirectoryAsync(pathFunc, ct);
         }
 
-        public async Task<bool> DeleteFileAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             _backgroundQueue.QueueBackgroundWorkItem(async token =>
             {
@@ -40,7 +40,7 @@ namespace Common
             return await _fs.DeleteFileAsync(pathFunc, ct);
         }
 
-        public async Task<bool> DirExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             //_backgroundQueue.QueueBackgroundWorkItem(async token =>
             //{
@@ -49,7 +49,7 @@ namespace Common
             return await _fs.DirExistsAsync(pathFunc, ct);
         }
 
-        public async Task<bool> FileExistsAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             //_backgroundQueue.QueueBackgroundWorkItem(async token =>
             //{
@@ -58,7 +58,7 @@ namespace Common
             return await _fs.FileExistsAsync(pathFunc, ct);
         }
 
-        public async Task<List<string>> GetFilesAsync(Func<PathOf, string> pathFunc, string extension = null, CancellationToken ct = default)
+        public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default)
         {
             //_backgroundQueue.QueueBackgroundWorkItem(async token =>
             //{
@@ -67,12 +67,7 @@ namespace Common
             return await _fs.GetFilesAsync(pathFunc, extension, ct);
         }
 
-        public PathOf GetPathOf()
-        {
-            return _fs.GetPathOf();
-        }
-
-        public async Task<T> ReadJsonAsync<T>(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             //_backgroundQueue.QueueBackgroundWorkItem(async token =>
             //{
@@ -81,12 +76,12 @@ namespace Common
             return await _fs.ReadJsonAsync<T>(pathFunc, ct);
         }
 
-        public async Task<string> ReadTextAsync(Func<PathOf, string> pathFunc, CancellationToken ct = default)
+        public async Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
         {
             return await _fs.ReadTextAsync(pathFunc, ct);
         }
 
-        public async Task<bool> WriteJsonAsync<T>(Func<PathOf, string> pathFunc, T obj, CancellationToken ct = default)
+        public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, CancellationToken ct = default)
         {
             _backgroundQueue.QueueBackgroundWorkItem(async token =>
             {
@@ -95,7 +90,7 @@ namespace Common
             return await _fs.WriteJsonAsync(pathFunc, obj, ct);
         }
 
-        public async Task<bool> WriteTextAsync(Func<PathOf, string> pathFunc, string obj, CancellationToken ct = default)
+        public async Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string obj, CancellationToken ct = default)
         {
             _backgroundQueue.QueueBackgroundWorkItem(async token =>
             {

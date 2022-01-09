@@ -21,7 +21,7 @@ namespace ProjectDiary
             IFileSystemService fsService,
             DiaryOption diaryOption)
         {
-            _fs = fsService.GetFileSystem(diaryOption.SearchEngineFileSystem);
+            _fs = fsService.GetFileSystem(diaryOption.SearchEngineFileSystem, diaryOption.Path);
         }
 
         private async Task<DiarySearchEngine> GetSearchEngineAsync(string diaryName)
@@ -37,7 +37,7 @@ namespace ProjectDiary
             {
                 engine = new DiarySearchEngine();
 
-                Func<PathOf, string> triePath = path => path.DiaryTrie(diaryName);
+                Func<Paths, string> triePath = path => path.DiaryTrie(diaryName);
                 if (await _fs.FileExistsAsync(triePath))
                 {
                     var trie = await _fs.ReadJsonAsync<DiaryTrie>(triePath);

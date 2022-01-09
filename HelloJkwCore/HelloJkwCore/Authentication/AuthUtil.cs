@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Common
+namespace HelloJkwCore
 {
     public class AuthUtil
     {
@@ -14,7 +14,7 @@ namespace Common
 
         public AuthUtil(IFileSystem fs)
         {
-            var task = fs.ReadJsonAsync<List<OAuthOption>>(path => path.GetPath(PathType.OAuthOption));
+            var task = fs.ReadJsonAsync<List<OAuthOption>>(path => path["OAuthOption"]);
             task.Wait();
             _oauthOptions = task.Result;
         }
