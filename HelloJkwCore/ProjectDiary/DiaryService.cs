@@ -20,7 +20,7 @@ namespace ProjectDiary
             IFileSystemService fsService)
         {
             _diarySearchService = diarySearchService;
-            _fs = fsService.GetFileSystem(option.FileSystemSelect);
+            _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
         }
 
         private async Task<List<DiaryFileName>> GetDiaryListAsync(string diaryName)
@@ -33,7 +33,7 @@ namespace ProjectDiary
                 }
             }
 
-            Func<PathOf, string> diaryPath = path => path.Diary(diaryName);
+            Func<Paths, string> diaryPath = path => path.Diary(diaryName);
 
             if (!(await _fs.DirExistsAsync(diaryPath)))
             {
@@ -113,7 +113,7 @@ namespace ProjectDiary
 
         private async Task<UserDiaryInfo> CreateUserDiaryInfoAsync(AppUser user)
         {
-            Func<PathOf, string> path = pathof => pathof.UserDiaryInfo(user);
+            Func<Paths, string> path = pathof => pathof.UserDiaryInfo(user);
             if (await _fs.FileExistsAsync(path))
             {
                 return await _fs.ReadJsonAsync<UserDiaryInfo>(path);
@@ -284,7 +284,7 @@ namespace ProjectDiary
                 Index = MakeNewIndex(list, date),
             };
 
-            Func<PathOf, string> diaryPath = path => path.Content(diary.DiaryName, content.GetFileName());
+            Func<Paths, string> diaryPath = path => path.Content(diary.DiaryName, content.GetFileName());
             await _fs.WriteJsonAsync(diaryPath, content);
 
             var diaryFileName = new DiaryFileName(content.GetFileName());
@@ -326,14 +326,14 @@ namespace ProjectDiary
 
             foreach (var deleteFile in deleteFiles)
             {
-                Func<PathOf, string> deleteFilePath = path => path.Content(diary.DiaryName, deleteFile.GetFileName());
+                Func<Paths, string> deleteFilePath = path => path.Content(diary.DiaryName, deleteFile.GetFileName());
                 await _fs.DeleteFileAsync(deleteFilePath);
                 list.Remove(new DiaryFileName(deleteFile.GetFileName()));
             }
 
             foreach (var updateFile in updateFiles)
             {
-                Func<PathOf, string> updateFilePath = path => path.Content(diary.DiaryName, updateFile.GetFileName());
+                Func<Paths, string> updateFilePath = path => path.Content(diary.DiaryName, updateFile.GetFileName());
                 await _fs.WriteJsonAsync(updateFilePath, updateFile);
             }
 
