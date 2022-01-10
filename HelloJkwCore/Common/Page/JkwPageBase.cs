@@ -12,7 +12,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore.Shared
+namespace Common
 {
     public class JkwPageBase : ComponentBase, IDisposable
     {
