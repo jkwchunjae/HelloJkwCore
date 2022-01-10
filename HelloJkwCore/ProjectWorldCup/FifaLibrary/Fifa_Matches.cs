@@ -18,7 +18,7 @@ namespace ProjectWorldCup
                 var pageData = await GetPageData(new Uri(url));
 
                 var groupStageMatches = pageData?["content"]?.ToArray()?[4]?["groupPhaseMatches"]
-                    ?.SelectMany(x => x?["matches"]?.Select(e => e?.ToObject<FifaMatchData>())?.ToList() ?? new List<FifaMatchData?>())
+                    ?.SelectMany(x => x?["matches"]?.Select(e => e?.ToObject<FifaMatchData>())?.ToList() ?? new List<FifaMatchData>())
                     .ToList();
 
                 return groupStageMatches ?? new();
@@ -33,7 +33,7 @@ namespace ProjectWorldCup
                 var pageData = await GetPageData(new Uri(url));
 
                 var knockoutStageMatches = pageData?["content"]?.ToArray()?[4]?["knockoutPhaseMatches"]
-                    ?.SelectMany(x => x?["matches"]?.Select(e => e?.ToObject<FifaMatchData>())?.ToList() ?? new List<FifaMatchData?>())
+                    ?.SelectMany(x => x?["matches"]?.Select(e => e?.ToObject<FifaMatchData>())?.ToList() ?? new List<FifaMatchData>())
                     .ToList();
 
                 return knockoutStageMatches ?? new();

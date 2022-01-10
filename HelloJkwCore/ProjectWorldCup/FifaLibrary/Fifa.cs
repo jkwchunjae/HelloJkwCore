@@ -15,7 +15,7 @@ namespace ProjectWorldCup
         private MemoryCache _cache = new MemoryCache("FIFA");
 
         /// <summary> FIFA 는 __NEXT_DATA__ id 스크립트 안에 페이지에 포함될 json을 넣어놓는다. 그걸 가져와서 쓰자.  </summary>
-        private async Task<JObject?> GetPageData(Uri uri)
+        private async Task<JObject> GetPageData(Uri uri)
         {
             var res = await _httpClient.GetAsync(uri);
 
