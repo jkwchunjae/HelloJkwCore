@@ -1,5 +1,7 @@
+@using System.Reflection
+
 <CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(Program).Assembly">
+    <Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="@assemblies">
         <Found Context="routeData">
             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         </Found>
@@ -10,3 +12,10 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    List<Assembly> assemblies = new()
+        {
+            typeof(Common.JkwPageBase).Assembly,
+        };
+}
