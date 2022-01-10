@@ -1,9 +1,7 @@
 ﻿using Common;
-using HelloJkwCore.Shared;
 using Microsoft.AspNetCore.Components;
-using ProjectWorldCup;
 
-namespace HelloJkwCore.Pages.WorldCup
+namespace ProjectWorldCup.Pages
 {
     public partial class TeamScore : JkwPageBase
     {

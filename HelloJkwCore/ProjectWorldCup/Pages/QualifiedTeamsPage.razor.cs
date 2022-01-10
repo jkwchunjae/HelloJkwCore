@@ -1,12 +1,10 @@
 ﻿using Common;
-using HelloJkwCore.Shared;
 using Microsoft.AspNetCore.Components;
-using ProjectWorldCup;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore.Pages.WorldCup
+namespace ProjectWorldCup.Pages
 {
     public partial class QualifiedTeamsPage : JkwPageBase
     {
