@@ -1,15 +1,13 @@
 ﻿using Common;
-using HelloJkwCore.Shared;
 using JkwExtensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using ProjectDiary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore.Pages.Diary
+namespace ProjectDiary.Pages
 {
     public partial class DiaryEdit : JkwPageBase
     {

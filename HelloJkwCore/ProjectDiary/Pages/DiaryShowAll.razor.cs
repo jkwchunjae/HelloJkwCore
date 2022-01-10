@@ -1,13 +1,11 @@
 ﻿using Common;
-using HelloJkwCore.Shared;
 using Microsoft.AspNetCore.Components;
-using ProjectDiary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore.Pages.Diary
+namespace ProjectDiary.Pages
 {
     public partial class DiaryShowAll : JkwPageBase
     {
