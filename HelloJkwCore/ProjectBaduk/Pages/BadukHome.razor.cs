@@ -1,5 +1,4 @@
 ﻿using Common;
-using HelloJkwCore.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using ProjectBaduk;
@@ -9,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore.Pages.Baduk
+namespace ProjectBaduk.Pages
 {
     public partial class BadukHome : JkwPageBase
     {

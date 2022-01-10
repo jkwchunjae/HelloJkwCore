@@ -1,14 +1,13 @@
-﻿using HelloJkwCore.Shared;
+﻿using Common;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using ProjectDiary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore.Pages.Diary
+namespace ProjectDiary.Pages
 {
     public partial class DiaryCreate : JkwPageBase
     {

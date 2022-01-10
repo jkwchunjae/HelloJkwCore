@@ -1,8 +1,6 @@
-﻿using HelloJkwCore.Shared;
-using JkwExtensions;
+﻿using JkwExtensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using ProjectDiary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +8,7 @@ using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Logging;
 
-namespace HelloJkwCore.Pages.Diary
+namespace ProjectDiary.Pages
 {
     public partial class DiaryHome : JkwPageBase
     {
