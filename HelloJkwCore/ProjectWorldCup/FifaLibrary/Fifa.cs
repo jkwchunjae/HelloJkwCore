@@ -17,18 +17,18 @@ namespace ProjectWorldCup
         /// <summary> FIFA 는 __NEXT_DATA__ id 스크립트 안에 페이지에 포함될 json을 넣어놓는다. 그걸 가져와서 쓰자.  </summary>
         private async Task<JObject> GetPageData(Uri uri)
         {
-            var res = await _httpClient.GetAsync(uri);
+            var pageDataText = await GetFromCacheOrAsync<string>(uri.ToString(), async () =>
+            {
+                var res = await _httpClient.GetAsync(uri);
+                var text = await res.Content.ReadAsStringAsync();
+                var pattern = @"<script id=""__NEXT_DATA__"".*?>(.*?)<\/script>";
+                var match = Regex.Match(text, pattern);
+                var data = match.Groups[1].Captures[0].Value;
 
-            var text = await res.Content.ReadAsStringAsync();
+                return data;
+            });
 
-            var pattern = @"<script id=""__NEXT_DATA__"".*?>(.*?)<\/script>";
-
-            var match = Regex.Match(text, pattern);
-
-            var data = match.Groups[1].Captures[0].Value;
-
-            var obj = JObject.Parse(data);
-
+            var obj = JObject.Parse(pageDataText);
             var o = obj["props"]?["pageProps"]?["pageData"];
 
             return o?.ToObject<JObject>() ?? null;

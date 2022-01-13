@@ -9,6 +9,7 @@ namespace ProjectWorldCup
     public partial class Fifa : IFifa
     {
         private readonly string GroupStageMatchesCacheKey = nameof(GroupStageMatchesCacheKey);
+        private readonly string KnockoutStageMatchesCacheKey = nameof(KnockoutStageMatchesCacheKey);
 
         public async Task<List<FifaMatchData>> GetGroupStageMatchesAsync()
         {
@@ -27,7 +28,7 @@ namespace ProjectWorldCup
 
         public async Task<List<FifaMatchData>> GetKnockoutStageMatchesAsync()
         {
-            return await GetFromCacheOrAsync<List<FifaMatchData>>(GroupStageMatchesCacheKey, async () =>
+            return await GetFromCacheOrAsync<List<FifaMatchData>>(KnockoutStageMatchesCacheKey, async () =>
             {
                 var url = "https://www.fifa.com/tournaments/mens/worldcup/qatar2022";
                 var pageData = await GetPageData(new Uri(url));
