@@ -1,12 +1,4 @@
-﻿using Common;
-using JkwExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProjectSuFc;
+﻿namespace ProjectSuFc;
 
 public partial class SuFcService : ISuFcService
 {

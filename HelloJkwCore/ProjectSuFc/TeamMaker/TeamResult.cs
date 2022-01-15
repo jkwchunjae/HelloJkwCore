@@ -1,12 +1,4 @@
-﻿using Common;
-using JkwExtensions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace ProjectSuFc;
+﻿namespace ProjectSuFc;
 
 [JsonConverter(typeof(StringIdJsonConverter<TeamName>))]
 public class TeamName : StringId
