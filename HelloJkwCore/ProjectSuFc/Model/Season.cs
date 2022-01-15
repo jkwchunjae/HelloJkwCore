@@ -6,16 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectSuFc
-{
-    [JsonConverter(typeof(StringIdJsonConverter<SeasonId>))]
-    public class SeasonId : StringId
-    {
-    }
+namespace ProjectSuFc;
 
-    public class Season
-    {
-        public SeasonId Id { get; set; }
-        public string Name { get; set; }
-    }
+[JsonConverter(typeof(StringIdJsonConverter<SeasonId>))]
+public class SeasonId : StringId
+{
+}
+
+public class Season
+{
+    public SeasonId Id { get; set; }
+    public string Name { get; set; }
 }

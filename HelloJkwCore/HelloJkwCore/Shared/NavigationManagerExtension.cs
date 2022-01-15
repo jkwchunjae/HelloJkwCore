@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore
+namespace HelloJkwCore;
+
+public static class NavigationManagerExtension
 {
-    public static class NavigationManagerExtension
+    public static void GoLoginPage(this NavigationManager navi)
     {
-        public static void GoLoginPage(this NavigationManager navi)
-        {
-            navi.NavigateTo("/login");
-        }
+        navi.NavigateTo("/login");
     }
 }

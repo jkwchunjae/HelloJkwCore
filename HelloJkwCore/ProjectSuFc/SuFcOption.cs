@@ -5,11 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Common;
 
-namespace ProjectSuFc
+namespace ProjectSuFc;
+
+public class SuFcOption
 {
-    public class SuFcOption
-    {
-        public FileSystemSelectOption FileSystemSelect { get; set; }
-        public PathMap Path { get; set; }
-    }
+    public FileSystemSelectOption FileSystemSelect { get; set; }
+    public PathMap Path { get; set; }
 }

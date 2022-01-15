@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common
+namespace Common;
+
+public class FileSystemSelectOption
 {
-    public class FileSystemSelectOption
-    {
-        public bool UseMainFileSystem { get; set; }
-        public FileSystemType FileSystemType { get; set; }
-    }
+    public bool UseMainFileSystem { get; set; }
+    public FileSystemType FileSystemType { get; set; }
 }

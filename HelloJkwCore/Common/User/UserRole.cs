@@ -6,14 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common
+namespace Common;
+
+[Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
+public enum UserRole
 {
-    [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
-    public enum UserRole
-    {
-        Admin,
-        DiaryWriter,
-        SuFcAdmin,
-        BadukCreator,
-    }
+    Admin,
+    DiaryWriter,
+    SuFcAdmin,
+    BadukCreator,
 }

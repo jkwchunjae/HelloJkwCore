@@ -5,18 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectSuFc
+namespace ProjectSuFc;
+
+public class FullRandomTeamMaker : TeamMaker
 {
-    public class FullRandomTeamMaker : TeamMaker
+    public override Task<TeamResult> MakeTeamAsync(List<MemberName> members, int teamCount, TeamSettingOption option)
     {
-        public override Task<TeamResult> MakeTeamAsync(List<MemberName> members, int teamCount, TeamSettingOption option)
-        {
-            var teamResult = new TeamResult(teamCount);
+        var teamResult = new TeamResult(teamCount);
 
-            var shuffled = RandomShuffle(members, teamResult.TeamNames);
+        var shuffled = RandomShuffle(members, teamResult.TeamNames);
 
-            teamResult.Players = shuffled;
-            return Task.FromResult(teamResult);
-        }
+        teamResult.Players = shuffled;
+        return Task.FromResult(teamResult);
     }
 }

@@ -5,51 +5,50 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
-namespace HelloJkwCore.Pages.Users
+namespace HelloJkwCore.Pages.Users;
+
+public partial class UserPage : JkwPageBase
 {
-    public partial class UserPage : JkwPageBase
+    private bool ChangeNickName = false;
+
+    private string InputNickName = string.Empty;
+
+    protected override void OnPageInitialized()
     {
-        private bool ChangeNickName = false;
+        CheckPageChangeNickName(Navi.Uri);
+    }
 
-        private string InputNickName = string.Empty;
+    protected override Task HandleLocationChanged(LocationChangedEventArgs e)
+    {
+        CheckPageChangeNickName(e.Location);
 
-        protected override void OnPageInitialized()
+        return Task.CompletedTask;
+    }
+
+    private void CheckPageChangeNickName(string url)
+    {
+        if (url.Contains("change-nickname"))
         {
-            CheckPageChangeNickName(Navi.Uri);
+            ChangeNickName = true;
+            InputNickName = User?.DisplayName;
+        }
+        else
+        {
+            ChangeNickName = false;
         }
 
-        protected override Task HandleLocationChanged(LocationChangedEventArgs e)
+        StateHasChanged();
+    }
+
+    private async Task ChangeNickNameAsync()
+    {
+        User.NickName = InputNickName?.Trim();
+        if (string.IsNullOrWhiteSpace(User.NickName))
         {
-            CheckPageChangeNickName(e.Location);
-
-            return Task.CompletedTask;
+            User.NickName = null;
         }
+        await UserStore.UpdateAsync(User, default);
 
-        private void CheckPageChangeNickName(string url)
-        {
-            if (url.Contains("change-nickname"))
-            {
-                ChangeNickName = true;
-                InputNickName = User?.DisplayName;
-            }
-            else
-            {
-                ChangeNickName = false;
-            }
-
-            StateHasChanged();
-        }
-
-        private async Task ChangeNickNameAsync()
-        {
-            User.NickName = InputNickName?.Trim();
-            if (string.IsNullOrWhiteSpace(User.NickName))
-            {
-                User.NickName = null;
-            }
-            await UserStore.UpdateAsync(User, default);
-
-            Navi.NavigateTo("/user");
-        }
+        Navi.NavigateTo("/user");
     }
 }

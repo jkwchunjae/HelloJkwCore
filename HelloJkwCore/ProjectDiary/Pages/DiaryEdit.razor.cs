@@ -7,133 +7,132 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectDiary.Pages
+namespace ProjectDiary.Pages;
+
+public partial class DiaryEdit : JkwPageBase
 {
-    public partial class DiaryEdit : JkwPageBase
+    [Inject]
+    public IDiaryService DiaryService { get; set; }
+    [Inject]
+    private UserInstantData UserData { get; set; }
+
+    [Parameter]
+    public string DiaryName { get; set; }
+    [Parameter]
+    public string Date { get; set; }
+
+    private DiaryInfo DiaryInfo { get; set; }
+    private DiaryView View { get; set; }
+
+    private bool HasDiaryInfo => DiaryInfo != null;
+    private bool HasDiaryContent => HasDiaryInfo && (View?.DiaryContents?.Any() ?? false);
+    private Dictionary<int, int> Rows => View?.DiaryContents?
+        .ToDictionary(x => x.Index, x => x.Text.Split('\n').Count())
+        ?? new();
+
+    protected override async Task OnPageInitializedAsync()
     {
-        [Inject]
-        public IDiaryService DiaryService { get; set; }
-        [Inject]
-        private UserInstantData UserData { get; set; }
-
-        [Parameter]
-        public string DiaryName { get; set; }
-        [Parameter]
-        public string Date { get; set; }
-
-        private DiaryInfo DiaryInfo { get; set; }
-        private DiaryView View { get; set; }
-
-        private bool HasDiaryInfo => DiaryInfo != null;
-        private bool HasDiaryContent => HasDiaryInfo && (View?.DiaryContents?.Any() ?? false);
-        private Dictionary<int, int> Rows => View?.DiaryContents?
-            .ToDictionary(x => x.Index, x => x.Text.Split('\n').Count())
-            ?? new();
-
-        protected override async Task OnPageInitializedAsync()
+        if (!IsAuthenticated)
         {
-            if (!IsAuthenticated)
-            {
-                NavigationManager.NavigateTo("/login");
-                return;
-            }
-
-            await InitDiary();
-
-            StateHasChanged();
+            NavigationManager.NavigateTo("/login");
+            return;
         }
 
-        protected override async Task HandleLocationChanged(LocationChangedEventArgs e)
-        {
-            await InitDiary();
+        await InitDiary();
 
-            StateHasChanged();
+        StateHasChanged();
+    }
+
+    protected override async Task HandleLocationChanged(LocationChangedEventArgs e)
+    {
+        await InitDiary();
+
+        StateHasChanged();
+    }
+
+    private async Task InitDiary()
+    {
+        DiaryInfo = null;
+        View = null;
+
+        if (!string.IsNullOrWhiteSpace(DiaryName))
+        {
+            DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, DiaryName);
+        }
+        else
+        {
+            var userDiaryInfo = await DiaryService.GetUserDiaryInfoAsync(User);
+            if (userDiaryInfo.MyDiaryList.Empty())
+                return;
+
+            var diaryName = userDiaryInfo.MyDiaryList.First();
+            DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, diaryName);
         }
 
-        private async Task InitDiary()
+        if (DiaryInfo == null)
+            return;
+
+        if (DiaryInfo.IsSecret && string.IsNullOrWhiteSpace(UserData.Password))
         {
-            DiaryInfo = null;
-            View = null;
+            Navi.NavigateTo(DiaryUrl.SetPassword());
+            return;
+        }
+        //WritableDiary = await DiaryService.GetWritableDiaryInfoAsync(User);
+        //ViewableDiary = await DiaryService.GetViewableDiaryInfoAsync(User);
 
-            if (!string.IsNullOrWhiteSpace(DiaryName))
+        if (HasDiaryInfo)
+        {
+            if (string.IsNullOrWhiteSpace(Date))
             {
-                DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, DiaryName);
+                View = await DiaryService.GetLastDiaryViewAsync(User, DiaryInfo);
             }
-            else
+            else if (Date.TryToDate(out var parsedDate))
             {
-                var userDiaryInfo = await DiaryService.GetUserDiaryInfoAsync(User);
-                if (userDiaryInfo.MyDiaryList.Empty())
-                    return;
-
-                var diaryName = userDiaryInfo.MyDiaryList.First();
-                DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, diaryName);
+                View = await DiaryService.GetDiaryViewAsync(User, DiaryInfo, parsedDate);
             }
 
-            if (DiaryInfo == null)
-                return;
-
-            if (DiaryInfo.IsSecret && string.IsNullOrWhiteSpace(UserData.Password))
+            if (DiaryInfo.IsSecret && HasDiaryContent)
             {
-                Navi.NavigateTo(DiaryUrl.SetPassword());
-                return;
-            }
-            //WritableDiary = await DiaryService.GetWritableDiaryInfoAsync(User);
-            //ViewableDiary = await DiaryService.GetViewableDiaryInfoAsync(User);
-
-            if (HasDiaryInfo)
-            {
-                if (string.IsNullOrWhiteSpace(Date))
+                foreach (var content in View?.DiaryContents)
                 {
-                    View = await DiaryService.GetLastDiaryViewAsync(User, DiaryInfo);
-                }
-                else if (Date.TryToDate(out var parsedDate))
-                {
-                    View = await DiaryService.GetDiaryViewAsync(User, DiaryInfo, parsedDate);
-                }
-
-                if (DiaryInfo.IsSecret && HasDiaryContent)
-                {
-                    foreach (var content in View?.DiaryContents)
+                    try
                     {
-                        try
-                        {
-                            content.Text = content.Text.Decrypt(UserData.Password);
-                        }
-                        catch
-                        {
-                            content.Text = "임호화된 일기를 해석하지 못했습니다. 비밀번호를 다시 확인해주세요.";
-                        }
+                        content.Text = content.Text.Decrypt(UserData.Password);
+                    }
+                    catch
+                    {
+                        content.Text = "임호화된 일기를 해석하지 못했습니다. 비밀번호를 다시 확인해주세요.";
                     }
                 }
             }
         }
+    }
 
-        private async Task EditDiary()
+    private async Task EditDiary()
+    {
+        if (!IsAuthenticated)
+            return;
+
+        if (DiaryInfo == null)
+            return;
+
+        List<DiaryContent> content;
+        if (DiaryInfo.IsSecret)
         {
-            if (!IsAuthenticated)
-                return;
+            content = await DiaryService.UpdateDiaryAsync(User, DiaryInfo, View.DiaryContents, UserData.Password);
+        }
+        else
+        {
+            content = await DiaryService.UpdateDiaryAsync(User, DiaryInfo, View.DiaryContents);
+        }
 
-            if (DiaryInfo == null)
-                return;
-
-            List<DiaryContent> content;
-            if (DiaryInfo.IsSecret)
-            {
-                content = await DiaryService.UpdateDiaryAsync(User, DiaryInfo, View.DiaryContents, UserData.Password);
-            }
-            else
-            {
-                content = await DiaryService.UpdateDiaryAsync(User, DiaryInfo, View.DiaryContents);
-            }
-
-            if (content?.Any() ?? false)
-            {
-                Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, content.First().Date));
-            }
-            else
-            {
-                Navi.NavigateTo(DiaryUrl.Home(DiaryInfo.DiaryName));
-            }
+        if (content?.Any() ?? false)
+        {
+            Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, content.First().Date));
+        }
+        else
+        {
+            Navi.NavigateTo(DiaryUrl.Home(DiaryInfo.DiaryName));
         }
     }
 }

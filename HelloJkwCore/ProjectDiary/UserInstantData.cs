@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectDiary
+namespace ProjectDiary;
+
+public class UserInstantData
 {
-    public class UserInstantData
-    {
-        public string Password { get; set; }
-    }
+    public string Password { get; set; }
 }

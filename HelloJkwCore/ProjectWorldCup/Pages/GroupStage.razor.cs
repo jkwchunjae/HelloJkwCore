@@ -3,18 +3,17 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ProjectWorldCup.Pages
+namespace ProjectWorldCup.Pages;
+
+public partial class GroupStage : JkwPageBase
 {
-    public partial class GroupStage : JkwPageBase
+    [Inject]
+    private IWorldCupService Service { get; set; }
+
+    private List<League> Groups { get; set; } = new();
+
+    protected override async Task OnPageInitializedAsync()
     {
-        [Inject]
-        private IWorldCupService Service { get; set; }
-
-        private List<League> Groups { get; set; } = new();
-
-        protected override async Task OnPageInitializedAsync()
-        {
-            Groups = await Service.GetGroupsAsync();
-        }
+        Groups = await Service.GetGroupsAsync();
     }
 }

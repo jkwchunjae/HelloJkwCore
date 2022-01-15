@@ -1,13 +1,12 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace HelloJkwCore
+namespace HelloJkwCore;
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum AuthProvider
 {
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum AuthProvider
-    {
-        Google,
-        KakaoTalk,
-        Dropbox,
-    }
+    Google,
+    KakaoTalk,
+    Dropbox,
 }

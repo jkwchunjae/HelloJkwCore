@@ -6,83 +6,82 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Tests.Common
-{
-    //public class InMemoryFileSystemTest
-    //{
-    //    InMemoryFileSystem _fs;
+namespace Tests.Common;
 
-    //    public InMemoryFileSystemTest()
-    //    {
-    //        _fs = new InMemoryFileSystem();
-    //    }
+//public class InMemoryFileSystemTest
+//{
+//    InMemoryFileSystem _fs;
 
-    //    [Fact]
-    //    public async Task FileReadWriteTest()
-    //    {
-    //        var path = "/test/test.json";
-    //        var data = "test";
+//    public InMemoryFileSystemTest()
+//    {
+//        _fs = new InMemoryFileSystem();
+//    }
 
-    //        await _fs.WriteJsonAsync(path, data);
+//    [Fact]
+//    public async Task FileReadWriteTest()
+//    {
+//        var path = "/test/test.json";
+//        var data = "test";
 
-    //        var result = await _fs.ReadJsonAsync<string>(path);
+//        await _fs.WriteJsonAsync(path, data);
 
-    //        Assert.Equal(data, result);
-    //    }
+//        var result = await _fs.ReadJsonAsync<string>(path);
 
-    //    [Fact]
-    //    public async Task FileExistsTest()
-    //    {
-    //        var path = "/test/test.json";
-    //        var data = "test";
+//        Assert.Equal(data, result);
+//    }
 
-    //        await _fs.WriteJsonAsync(path, data);
+//    [Fact]
+//    public async Task FileExistsTest()
+//    {
+//        var path = "/test/test.json";
+//        var data = "test";
 
-    //        var exists = await _fs.FileExistsAsync(path);
+//        await _fs.WriteJsonAsync(path, data);
 
-    //        Assert.True(exists);
-    //    }
+//        var exists = await _fs.FileExistsAsync(path);
 
-    //    [Fact]
-    //    public async Task FileNotExistsTest()
-    //    {
-    //        var path = "/test/test_unknown.json";
+//        Assert.True(exists);
+//    }
 
-    //        var exists = await _fs.FileExistsAsync(path);
+//    [Fact]
+//    public async Task FileNotExistsTest()
+//    {
+//        var path = "/test/test_unknown.json";
 
-    //        Assert.False(exists);
-    //    }
+//        var exists = await _fs.FileExistsAsync(path);
 
-    //    [Fact]
-    //    public async Task FileDeleteTest()
-    //    {
-    //        var path = "/test/test.json";
-    //        var data = "test";
+//        Assert.False(exists);
+//    }
 
-    //        await _fs.WriteJsonAsync(path, data);
+//    [Fact]
+//    public async Task FileDeleteTest()
+//    {
+//        var path = "/test/test.json";
+//        var data = "test";
 
-    //        await _fs.DeleteFileAsync(path);
+//        await _fs.WriteJsonAsync(path, data);
 
-    //        var exists = await _fs.FileExistsAsync(path);
+//        await _fs.DeleteFileAsync(path);
 
-    //        Assert.False(exists);
-    //    }
+//        var exists = await _fs.FileExistsAsync(path);
 
-    //    [Fact]
-    //    public async Task GetFileListTest()
-    //    {
-    //        var dirPath = "/test";
-    //        var path1 = "/test/test1.json";
-    //        var path2 = "/test/test2.json";
-    //        var data = "test";
+//        Assert.False(exists);
+//    }
 
-    //        await _fs.WriteJsonAsync(path1, data);
-    //        await _fs.WriteJsonAsync(path2, data);
+//    [Fact]
+//    public async Task GetFileListTest()
+//    {
+//        var dirPath = "/test";
+//        var path1 = "/test/test1.json";
+//        var path2 = "/test/test2.json";
+//        var data = "test";
 
-    //        var list = await _fs.GetFilesAsync(dirPath);
+//        await _fs.WriteJsonAsync(path1, data);
+//        await _fs.WriteJsonAsync(path2, data);
 
-    //        Assert.Contains(Path.GetFileName(path1), list);
-    //        Assert.Contains(Path.GetFileName(path2), list);
-    //    }
-    //}
-}
+//        var list = await _fs.GetFilesAsync(dirPath);
+
+//        Assert.Contains(Path.GetFileName(path1), list);
+//        Assert.Contains(Path.GetFileName(path2), list);
+//    }
+//}

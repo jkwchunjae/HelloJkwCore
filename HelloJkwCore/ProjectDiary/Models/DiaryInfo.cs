@@ -1,67 +1,66 @@
 ﻿using System.Collections.Generic;
 
-namespace ProjectDiary
+namespace ProjectDiary;
+
+public class DiaryInfo
 {
-    public class DiaryInfo
+    public string Id { get; set; }
+    public string Owner { get; set; }
+    public string DiaryName { get; set; }
+    public bool IsSecret { get; set; }
+    public List<string> Writers { get; set; }
+    public List<string> Viewers { get; set; }
+
+    public DiaryInfo()
     {
-        public string Id { get; set; }
-        public string Owner { get; set; }
-        public string DiaryName { get; set; }
-        public bool IsSecret { get; set; }
-        public List<string> Writers { get; set; }
-        public List<string> Viewers { get; set; }
+        Writers = new List<string>();
+        Viewers = new List<string>();
+    }
 
-        public DiaryInfo()
-        {
-            Writers = new List<string>();
-            Viewers = new List<string>();
-        }
+    public DiaryInfo(string id, string owner, string diaryName, bool isSecret)
+        : this()
+    {
+        Id = id;
+        Owner = owner;
+        DiaryName = diaryName;
+        IsSecret = isSecret;
+    }
 
-        public DiaryInfo(string id, string owner, string diaryName, bool isSecret)
-            : this()
-        {
-            Id = id;
-            Owner = owner;
-            DiaryName = diaryName;
-            IsSecret = isSecret;
-        }
+    public DiaryInfo(DiaryInfo info)
+    {
+        Id = info.Id;
+        Owner = info.Owner;
+        DiaryName = info.DiaryName;
+        IsSecret = info.IsSecret;
+        Writers = info.Writers;
+        Viewers = info.Viewers;
+    }
 
-        public DiaryInfo(DiaryInfo info)
-        {
-            Id = info.Id;
-            Owner = info.Owner;
-            DiaryName = info.DiaryName;
-            IsSecret = info.IsSecret;
-            Writers = info.Writers;
-            Viewers = info.Viewers;
-        }
+    public bool CanManage(string email)
+    {
+        if (Owner == email)
+            return true;
 
-        public bool CanManage(string email)
-        {
-            if (Owner == email)
-                return true;
+        return false;
+    }
 
-            return false;
-        }
+    public bool CanWrite(string email)
+    {
+        if (Owner == email)
+            return true;
+        if (Writers?.Contains(email) ?? false)
+            return true;
 
-        public bool CanWrite(string email)
-        {
-            if (Owner == email)
-                return true;
-            if (Writers?.Contains(email) ?? false)
-                return true;
+        return false;
+    }
 
-            return false;
-        }
+    public bool CanRead(string email)
+    {
+        if (CanWrite(email))
+            return true;
+        if (Viewers?.Contains(email) ?? false)
+            return true;
 
-        public bool CanRead(string email)
-        {
-            if (CanWrite(email))
-                return true;
-            if (Viewers?.Contains(email) ?? false)
-                return true;
-
-            return false;
-        }
+        return false;
     }
 }

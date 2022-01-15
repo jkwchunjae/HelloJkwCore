@@ -5,14 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common
+namespace Common;
+
+[Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
+public enum FileSystemType
 {
-    [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
-    public enum FileSystemType
-    {
-        InMemory,
-        Local,
-        Dropbox,
-        Azure,
-    }
+    InMemory,
+    Local,
+    Dropbox,
+    Azure,
 }

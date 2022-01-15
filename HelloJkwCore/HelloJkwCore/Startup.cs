@@ -1,4 +1,4 @@
-using Common;
+﻿using Common;
 using Common.Dropbox;
 using HelloJkwCore.User;
 using Microsoft.AspNetCore.Authentication;
@@ -19,167 +19,166 @@ using System.Net.Http;
 using MudBlazor.Services;
 using System.Globalization;
 
-namespace HelloJkwCore
+namespace HelloJkwCore;
+
+public class Startup
 {
-    public class Startup
+    readonly CoreOption _coreOption;
+
+    private AuthUtil CreateAuthUtil(IConfiguration configuration)
     {
-        readonly CoreOption _coreOption;
+        var fsOption = new FileSystemOption();
+        configuration.GetSection("FileSystem").Bind(fsOption);
 
-        private AuthUtil CreateAuthUtil(IConfiguration configuration)
-        {
-            var fsOption = new FileSystemOption();
-            configuration.GetSection("FileSystem").Bind(fsOption);
+        var fsService = new FileSystemService(fsOption, null, null);
+        var fs = fsService.GetFileSystem(_coreOption.AuthFileSystem, _coreOption.Path);
 
-            var fsService = new FileSystemService(fsOption, null, null);
-            var fs = fsService.GetFileSystem(_coreOption.AuthFileSystem, _coreOption.Path);
+        return new AuthUtil(fs);
+    }
 
-            return new AuthUtil(fs);
-        }
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
+        _coreOption = CoreOption.Create(Configuration);
+    }
 
-            _coreOption = CoreOption.Create(Configuration);
-        }
+    public IConfiguration Configuration { get; }
 
-        public IConfiguration Configuration { get; }
+    // This method gets called by the runtime. Use this method to add services to the container.
+    // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+    public void ConfigureServices(IServiceCollection services)
+    {
+        var culture = new CultureInfo("ko-KR");
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
-        {
-            var culture = new CultureInfo("ko-KR");
-            CultureInfo.CurrentCulture = culture;
-            CultureInfo.CurrentUICulture = culture;
-            CultureInfo.DefaultThreadCurrentCulture = culture;
-            CultureInfo.DefaultThreadCurrentUICulture = culture;
+        services.AddSingleton(_coreOption);
+        services.AddMudServices();
 
-            services.AddSingleton(_coreOption);
-            services.AddMudServices();
+        #region Authentication
 
-            #region Authentication
+        var authUtil = CreateAuthUtil(Configuration);
 
-            var authUtil = CreateAuthUtil(Configuration);
+        var googleAuthOption = authUtil.GetAuthOption(AuthProvider.Google);
+        var kakaoAuthOption = authUtil.GetAuthOption(AuthProvider.KakaoTalk);
 
-            var googleAuthOption = authUtil.GetAuthOption(AuthProvider.Google);
-            var kakaoAuthOption = authUtil.GetAuthOption(AuthProvider.KakaoTalk);
+        services.AddIdentityCore<AppUser>()
+            .AddUserManager<AppUserManager<AppUser>>()
+            .AddSignInManager<SignInManager<AppUser>>()
+            .AddRoles<IdentityRole>()
+            .AddRoleStore<RoleStore>();
 
-            services.AddIdentityCore<AppUser>()
-                .AddUserManager<AppUserManager<AppUser>>()
-                .AddSignInManager<SignInManager<AppUser>>()
-                .AddRoles<IdentityRole>()
-                .AddRoleStore<RoleStore>();
+        services.AddSingleton<IUserStore<AppUser>, UserStore>();
 
-            services.AddSingleton<IUserStore<AppUser>, UserStore>();
+        services
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie();
 
-            services
-                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
-
-            services
-                //.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                //.AddCookie()
-                .AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-                    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-                    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-                    options.DefaultSignOutScheme = IdentityConstants.ApplicationScheme;
-                })
-                .AddCookie(IdentityConstants.ExternalScheme)
-                .AddCookie(IdentityConstants.ApplicationScheme)
-                .AddGoogle(options =>
-                {
-                    options.ClientId = googleAuthOption?.ClientId;
-                    options.ClientSecret = googleAuthOption?.ClientSecret;
-                    options.CallbackPath = googleAuthOption?.Callback;
-                    options.ClaimActions.MapJsonKey("urn:google:profile", "link");
-                    options.ClaimActions.MapJsonKey("urn:google:image", "picture");
-                })
-                .AddKakaoTalk(options =>
-                {
-                    options.ClientId = kakaoAuthOption?.ClientId;
-                    options.ClientSecret = kakaoAuthOption?.ClientSecret;
-                    options.CallbackPath = kakaoAuthOption?.Callback;
-                });
-
-            services.AddAuthorization(options =>
+        services
+            //.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //.AddCookie()
+            .AddAuthentication(options =>
             {
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                   .RequireAuthenticatedUser()
-                   .Build();
+                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+                options.DefaultSignOutScheme = IdentityConstants.ApplicationScheme;
+            })
+            .AddCookie(IdentityConstants.ExternalScheme)
+            .AddCookie(IdentityConstants.ApplicationScheme)
+            .AddGoogle(options =>
+            {
+                options.ClientId = googleAuthOption?.ClientId;
+                options.ClientSecret = googleAuthOption?.ClientSecret;
+                options.CallbackPath = googleAuthOption?.Callback;
+                options.ClaimActions.MapJsonKey("urn:google:profile", "link");
+                options.ClaimActions.MapJsonKey("urn:google:image", "picture");
+            })
+            .AddKakaoTalk(options =>
+            {
+                options.ClientId = kakaoAuthOption?.ClientId;
+                options.ClientSecret = kakaoAuthOption?.ClientSecret;
+                options.CallbackPath = kakaoAuthOption?.Callback;
             });
 
-            services.AddHelloJkwPolicy();
-
-            #endregion
-
-            #region ASP.NET
-
-            services.AddHttpContextAccessor();
-            services.AddScoped<HttpContextAccessor>();
-            services.AddHttpClient();
-            services.AddScoped<HttpClient>();
-
-            services.AddSingleton(Configuration);
-
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
-
-            //services.AddHostedService<TimedHostedService>();
-            services.AddHostedService<QueuedHostedService>();
-            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-
-            #endregion
-
-            #region FileSystem
-
-            var pathOption = new PathMap();
-            Configuration.GetSection("Path").Bind(pathOption);
-            services.AddSingleton(pathOption);
-
-            var fsOption = new FileSystemOption();
-            Configuration.GetSection("FileSystem").Bind(fsOption);
-            services.AddSingleton(fsOption);
-
-            services.AddSingleton<IFileSystemService, FileSystemService>();
-
-            #endregion
-
-            services.AddDiaryService(Configuration);
-            services.AddSuFcService(Configuration);
-            services.AddBadukService(Configuration);
-            services.AddWorldCupService(Configuration);
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        services.AddAuthorization(options =>
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+               .RequireAuthenticatedUser()
+               .Build();
+        });
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+        services.AddHelloJkwPolicy();
 
-            app.UseCookiePolicy();
-            app.UseAuthentication();
+        #endregion
 
-            app.UseRouting();
+        #region ASP.NET
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
-            });
+        services.AddHttpContextAccessor();
+        services.AddScoped<HttpContextAccessor>();
+        services.AddHttpClient();
+        services.AddScoped<HttpClient>();
+
+        services.AddSingleton(Configuration);
+
+        services.AddRazorPages();
+        services.AddServerSideBlazor();
+
+        //services.AddHostedService<TimedHostedService>();
+        services.AddHostedService<QueuedHostedService>();
+        services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+
+        #endregion
+
+        #region FileSystem
+
+        var pathOption = new PathMap();
+        Configuration.GetSection("Path").Bind(pathOption);
+        services.AddSingleton(pathOption);
+
+        var fsOption = new FileSystemOption();
+        Configuration.GetSection("FileSystem").Bind(fsOption);
+        services.AddSingleton(fsOption);
+
+        services.AddSingleton<IFileSystemService, FileSystemService>();
+
+        #endregion
+
+        services.AddDiaryService(Configuration);
+        services.AddSuFcService(Configuration);
+        services.AddBadukService(Configuration);
+        services.AddWorldCupService(Configuration);
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
         }
+        else
+        {
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseCookiePolicy();
+        app.UseAuthentication();
+
+        app.UseRouting();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapBlazorHub();
+            endpoints.MapFallbackToPage("/_Host");
+        });
     }
 }

@@ -6,16 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.Dropbox
+namespace Common.Dropbox;
+
+public static class DropboxHelper
 {
-    public static class DropboxHelper
+    public static DropboxClient GetDropboxClient(DropboxOption dropboxOption)
     {
-        public static DropboxClient GetDropboxClient(DropboxOption dropboxOption)
-        {
-            return new DropboxClient(
-                dropboxOption.RefreshToken,
-                dropboxOption.ClientId,
-                dropboxOption.ClientSecret);
-        }
+        return new DropboxClient(
+            dropboxOption.RefreshToken,
+            dropboxOption.ClientId,
+            dropboxOption.ClientSecret);
     }
 }
