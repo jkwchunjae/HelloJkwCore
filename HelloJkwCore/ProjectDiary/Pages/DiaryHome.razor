@@ -71,11 +71,10 @@ else if (HasDiaryContent)
         }
         @if (DiaryInfo.CanWrite(User.Email))
         {
-            <MudButton Link="@DiaryUrl.Write(DiaryInfo)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Success">
+            var nextDate = View.DiaryContents.First().Date.AddDays(1);
+
+            <MudButton Link="@DiaryUrl.Write(DiaryInfo, nextDate)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Success">
                 쓰기
-            </MudButton>
-            <MudButton Link="@DiaryUrl.Write(DiaryInfo, View.DiaryContents[0].Date.AddDays(1))" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Success">
-                다음날 쓰기
             </MudButton>
         }
         @if (IsMyText(View))
