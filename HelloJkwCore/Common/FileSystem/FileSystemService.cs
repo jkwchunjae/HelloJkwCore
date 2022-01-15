@@ -1,11 +1,4 @@
-﻿using Common.Dropbox;
-using Dropbox.Api;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Common;
+﻿namespace Common;
 
 public interface IFileSystemService
 {
@@ -41,7 +34,7 @@ public class FileSystemService : IFileSystemService
 
         if (fsOption.Dropbox != null)
         {
-            var dropboxClient = DropboxHelper.GetDropboxClient(fsOption.Dropbox);
+            var dropboxClient = DropboxExtensions.GetDropboxClient(fsOption.Dropbox);
             fsDic.Add(FileSystemType.Dropbox, new DropboxFileSystem(pathOption, dropboxClient));
         }
         if (fsOption.Azure != null)

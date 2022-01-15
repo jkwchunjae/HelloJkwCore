@@ -1,9 +1,5 @@
 ﻿using Dropbox.Api;
 using Dropbox.Api.Files;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Dropbox.Api.Files.WriteMode;
 
 namespace Common;
@@ -11,6 +7,14 @@ namespace Common;
 public static class DropboxExtensions
 {
     private static readonly Encoding _defaultEncoding = new UTF8Encoding(false);
+    public static DropboxClient GetDropboxClient(DropboxOption dropboxOption)
+    {
+        return new DropboxClient(
+            dropboxOption.RefreshToken,
+            dropboxOption.ClientId,
+            dropboxOption.ClientSecret);
+    }
+
     public static async Task<T> ReadJsonAsync<T>(this DropboxClient client, string path)
     {
         var fileText = await client.ReadTextAsync(path);
