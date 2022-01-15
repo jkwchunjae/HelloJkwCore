@@ -1,6 +1,4 @@
-﻿using Common;
-
-namespace ProjectDiary;
+﻿namespace ProjectDiary;
 
 public class DiaryOption
 {

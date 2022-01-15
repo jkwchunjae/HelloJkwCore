@@ -1,7 +1,4 @@
-﻿using JkwExtensions;
-using System;
-
-namespace ProjectDiary;
+﻿namespace ProjectDiary;
 
 public class DiaryFileName : IComparable
 {

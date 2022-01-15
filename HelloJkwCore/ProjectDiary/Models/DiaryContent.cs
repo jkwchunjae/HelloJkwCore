@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectDiary;
+﻿namespace ProjectDiary;
 
 public class DiaryContent
 {

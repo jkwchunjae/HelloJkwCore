@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using Common;
-using JkwExtensions;
-
-namespace ProjectDiary;
+﻿namespace ProjectDiary;
 
 class DiarySearchEngine
 {

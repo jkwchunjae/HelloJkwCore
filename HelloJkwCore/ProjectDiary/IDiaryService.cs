@@ -1,9 +1,4 @@
-﻿using Common;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace ProjectDiary;
+﻿namespace ProjectDiary;
 
 public interface IDiaryService
 {

@@ -1,12 +1,4 @@
-﻿using Common;
-using JkwExtensions;
-using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ProjectDiary.Pages;
+﻿namespace ProjectDiary.Pages;
 
 public partial class DiarySearch : JkwPageBase
 {

@@ -1,14 +1,4 @@
-﻿using JkwExtensions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Common;
-using Microsoft.Extensions.Logging;
-
-namespace ProjectDiary.Pages;
+﻿namespace ProjectDiary.Pages;
 
 public partial class DiaryHome : JkwPageBase
 {
