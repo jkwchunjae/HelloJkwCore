@@ -1,14 +1,4 @@
-﻿using Common;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using ProjectBaduk;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ProjectBaduk.Pages;
+﻿namespace ProjectBaduk.Pages;
 
 public partial class BadukHome : JkwPageBase
 {

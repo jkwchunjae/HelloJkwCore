@@ -1,13 +1,4 @@
-﻿using Common;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProjectBaduk;
+﻿namespace ProjectBaduk;
 
 /// <summary> 바둑 한 판의 정보를 담고있는 데이터 </summary>
 public class BadukGameData

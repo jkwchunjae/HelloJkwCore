@@ -1,12 +1,4 @@
-﻿using Common;
-using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ProjectBaduk.Pages;
+﻿namespace ProjectBaduk.Pages;
 
 public partial class BadukSaveDataComponent : JkwPageBase
 {
