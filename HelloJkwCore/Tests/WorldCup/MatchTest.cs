@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ProjectWorldCup;
-using Xunit;
-
-namespace Tests.WorldCup;
+﻿namespace Tests.WorldCup;
 
 public class MatchTest
 {
