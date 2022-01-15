@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
+﻿namespace ProjectDiary;
 
-namespace ProjectDiary
+public class DiaryView
 {
-    public class DiaryView
-    {
-        public DiaryInfo DiaryInfo { get; set; }
-        public List<DiaryContent> DiaryContents { get; set; }
-        public DiaryNavigationData DiaryNavigationData { get; set; }
-    }
+    public DiaryInfo DiaryInfo { get; set; }
+    public List<DiaryContent> DiaryContents { get; set; }
+    public DiaryNavigationData DiaryNavigationData { get; set; }
 }

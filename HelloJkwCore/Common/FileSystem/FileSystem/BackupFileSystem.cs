@@ -1,102 +1,94 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿namespace Common;
 
-namespace Common
+public class BackupFileSystem : IFileSystem
 {
-    public class BackupFileSystem : IFileSystem
+    private readonly IBackgroundTaskQueue _backgroundQueue;
+
+    private readonly IFileSystem _fs;
+    private readonly IFileSystem _backup;
+
+    public BackupFileSystem(IFileSystem fsMain, IFileSystem fsBackup, IBackgroundTaskQueue backgroundQueue)
     {
-        private readonly IBackgroundTaskQueue _backgroundQueue;
+        _backgroundQueue = backgroundQueue;
 
-        private readonly IFileSystem _fs;
-        private readonly IFileSystem _backup;
+        _fs = fsMain;
+        _backup = fsBackup;
+    }
 
-        public BackupFileSystem(IFileSystem fsMain, IFileSystem fsBackup, IBackgroundTaskQueue backgroundQueue)
+    public async Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        _backgroundQueue.QueueBackgroundWorkItem(async token =>
         {
-            _backgroundQueue = backgroundQueue;
+            await _backup.CreateDirectoryAsync(pathFunc, token);
+        });
+        return await _fs.CreateDirectoryAsync(pathFunc, ct);
+    }
 
-            _fs = fsMain;
-            _backup = fsBackup;
-        }
-
-        public async Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    public async Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        _backgroundQueue.QueueBackgroundWorkItem(async token =>
         {
-            _backgroundQueue.QueueBackgroundWorkItem(async token =>
-            {
-                await _backup.CreateDirectoryAsync(pathFunc, token);
-            });
-            return await _fs.CreateDirectoryAsync(pathFunc, ct);
-        }
+            await _backup.DeleteFileAsync(pathFunc, token);
+        });
+        return await _fs.DeleteFileAsync(pathFunc, ct);
+    }
 
-        public async Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
-        {
-            _backgroundQueue.QueueBackgroundWorkItem(async token =>
-            {
-                await _backup.DeleteFileAsync(pathFunc, token);
-            });
-            return await _fs.DeleteFileAsync(pathFunc, ct);
-        }
+    public async Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        //_backgroundQueue.QueueBackgroundWorkItem(async token =>
+        //{
+        //    await _backup.DirExistsAsync(pathFunc, token);
+        //});
+        return await _fs.DirExistsAsync(pathFunc, ct);
+    }
 
-        public async Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
-        {
-            //_backgroundQueue.QueueBackgroundWorkItem(async token =>
-            //{
-            //    await _backup.DirExistsAsync(pathFunc, token);
-            //});
-            return await _fs.DirExistsAsync(pathFunc, ct);
-        }
+    public async Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        //_backgroundQueue.QueueBackgroundWorkItem(async token =>
+        //{
+        //    await _backup.FileExistsAsync(pathFunc, token);
+        //});
+        return await _fs.FileExistsAsync(pathFunc, ct);
+    }
 
-        public async Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
-        {
-            //_backgroundQueue.QueueBackgroundWorkItem(async token =>
-            //{
-            //    await _backup.FileExistsAsync(pathFunc, token);
-            //});
-            return await _fs.FileExistsAsync(pathFunc, ct);
-        }
+    public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default)
+    {
+        //_backgroundQueue.QueueBackgroundWorkItem(async token =>
+        //{
+        //    await _backup.GetFilesAsync(pathFunc, extension, token);
+        //});
+        return await _fs.GetFilesAsync(pathFunc, extension, ct);
+    }
 
-        public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default)
-        {
-            //_backgroundQueue.QueueBackgroundWorkItem(async token =>
-            //{
-            //    await _backup.GetFilesAsync(pathFunc, extension, token);
-            //});
-            return await _fs.GetFilesAsync(pathFunc, extension, ct);
-        }
+    public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        //_backgroundQueue.QueueBackgroundWorkItem(async token =>
+        //{
+        //    await _backup.ReadJsonAsync(pathFunc, token);
+        //});
+        return await _fs.ReadJsonAsync<T>(pathFunc, ct);
+    }
 
-        public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
-        {
-            //_backgroundQueue.QueueBackgroundWorkItem(async token =>
-            //{
-            //    await _backup.ReadJsonAsync(pathFunc, token);
-            //});
-            return await _fs.ReadJsonAsync<T>(pathFunc, ct);
-        }
+    public async Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        return await _fs.ReadTextAsync(pathFunc, ct);
+    }
 
-        public async Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, CancellationToken ct = default)
+    {
+        _backgroundQueue.QueueBackgroundWorkItem(async token =>
         {
-            return await _fs.ReadTextAsync(pathFunc, ct);
-        }
+            await _backup.WriteJsonAsync(pathFunc, obj, token);
+        });
+        return await _fs.WriteJsonAsync(pathFunc, obj, ct);
+    }
 
-        public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, CancellationToken ct = default)
+    public async Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string obj, CancellationToken ct = default)
+    {
+        _backgroundQueue.QueueBackgroundWorkItem(async token =>
         {
-            _backgroundQueue.QueueBackgroundWorkItem(async token =>
-            {
-                await _backup.WriteJsonAsync(pathFunc, obj, token);
-            });
-            return await _fs.WriteJsonAsync(pathFunc, obj, ct);
-        }
-
-        public async Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string obj, CancellationToken ct = default)
-        {
-            _backgroundQueue.QueueBackgroundWorkItem(async token =>
-            {
-                await _backup.WriteTextAsync(pathFunc, obj, token);
-            });
-            return await _fs.WriteTextAsync(pathFunc, obj, ct);
-        }
+            await _backup.WriteTextAsync(pathFunc, obj, token);
+        });
+        return await _fs.WriteTextAsync(pathFunc, obj, ct);
     }
 }

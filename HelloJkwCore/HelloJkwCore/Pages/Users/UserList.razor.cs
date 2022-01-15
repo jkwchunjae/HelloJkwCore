@@ -1,61 +1,52 @@
-﻿using Common;
-using HelloJkwCore.Shared;
-using JkwExtensions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
 
-namespace HelloJkwCore.Pages.Users
+namespace HelloJkwCore.Pages.Users;
+
+public partial class UserList : JkwPageBase
 {
-    public partial class UserList : JkwPageBase
+    [Inject]
+    private UserManager<AppUser> UserManager { get; set; }
+
+    private List<AppUser> Users { get; set; }
+
+    private IEnumerable<AppUser> FilteredUsers => Users
+        ?.Where(x => CheckedRoles.Empty() ? true :
+            CheckedRoles.All(e => x.Roles.Contains(e)));
+
+    private IEnumerable<UserRole> CheckedRolesData { get; set; }
+
+    private IEnumerable<UserRole> CheckedRoles = new List<UserRole>();
+
+    public UserList()
     {
-        [Inject]
-        private UserManager<AppUser> UserManager { get; set; }
+        CheckedRolesData = typeof(UserRole).GetValues<UserRole>();
+    }
 
-        private List<AppUser> Users { get; set; }
-
-        private IEnumerable<AppUser> FilteredUsers => Users
-            ?.Where(x => CheckedRoles.Empty() ? true :
-                CheckedRoles.All(e => x.Roles.Contains(e)));
-
-        private IEnumerable<UserRole> CheckedRolesData { get; set; }
-
-        private IEnumerable<UserRole> CheckedRoles = new List<UserRole>();
-
-        public UserList()
+    protected override async Task OnPageInitializedAsync()
+    {
+        if (!User?.HasRole(UserRole.Admin) ?? true)
         {
-            CheckedRolesData = typeof(UserRole).GetValues<UserRole>();
+            Navi.NavigateTo("/login");
+            return;
         }
+        Users = (await UserManager.GetUsersInRoleAsync("all")).ToList();
+    }
 
-        protected override async Task OnPageInitializedAsync()
+    private async Task UserRoleChangedAsync(AppUser user, UserRole role, bool check)
+    {
+        if (check)
         {
-            if (!User?.HasRole(UserRole.Admin) ?? true)
-            {
-                Navi.NavigateTo("/login");
-                return;
-            }
-            Users = (await UserManager.GetUsersInRoleAsync("all")).ToList();
+            await UserManager.AddToRoleAsync(user, role.ToString());
         }
+        else
+        {
+            await UserManager.RemoveFromRoleAsync(user, role.ToString());
+        }
+    }
 
-        private async Task UserRoleChangedAsync(AppUser user, UserRole role, bool check)
-        {
-            if (check)
-            {
-                await UserManager.AddToRoleAsync(user, role.ToString());
-            }
-            else
-            {
-                await UserManager.RemoveFromRoleAsync(user, role.ToString());
-            }
-        }
-
-        private async Task UserRoleToggleAsync(AppUser user, UserRole role)
-        {
-            var check = !user.Roles.Contains(role);
-            await UserRoleChangedAsync(user, role, check);
-        }
+    private async Task UserRoleToggleAsync(AppUser user, UserRole role)
+    {
+        var check = !user.Roles.Contains(role);
+        await UserRoleChangedAsync(user, role, check);
     }
 }

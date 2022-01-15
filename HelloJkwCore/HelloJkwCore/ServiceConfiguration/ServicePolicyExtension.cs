@@ -1,22 +1,17 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace HelloJkwCore
+namespace HelloJkwCore;
+
+public static class ServicePolicyExtension
 {
-    public static class ServicePolicyExtension
+    public static IServiceCollection AddHelloJkwPolicy(this IServiceCollection services)
     {
-        public static IServiceCollection AddHelloJkwPolicy(this IServiceCollection services)
+        services.AddAuthorization(options =>
         {
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("Diary",
-                    policy => policy.RequireAuthenticatedUser());
-            });
+            options.AddPolicy("Diary",
+                policy => policy.RequireAuthenticatedUser());
+        });
 
-            return services;
-        }
+        return services;
     }
 }

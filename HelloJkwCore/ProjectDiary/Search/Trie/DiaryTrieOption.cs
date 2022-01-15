@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace ProjectDiary;
 
-namespace ProjectDiary
+static class DiaryTrieOption
 {
-    static class DiaryTrieOption
-    {
-        public static int SourceSaveDepth { get; set; } = 2;
-    }
+    public static int SourceSaveDepth { get; set; } = 2;
 }

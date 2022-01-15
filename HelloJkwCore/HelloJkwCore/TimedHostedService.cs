@@ -1,54 +1,45 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿namespace HelloJkwCore;
 
-namespace HelloJkwCore
+public class TimedHostedService : IHostedService, IDisposable
 {
-    public class TimedHostedService : IHostedService, IDisposable
+    private int executionCount = 0;
+    private readonly ILogger<TimedHostedService> _logger;
+    private Timer _timer;
+
+    public TimedHostedService(ILogger<TimedHostedService> logger)
     {
-        private int executionCount = 0;
-        private readonly ILogger<TimedHostedService> _logger;
-        private Timer _timer;
+        _logger = logger;
+    }
 
-        public TimedHostedService(ILogger<TimedHostedService> logger)
-        {
-            _logger = logger;
-        }
+    public Task StartAsync(CancellationToken stoppingToken)
+    {
+        _logger.LogInformation("Timed Hosted Service running.");
 
-        public Task StartAsync(CancellationToken stoppingToken)
-        {
-            _logger.LogInformation("Timed Hosted Service running.");
+        _timer = new Timer(DoWork, null, TimeSpan.Zero,
+            TimeSpan.FromSeconds(5));
 
-            _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(5));
+        return Task.CompletedTask;
+    }
 
-            return Task.CompletedTask;
-        }
+    private void DoWork(object state)
+    {
+        var count = Interlocked.Increment(ref executionCount);
 
-        private void DoWork(object state)
-        {
-            var count = Interlocked.Increment(ref executionCount);
+        _logger.LogInformation(
+            "Timed Hosted Service is working. Count: {Count}", count);
+    }
 
-            _logger.LogInformation(
-                "Timed Hosted Service is working. Count: {Count}", count);
-        }
+    public Task StopAsync(CancellationToken stoppingToken)
+    {
+        _logger.LogInformation("Timed Hosted Service is stopping.");
 
-        public Task StopAsync(CancellationToken stoppingToken)
-        {
-            _logger.LogInformation("Timed Hosted Service is stopping.");
+        _timer?.Change(Timeout.Infinite, 0);
 
-            _timer?.Change(Timeout.Infinite, 0);
+        return Task.CompletedTask;
+    }
 
-            return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            _timer?.Dispose();
-        }
+    public void Dispose()
+    {
+        _timer?.Dispose();
     }
 }

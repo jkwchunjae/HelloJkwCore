@@ -1,96 +1,87 @@
-﻿using Common;
-using JkwExtensions;
-using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿namespace ProjectDiary.Pages;
 
-namespace ProjectDiary.Pages
+public partial class DiaryAdminTool : JkwPageBase
 {
-    public partial class DiaryAdminTool : JkwPageBase
+    [Inject]
+    IDiaryService DiaryService { get; set; }
+    [Inject]
+    IDiarySearchService DiarySearchService { get; set; }
+
+    IEnumerable<DiaryData> DiaryDataList { get; set; } = new List<DiaryData>();
+
+    Dictionary<string, (bool ProgressOn, int ProgressTotal, int ProgressValue)> ProgressDic = new();
+
+    protected override async Task OnPageInitializedAsync()
     {
-        [Inject]
-        IDiaryService DiaryService { get; set; }
-        [Inject]
-        IDiarySearchService DiarySearchService { get; set; }
-
-        IEnumerable<DiaryData> DiaryDataList { get; set; } = new List<DiaryData>();
-
-        Dictionary<string, (bool ProgressOn, int ProgressTotal, int ProgressValue)> ProgressDic = new();
-
-        protected override async Task OnPageInitializedAsync()
+        if (IsAuthenticated && User.HasRole(UserRole.Admin))
         {
-            if (IsAuthenticated && User.HasRole(UserRole.Admin))
-            {
-                var list = await DiaryService.GetAllDiaryListAsync(User);
+            var list = await DiaryService.GetAllDiaryListAsync(User);
 
-                DiaryDataList = await list
-                    .Select(async x => await CreateDiaryData(x))
-                    .WhenAll();
-            }
+            DiaryDataList = await list
+                .Select(async x => await CreateDiaryData(x))
+                .WhenAll();
+        }
+    }
+
+    private async Task<DiaryData> CreateDiaryData(DiaryInfo diaryInfo)
+    {
+        var diaryData = new DiaryData(diaryInfo);
+
+        var files = await DiaryService.GetDiaryFileAllAsync(User, diaryInfo);
+
+        diaryData.DiaryFileList = files;
+
+        return diaryData;
+    }
+
+    async Task CreateTrie(DiaryData diaryData)
+    {
+        if (diaryData.IsSecret)
+        {
+            return;
         }
 
-        private async Task<DiaryData> CreateDiaryData(DiaryInfo diaryInfo)
+        diaryData.Progress = (true, diaryData.DiaryFileList.Count, 0);
+        StateHasChanged();
+
+        await DiarySearchService.ClearTrie(diaryData.DiaryName);
+
+        var progressValue = 0;
+        foreach (var fileName in diaryData.DiaryFileList)
         {
-            var diaryData = new DiaryData(diaryInfo);
+            progressValue++;
+            var content = await DiaryService.GetDiaryContentAsync(User, diaryData, fileName);
+            await DiarySearchService.AppendDiaryTextAsync(diaryData.DiaryName, fileName, content.Text);
 
-            var files = await DiaryService.GetDiaryFileAllAsync(User, diaryInfo);
-
-            diaryData.DiaryFileList = files;
-
-            return diaryData;
-        }
-
-        async Task CreateTrie(DiaryData diaryData)
-        {
-            if (diaryData.IsSecret)
+            if (diaryData.Progress.Total > 100)
             {
-                return;
-            }
-
-            diaryData.Progress = (true, diaryData.DiaryFileList.Count, 0);
-            StateHasChanged();
-
-            await DiarySearchService.ClearTrie(diaryData.DiaryName);
-
-            var progressValue = 0;
-            foreach (var fileName in diaryData.DiaryFileList)
-            {
-                progressValue++;
-                var content = await DiaryService.GetDiaryContentAsync(User, diaryData, fileName);
-                await DiarySearchService.AppendDiaryTextAsync(diaryData.DiaryName, fileName, content.Text);
-
-                if (diaryData.Progress.Total > 100)
-                {
-                    if (progressValue % 10 == 0)
-                    {
-                        diaryData.Progress = (true, diaryData.DiaryFileList.Count, progressValue);
-                        StateHasChanged();
-                    }
-                }
-                else
+                if (progressValue % 10 == 0)
                 {
                     diaryData.Progress = (true, diaryData.DiaryFileList.Count, progressValue);
                     StateHasChanged();
                 }
             }
-            diaryData.Progress = (true, diaryData.DiaryFileList.Count, diaryData.DiaryFileList.Count);
-            StateHasChanged();
-
-            await DiarySearchService.SaveDiaryTrie(diaryData.DiaryName);
+            else
+            {
+                diaryData.Progress = (true, diaryData.DiaryFileList.Count, progressValue);
+                StateHasChanged();
+            }
         }
+        diaryData.Progress = (true, diaryData.DiaryFileList.Count, diaryData.DiaryFileList.Count);
+        StateHasChanged();
+
+        await DiarySearchService.SaveDiaryTrie(diaryData.DiaryName);
     }
+}
 
-    class DiaryData : DiaryInfo
+class DiaryData : DiaryInfo
+{
+    public List<DiaryFileName> DiaryFileList { get; set; }
+    public (bool On, int Total, int Value) Progress { get; set; }
+
+    public DiaryData(DiaryInfo info)
+        :base(info)
     {
-        public List<DiaryFileName> DiaryFileList { get; set; }
-        public (bool On, int Total, int Value) Progress { get; set; }
-
-        public DiaryData(DiaryInfo info)
-            :base(info)
-        {
-            Progress = (false, 0, 0);
-        }
+        Progress = (false, 0, 0);
     }
 }

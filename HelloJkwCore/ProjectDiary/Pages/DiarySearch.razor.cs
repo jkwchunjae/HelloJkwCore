@@ -1,64 +1,55 @@
-﻿using Common;
-using JkwExtensions;
-using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿namespace ProjectDiary.Pages;
 
-namespace ProjectDiary.Pages
+public partial class DiarySearch : JkwPageBase
 {
-    public partial class DiarySearch : JkwPageBase
+    [Parameter]
+    public string DiaryName { get; set; }
+
+    [Inject]
+    public IDiaryService DiaryService { get; set; }
+    [Inject]
+    public IDiarySearchService DiarySearchService { get; set; }
+
+    DiaryInfo DiaryInfo { get; set; }
+    List<DiaryContent> DiaryContentList { get; set; } = null;
+
+    DiarySearchData searchData = null;
+
+    protected override async Task OnPageInitializedAsync()
     {
-        [Parameter]
-        public string DiaryName { get; set; }
-
-        [Inject]
-        public IDiaryService DiaryService { get; set; }
-        [Inject]
-        public IDiarySearchService DiarySearchService { get; set; }
-
-        DiaryInfo DiaryInfo { get; set; }
-        List<DiaryContent> DiaryContentList { get; set; } = null;
-
-        DiarySearchData searchData = null;
-
-        protected override async Task OnPageInitializedAsync()
+        if (!IsAuthenticated)
         {
-            if (!IsAuthenticated)
-            {
-                Navi.NavigateTo("/login");
-                return;
-            }
-
-            DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, DiaryName);
-            var list = await DiaryService.GetDiaryFileAllAsync(User, DiaryInfo);
-
-            if (list?.Empty() ?? true)
-            {
-                searchData = null;
-                return;
-            }
-
-            searchData = new DiarySearchData();
-            searchData.BeginDate = list.First().Date;
-            searchData.EndDate = list.Last().Date;
+            Navi.NavigateTo("/login");
+            return;
         }
 
-        private async Task Search(DiarySearchData searchData)
+        DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, DiaryName);
+        var list = await DiaryService.GetDiaryFileAllAsync(User, DiaryInfo);
+
+        if (list?.Empty() ?? true)
         {
-            var files = await DiarySearchService.SearchAsync(DiaryInfo.DiaryName, searchData) ?? new List<DiaryFileName>();
-
-            var contents = await files
-                .Select(async filename => await DiaryService.GetDiaryContentAsync(User, DiaryInfo, filename))
-                .WhenAll();
-
-            DiaryContentList = contents.Where(x => x != null).ToList();
+            searchData = null;
+            return;
         }
 
-        private async Task OnSubmitAsync()
-        {
-            await Search(searchData);
-        }
+        searchData = new DiarySearchData();
+        searchData.BeginDate = list.First().Date;
+        searchData.EndDate = list.Last().Date;
+    }
+
+    private async Task Search(DiarySearchData searchData)
+    {
+        var files = await DiarySearchService.SearchAsync(DiaryInfo.DiaryName, searchData) ?? new List<DiaryFileName>();
+
+        var contents = await files
+            .Select(async filename => await DiaryService.GetDiaryContentAsync(User, DiaryInfo, filename))
+            .WhenAll();
+
+        DiaryContentList = contents.Where(x => x != null).ToList();
+    }
+
+    private async Task OnSubmitAsync()
+    {
+        await Search(searchData);
     }
 }

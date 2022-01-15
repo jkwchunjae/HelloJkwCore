@@ -1,18 +1,10 @@
-﻿using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Common;
 
-namespace Common
+[JsonConverter(typeof(StringEnumConverter))]
+public enum FileSystemType
 {
-    [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
-    public enum FileSystemType
-    {
-        InMemory,
-        Local,
-        Dropbox,
-        Azure,
-    }
+    InMemory,
+    Local,
+    Dropbox,
+    Azure,
 }

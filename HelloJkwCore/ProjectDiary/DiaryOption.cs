@@ -1,11 +1,8 @@
-﻿using Common;
+﻿namespace ProjectDiary;
 
-namespace ProjectDiary
+public class DiaryOption
 {
-    public class DiaryOption
-    {
-        public FileSystemSelectOption FileSystemSelect { get; set; }
-        public FileSystemSelectOption SearchEngineFileSystem { get; set; }
-        public PathMap Path { get; set; }
-    }
+    public FileSystemSelectOption FileSystemSelect { get; set; }
+    public FileSystemSelectOption SearchEngineFileSystem { get; set; }
+    public PathMap Path { get; set; }
 }
