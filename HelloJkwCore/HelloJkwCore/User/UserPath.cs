@@ -1,6 +1,4 @@
-﻿using Common;
-
-namespace HelloJkwCore.User;
+﻿namespace HelloJkwCore.User;
 
 public static class UserPathType
 {

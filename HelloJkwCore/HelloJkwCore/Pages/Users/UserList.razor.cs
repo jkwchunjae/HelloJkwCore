@@ -1,12 +1,4 @@
-﻿using Common;
-using HelloJkwCore.Shared;
-using JkwExtensions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace HelloJkwCore.Pages.Users;
 

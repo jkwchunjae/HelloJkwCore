@@ -1,5 +1,4 @@
-﻿using Common;
-using HelloJkwCore.User;
+﻿using HelloJkwCore.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -9,11 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using ProjectBaduk;
-using ProjectDiary;
-using ProjectSuFc;
-using ProjectWorldCup;
 using System.Net.Http;
 using MudBlazor.Services;
 using System.Globalization;
