@@ -1,10 +1,4 @@
-﻿using Common;
-using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ProjectWorldCup.Pages;
+﻿namespace ProjectWorldCup.Pages;
 
 public partial class QualifiedTeamsPage : JkwPageBase
 {

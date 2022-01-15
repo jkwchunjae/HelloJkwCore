@@ -1,9 +1,4 @@
-﻿using Common;
-using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace ProjectWorldCup.Pages;
+﻿namespace ProjectWorldCup.Pages;
 
 public class Round
 {

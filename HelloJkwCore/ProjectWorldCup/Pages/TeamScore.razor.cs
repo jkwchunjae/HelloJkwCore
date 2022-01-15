@@ -1,7 +1,4 @@
-﻿using Common;
-using Microsoft.AspNetCore.Components;
-
-namespace ProjectWorldCup.Pages;
+﻿namespace ProjectWorldCup.Pages;
 
 public partial class TeamScore : JkwPageBase
 {
