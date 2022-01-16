@@ -66,6 +66,9 @@ public class JkwLayoutBase : LayoutComponentBase, IDisposable
         {
             var userId = _authenticationState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             User = await UserStore.FindByIdAsync(userId, CancellationToken.None);
+
+            if (User == null)
+                IsAuthenticated = false; // 가끔 이런 경우가 있나보다.
         }
         else
         {
