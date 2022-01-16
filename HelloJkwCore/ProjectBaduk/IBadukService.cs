@@ -2,12 +2,12 @@
 
 public interface IBadukService
 {
-    Task<BadukGameData> GetBadukGameData(DiaryName diaryName, string subject);
-    Task<BadukDiary> SaveBadukGameData(DiaryName diaryName, BadukGameData badukGameData);
-    Task<BadukDiary> DeleteBadukGameData(DiaryName diaryName, string subject);
+    Task<BadukGameData> GetBadukGameData(BadukDiaryName diaryName, string subject);
+    Task<BadukDiary> SaveBadukGameData(BadukDiaryName diaryName, BadukGameData badukGameData);
+    Task<BadukDiary> DeleteBadukGameData(BadukDiaryName diaryName, string subject);
 
-    Task<BadukDiary> GetBadukDiary(DiaryName diaryName);
+    Task<BadukDiary> GetBadukDiary(BadukDiaryName diaryName);
     Task<List<BadukDiary>> GetBadukDiaryList(AppUser user);
-    Task CreateBadukDiary(AppUser user, DiaryName diaryName);
-    Task DeleteBadukDiary(AppUser user, DiaryName diaryName);
+    Task CreateBadukDiary(AppUser user, BadukDiaryName diaryName);
+    Task DeleteBadukDiary(AppUser user, BadukDiaryName diaryName);
 }
