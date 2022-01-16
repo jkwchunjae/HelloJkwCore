@@ -19,7 +19,7 @@ public partial class DiaryShowAll : JkwPageBase
             return;
         }
 
-        DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, DiaryName);
+        DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, new DiaryName(DiaryName));
 
         if (DiaryInfo != null)
         {

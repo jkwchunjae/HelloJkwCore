@@ -10,6 +10,10 @@ public class StringId : IComparable<StringId>, IEquatable<StringId>
         Id = id;
     }
 
+    public int Length => Id.Length;
+
+    public bool Contains(string value) => Id.Contains(value);
+
     public override string ToString()
     {
         return Id;

@@ -25,16 +25,16 @@ public class StoneLogData
     public StoneColor Color { get; set; }
 }
 
-[JsonConverter(typeof(StringIdJsonConverter<DiaryName>))]
-public class DiaryName : StringName
+[JsonConverter(typeof(StringIdJsonConverter<BadukDiaryName>))]
+public class BadukDiaryName : StringName
 {
-    public DiaryName() { }
-    public DiaryName(string name) : base(name) { }
+    public BadukDiaryName() { }
+    public BadukDiaryName(string name) : base(name) { }
 }
 
 public class BadukDiary
 {
-    public DiaryName Name { get; set; }
+    public BadukDiaryName Name { get; set; }
     public UserId OwnerUserId { get; set; }
     public List<UserId> ConnectUserIdList { get; set; }
     /// <summary> 최근것이 위에있음.  </summary>

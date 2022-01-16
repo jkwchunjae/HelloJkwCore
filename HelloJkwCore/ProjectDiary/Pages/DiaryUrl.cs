@@ -2,9 +2,9 @@
 
 public static class DiaryUrl
 {
-    public static string Home(string diaryName = null)
+    public static string Home(DiaryName diaryName = null)
     {
-        if (string.IsNullOrWhiteSpace(diaryName))
+        if (string.IsNullOrWhiteSpace(diaryName?.Name))
         {
             return $"/diary";
         }
@@ -34,17 +34,17 @@ public static class DiaryUrl
         return $"/diary/edit/{diaryInfo.DiaryName}/{date:yyyyMMdd}";
     }
 
-    public static string ShowAll(string diaryName)
+    public static string ShowAll(DiaryName diaryName)
     {
         return $"/diary/showall/{diaryName}";
     }
 
-    public static string Search(string diaryName)
+    public static string Search(DiaryName diaryName)
     {
         return $"/diary/search/{diaryName}";
     }
 
-    public static string DiaryContent(string diaryName, DateTime date)
+    public static string DiaryContent(DiaryName diaryName, DateTime date)
     {
         return $"/diary/{diaryName}/{date:yyyyMMdd}";
     }

@@ -2,23 +2,20 @@
 
 public class DiaryInfo
 {
-    public UserId Id { get; set; }
-    public string Owner { get; set; }
-    public string DiaryName { get; set; }
+    //public UserId Id { get; set; }
+    public UserId Owner { get; set; }
+    public DiaryName DiaryName { get; set; }
     public bool IsSecret { get; set; }
-    public List<string> Writers { get; set; }
-    public List<string> Viewers { get; set; }
+    public List<UserId> Writers { get; set; } = new();
+    public List<UserId> Viewers { get; set; } = new();
 
     public DiaryInfo()
     {
-        Writers = new List<string>();
-        Viewers = new List<string>();
     }
 
-    public DiaryInfo(UserId id, string owner, string diaryName, bool isSecret)
+    public DiaryInfo(UserId owner, DiaryName diaryName, bool isSecret)
         : this()
     {
-        Id = id;
         Owner = owner;
         DiaryName = diaryName;
         IsSecret = isSecret;
@@ -26,7 +23,6 @@ public class DiaryInfo
 
     public DiaryInfo(DiaryInfo info)
     {
-        Id = info.Id;
         Owner = info.Owner;
         DiaryName = info.DiaryName;
         IsSecret = info.IsSecret;
@@ -34,29 +30,29 @@ public class DiaryInfo
         Viewers = info.Viewers;
     }
 
-    public bool CanManage(string email)
+    public bool CanManage(UserId userId)
     {
-        if (Owner == email)
+        if (Owner == userId)
             return true;
 
         return false;
     }
 
-    public bool CanWrite(string email)
+    public bool CanWrite(UserId userId)
     {
-        if (Owner == email)
+        if (Owner == userId)
             return true;
-        if (Writers?.Contains(email) ?? false)
+        if (Writers?.Contains(userId) ?? false)
             return true;
 
         return false;
     }
 
-    public bool CanRead(string email)
+    public bool CanRead(UserId userId)
     {
-        if (CanWrite(email))
+        if (CanWrite(userId))
             return true;
-        if (Viewers?.Contains(email) ?? false)
+        if (Viewers?.Contains(userId) ?? false)
             return true;
 
         return false;

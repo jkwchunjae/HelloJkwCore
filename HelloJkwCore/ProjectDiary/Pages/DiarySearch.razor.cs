@@ -23,7 +23,7 @@ public partial class DiarySearch : JkwPageBase
             return;
         }
 
-        DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, DiaryName);
+        DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, new DiaryName(DiaryName));
         var list = await DiaryService.GetDiaryFileAllAsync(User, DiaryInfo);
 
         if (list?.Empty() ?? true)

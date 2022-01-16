@@ -10,7 +10,7 @@ public class BadukService : IBadukService
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
     }
 
-    public async Task<BadukDiary> DeleteBadukGameData(DiaryName diaryName, string subject)
+    public async Task<BadukDiary> DeleteBadukGameData(BadukDiaryName diaryName, string subject)
     {
         var diary = await GetBadukDiary(diaryName);
         diary.GameDataList = (diary.GameDataList ?? new())
@@ -23,14 +23,14 @@ public class BadukService : IBadukService
         return diary;
     }
 
-    public async Task<BadukGameData> GetBadukGameData(DiaryName diaryName, string subject)
+    public async Task<BadukGameData> GetBadukGameData(BadukDiaryName diaryName, string subject)
     {
         var gameData = await _fs.ReadJsonAsync<BadukGameData>(path => GameDataFilePath(path, diaryName, subject));
 
         return gameData;
     }
 
-    public async Task<List<BadukGameData>> GetBadukSummaryList(DiaryName diaryName)
+    public async Task<List<BadukGameData>> GetBadukSummaryList(BadukDiaryName diaryName)
     {
         if (!await _fs.DirExistsAsync(path => GameDataSavePath(path, diaryName)))
         {
@@ -46,7 +46,7 @@ public class BadukService : IBadukService
         return gameDataList.OrderByDescending(x => x.CreateTime).ToList();
     }
 
-    public async Task<BadukDiary> SaveBadukGameData(DiaryName diaryName, BadukGameData badukGameData)
+    public async Task<BadukDiary> SaveBadukGameData(BadukDiaryName diaryName, BadukGameData badukGameData)
     {
         if (string.IsNullOrEmpty(badukGameData.Subject.Trim()))
         {
@@ -67,7 +67,7 @@ public class BadukService : IBadukService
         return diary;
     }
 
-    public async Task<BadukDiary> GetBadukDiary(DiaryName diaryName)
+    public async Task<BadukDiary> GetBadukDiary(BadukDiaryName diaryName)
     {
         if (!await _fs.FileExistsAsync(path => DiaryFilePath(path, diaryName.Name)))
         {
@@ -94,7 +94,7 @@ public class BadukService : IBadukService
 
         var diaryList = await list
             .Select(fileName => Path.GetFileNameWithoutExtension(fileName))
-            .Select(async file => await GetBadukDiary(new DiaryName(file)))
+            .Select(async file => await GetBadukDiary(new BadukDiaryName(file)))
             .WhenAll();
 
         var result = diaryList.ToList()
@@ -105,7 +105,7 @@ public class BadukService : IBadukService
         return result;
     }
 
-    public async Task CreateBadukDiary(AppUser user, DiaryName diaryName)
+    public async Task CreateBadukDiary(AppUser user, BadukDiaryName diaryName)
     {
         var duplicated = await _fs.FileExistsAsync(path => DiaryFilePath(path, diaryName.Name));
         if (duplicated)
@@ -121,7 +121,7 @@ public class BadukService : IBadukService
         await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName.Name), diaryData);
     }
 
-    public async Task DeleteBadukDiary(AppUser user, DiaryName diaryName)
+    public async Task DeleteBadukDiary(AppUser user, BadukDiaryName diaryName)
     {
         var diaryList = await GetBadukDiaryList(user);
 
@@ -133,12 +133,12 @@ public class BadukService : IBadukService
         }
     }
 
-    private string GameDataSavePath(Paths path, DiaryName diaryName)
+    private string GameDataSavePath(Paths path, BadukDiaryName diaryName)
     {
         return path[BadukPathType.BadukSavePath] + "/" + diaryName;
     }
 
-    private string GameDataFilePath(Paths path, DiaryName diaryName, string fileName)
+    private string GameDataFilePath(Paths path, BadukDiaryName diaryName, string fileName)
     {
         var badukSavePath = path[BadukPathType.BadukSavePath];
         return $"{badukSavePath}/{diaryName}/{fileName}.json";

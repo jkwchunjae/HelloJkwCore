@@ -48,7 +48,7 @@ public partial class DiaryEdit : JkwPageBase
 
         if (!string.IsNullOrWhiteSpace(DiaryName))
         {
-            DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, DiaryName);
+            DiaryInfo = await DiaryService.GetDiaryInfoAsync(User, new DiaryName(DiaryName));
         }
         else
         {

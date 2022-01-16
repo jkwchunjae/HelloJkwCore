@@ -1,4 +1,6 @@
-﻿namespace ProjectDiary.Pages;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ProjectDiary.Pages;
 
 public partial class DiaryAdminTool : JkwPageBase
 {
@@ -6,6 +8,8 @@ public partial class DiaryAdminTool : JkwPageBase
     IDiaryService DiaryService { get; set; }
     [Inject]
     IDiarySearchService DiarySearchService { get; set; }
+    [Inject]
+    private UserManager<AppUser> UserManager { get; set; }
 
     IEnumerable<DiaryData> DiaryDataList { get; set; } = new List<DiaryData>();
 
@@ -28,8 +32,10 @@ public partial class DiaryAdminTool : JkwPageBase
         var diaryData = new DiaryData(diaryInfo);
 
         var files = await DiaryService.GetDiaryFileAllAsync(User, diaryInfo);
-
         diaryData.DiaryFileList = files;
+
+        var user = await UserManager.FindByIdAsync(diaryInfo.Owner.Id);
+        diaryData.OwnerUser = user;
 
         return diaryData;
     }
@@ -78,6 +84,26 @@ class DiaryData : DiaryInfo
 {
     public List<DiaryFileName> DiaryFileList { get; set; }
     public (bool On, int Total, int Value) Progress { get; set; }
+    public AppUser OwnerUser { get; set; }
+    public string OwnerName
+    {
+        get
+        {
+            if (OwnerUser == null)
+            {
+                return Owner.Id;
+            }
+            else if (OwnerUser?.NickName != null)
+            {
+                if (OwnerUser.NickName != OwnerUser.UserName)
+                {
+                    return $"{OwnerUser.NickName} ({OwnerUser.UserName})";
+                }
+            }
+
+            return OwnerUser.DisplayName;
+        }
+    }
 
     public DiaryData(DiaryInfo info)
         :base(info)

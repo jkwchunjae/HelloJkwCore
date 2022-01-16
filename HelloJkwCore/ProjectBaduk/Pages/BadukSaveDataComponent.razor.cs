@@ -84,7 +84,7 @@ public partial class BadukSaveDataComponent : JkwPageBase
         if (NewDiaryName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
             return;
 
-        await BadukService.CreateBadukDiary(User, new DiaryName(NewDiaryName));
+        await BadukService.CreateBadukDiary(User, new BadukDiaryName(NewDiaryName));
         await Init();
     }
 
@@ -93,7 +93,7 @@ public partial class BadukSaveDataComponent : JkwPageBase
         if (string.IsNullOrEmpty(NewDiaryName.Trim()))
             return;
 
-        var diaryName = new DiaryName(NewDiaryName.Trim());
+        var diaryName = new BadukDiaryName(NewDiaryName.Trim());
         if (DiaryList.Any(x => x.Name == diaryName))
         {
             await BadukService.DeleteBadukDiary(User, diaryName);

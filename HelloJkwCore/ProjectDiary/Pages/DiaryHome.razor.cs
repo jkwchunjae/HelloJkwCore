@@ -69,7 +69,7 @@ public partial class DiaryHome : JkwPageBase
 
         if (!string.IsNullOrWhiteSpace(DiaryName))
         {
-            DiaryInfo = await GetDiaryInfo(DiaryName);
+            DiaryInfo = await GetDiaryInfo(new DiaryName(DiaryName));
             MyDiaryInfo = await GetMyDiaryInfo();
         }
         else
@@ -123,18 +123,15 @@ public partial class DiaryHome : JkwPageBase
 
     private bool IsMyText(DiaryView view)
     {
-        if (view.DiaryInfo.Owner == User.Email)
-            return true;
-
-        if (view.DiaryInfo.Writers?.Contains(User.Email) ?? false)
+        if (view.DiaryInfo.CanWrite(User.Id))
             return true;
 
         return false;
     }
 
-    private async Task<DiaryInfo> GetDiaryInfo(string diaryName)
+    private async Task<DiaryInfo> GetDiaryInfo(DiaryName diaryName)
     {
-        if (string.IsNullOrWhiteSpace(diaryName))
+        if (string.IsNullOrWhiteSpace(diaryName?.Name))
             return null;
 
         return await DiaryService.GetDiaryInfoAsync(User, diaryName);

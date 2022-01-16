@@ -48,25 +48,21 @@ public class DiaryServiceTest
         };
         _diary = new DiaryInfo
         {
-            DiaryName = "testdiary",
-            Id = _user.Id,
+            DiaryName = new DiaryName("testdiary"),
+            Owner = _user.Id,
             IsSecret = false,
-            Owner = _user.Email,
-            Writers = new List<string>(),
-            Viewers = new List<string>(),
         };
     }
 
     [Fact]
     public async Task CreateDiaryTest()
     {
-        var diaryName = "testdiary";
+        var diaryName = new DiaryName("testdiary");
         var isSecret = false;
 
         var diary = await _diaryService.CreateDiaryInfoAsync(_user, diaryName, isSecret);
 
-        Assert.Equal(_user.Id, diary.Id);
-        Assert.Equal(_user.Email, diary.Owner);
+        Assert.Equal(_user.Id, diary.Owner);
         Assert.Equal(diaryName, diary.DiaryName);
         Assert.Equal(isSecret, diary.IsSecret);
         Assert.Empty(diary.Writers);
@@ -76,7 +72,7 @@ public class DiaryServiceTest
     [Fact]
     public async Task GetUserDiaryTest()
     {
-        var diaryName = "testdiary";
+        var diaryName = new DiaryName("testdiary");
         var isSecret = false;
 
         await _diaryService.CreateDiaryInfoAsync(_user, diaryName, isSecret);

@@ -15,7 +15,7 @@ public partial class DiaryCreate : JkwPageBase
     {
         try
         {
-            var diary = await DiaryService.CreateDiaryInfoAsync(User, model.DiaryName, model.IsSecret);
+            var diary = await DiaryService.CreateDiaryInfoAsync(User, new DiaryName(model.DiaryName), model.IsSecret);
             Navi.NavigateTo(DiaryUrl.Home(diary.DiaryName));
         }
         catch
@@ -28,7 +28,7 @@ public partial class DiaryCreate : JkwPageBase
         if (string.IsNullOrWhiteSpace(diaryName))
             yield return "일기장 이름을 입력해주세요.";
 
-        diaryName = diaryName.Trim();
+        diaryName = diaryName?.Trim() ?? string.Empty;
         var minLength = 3;
         var maxLength = 30;
         if (diaryName.Length < minLength || diaryName.Length > maxLength)
