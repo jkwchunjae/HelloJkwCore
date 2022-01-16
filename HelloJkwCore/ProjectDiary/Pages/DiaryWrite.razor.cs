@@ -29,7 +29,7 @@ public partial class DiaryWrite : JkwPageBase
 
         if (DiaryInfo == null)
         {
-            Navi.NavigateTo(DiaryUrl.Home(DiaryName));
+            Navi.NavigateTo(DiaryUrl.Home(new DiaryName(DiaryName)));
         }
 
         if (DiaryInfo.IsSecret && string.IsNullOrWhiteSpace(UserData.Password))

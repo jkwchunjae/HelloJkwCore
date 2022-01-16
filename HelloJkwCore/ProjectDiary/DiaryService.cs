@@ -6,7 +6,7 @@ public class DiaryService : IDiaryService
 {
     private readonly IFileSystem _fs;
     private readonly IDiarySearchService _diarySearchService;
-    private readonly Dictionary<string /* DiaryName */, List<DiaryFileName>> _filesCache = new();
+    private readonly Dictionary<DiaryName, List<DiaryFileName>> _filesCache = new();
 
     public DiaryService(
         DiaryOption option,
@@ -17,7 +17,7 @@ public class DiaryService : IDiaryService
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
     }
 
-    private async Task<List<DiaryFileName>> GetDiaryListAsync(string diaryName)
+    private async Task<List<DiaryFileName>> GetDiaryListAsync(DiaryName diaryName)
     {
         lock (_filesCache)
         {
@@ -50,7 +50,7 @@ public class DiaryService : IDiaryService
         return diaryFileNameList;
     }
 
-    private void SaveDiaryCache(string diaryName, List<DiaryFileName> list)
+    private void SaveDiaryCache(DiaryName diaryName, List<DiaryFileName> list)
     {
         lock (_filesCache)
         {
@@ -61,20 +61,20 @@ public class DiaryService : IDiaryService
     /// <summary>
     /// Atomic operation
     /// </summary>
-    private async Task<bool> CheckAndAddDiaryNameAsync(string diaryName)
+    private async Task<bool> CheckAndAddDiaryNameAsync(DiaryName diaryName)
     {
         if (diaryName.Length < 3)
             return false;
         if (diaryName.Length > 30)
             return false;
-        if (!Regex.IsMatch(diaryName, @"^[a-z]+$"))
+        if (!Regex.IsMatch(diaryName.Name, @"^[a-z]+$"))
             return false;
 
         // TODO lock
-        var diaryNameList = await _fs.ReadJsonAsync<List<string>>(path => path.DiaryNameListFile());
-        if (diaryNameList == default(List<string>))
+        var diaryNameList = await _fs.ReadJsonAsync<List<DiaryName>>(path => path.DiaryNameListFile());
+        if (diaryNameList == default(List<DiaryName>))
         {
-            diaryNameList = new List<string>();
+            diaryNameList = new List<DiaryName>();
         }
 
         if (diaryNameList.Contains(diaryName))
@@ -88,7 +88,7 @@ public class DiaryService : IDiaryService
         return true;
     }
 
-    private async Task<DiaryContent> GetDiaryContentAsync(string diaryName, DiaryFileName fileName)
+    private async Task<DiaryContent> GetDiaryContentAsync(DiaryName diaryName, DiaryFileName fileName)
     {
         return await _fs.ReadJsonAsync<DiaryContent>(path => path.Content(diaryName, fileName.ToString()));
     }
@@ -99,7 +99,7 @@ public class DiaryService : IDiaryService
         if (user.HasRole(UserRole.Admin))
             force = true;
 
-        if (!force && !diary.CanRead(user?.Email))
+        if (!force && !diary.CanRead(user?.Id))
             return null;
 
         return await GetDiaryContentAsync(diary.DiaryName, diaryFileName);
@@ -127,7 +127,7 @@ public class DiaryService : IDiaryService
         return null;
     }
 
-    public async Task<DiaryInfo> CreateDiaryInfoAsync(AppUser user, string diaryName, bool isSecret)
+    public async Task<DiaryInfo> CreateDiaryInfoAsync(AppUser user, DiaryName diaryName, bool isSecret)
     {
         // 1. 일기장 이름 등록 
         if (!await CheckAndAddDiaryNameAsync(diaryName))
@@ -146,7 +146,7 @@ public class DiaryService : IDiaryService
         userDiaryInfo.AddMyDiary(diaryName);
         await _fs.WriteJsonAsync(path => path.UserDiaryInfo(user), userDiaryInfo);
 
-        var newDiary = new DiaryInfo(user.Id, user.Email, diaryName, isSecret);
+        var newDiary = new DiaryInfo(user.Id, user.Id, diaryName, isSecret);
         await _fs.WriteJsonAsync(path => path.DiaryInfo(diaryName), newDiary);
 
         return newDiary;
@@ -162,7 +162,7 @@ public class DiaryService : IDiaryService
         return null;
     }
 
-    public async Task<DiaryInfo> GetDiaryInfoAsync(AppUser user, string diaryName)
+    public async Task<DiaryInfo> GetDiaryInfoAsync(AppUser user, DiaryName diaryName)
     {
         var userDiaryInfo = await GetUserDiaryInfoAsync(user);
 
@@ -358,8 +358,11 @@ public class DiaryService : IDiaryService
         if (!(user?.HasRole(UserRole.Admin) ?? false))
             return null;
 
-        var diaryNameList = await _fs.ReadJsonAsync<List<string>>(path => path.DiaryNameListFile());
-        var diaryInfoList = await (diaryNameList ?? new List<string>())
+        var diaryNameList = await _fs.ReadJsonAsync<List<DiaryName>>(path => path.DiaryNameListFile());
+        if (diaryNameList?.Empty() ?? true)
+            return new List<DiaryInfo>();
+
+        var diaryInfoList = await diaryNameList
             .Select(async diaryName => await _fs.ReadJsonAsync<DiaryInfo>(path => path.DiaryInfo(diaryName)))
             .WhenAll();
 

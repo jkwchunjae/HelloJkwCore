@@ -3,9 +3,9 @@
 public interface IDiaryService
 {
     #region DiaryInfo
-    Task<DiaryInfo> CreateDiaryInfoAsync(AppUser user, string diaryName, bool isSecret);
+    Task<DiaryInfo> CreateDiaryInfoAsync(AppUser user, DiaryName diaryName, bool isSecret);
     Task<UserDiaryInfo> GetUserDiaryInfoAsync(AppUser user);
-    Task<DiaryInfo> GetDiaryInfoAsync(AppUser user, string diaryName);
+    Task<DiaryInfo> GetDiaryInfoAsync(AppUser user, DiaryName diaryName);
     Task<List<DiaryInfo>> GetWritableDiaryInfoAsync(AppUser user);
     Task<List<DiaryInfo>> GetViewableDiaryInfoAsync(AppUser user);
     #endregion

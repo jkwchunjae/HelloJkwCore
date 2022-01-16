@@ -15,7 +15,7 @@ public partial class DiaryCreate : JkwPageBase
     {
         try
         {
-            var diary = await DiaryService.CreateDiaryInfoAsync(User, model.DiaryName, model.IsSecret);
+            var diary = await DiaryService.CreateDiaryInfoAsync(User, new DiaryName(model.DiaryName), model.IsSecret);
             Navi.NavigateTo(DiaryUrl.Home(diary.DiaryName));
         }
         catch

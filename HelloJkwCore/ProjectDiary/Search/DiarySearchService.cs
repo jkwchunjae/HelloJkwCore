@@ -4,7 +4,7 @@ public class DiarySearchService : IDiarySearchService
 {
     private readonly IFileSystem _fs;
 
-    private Dictionary<string, DiarySearchEngine> _engineDic = new();
+    private Dictionary<DiaryName, DiarySearchEngine> _engineDic = new();
 
     private ReaderWriterLockSlim _lock = new();
 
@@ -15,7 +15,7 @@ public class DiarySearchService : IDiarySearchService
         _fs = fsService.GetFileSystem(diaryOption.SearchEngineFileSystem, diaryOption.Path);
     }
 
-    private async Task<DiarySearchEngine> GetSearchEngineAsync(string diaryName)
+    private async Task<DiarySearchEngine> GetSearchEngineAsync(DiaryName diaryName)
     {
         var hasEngine = false;
         lock (_engineDic)
@@ -47,7 +47,7 @@ public class DiarySearchService : IDiarySearchService
         }
     }
 
-    public void RefreshCache(string diaryName)
+    public void RefreshCache(DiaryName diaryName)
     {
         lock (_engineDic)
         {
@@ -66,13 +66,13 @@ public class DiarySearchService : IDiarySearchService
         }
     }
 
-    public async Task AppendDiaryTextAsync(string diaryName, DiaryFileName fileName, string diaryText)
+    public async Task AppendDiaryTextAsync(DiaryName diaryName, DiaryFileName fileName, string diaryText)
     {
         var engine = await GetSearchEngineAsync(diaryName);
         engine.AddText(diaryText, fileName.FileName);
     }
 
-    public async Task<IEnumerable<DiaryFileName>> SearchAsync(string diaryName, DiarySearchData searchData)
+    public async Task<IEnumerable<DiaryFileName>> SearchAsync(DiaryName diaryName, DiarySearchData searchData)
     {
         var engine = await GetSearchEngineAsync(diaryName);
         var result = engine.Search(searchData.Keyword);
@@ -84,13 +84,13 @@ public class DiarySearchService : IDiarySearchService
         return list;
     }
 
-    public async Task ClearTrie(string diaryName)
+    public async Task ClearTrie(DiaryName diaryName)
     {
         var engine = await GetSearchEngineAsync(diaryName);
         engine.SetTrie(new DiaryTrie());
     }
 
-    public async Task<bool> SaveDiaryTrie(string diaryName)
+    public async Task<bool> SaveDiaryTrie(DiaryName diaryName)
     {
         var engine = await GetSearchEngineAsync(diaryName);
         var jsonText = engine.GetTrieJson();

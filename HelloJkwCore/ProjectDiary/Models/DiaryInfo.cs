@@ -4,18 +4,16 @@ public class DiaryInfo
 {
     public UserId Id { get; set; }
     public string Owner { get; set; }
-    public string DiaryName { get; set; }
+    public DiaryName DiaryName { get; set; }
     public bool IsSecret { get; set; }
-    public List<string> Writers { get; set; }
-    public List<string> Viewers { get; set; }
+    public List<string> Writers { get; set; } = new();
+    public List<string> Viewers { get; set; } = new();
 
     public DiaryInfo()
     {
-        Writers = new List<string>();
-        Viewers = new List<string>();
     }
 
-    public DiaryInfo(UserId id, string owner, string diaryName, bool isSecret)
+    public DiaryInfo(UserId id, string owner, DiaryName diaryName, bool isSecret)
         : this()
     {
         Id = id;
@@ -34,29 +32,29 @@ public class DiaryInfo
         Viewers = info.Viewers;
     }
 
-    public bool CanManage(string email)
+    public bool CanManage(string userId)
     {
-        if (Owner == email)
+        if (Owner == userId)
             return true;
 
         return false;
     }
 
-    public bool CanWrite(string email)
+    public bool CanWrite(string userId)
     {
-        if (Owner == email)
+        if (Owner == userId)
             return true;
-        if (Writers?.Contains(email) ?? false)
+        if (Writers?.Contains(userId) ?? false)
             return true;
 
         return false;
     }
 
-    public bool CanRead(string email)
+    public bool CanRead(string userId)
     {
-        if (CanWrite(email))
+        if (CanWrite(userId))
             return true;
-        if (Viewers?.Contains(email) ?? false)
+        if (Viewers?.Contains(userId) ?? false)
             return true;
 
         return false;

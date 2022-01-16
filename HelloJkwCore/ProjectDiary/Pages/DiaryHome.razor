@@ -63,13 +63,13 @@ else if (HasDiaryContent)
             <MudButton Link="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
                 전체보기
             </MudButton>
-        @if (DiaryInfo.IsSecret == false && DiaryInfo.CanWrite(User.Email))
+        @if (DiaryInfo.IsSecret == false && DiaryInfo.CanWrite(User.Id))
         {
             <MudButton Link="@DiaryUrl.Search(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
                 검색
             </MudButton>
         }
-        @if (DiaryInfo.CanWrite(User.Email))
+        @if (DiaryInfo.CanWrite(User.Id))
         {
             var nextDate = View.DiaryContents.First().Date.AddDays(1);
 

@@ -30,22 +30,22 @@ public static class DiaryPath
         return $"{paths.DiaryInfoList()}/userdiary.{user.Id}.json";
     }
 
-    public static string DiaryInfo(this Paths paths, string diaryName)
+    public static string DiaryInfo(this Paths paths, DiaryName diaryName)
     {
         return $"{paths.DiaryInfoList()}/diary.{diaryName}.json";
     }
 
-    public static string Diary(this Paths paths, string diaryName)
+    public static string Diary(this Paths paths, DiaryName diaryName)
     {
         return $"{paths.DiaryContents()}/{diaryName}";
     }
 
-    public static string Content(this Paths paths, string diaryName, string fileName)
+    public static string Content(this Paths paths, DiaryName diaryName, string fileName)
     {
         return $"{paths.Diary(diaryName)}/{fileName}";
     }
 
-    public static string DiaryTrie(this Paths paths, string diaryName)
+    public static string DiaryTrie(this Paths paths, DiaryName diaryName)
     {
         var dirPath = paths[DiaryPathType.DiaryTriePath];
         return $"{dirPath}/trie.{diaryName}.json";
