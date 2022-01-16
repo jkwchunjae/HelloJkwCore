@@ -291,7 +291,10 @@ public class DiaryService : IDiaryService
         if (!diary.IsSecret)
         {
             if (_diarySearchService != null)
+            {
                 await _diarySearchService.AppendDiaryTextAsync(diary.DiaryName, diaryFileName, text);
+                await _diarySearchService.SaveDiaryTrie(diary.DiaryName);
+            }
         }
 
         return content;
