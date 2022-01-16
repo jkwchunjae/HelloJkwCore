@@ -11,6 +11,9 @@ public class StringId : IComparable<StringId>, IEquatable<StringId>
     }
 
     public int Length => Id.Length;
+
+    public bool Contains(string value) => Id.Contains(value);
+
     public override string ToString()
     {
         return Id;

@@ -28,7 +28,7 @@ public partial class DiaryCreate : JkwPageBase
         if (string.IsNullOrWhiteSpace(diaryName))
             yield return "일기장 이름을 입력해주세요.";
 
-        diaryName = diaryName.Trim();
+        diaryName = diaryName?.Trim() ?? string.Empty;
         var minLength = 3;
         var maxLength = 30;
         if (diaryName.Length < minLength || diaryName.Length > maxLength)

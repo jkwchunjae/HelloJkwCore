@@ -2,21 +2,20 @@
 
 public class DiaryInfo
 {
-    public UserId Id { get; set; }
-    public string Owner { get; set; }
+    //public UserId Id { get; set; }
+    public UserId Owner { get; set; }
     public DiaryName DiaryName { get; set; }
     public bool IsSecret { get; set; }
-    public List<string> Writers { get; set; } = new();
-    public List<string> Viewers { get; set; } = new();
+    public List<UserId> Writers { get; set; } = new();
+    public List<UserId> Viewers { get; set; } = new();
 
     public DiaryInfo()
     {
     }
 
-    public DiaryInfo(UserId id, string owner, DiaryName diaryName, bool isSecret)
+    public DiaryInfo(UserId owner, DiaryName diaryName, bool isSecret)
         : this()
     {
-        Id = id;
         Owner = owner;
         DiaryName = diaryName;
         IsSecret = isSecret;
@@ -24,7 +23,6 @@ public class DiaryInfo
 
     public DiaryInfo(DiaryInfo info)
     {
-        Id = info.Id;
         Owner = info.Owner;
         DiaryName = info.DiaryName;
         IsSecret = info.IsSecret;
@@ -32,7 +30,7 @@ public class DiaryInfo
         Viewers = info.Viewers;
     }
 
-    public bool CanManage(string userId)
+    public bool CanManage(UserId userId)
     {
         if (Owner == userId)
             return true;
@@ -40,7 +38,7 @@ public class DiaryInfo
         return false;
     }
 
-    public bool CanWrite(string userId)
+    public bool CanWrite(UserId userId)
     {
         if (Owner == userId)
             return true;
@@ -50,7 +48,7 @@ public class DiaryInfo
         return false;
     }
 
-    public bool CanRead(string userId)
+    public bool CanRead(UserId userId)
     {
         if (CanWrite(userId))
             return true;

@@ -49,9 +49,8 @@ public class DiaryServiceTest
         _diary = new DiaryInfo
         {
             DiaryName = new DiaryName("testdiary"),
-            Id = _user.Id,
-            IsSecret = false,
             Owner = _user.Id,
+            IsSecret = false,
         };
     }
 
@@ -63,7 +62,6 @@ public class DiaryServiceTest
 
         var diary = await _diaryService.CreateDiaryInfoAsync(_user, diaryName, isSecret);
 
-        Assert.Equal(_user.Id, diary.Id);
         Assert.Equal(_user.Id, diary.Owner);
         Assert.Equal(diaryName, diary.DiaryName);
         Assert.Equal(isSecret, diary.IsSecret);

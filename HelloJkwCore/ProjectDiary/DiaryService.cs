@@ -146,7 +146,7 @@ public class DiaryService : IDiaryService
         userDiaryInfo.AddMyDiary(diaryName);
         await _fs.WriteJsonAsync(path => path.UserDiaryInfo(user), userDiaryInfo);
 
-        var newDiary = new DiaryInfo(user.Id, user.Id, diaryName, isSecret);
+        var newDiary = new DiaryInfo(user.Id, diaryName, isSecret);
         await _fs.WriteJsonAsync(path => path.DiaryInfo(diaryName), newDiary);
 
         return newDiary;
@@ -367,5 +367,13 @@ public class DiaryService : IDiaryService
             .WhenAll();
 
         return diaryInfoList.ToList();
+    }
+
+    public async Task UpdateDiaryInfoAsync(AppUser user, DiaryInfo diaryInfo)
+    {
+        if (diaryInfo.CanManage(user.Id) || user.HasRole(UserRole.Admin))
+        {
+            await _fs.WriteJsonAsync(path => path.DiaryInfo(diaryInfo.DiaryName), diaryInfo);
+        }
     }
 }
