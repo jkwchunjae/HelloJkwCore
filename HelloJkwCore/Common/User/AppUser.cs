@@ -2,12 +2,12 @@
 
 public class AppUser
 {
-    public static string UserId(string loginProvider, string providerKey)
+    public static UserId UserId(string loginProvider, string providerKey)
     {
-        return $"{loginProvider}.{providerKey}".ToLower();
+        return new UserId($"{loginProvider}.{providerKey}".ToLower());
     }
 
-    public string Id { get; set; }
+    public UserId Id { get; set; }
     public DateTime CreateTime { get; set; }
     public string UserName { get; set; }
     public string NickName { get; set; }

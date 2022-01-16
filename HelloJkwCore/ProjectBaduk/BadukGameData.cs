@@ -35,8 +35,8 @@ public class DiaryName : StringName
 public class BadukDiary
 {
     public DiaryName Name { get; set; }
-    public string OwnerUserId { get; set; }
-    public List<string> ConnectUserIdList { get; set; }
+    public UserId OwnerUserId { get; set; }
+    public List<UserId> ConnectUserIdList { get; set; }
     /// <summary> 최근것이 위에있음.  </summary>
     public List<string> GameDataList { get; set; }
 }

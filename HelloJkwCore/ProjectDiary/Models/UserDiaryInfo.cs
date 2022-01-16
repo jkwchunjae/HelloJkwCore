@@ -2,7 +2,7 @@
 
 public class UserDiaryInfo
 {
-    public string UserId { get; set; }
+    public UserId UserId { get; set; }
     public List<string> MyDiaryList { get; set; } = new();
     public List<string> WriterList { get; set; } = new();
     public List<string> ViewList { get; set; } = new();

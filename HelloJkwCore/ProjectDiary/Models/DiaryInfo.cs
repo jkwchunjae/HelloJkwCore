@@ -2,7 +2,7 @@
 
 public class DiaryInfo
 {
-    public string Id { get; set; }
+    public UserId Id { get; set; }
     public string Owner { get; set; }
     public string DiaryName { get; set; }
     public bool IsSecret { get; set; }
@@ -15,7 +15,7 @@ public class DiaryInfo
         Viewers = new List<string>();
     }
 
-    public DiaryInfo(string id, string owner, string diaryName, bool isSecret)
+    public DiaryInfo(UserId id, string owner, string diaryName, bool isSecret)
         : this()
     {
         Id = id;

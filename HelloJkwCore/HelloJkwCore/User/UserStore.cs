@@ -60,7 +60,7 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
     {
         await CreateUsersDirectoryAsync(ct);
 
-        Func<Paths, string> userPath = path => path.UserFilePathByUserId(userId);
+        Func<Paths, string> userPath = path => path.UserFilePathByUserId(new UserId(userId));
         if (await _fs.FileExistsAsync(userPath))
         {
             return await _fs.ReadJsonAsync<AppUser>(userPath);
@@ -80,7 +80,7 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
 
     private async Task<bool> ExistsUserAsync(string userId, CancellationToken ct = default)
     {
-        return await _fs.FileExistsAsync(path => path.UserFilePathByUserId(userId), ct);
+        return await _fs.FileExistsAsync(path => path.UserFilePathByUserId(new UserId(userId)), ct);
     }
 
     public Task AddLoginAsync(AppUser user, UserLoginInfo login, CancellationToken ct)
@@ -92,7 +92,7 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
     {
         try
         {
-            var exists = await ExistsUserAsync(user.Id);
+            var exists = await ExistsUserAsync(user.Id.Id);
 
             if (exists)
             {
@@ -114,7 +114,7 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
     {
         try
         {
-            if (await ExistsUserAsync(user.Id))
+            if (await ExistsUserAsync(user.Id.Id))
             {
                 await _fs.DeleteFileAsync(path => path.UserFilePathByUserId(user.Id));
                 return IdentityResult.Success;
@@ -152,7 +152,7 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
     {
         var userId = AppUser.UserId(loginProvider, providerKey);
 
-        return await FindByIdAsync(userId, ct);
+        return await FindByIdAsync(userId.Id, ct);
     }
 
     public async Task<AppUser> FindByNameAsync(string normalizedUserName, CancellationToken ct)
@@ -187,7 +187,7 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
 
     public Task<string> GetUserIdAsync(AppUser user, CancellationToken ct)
     {
-        return Task.FromResult(user.Id);
+        return Task.FromResult(user.Id.Id);
     }
 
     public Task<string> GetUserNameAsync(AppUser user, CancellationToken ct)
@@ -231,7 +231,7 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
     {
         try
         {
-            if (await ExistsUserAsync(user.Id, ct))
+            if (await ExistsUserAsync(user.Id.Id, ct))
             {
                 await SaveUserAsync(user, ct);
                 return IdentityResult.Success;

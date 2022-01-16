@@ -11,7 +11,7 @@ public static class UserPath
         return $"{path[UserPathType.UsersPath]}/{fileName}".ToLower();
     }
 
-    public static string UserFilePathByUserId(this Paths path, string userId)
+    public static string UserFilePathByUserId(this Paths path, UserId userId)
     {
         return $"{path[UserPathType.UsersPath]}/user.{userId}.json".ToLower();
     }
