@@ -12,11 +12,15 @@ public partial class Fifa : IFifa
             var url = "https://www.fifa.com/tournaments/mens/worldcup/qatar2022";
             var pageData = await GetPageData(new Uri(url));
 
-            var groupStageMatches = pageData?["content"]?.ToArray()?[4]?["groupPhaseMatches"]
-                ?.SelectMany(x => x?["matches"]?.Select(e => e?.ToObject<FifaMatchData>())?.ToList() ?? new List<FifaMatchData>())
-                .ToList();
+            var contents = pageData?["content"]?.ToArray();
 
-            return groupStageMatches ?? new();
+            var groupPhaseMatches = contents
+                .Select(content => content["groupPhaseMatches"])
+                .FirstOrDefault(content => content != null);
+
+            return groupPhaseMatches
+                ?.SelectMany(x => x["matches"].Select(e => e.ToObject<FifaMatchData>()).ToList())
+                .ToList() ?? new();
         });
     }
 
@@ -27,11 +31,15 @@ public partial class Fifa : IFifa
             var url = "https://www.fifa.com/tournaments/mens/worldcup/qatar2022";
             var pageData = await GetPageData(new Uri(url));
 
-            var knockoutStageMatches = pageData?["content"]?.ToArray()?[4]?["knockoutPhaseMatches"]
-                ?.SelectMany(x => x?["matches"]?.Select(e => e?.ToObject<FifaMatchData>())?.ToList() ?? new List<FifaMatchData>())
-                .ToList();
+            var contents = pageData?["content"]?.ToArray();
 
-            return knockoutStageMatches ?? new();
+            var knockoutStageMatches = contents
+                .Select(content => content["knockoutPhaseMatches"])
+                .FirstOrDefault(content => content != null);
+
+            return knockoutStageMatches
+                ?.SelectMany(x => x["matches"].Select(e => e.ToObject<FifaMatchData>()).ToList())
+                .ToList() ?? new();
         });
     }
 }

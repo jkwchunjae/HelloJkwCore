@@ -8,7 +8,7 @@ public partial class Fifa : IFifa
     private MemoryCache _cache = new MemoryCache("FIFA");
 
     /// <summary> FIFA 는 __NEXT_DATA__ id 스크립트 안에 페이지에 포함될 json을 넣어놓는다. 그걸 가져와서 쓰자.  </summary>
-    private async Task<JObject> GetPageData(Uri uri)
+    protected async Task<JObject> GetPageData(Uri uri)
     {
         var pageDataText = await GetFromCacheOrAsync<string>(uri.ToString(), async () =>
         {
@@ -27,7 +27,7 @@ public partial class Fifa : IFifa
         return o?.ToObject<JObject>() ?? null;
     }
 
-    private async Task<T> GetFromCacheOrAsync<T>(string cacheKey, Func<Task<T>> func)
+    protected async Task<T> GetFromCacheOrAsync<T>(string cacheKey, Func<Task<T>> func)
     {
         try
         {
