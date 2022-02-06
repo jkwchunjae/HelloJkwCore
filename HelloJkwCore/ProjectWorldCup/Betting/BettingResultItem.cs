@@ -4,14 +4,10 @@ public interface IBettingResultItem
 {
     string Id { get; set; }
     int Score { get; set; }
-}
-
-public interface IBettingResultItemResult : IBettingResultItem
-{
     int Reward { get; set; }
 }
 
-public class BettingResultItem : IBettingResultItemResult
+public class BettingResultItem : IBettingResultItem
 {
     public string Id { get; set; }
     public int Score { get; set; }

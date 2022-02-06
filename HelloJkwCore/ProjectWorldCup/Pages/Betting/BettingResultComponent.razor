@@ -1,0 +1,14 @@
+﻿@inherits JkwPageBase
+
+<MudTable Items="@BettingResult">
+    <HeaderContent>
+        <MudTh>닉네임</MudTh>
+        <MudTh>점수</MudTh>
+        <MudTh>결과</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.User.DisplayName</MudTd>
+        <MudTd>@context.Score</MudTd>
+        <MudTd>@context.Reward</MudTd>
+    </RowTemplate>
+</MudTable>

@@ -1,16 +1,16 @@
 ﻿namespace ProjectWorldCup;
 
 public class BettingResultTable<T> : IEnumerable<T>
-    where T : IBettingResultItemResult, new()
+    where T : IBettingResultItem, new()
 {
     private IEnumerable<T> _items { get; set; }
 
-    public BettingResultTable(IEnumerable<IBettingResultItem> list)
+    public BettingResultTable(IEnumerable<T> list)
     {
+        _items = list;
+
         double totalScore = list.Sum(x => x.Score);
         var listCount = list.Count();
-
-        _items = list.Select(x => new T() { Id = x.Id, Score = x.Score }).ToList();
 
         foreach (var item in _items)
         {
