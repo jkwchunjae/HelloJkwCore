@@ -2,8 +2,6 @@
 
 @page "/worldcup/2022/qualified"
 
-@using ProjectWorldCup.Pages.Betting
-
 <WcTitle>본선 진출국 (@QualifiedTeams.Count / 32)</WcTitle>
 
 @foreach (var data in TeamByRegion)
@@ -27,5 +25,3 @@
         </div>
     </div>
 }
-
-<BettingResultComponent></BettingResultComponent>
