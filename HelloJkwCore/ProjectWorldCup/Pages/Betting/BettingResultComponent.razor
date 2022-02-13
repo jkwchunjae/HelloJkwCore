@@ -1,0 +1,28 @@
+﻿@inherits JkwPageBase
+
+<MudTable Items="@BettingResult">
+    <HeaderContent>
+        <MudTh>닉네임</MudTh>
+        <MudTh>성공</MudTh>
+        <MudTh>실패</MudTh>
+        <MudTh>점수</MudTh>
+        <MudTh>결과</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.User.DisplayName</MudTd>
+        <MudTd>
+            @foreach (var s in context.Success)
+            {
+                <img class="team-img success" src="@s.Flag"/>
+            }
+        </MudTd>
+        <MudTd>
+            @foreach (var s in context.Fail)
+            {
+                <img class="team-img fail" src="@s.Flag"/>
+            }
+        </MudTd>
+        <MudTd>@context.Score</MudTd>
+        <MudTd>@context.Reward</MudTd>
+    </RowTemplate>
+</MudTable>

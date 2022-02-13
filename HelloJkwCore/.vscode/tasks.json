@@ -32,6 +32,7 @@
             "args": [
                 "watch",
                 "run",
+                "--project=${workspaceFolder}/HelloJkwCore/HelloJkwCore.csproj",
                 "${workspaceFolder}/HelloJkwCore/HelloJkwCore.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
