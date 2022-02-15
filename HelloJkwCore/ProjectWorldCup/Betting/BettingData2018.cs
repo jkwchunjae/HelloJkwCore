@@ -31,7 +31,13 @@ public class BettingData2018
     }
 }
 
-public class Target2018
+public interface ITeam
+{
+    public string Id { get; set; }
+    public string Value { get; set; }
+}
+
+public class Target2018 : ITeam
 {
     public string Id { get; set; }
     public string Value { get; set; }
@@ -55,7 +61,7 @@ public class UserBettingData2018
     }
 }
 
-public class UserBetting2018
+public class UserBetting2018 : ITeam
 {
     public string Id { get; set; }
     public string Value { get; set; }
