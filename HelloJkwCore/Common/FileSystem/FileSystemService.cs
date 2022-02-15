@@ -32,17 +32,29 @@ public class FileSystemService : IFileSystemService
     {
         Dictionary<FileSystemType, IFileSystem> fsDic = new();
 
-        if (fsOption.Dropbox != null)
+        if (pathOption.Dropbox != null)
         {
-            var dropboxClient = DropboxExtensions.GetDropboxClient(fsOption.Dropbox);
-            fsDic.Add(FileSystemType.Dropbox, new DropboxFileSystem(pathOption, dropboxClient));
+            if (fsOption.Dropbox != null)
+            {
+                var dropboxClient = DropboxExtensions.GetDropboxClient(fsOption.Dropbox);
+                fsDic.Add(FileSystemType.Dropbox, new DropboxFileSystem(pathOption, dropboxClient));
+            }
         }
-        if (fsOption.Azure != null)
+        if (pathOption.Azure != null)
         {
-            fsDic.Add(FileSystemType.Azure, new AzureFileSystem(pathOption, fsOption.Azure.ConnectionString, _loggerFactory));
+            if (fsOption.Azure != null)
+            {
+                fsDic.Add(FileSystemType.Azure, new AzureFileSystem(pathOption, fsOption.Azure.ConnectionString, _loggerFactory));
+            }
         }
-        fsDic.Add(FileSystemType.InMemory, new InMemoryFileSystem(pathOption));
-        fsDic.Add(FileSystemType.Local, new LocalFileSystem(pathOption));
+        if (pathOption.InMemory != null)
+        {
+            fsDic.Add(FileSystemType.InMemory, new InMemoryFileSystem(pathOption));
+        }
+        if (pathOption.Local != null)
+        {
+            fsDic.Add(FileSystemType.Local, new LocalFileSystem(pathOption));
+        }
 
         return fsDic;
     }
