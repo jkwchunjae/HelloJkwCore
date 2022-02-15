@@ -62,7 +62,7 @@ public partial class WorldCupService
         {
             Id = data.Value,
             Name = data.Value,
-            Flag = data.Value,
+            Flag = $"https://cloudinary.fifa.com/api/v1/picture/flags-sq-1/{data.Value}",
         };
 
         _cache2018.Add(data.Value, team, DateTimeOffset.MaxValue);
