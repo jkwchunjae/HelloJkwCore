@@ -1,0 +1,26 @@
+﻿@using ProjectWorldCup.Pages.Betting;
+
+@page "/worldcup/2018/result";
+
+<h1>2018 러시아 월드컵 내기 결과</h1>
+
+<h3>1라운드: 16강 진출팀 맞추기</h3>
+
+<BettingResult2018Component BettingItems="GroupStageItems" />
+
+@code
+{
+    [Inject]
+    private IWorldCupService WorldCupService { get; set; }
+
+    private List<WcBettingItem> GroupStageItems { get; set; } = new();
+
+    public Wc2018Result()
+    {
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        GroupStageItems = await WorldCupService.Get2018GroupStageBettingResult();
+    }
+}

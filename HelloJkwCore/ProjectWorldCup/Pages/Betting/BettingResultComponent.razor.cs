@@ -8,6 +8,8 @@ public partial class BettingResultComponent : JkwPageBase
     UserManager<AppUser> UserManager { get; set; }
     [Inject] 
     IWorldCupService WorldCupService { get; set; }
+    [Parameter]
+    public List<WcBettingItem> BettingItems { get; set; }
 
     BettingResultTable<WcBettingItem> BettingResult { get; set; }
 
