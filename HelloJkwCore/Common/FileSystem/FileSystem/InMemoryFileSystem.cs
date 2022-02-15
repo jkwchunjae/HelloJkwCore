@@ -7,7 +7,10 @@ public class InMemoryFileSystem : IFileSystem
 
     public InMemoryFileSystem(PathMap pathOption)
     {
-        _pathOf = new Paths(pathOption, FileSystemType.InMemory);
+        if (pathOption.InMemory != null)
+        {
+            _pathOf = new Paths(pathOption, FileSystemType.InMemory);
+        }
     }
 
     public Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
@@ -54,6 +57,10 @@ public class InMemoryFileSystem : IFileSystem
 
     public Paths GetPathOf()
     {
+        if (_pathOf == null)
+        {
+            throw new NotDefinedFileSystemType(FileSystemType.InMemory);
+        }
         return _pathOf;
     }
 

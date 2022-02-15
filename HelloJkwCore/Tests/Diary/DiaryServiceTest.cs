@@ -11,7 +11,7 @@ public class DiaryServiceTest
     {
         var pathOption = new PathMap
         {
-            Default = new Dictionary<string, string>
+            InMemory = new()
             {
                 [DiaryPathType.DiaryNameListFile] = "/db/diary/diary-name-list.json",
                 [DiaryPathType.DiaryListPath] = "/db/diary/diary-info",

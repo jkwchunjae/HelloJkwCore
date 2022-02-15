@@ -7,7 +7,10 @@ public class LocalFileSystem : IFileSystem
 
     public LocalFileSystem(PathMap pathOption, Encoding encoding = null)
     {
-        _pathOf = new Paths(pathOption, FileSystemType.Local);
+        if (pathOption.Local != null)
+        {
+            _pathOf = new Paths(pathOption, FileSystemType.Local);
+        }
         _encoding = encoding ?? new UTF8Encoding(false);
     }
 
@@ -56,6 +59,10 @@ public class LocalFileSystem : IFileSystem
 
     public Paths GetPathOf()
     {
+        if (_pathOf == null)
+        {
+            throw new NotDefinedFileSystemType(FileSystemType.Local);
+        }
         return _pathOf;
     }
 

@@ -2,23 +2,27 @@
 
 public class Paths
 {
-    private readonly Dictionary<string, string> _pathDic;
+    private FileSystemType _fileSystemType { get; init; }
+    private Dictionary<string, string> _pathDic { get; init; }
 
     public Paths(PathMap option, FileSystemType fsType)
     {
-        _pathDic = option.Default.Select(x => x.Key)
-            .Concat(option[fsType].Select(x => x.Key))
-            .Distinct()
-            .Select(key => new
-            {
-                Key = key,
-                Value = option[fsType].ContainsKey(key) ? option[fsType][key] : option.Default[key],
-            })
-            .ToDictionary(x => x.Key, x => x.Value);
+        _fileSystemType = fsType;
+        _pathDic = option[fsType];
     }
 
     public string this[string key]
     {
-        get => _pathDic[key];
+        get
+        {
+            if (_pathDic.ContainsKey(key))
+            {
+                return _pathDic[key];
+            }
+            else
+            {
+                throw new NotDefinedPath(_fileSystemType, key);
+            }
+        }
     }
 }
