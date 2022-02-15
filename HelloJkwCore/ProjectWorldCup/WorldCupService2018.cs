@@ -22,9 +22,20 @@ public partial class WorldCupService
         return result;
     }
 
-    public Task<List<WcBettingItem>> Get2018Round16BettingResult()
+    public async Task<List<WcBettingItem>> Get2018Round16BettingResult()
     {
-        throw new NotImplementedException();
+        if (_cache2018.Contains(nameof(Get2018Round16BettingResult)))
+        {
+            return (List<WcBettingItem>)_cache2018[nameof(Get2018Round16BettingResult)];
+        }
+
+        var bettingData = await _fs2018.ReadJsonAsync<BettingData2018>(path => path[WorldCupPath.Result2018Round16]);
+
+        var result = ToWcBettingItem(bettingData);
+
+        _cache2018.Add(nameof(Get2018Round16BettingResult), result, DateTimeOffset.MaxValue);
+
+        return result;
     }
 
     public Task<List<WcFinalBettingItem>> Get2018FinalBettingResult()
