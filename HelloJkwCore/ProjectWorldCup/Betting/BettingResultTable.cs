@@ -7,17 +7,17 @@ public class BettingResultTable<T> : IEnumerable<T>
 
     public BettingResultTable(IEnumerable<T> list, BettingTableOption bettingTableOption = null)
     {
-        _items = list;
-
         double totalScore = list.Sum(x => x.Score);
         var listCount = list.Count();
 
-        foreach (var item in _items)
+        foreach (var item in list)
         {
             var ratio = item.Score * listCount / totalScore;
             var reward = (int)(10000 * ratio); // 항상 배팅금액은 1만원이다.
             item.Reward = bettingTableOption?.RewardForUser?.Invoke(reward) ?? RewardForUser(reward);
         }
+
+        _items = list.OrderByDescending(x => x.Reward).ToList();
     }
 
     public IEnumerator<T> GetEnumerator()
