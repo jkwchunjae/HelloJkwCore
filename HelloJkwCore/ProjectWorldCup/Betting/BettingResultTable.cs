@@ -5,7 +5,7 @@ public class BettingResultTable<T> : IEnumerable<T>
 {
     private IEnumerable<T> _items { get; set; }
 
-    public BettingResultTable(IEnumerable<T> list)
+    public BettingResultTable(IEnumerable<T> list, BettingTableOption bettingTableOption = null)
     {
         _items = list;
 
@@ -15,7 +15,7 @@ public class BettingResultTable<T> : IEnumerable<T>
         foreach (var item in _items)
         {
             var ratio = item.Score * listCount / totalScore;
-            item.Reward = CalcReward(ratio);
+            item.Reward = bettingTableOption?.CalcReward?.Invoke(ratio) ?? CalcReward(ratio);
         }
     }
 
@@ -36,4 +36,9 @@ public class BettingResultTable<T> : IEnumerable<T>
 
         return reward.RoundN(-3, 7); // 100의 자리에서 7기준으로 반올림한다.
     }
+}
+
+public class BettingTableOption
+{
+    public Func<double, int> CalcReward { get; set; }
 }
