@@ -15,7 +15,8 @@ public class BettingResultTable<T> : IEnumerable<T>
         foreach (var item in _items)
         {
             var ratio = item.Score * listCount / totalScore;
-            item.Reward = bettingTableOption?.CalcReward?.Invoke(ratio) ?? CalcReward(ratio);
+            var reward = (int)(10000 * ratio); // 항상 배팅금액은 1만원이다.
+            item.Reward = bettingTableOption?.RewardForUser?.Invoke(reward) ?? RewardForUser(reward);
         }
     }
 
@@ -29,16 +30,13 @@ public class BettingResultTable<T> : IEnumerable<T>
         return _items.GetEnumerator();
     }
 
-    private static int CalcReward(double ratio)
+    private static int RewardForUser(int reward)
     {
-        var input = 10000; // 항상 배팅금액은 1만원이다.
-        var reward = (int)(input * ratio);
-
-        return reward.RoundN(-3, 7); // 100의 자리에서 7기준으로 반올림한다.
+        return reward.RoundN(-3, 6); // 100의 자리에서 6기준으로 반올림한다.
     }
 }
 
 public class BettingTableOption
 {
-    public Func<double, int> CalcReward { get; set; }
+    public Func<int, int> RewardForUser { get; set; }
 }
