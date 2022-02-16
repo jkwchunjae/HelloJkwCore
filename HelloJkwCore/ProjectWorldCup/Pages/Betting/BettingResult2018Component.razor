@@ -1,6 +1,6 @@
 ﻿@inherits JkwPageBase
 
-<MudTable Items="@BettingResult">
+<MudTable Items="BettingResult" Dense="true">
     <HeaderContent>
         <MudTh>닉네임</MudTh>
         <MudTh>성공</MudTh>
@@ -27,6 +27,6 @@
             </div>
         </MudTd>
         <MudTd Style="justify-content: normal;">@context.Score</MudTd>
-        <MudTd Style="justify-content: normal;">@context.Reward</MudTd>
+        <MudTd Style="justify-content: normal;">@context.Reward.ToString("#,#")</MudTd>
     </RowTemplate>
 </MudTable>
