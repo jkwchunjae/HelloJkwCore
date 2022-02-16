@@ -47,7 +47,7 @@ public class Result2018Test
         _worldCupService = new WorldCupService(fsService, worldcupOption, fifa);
     }
 
-    [Fact]
+    //[Fact]
     public async Task LoadGroupStageTest()
     {
         var list = await _worldCupService.Get2018GroupStageBettingResult();
@@ -55,7 +55,7 @@ public class Result2018Test
         Assert.Equal(11, list.Count);
     }
 
-    [Fact]
+    //[Fact]
     public async Task CalcGroupStageTest()
     {
         var list = await _worldCupService.Get2018GroupStageBettingResult();
@@ -81,7 +81,7 @@ public class Result2018Test
         Assert.Equal(10310, result.First(x => x.User.UserName == "taeheeyu@gmail.com").Reward);
     }
 
-    [Fact]
+    //[Fact]
     public async Task CalcFinalResultTest()
     {
         var list = await _worldCupService.Get2018FinalBettingResult();
