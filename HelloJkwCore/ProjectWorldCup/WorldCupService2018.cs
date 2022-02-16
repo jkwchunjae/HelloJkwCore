@@ -38,9 +38,20 @@ public partial class WorldCupService
         return result;
     }
 
-    public Task<List<WcFinalBettingItem>> Get2018FinalBettingResult()
+    public async Task<List<WcFinalBettingItem>> Get2018FinalBettingResult()
     {
-        throw new NotImplementedException();
+        if (_cache2018.Contains(nameof(Get2018FinalBettingResult)))
+        {
+            return (List<WcFinalBettingItem>)_cache2018[nameof(Get2018FinalBettingResult)];
+        }
+
+        var bettingData = await _fs2018.ReadJsonAsync<BettingData2018>(path => path[WorldCupPath.Result2018Final]);
+
+        var result = ToWcFinalBettingItem(bettingData);
+
+        _cache2018.Add(nameof(Get2018FinalBettingResult), result, DateTimeOffset.MaxValue);
+
+        return result;
     }
 
     private List<WcBettingItem> ToWcBettingItem(BettingData2018 data)
@@ -55,6 +66,35 @@ public partial class WorldCupService
             {
                 User = new AppUser { Id = AppUser.UserId("fake", x.Username), UserName = x.Username },
                 Picked = x.BettingList
+                    .Select(e => MakeFakeTeam(e))
+                    .ToList(),
+                Fixed = @fixed,
+            })
+            .ToList();
+    }
+
+    private List<WcFinalBettingItem> ToWcFinalBettingItem(BettingData2018 data)
+    {
+        var @fixed = data.TargetList
+            .Select(e => MakeFakeTeam(e))
+            .ToList();
+
+        var order = new Dictionary<string, int>
+        {
+            ["Champion"] = 1,
+            ["Second"] = 2,
+            ["Third"] = 3,
+            ["Fourth"] = 4,
+        };
+
+        return data.UserBettingList.Values
+            .Where(x => x.BettingGroup == "A")
+            .Select(x => new WcFinalBettingItem
+            {
+                User = new AppUser { Id = AppUser.UserId("fake", x.Username), UserName = x.Username },
+                Picked = x.BettingList
+                    .Where(x => order.ContainsKey(x.Id))
+                    .OrderBy(x => order[x.Id])
                     .Select(e => MakeFakeTeam(e))
                     .ToList(),
                 Fixed = @fixed,
