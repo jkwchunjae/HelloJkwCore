@@ -1,0 +1,51 @@
+﻿@inherits JkwPageBase
+
+<MudTable Items="BettingResult" Dense="true">
+    <HeaderContent>
+        <MudTh>닉네임</MudTh>
+        <MudTh>
+            @if (FirstItem != null)
+            {
+            <div>
+            <img class="team-img success" src="@FirstItem.Fixed[0].Flag" />
+            <img class="team-img success" src="@FirstItem.Fixed[1].Flag" />
+            <img class="team-img success" src="@FirstItem.Fixed[2].Flag" />
+            <img class="team-img success" src="@FirstItem.Fixed[3].Flag" />
+            </div>
+            }
+        </MudTh>
+        <MudTh>최종 순위 점수</MudTh>
+        <MudTh>결승전 점수</MudTh>
+        <MudTh>4강 점수</MudTh>
+        <MudTh>합계 점수</MudTh>
+        <MudTh>배당금</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTh>
+            @context.User.DisplayName.Substring(0, 5)***
+        </MudTh>
+        <MudTh>
+            <div>
+            <img class="team-img success" src="@context.Picked[0].Flag" />
+            <img class="team-img success" src="@context.Picked[1].Flag" />
+            <img class="team-img success" src="@context.Picked[2].Flag" />
+            <img class="team-img success" src="@context.Picked[3].Flag" />
+            </div>
+        </MudTh>
+        <MudTh>
+            @context.RankScore
+        </MudTh>
+        <MudTh>
+            @context.FinalMatchScore
+        </MudTh>
+        <MudTh>
+            @context.SemiFinalMatchScore
+        </MudTh>
+        <MudTh>
+            @context.Score
+        </MudTh>
+        <MudTh>
+            @context.Reward.ToString("#,#")
+        </MudTh>
+    </RowTemplate>
+</MudTable>

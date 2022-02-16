@@ -2,11 +2,9 @@
 
 @page "/worldcup"
 
-<WcTitle>2022 카타르 월드컵</WcTitle>
+<QualifiedTeamsPage></QualifiedTeamsPage>
 
-@code {
-    protected override void OnPageInitialized()
-    {
-        Navi.NavigateTo("worldcup/2022/qualified");
-    }
-}
+<div style="height: 50px;"></div>
+
+<Wc2018Result></Wc2018Result>
+

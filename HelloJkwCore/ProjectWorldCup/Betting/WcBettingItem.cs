@@ -12,7 +12,7 @@ public class WcBettingItem : IBettingResultItem
         get => User.Id.ToString();
         set { }
     }
-    public int Score
+    public virtual int Score
     {
         get => Success.Count;
         set { }

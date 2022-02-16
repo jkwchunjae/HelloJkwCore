@@ -19,7 +19,7 @@ public class BettingResultTest
             if (item.Score == 5)
                 Assert.Equal(8000, item.Reward);
             if (item.Score == 10)
-                Assert.Equal(16000, item.Reward);
+                Assert.Equal(17000, item.Reward);
         }
     }
 }

@@ -1,0 +1,8 @@
+﻿img.team-img {
+    width: 35px;
+    margin-right: 4px;
+}
+
+img.fail {
+    filter: contrast(0.3);
+}
