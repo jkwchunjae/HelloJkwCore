@@ -2,10 +2,9 @@
 
 public partial class DiaryWrite : JkwPageBase
 {
-    [Inject]
-    private IDiaryService DiaryService { get; set; }
-    [Inject]
-    private UserInstantData UserData { get; set; }
+    [Inject] private IDiaryService DiaryService { get; set; }
+    [Inject] private IDiaryTemporaryService DiaryTemporaryService { get; set; }
+    [Inject] private UserInstantData UserData { get; set; }
 
     [Parameter]
     public string DiaryName { get; set; }
@@ -47,6 +46,14 @@ public partial class DiaryWrite : JkwPageBase
                 Date = parsedDate;
             }
         }
+
+        var tempData = await TryGetTemporaryAsync();
+
+        if (tempData.Found)
+        {
+            Date = tempData.Date;
+            Content = tempData.Content;
+        }
     }
 
     async Task WriteDiaryAsync()
@@ -71,5 +78,33 @@ public partial class DiaryWrite : JkwPageBase
         {
             Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, Date.Value));
         }
+    }
+
+    async Task OnContentChanged(string content)
+    {
+        Content = content;
+        await SaveTemporaryAsync();
+    }
+
+    async Task SaveTemporaryAsync()
+    {
+        if (!IsAuthenticated)
+            return;
+        if (DiaryInfo == null)
+            return;
+
+        await DiaryTemporaryService.SaveTemproryDiary(User, DiaryInfo, Date.Value, Content);
+    }
+
+    async Task<(bool Found, DateTime Date, string Content)> TryGetTemporaryAsync()
+    {
+        if (!IsAuthenticated)
+            return (false, DateTime.MinValue, string.Empty);
+        if (DiaryInfo == null)
+            return (false, DateTime.MinValue, string.Empty);
+
+        var tempData = await DiaryTemporaryService.GetTemproryDiary(User, DiaryInfo);
+
+        return tempData;
     }
 }

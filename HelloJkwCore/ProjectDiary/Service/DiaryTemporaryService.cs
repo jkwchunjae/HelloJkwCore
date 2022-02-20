@@ -7,7 +7,7 @@ public class DiaryTemporaryService : IDiaryTemporaryService
     class DiaryTempData
     {
         public DateTime Date { get; set; }
-        public string Text { get; set; }
+        public string Content { get; set; }
     }
 
     private MemoryCache _cache = new("diary-temporary");
@@ -15,23 +15,23 @@ public class DiaryTemporaryService : IDiaryTemporaryService
     private string GetKey(AppUser user, DiaryInfo diary)
         => $"{user.Id}::{diary.DiaryName}";
 
-    public Task<(bool Found, DateTime date, string text)> GetTemproryDiary(AppUser user, DiaryInfo diary)
+    public Task<(bool Found, DateTime Date, string Content)> GetTemproryDiary(AppUser user, DiaryInfo diary)
     {
         var key = GetKey(user, diary);
         if (_cache.Contains(key))
         {
             var data = (DiaryTempData)_cache[key];
             if (data != null)
-                return Task.FromResult((true, data.Date, data.Text));
+                return Task.FromResult((true, data.Date, data.Content));
         }
 
         return Task.FromResult((false, DateTime.MinValue, string.Empty));
     }
 
-    public Task SaveTemproryDiary(AppUser user, DiaryInfo diary, DateTime date, string text)
+    public Task SaveTemproryDiary(AppUser user, DiaryInfo diary, DateTime date, string content)
     {
         var key = GetKey(user, diary);
-        var data = new DiaryTempData { Date = date, Text = text };
+        var data = new DiaryTempData { Date = date, Content = content };
         _cache[key] = data;
         return Task.CompletedTask;
     }
