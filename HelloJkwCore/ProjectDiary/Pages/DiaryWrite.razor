@@ -7,12 +7,12 @@
         <PageTitle>일기 쓰기</PageTitle>
         <MudGrid>
             <MudItem Style="max-width: 200px;">
-                <MudDatePicker @bind-Date="Date" DateFormat="yyyy.MM.dd (ddd)" TitleDateFormat="yyyy.MM.dd dddd"></MudDatePicker>
+                <MudDatePicker Date="Date" DateChanged="OnDateChanged" DateFormat="yyyy.MM.dd (ddd)" TitleDateFormat="yyyy.MM.dd dddd"></MudDatePicker>
             </MudItem>
         </MudGrid>
         <MudGrid>
             <MudItem xs="12" sm="12" md="12" lg="12">
-                <MudTextField T="string" @bind-Value="Content" Lines="15" Style="line-height: 30px;" AutoFocus="true"/>
+                <MudTextField T="string" Value="Content" ValueChanged="OnContentChanged" Lines="15" Style="line-height: 30px;" AutoFocus="true"/>
             </MudItem>
             <MudItem xs="12" sm="12" md="12" lg="12">
                 <OneClickButton OnClick="(async () => await WriteDiaryAsync())" 

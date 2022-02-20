@@ -15,5 +15,6 @@ public static partial class DiaryServiceHelper
         services.AddSingleton<IDiaryService, DiaryService>();
         services.AddSingleton<IDiarySearchService, DiarySearchService>();
         services.AddSingleton<IDiaryAdminService, DiaryAdminService>();
+        services.AddSingleton<IDiaryTemporaryService, DiaryTemporaryService>();
     }
 }

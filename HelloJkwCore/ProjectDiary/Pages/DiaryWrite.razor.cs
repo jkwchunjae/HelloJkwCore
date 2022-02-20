@@ -2,10 +2,9 @@
 
 public partial class DiaryWrite : JkwPageBase
 {
-    [Inject]
-    private IDiaryService DiaryService { get; set; }
-    [Inject]
-    private UserInstantData UserData { get; set; }
+    [Inject] private IDiaryService DiaryService { get; set; }
+    [Inject] private IDiaryTemporaryService DiaryTemporaryService { get; set; }
+    [Inject] private UserInstantData UserData { get; set; }
 
     [Parameter]
     public string DiaryName { get; set; }
@@ -47,6 +46,14 @@ public partial class DiaryWrite : JkwPageBase
                 Date = parsedDate;
             }
         }
+
+        var tempData = await TryGetTemporaryAsync();
+
+        if (tempData.Found)
+        {
+            Date = tempData.Date;
+            Content = tempData.Content;
+        }
     }
 
     async Task WriteDiaryAsync()
@@ -67,9 +74,53 @@ public partial class DiaryWrite : JkwPageBase
             content = await DiaryService.WriteDiaryAsync(User, DiaryInfo, Date.Value, Content);
         }
 
+        await DiaryTemporaryService.RemoveTemporaryDiary(User, DiaryInfo);
+
         if (content != null)
         {
             Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, Date.Value));
         }
+    }
+
+    async Task OnContentChanged(string content)
+    {
+        Content = content;
+
+        if (string.IsNullOrEmpty(Content))
+        {
+            await DiaryTemporaryService.RemoveTemporaryDiary(User, DiaryInfo);
+        }
+        else
+        {
+            await SaveTemporaryAsync();
+        }
+    }
+
+    async Task OnDateChanged(DateTime? date)
+    {
+        Date = date;
+        await SaveTemporaryAsync();
+    }
+
+    async Task SaveTemporaryAsync()
+    {
+        if (!IsAuthenticated)
+            return;
+        if (DiaryInfo == null)
+            return;
+
+        await DiaryTemporaryService.SaveTemporaryDiary(User, DiaryInfo, Date.Value, Content);
+    }
+
+    async Task<(bool Found, DateTime Date, string Content)> TryGetTemporaryAsync()
+    {
+        if (!IsAuthenticated)
+            return (false, DateTime.MinValue, string.Empty);
+        if (DiaryInfo == null)
+            return (false, DateTime.MinValue, string.Empty);
+
+        var tempData = await DiaryTemporaryService.GetTemporaryDiary(User, DiaryInfo);
+
+        return tempData;
     }
 }
