@@ -33,6 +33,15 @@ public class DiaryTemporaryService : IDiaryTemporaryService
         var key = GetKey(user, diary);
         var data = new DiaryTempData { Date = date, Content = content };
         _cache[key] = data;
+
+        return Task.CompletedTask;
+    }
+
+    public Task RemoveTemporaryDiary(AppUser user, DiaryInfo diary)
+    {
+        var key = GetKey(user, diary);
+        _cache.Remove(key);
+
         return Task.CompletedTask;
     }
 }

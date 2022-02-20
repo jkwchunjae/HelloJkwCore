@@ -74,6 +74,8 @@ public partial class DiaryWrite : JkwPageBase
             content = await DiaryService.WriteDiaryAsync(User, DiaryInfo, Date.Value, Content);
         }
 
+        await DiaryTemporaryService.RemoveTemporaryDiary(User, DiaryInfo);
+
         if (content != null)
         {
             Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, Date.Value));
