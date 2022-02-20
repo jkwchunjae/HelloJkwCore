@@ -15,7 +15,7 @@ public class DiaryTemporaryService : IDiaryTemporaryService
     private string GetKey(AppUser user, DiaryInfo diary)
         => $"{user.Id}::{diary.DiaryName}";
 
-    public Task<(bool Found, DateTime Date, string Content)> GetTemproryDiary(AppUser user, DiaryInfo diary)
+    public Task<(bool Found, DateTime Date, string Content)> GetTemporaryDiary(AppUser user, DiaryInfo diary)
     {
         var key = GetKey(user, diary);
         if (_cache.Contains(key))
@@ -28,7 +28,7 @@ public class DiaryTemporaryService : IDiaryTemporaryService
         return Task.FromResult((false, DateTime.MinValue, string.Empty));
     }
 
-    public Task SaveTemproryDiary(AppUser user, DiaryInfo diary, DateTime date, string content)
+    public Task SaveTemporaryDiary(AppUser user, DiaryInfo diary, DateTime date, string content)
     {
         var key = GetKey(user, diary);
         var data = new DiaryTempData { Date = date, Content = content };

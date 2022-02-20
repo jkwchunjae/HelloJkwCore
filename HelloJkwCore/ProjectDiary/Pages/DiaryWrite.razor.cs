@@ -93,7 +93,7 @@ public partial class DiaryWrite : JkwPageBase
         if (DiaryInfo == null)
             return;
 
-        await DiaryTemporaryService.SaveTemproryDiary(User, DiaryInfo, Date.Value, Content);
+        await DiaryTemporaryService.SaveTemporaryDiary(User, DiaryInfo, Date.Value, Content);
     }
 
     async Task<(bool Found, DateTime Date, string Content)> TryGetTemporaryAsync()
@@ -103,7 +103,7 @@ public partial class DiaryWrite : JkwPageBase
         if (DiaryInfo == null)
             return (false, DateTime.MinValue, string.Empty);
 
-        var tempData = await DiaryTemporaryService.GetTemproryDiary(User, DiaryInfo);
+        var tempData = await DiaryTemporaryService.GetTemporaryDiary(User, DiaryInfo);
 
         return tempData;
     }
