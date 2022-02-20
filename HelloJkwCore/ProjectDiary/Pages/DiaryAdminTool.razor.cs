@@ -4,12 +4,10 @@ namespace ProjectDiary.Pages;
 
 public partial class DiaryAdminTool : JkwPageBase
 {
-    [Inject]
-    IDiaryService DiaryService { get; set; }
-    [Inject]
-    IDiarySearchService DiarySearchService { get; set; }
-    [Inject]
-    private UserManager<AppUser> UserManager { get; set; }
+    [Inject] IDiaryService DiaryService { get; set; }
+    [Inject] IDiaryAdminService DiaryAdminService { get; set; }
+    [Inject] IDiarySearchService DiarySearchService { get; set; }
+    [Inject] private UserManager<AppUser> UserManager { get; set; }
 
     IEnumerable<DiaryData> DiaryDataList { get; set; } = new List<DiaryData>();
 
@@ -19,7 +17,7 @@ public partial class DiaryAdminTool : JkwPageBase
     {
         if (IsAuthenticated && User.HasRole(UserRole.Admin))
         {
-            var list = await DiaryService.GetAllDiaryListAsync(User);
+            var list = await DiaryAdminService.GetAllDiaryListAsync(User);
 
             DiaryDataList = await list
                 .Select(async x => await CreateDiaryData(x))
