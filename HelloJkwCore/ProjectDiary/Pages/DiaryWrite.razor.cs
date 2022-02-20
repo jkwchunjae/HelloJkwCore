@@ -85,7 +85,15 @@ public partial class DiaryWrite : JkwPageBase
     async Task OnContentChanged(string content)
     {
         Content = content;
-        await SaveTemporaryAsync();
+
+        if (string.IsNullOrEmpty(Content))
+        {
+            await DiaryTemporaryService.RemoveTemporaryDiary(User, DiaryInfo);
+        }
+        else
+        {
+            await SaveTemporaryAsync();
+        }
     }
 
     async Task OnDateChanged(DateTime? date)
