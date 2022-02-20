@@ -88,6 +88,12 @@ public partial class DiaryWrite : JkwPageBase
         await SaveTemporaryAsync();
     }
 
+    async Task OnDateChanged(DateTime? date)
+    {
+        Date = date;
+        await SaveTemporaryAsync();
+    }
+
     async Task SaveTemporaryAsync()
     {
         if (!IsAuthenticated)
