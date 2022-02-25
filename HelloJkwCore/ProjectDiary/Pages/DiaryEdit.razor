@@ -13,16 +13,22 @@
         </MudItem>
     </MudGrid>
     <MudGrid>
+        @if (HasError)
+        {
+            <MudAlert Severity="Severity.Error">뭔가 에러가 발생했습니다.</MudAlert>
+        }
         @foreach (var content in View.DiaryContents)
         {
         <MudItem Style="width: 100%">
-            <MudTextField T="string" @bind-Value="content.Text" Lines="15" Style="line-height: 30px;" AutoFocus="true"/>
+            <DiaryText @bind-Text="@content.Text" AutoFocus="true" ErrorStateChanged="OnContentErrorStateChanged" />
         </MudItem>
         }
     </MudGrid>
     <MudGrid>
         <MudItem>
-            <OneClickButton OnClick="EditDiary" StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info">
+            <OneClickButton OnClick="EditDiary"
+                            Reusable="true"
+                            StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info">
                 수정
             </OneClickButton>
         </MudItem>

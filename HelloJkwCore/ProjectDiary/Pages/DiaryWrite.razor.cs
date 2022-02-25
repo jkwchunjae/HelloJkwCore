@@ -14,6 +14,8 @@ public partial class DiaryWrite : JkwPageBase
     private DiaryInfo DiaryInfo { get; set; }
     private DateTime? Date { get; set; }
     private string Content { get; set; }
+    private bool ContentHasError { get; set; }
+    private bool HasError { get; set; }
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -64,21 +66,31 @@ public partial class DiaryWrite : JkwPageBase
         if (DiaryInfo == null)
             return;
 
-        DiaryContent content;
-        if (DiaryInfo.IsSecret)
-        {
-            content = await DiaryService.WriteDiaryAsync(User, DiaryInfo, Date.Value, Content, UserData.Password);
-        }
-        else
-        {
-            content = await DiaryService.WriteDiaryAsync(User, DiaryInfo, Date.Value, Content);
-        }
+        if (ContentHasError)
+            return;
 
-        await DiaryTemporaryService.RemoveTemporaryDiary(User, DiaryInfo);
-
-        if (content != null)
+        try
         {
-            Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, Date.Value));
+            DiaryContent content;
+            if (DiaryInfo.IsSecret)
+            {
+                content = await DiaryService.WriteDiaryAsync(User, DiaryInfo, Date.Value, Content, UserData.Password);
+            }
+            else
+            {
+                content = await DiaryService.WriteDiaryAsync(User, DiaryInfo, Date.Value, Content);
+            }
+
+            await DiaryTemporaryService.RemoveTemporaryDiary(User, DiaryInfo);
+
+            if (content != null)
+            {
+                Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, Date.Value));
+            }
+        }
+        catch
+        {
+            HasError = true;
         }
     }
 
@@ -100,6 +112,11 @@ public partial class DiaryWrite : JkwPageBase
     {
         Date = date;
         await SaveTemporaryAsync();
+    }
+
+    void OnContentErrorStateChanged(bool error)
+    {
+        ContentHasError = error;
     }
 
     async Task SaveTemporaryAsync()
