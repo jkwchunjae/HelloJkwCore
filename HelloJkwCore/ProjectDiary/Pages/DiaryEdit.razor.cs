@@ -21,6 +21,9 @@ public partial class DiaryEdit : JkwPageBase
         .ToDictionary(x => x.Index, x => x.Text.Split('\n').Count())
         ?? new();
 
+    private bool ContentHasError { get; set; }
+    private bool HasError { get; set; }
+
     protected override async Task OnPageInitializedAsync()
     {
         if (!IsAuthenticated)
@@ -107,23 +110,38 @@ public partial class DiaryEdit : JkwPageBase
         if (DiaryInfo == null)
             return;
 
-        List<DiaryContent> content;
-        if (DiaryInfo.IsSecret)
-        {
-            content = await DiaryService.UpdateDiaryAsync(User, DiaryInfo, View.DiaryContents, UserData.Password);
-        }
-        else
-        {
-            content = await DiaryService.UpdateDiaryAsync(User, DiaryInfo, View.DiaryContents);
-        }
+        if (ContentHasError)
+            return;
 
-        if (content?.Any() ?? false)
+        try
         {
-            Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, content.First().Date));
+            List<DiaryContent> content;
+            if (DiaryInfo.IsSecret)
+            {
+                content = await DiaryService.UpdateDiaryAsync(User, DiaryInfo, View.DiaryContents, UserData.Password);
+            }
+            else
+            {
+                content = await DiaryService.UpdateDiaryAsync(User, DiaryInfo, View.DiaryContents);
+            }
+
+            if (content?.Any() ?? false)
+            {
+                Navi.NavigateTo(DiaryUrl.DiaryContent(DiaryInfo.DiaryName, content.First().Date));
+            }
+            else
+            {
+                Navi.NavigateTo(DiaryUrl.Home(DiaryInfo.DiaryName));
+            }
         }
-        else
+        catch
         {
-            Navi.NavigateTo(DiaryUrl.Home(DiaryInfo.DiaryName));
+            HasError = true;
         }
+    }
+
+    void OnContentErrorStateChanged(bool error)
+    {
+        ContentHasError = error;
     }
 }
