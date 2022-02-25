@@ -16,7 +16,7 @@
         @foreach (var content in View.DiaryContents)
         {
         <MudItem Style="width: 100%">
-            <MudTextField T="string" @bind-Value="content.Text" Lines="15" Style="line-height: 30px;" AutoFocus="true"/>
+            <DiaryText @bind-Text="@content.Text" AutoFocus="true" />
         </MudItem>
         }
     </MudGrid>
