@@ -3,6 +3,9 @@
 
 name: Build and deploy ASP.Net Core app to Azure Web App - hellojkwcore
 
+env:
+  working-directory: ./HelloJkwCore
+
 on:
   push:
     branches:
@@ -24,12 +27,15 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
+        working-directory: ${{env.working-directory}}
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        working-directory: ${{env.working-directory}}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
+        working-directory: ${{env.working-directory}}
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
@@ -50,6 +56,7 @@ jobs:
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
+        working-directory: ${{env.working-directory}}
         with:
           app-name: 'hellojkwcore'
           slot-name: 'Production'
