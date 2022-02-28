@@ -34,9 +34,8 @@ public static class DropboxExtensions
         var bytes = encoding.GetBytes(text);
         using (var stream = new MemoryStream(bytes))
         {
-            return await client.Files.UploadAsync(
-                new CommitInfo(path, mode: Overwrite.Instance),
-                stream);
+            var uploadArgs = new UploadArg(path, mode: Overwrite.Instance);
+            return await client.Files.UploadAsync(uploadArgs, stream);
         }
     }
 
