@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectBaduk", "ProjectBadu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F0A3A004-E9A9-44EA-A457-8B1E629A7067}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectTrip", "ProjectTrip\ProjectTrip.csproj", "{69732BA7-892A-4C06-AC72-1A99DE7D9D91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{6C9F7DC0-02D5-4ADF-A8F1-8DC2A208114B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C9F7DC0-02D5-4ADF-A8F1-8DC2A208114B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C9F7DC0-02D5-4ADF-A8F1-8DC2A208114B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69732BA7-892A-4C06-AC72-1A99DE7D9D91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69732BA7-892A-4C06-AC72-1A99DE7D9D91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69732BA7-892A-4C06-AC72-1A99DE7D9D91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69732BA7-892A-4C06-AC72-1A99DE7D9D91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
