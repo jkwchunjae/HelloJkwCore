@@ -11,7 +11,7 @@ public class TripService : ITripService
         _fs = fsService.GetFileSystem(tripOption.FileSystemSelect, tripOption.Path);
     }
 
-    public async Task CreateOrUpdateTripAsync(ITripUser user, Trip trip)
+    public async Task CreateOrUpdateTripAsync(AppUser user, Trip trip)
     {
         var userData = await _fs.ReadUserDataAsync(user);
 
@@ -24,17 +24,17 @@ public class TripService : ITripService
         await _fs.UpdateUserDataAsync(userData);
     }
 
-    public Task DeleteTripAsync(ITripUser user, Trip trip)
+    public Task DeleteTripAsync(AppUser user, Trip trip)
     {
         throw new NotImplementedException();
     }
 
-    public Task DeleteTripByUrlAsync(ITripUser user, StringId tripId)
+    public Task DeleteTripByUrlAsync(AppUser user, StringId tripId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Trip> GetTripByUrlAsync(ITripUser user, StringId tripId)
+    public async Task<Trip> GetTripByUrlAsync(AppUser user, StringId tripId)
     {
         var trip = await _fs.ReadTripAsync(tripId);
 
@@ -48,7 +48,7 @@ public class TripService : ITripService
         }
     }
 
-    public async Task<List<Trip>> GetTripsAsync(ITripUser user)
+    public async Task<List<Trip>> GetTripsAsync(AppUser user)
     {
         var userData = await _fs.ReadUserDataAsync(user);
 

@@ -14,7 +14,7 @@ public static class TripFileSystemHelper
         return tripDataPath;
     }
 
-    public static async Task<UserData> ReadUserDataAsync(this IFileSystem fs, ITripUser user)
+    public static async Task<UserData> ReadUserDataAsync(this IFileSystem fs, AppUser user)
     {
         var tripUserPath = GetTripUserPath(user.Id);
         if (await fs.FileExistsAsync(tripUserPath))
