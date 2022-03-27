@@ -1,0 +1,12 @@
+﻿global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Text;
+global using System.Threading.Tasks;
+global using JkwExtensions;
+global using Common;
+global using KakaoMapBlazor;
+global using KakaoMapBlazor.Map;
+global using KakaoMapBlazor.Models;
+global using KakaoMapBlazor.Enums;
+global using ProjectTrip.Models;

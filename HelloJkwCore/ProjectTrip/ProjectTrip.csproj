@@ -6,11 +6,15 @@
 
   <ItemGroup>
     <PackageReference Include="Jkw.Extensions" Version="1.0.13" />
-    <PackageReference Include="KakaoMapBlazor" Version="1.0.0" />
+    <PackageReference Include="KakaoMapBlazor" Version="2.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

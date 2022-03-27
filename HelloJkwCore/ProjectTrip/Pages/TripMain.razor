@@ -1,9 +1,11 @@
 ﻿@inherits JkwPageBase
-
 @page "/trip"
+@using KakaoMapBlazor
 
 <h3>TripMain</h3>
 
-@code {
-
-}
+<KakaoMapComponent
+    @ref="kakaoMapComponent"
+    CreateOption="mapCreateOption"
+    Style="width: 500px; height: 400px;"
+></KakaoMapComponent>
