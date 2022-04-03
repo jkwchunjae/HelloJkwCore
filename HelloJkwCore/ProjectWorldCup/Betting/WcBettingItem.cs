@@ -3,8 +3,8 @@
 public class WcBettingItem : IBettingResultItem
 {
     public AppUser User { get; init; }
-    public List<Team> Picked { get; set; }
-    public List<Team> Fixed { get; set; }
+    public List<Team> Picked { get; set; } = new();
+    public List<Team> Fixed { get; set; } = new();
     public int Reward { get; set; }
 
     public string Id
@@ -17,6 +17,6 @@ public class WcBettingItem : IBettingResultItem
         get => Success.Count;
         set { }
     }
-    public List<Team> Success => Picked?.Where(s => Fixed?.Contains(s) ?? false).ToList() ?? new();
-    public List<Team> Fail => Picked?.Where(s => !(Fixed?.Contains(s) ?? false)).ToList() ?? new();
+    public List<Team> Success => Picked.Where(s => Fixed.Contains(s)).ToList();
+    public List<Team> Fail => Picked.Where(s => !Fixed.Contains(s)).ToList();
 }
