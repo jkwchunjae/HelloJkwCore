@@ -1,12 +1,55 @@
 ﻿namespace ProjectWorldCup;
 
-public class Team
+public class Team : IEquatable<Team>, IComparable<Team>
 {
     public string Id { get; set; }
     public string Name { get; set; }
     public string Flag { get; set; }
     public int FifaRank { get; set; }
     public string Region { get; set; }
+
+    public int CompareTo(Team other)
+    {
+        return Id.CompareTo(other.Id);
+    }
+
+    public bool Equals(Team other)
+    {
+        return Id == other?.Id;
+    }
+
+    public static bool operator ==(Team obj1, Team obj2)
+    {
+        if (ReferenceEquals(obj1, obj2))
+        {
+            return true;
+        }
+        if (ReferenceEquals(obj1, null))
+        {
+            return false;
+        }
+        if (ReferenceEquals(obj2, null))
+        {
+            return false;
+        }
+
+        return obj1.Equals(obj2);
+    }
+
+    public static bool operator !=(Team obj1, Team obj2)
+    {
+        return !(obj1 == obj2);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as Team);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
 }
 
 public class TeamStanding<TTeam> where TTeam : Team
