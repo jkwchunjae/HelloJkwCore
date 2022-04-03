@@ -2,7 +2,7 @@
 
 public class Result2018Test
 {
-    IWorldCupService _worldCupService;
+    IBettingService _bettingService;
 
     public Result2018Test()
     {
@@ -44,13 +44,13 @@ public class Result2018Test
 
         var fsService = new FileSystemService(fsOption, null, null);
 
-        _worldCupService = new WorldCupService(fsService, worldcupOption, fifa);
+        _bettingService = new BettingService(fsService, worldcupOption);
     }
 
     //[Fact]
     public async Task LoadGroupStageTest()
     {
-        var list = await _worldCupService.Get2018GroupStageBettingResult();
+        var list = await _bettingService.Get2018GroupStageBettingResult();
 
         Assert.Equal(11, list.Count);
     }
@@ -58,7 +58,7 @@ public class Result2018Test
     //[Fact]
     public async Task CalcGroupStageTest()
     {
-        var list = await _worldCupService.Get2018GroupStageBettingResult();
+        var list = await _bettingService.Get2018GroupStageBettingResult();
 
         var result = new BettingResultTable<WcBettingItem>(list, new BettingTableOption
         {
@@ -84,7 +84,7 @@ public class Result2018Test
     //[Fact]
     public async Task CalcFinalResultTest()
     {
-        var list = await _worldCupService.Get2018FinalBettingResult();
+        var list = await _bettingService.Get2018FinalBettingResult();
 
         var result = new BettingResultTable<WcFinalBettingItem>(list, new BettingTableOption
         {

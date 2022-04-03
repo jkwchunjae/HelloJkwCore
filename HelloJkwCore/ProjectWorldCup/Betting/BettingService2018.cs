@@ -2,9 +2,10 @@
 
 namespace ProjectWorldCup;
 
-public partial class WorldCupService
+public partial class BettingService
 {
     private MemoryCache _cache2018 = new MemoryCache("Result2018");
+    private readonly IFileSystem _fs2018;
 
     public async Task<List<WcBettingItem>> Get2018GroupStageBettingResult()
     {

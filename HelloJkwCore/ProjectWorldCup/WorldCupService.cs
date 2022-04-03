@@ -3,7 +3,6 @@
 public partial class WorldCupService : IWorldCupService
 {
     private readonly IFileSystem _fs;
-    private readonly IFileSystem _fs2018;
     private IFifa _fifa;
 
     public WorldCupService(
@@ -13,7 +12,6 @@ public partial class WorldCupService : IWorldCupService
     {
         _fifa = fifa;
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
-        _fs2018 = fsService.GetFileSystem(option.FileSystemSelect2018, option.Path);
     }
 
     public async Task<List<Team>> Get2022QualifiedTeamsAsync()
