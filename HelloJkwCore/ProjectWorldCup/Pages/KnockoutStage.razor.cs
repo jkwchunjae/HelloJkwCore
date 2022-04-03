@@ -3,7 +3,7 @@
 public class Round
 {
     public string RoundName { get; set; }
-    public List<Match> Matches { get; set; }
+    public List<KnMatch> Matches { get; set; }
 }
 public partial class KnockoutStage : JkwPageBase
 {
@@ -12,11 +12,11 @@ public partial class KnockoutStage : JkwPageBase
 
     private KnockoutStageData Knockout { get; set; } = new();
 
-    private Match Final => Knockout.Final;
-    private Match ThirdPlacePlayOff => Knockout.ThirdPlacePlayOff;
-    private List<Match> SemiFinals => Knockout.SemiFinals;
-    private List<Match> QuarterFinals => Knockout.QuarterFinals;
-    private List<Match> Round16 => Knockout.Round16;
+    private KnMatch Final => Knockout.Final;
+    private KnMatch ThirdPlacePlayOff => Knockout.ThirdPlacePlayOff;
+    private List<KnMatch> SemiFinals => Knockout.SemiFinals;
+    private List<KnMatch> QuarterFinals => Knockout.QuarterFinals;
+    private List<KnMatch> Round16 => Knockout.Round16;
 
     private List<Round> KnockoutRounds = new();
 
@@ -29,12 +29,12 @@ public partial class KnockoutStage : JkwPageBase
             new Round
             {
                 RoundName = "결승",
-                Matches = new List<Match> { Knockout.Final },
+                Matches = new List<KnMatch> { Knockout.Final },
             },
             new Round
             {
                 RoundName = "3, 4위 전",
-                Matches = new List<Match> { Knockout.ThirdPlacePlayOff },
+                Matches = new List<KnMatch> { Knockout.ThirdPlacePlayOff },
             },
             new Round
             {

@@ -14,7 +14,7 @@ public class MatchTest
     [Fact]
     public void Match_Drawn_Test()
     {
-        var match = new Match
+        var match = new Match<Team>
         {
             HomeTeam = Team1,
             AwayTeam = Team2,
@@ -30,7 +30,7 @@ public class MatchTest
     [Fact]
     public void Match_Winner_Test1()
     {
-        var match = new Match
+        var match = new Match<Team>
         {
             HomeTeam = Team1,
             AwayTeam = Team2,
@@ -47,7 +47,7 @@ public class MatchTest
     [Fact]
     public void Match_Winner_Test2()
     {
-        var match = new Match
+        var match = new Match<Team>
         {
             HomeTeam = Team1,
             AwayTeam = Team2,
@@ -64,7 +64,7 @@ public class MatchTest
     [Fact]
     public void Match_Winner_Test3()
     {
-        var match = new Match
+        var match = new Match<Team>
         {
             HomeTeam = Team1,
             AwayTeam = Team2,
@@ -81,7 +81,7 @@ public class MatchTest
     [Fact]
     public void Match_Winner_Test4()
     {
-        var match = new Match
+        var match = new Match<Team>
         {
             HomeTeam = Team1,
             AwayTeam = Team2,

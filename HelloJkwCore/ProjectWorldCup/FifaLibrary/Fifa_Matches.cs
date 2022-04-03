@@ -20,6 +20,7 @@ public partial class Fifa : IFifa
 
             return groupPhaseMatches
                 ?.SelectMany(x => x["matches"].Select(e => e.ToObject<FifaMatchData>()).ToList())
+                .Where(x => x.PlaceholderA != null)
                 .ToList() ?? new();
         });
     }

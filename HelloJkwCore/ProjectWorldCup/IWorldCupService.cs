@@ -4,9 +4,9 @@ public interface IWorldCupService
 {
     Task<List<Team>> Get2022QualifiedTeamsAsync();
     Task<List<RankingTeamData>> GetLastRankingTeamDataAsync(Gender gender);
-    Task<List<Match>> GetGroupStageMatchesAsync();
-    Task<List<Match>> GetKnockOutStageMatchesAsync();
-    Task<List<League>> GetGroupsAsync();
+    Task<List<GroupMatch>> GetGroupStageMatchesAsync();
+    Task<List<KnMatch>> GetKnockOutStageMatchesAsync();
+    Task<List<WcGroup>> GetGroupsAsync();
     Task<KnockoutStageData> GetKnockoutStageDataAsync();
 
     #region Result 2018

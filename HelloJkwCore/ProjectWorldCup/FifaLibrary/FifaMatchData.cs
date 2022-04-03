@@ -1,5 +1,16 @@
 ﻿namespace ProjectWorldCup;
 
+public class FifaMatchTeam
+{
+    [JsonProperty("abbreviation")]
+    public string Abbreviation { get; set; }
+    [JsonProperty("pictureUrl")]
+    public string PictureUrl { get; set; }
+    [JsonProperty("score")]
+    public int? Score { get; set; }
+    [JsonProperty("teamName")]
+    public string TeamName { get; set; }
+}
 public class FifaMatchData
 {
     [JsonProperty("idMatch")]
@@ -50,7 +61,7 @@ public class FifaMatchData
     public int Period { get; set; }
 
     [JsonProperty("winner")]
-    public object Winner { get; set; }
+    public FifaMatchTeam Winner { get; set; }
 
     [JsonProperty("awayTeamPenaltyScore")]
     public object AwayTeamPenaltyScore { get; set; }
@@ -65,10 +76,10 @@ public class FifaMatchData
     public object AggregateHomeTeamScore { get; set; }
 
     [JsonProperty("awayTeam")]
-    public object AwayTeam { get; set; }
+    public FifaMatchTeam AwayTeam { get; set; }
 
     [JsonProperty("homeTeam")]
-    public object HomeTeam { get; set; }
+    public FifaMatchTeam HomeTeam { get; set; }
 
     [JsonProperty("resultType")]
     public int ResultType { get; set; }

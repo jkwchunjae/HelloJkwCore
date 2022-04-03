@@ -5,7 +5,7 @@ public class LeagueTest
     [Fact]
     public void PremierLeague_2020_2021()
     {
-        var league = new League
+        var league = new League<Match<Team>, Team>
         {
             Name = "PremierLeague 2020-2021",
         };
@@ -494,14 +494,14 @@ public class LeagueTest
 
 public static class LeagueExtensions
 {
-    public static Team FindTeam(this League league, string id)
+    public static Team FindTeam(this League<Match<Team>, Team> league, string id)
     {
         return league.Teams.FirstOrDefault(x => x.Id == id);
     }
 
-    public static void AddMatch(this League league, string homeId, string awayId, int homeScore, int awayScore)
+    public static void AddMatch(this League<Match<Team>, Team> league, string homeId, string awayId, int homeScore, int awayScore)
     {
-        league.AddMatch(new Match
+        league.AddMatch(new Match<Team>
         {
             Status = MatchStatus.Done,
             HomeTeam = league.FindTeam(homeId),

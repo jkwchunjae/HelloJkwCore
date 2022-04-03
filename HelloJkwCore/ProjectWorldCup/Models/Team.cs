@@ -9,9 +9,10 @@ public class Team
     public string Region { get; set; }
 }
 
-public class TeamStanding
+public class TeamStanding<TTeam> where TTeam : Team
 {
-    public Team Team { get; set; }
+    public TTeam Team { get; set; }
+    /// <summary> 승점 </summary>
     public int Point => Won * 3 + Drawn * 1 + Lost * 0;
     public int Rank { get; set; }
     /// <summary> 게임 수 </summary>

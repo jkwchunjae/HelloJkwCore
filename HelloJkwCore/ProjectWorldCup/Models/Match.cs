@@ -15,13 +15,13 @@ public enum MatchInfoType
     MatchNumber,
 }
 
-public class Match
+public class Match<TTeam> where TTeam : Team
 {
     /// <summary> 매치 시작 시간 </summary>
     public DateTime Time { get; set; }
     public MatchStatus Status { get; set; } = MatchStatus.Before;
-    public Team HomeTeam { get; set; } = new();
-    public Team AwayTeam { get; set; } = new();
+    public TTeam HomeTeam { get; set; }
+    public TTeam AwayTeam { get; set; }
     public int HomeScore { get; set; }
     public int AwayScore { get; set; }
     /// <summary> 홈팀 승부차기 득점 </summary>
@@ -31,26 +31,13 @@ public class Match
     public Dictionary<MatchInfoType, string> Info { get; set; } = new();
 
     public bool IsDraw => HomeScore == AwayScore && HomePenaltyScore == AwayPenaltyScore;
-    public (Team Team, int Score, int PenaltyScore) Winner => HomeScore != AwayScore
+    public (TTeam Team, int Score, int PenaltyScore) Winner => HomeScore != AwayScore
         ? (HomeScore > AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))
         : (HomePenaltyScore > AwayPenaltyScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore));
-    public (Team Team, int Score, int PenaltyScore) Looser => HomeScore != AwayScore
+    public (TTeam Team, int Score, int PenaltyScore) Looser => HomeScore != AwayScore
         ? (HomeScore < AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))
         : (HomePenaltyScore < AwayPenaltyScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore));
 
 
-    public static Match CreateFromFifaMatchData(FifaMatchData fifaMatchData)
-    {
-        return new Match
-        {
-            Time = fifaMatchData.Date,
-            Status = MatchStatus.Before,
-            HomeTeam = new Team { Id = fifaMatchData.PlaceholderA, Name = fifaMatchData.PlaceholderA },
-            AwayTeam = new Team { Id = fifaMatchData.PlaceholderB, Name = fifaMatchData.PlaceholderB },
-            Info = new()
-            {
-                [MatchInfoType.MatchNumber] = fifaMatchData.MatchNumber.ToString(),
-            },
-        };
-    }
+
 }
