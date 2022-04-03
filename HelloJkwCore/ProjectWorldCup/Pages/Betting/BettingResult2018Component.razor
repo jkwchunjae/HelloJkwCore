@@ -9,8 +9,8 @@
         <MudTh>배당금</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd Style="justify-content: normal;">@context.User.DisplayName.Substring(0, 5)***</MudTd>
-        <MudTd Style="justify-content: normal;">
+        <MudTd DataLabel="닉네임">@context.User.DisplayName.Substring(0, 5)***</MudTd>
+        <MudTd DataLabel="성공">
             <div>
             @foreach (var s in context.Success)
             {
@@ -18,7 +18,7 @@
             }
             </div>
         </MudTd>
-        <MudTd Style="justify-content: normal;">
+        <MudTd DataLabel="실패">
             <div>
             @foreach (var s in context.Fail)
             {
@@ -26,7 +26,7 @@
             }
             </div>
         </MudTd>
-        <MudTd Style="justify-content: normal;">@context.Score</MudTd>
-        <MudTd Style="justify-content: normal;">@context.Reward.ToString("#,#")</MudTd>
+        <MudTd DataLabel="점수">@context.Score</MudTd>
+        <MudTd DataLabel="배당금">@context.Reward.ToString("#,#")</MudTd>
     </RowTemplate>
 </MudTable>

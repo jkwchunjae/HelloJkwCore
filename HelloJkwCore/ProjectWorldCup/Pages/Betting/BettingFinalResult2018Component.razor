@@ -17,35 +17,35 @@
         <MudTh>최종 순위 점수</MudTh>
         <MudTh>결승전 점수</MudTh>
         <MudTh>4강 점수</MudTh>
-        <MudTh>합계 점수</MudTh>
+        <MudTh>점수 합계</MudTh>
         <MudTh>배당금</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTh>
+        <MudTd DataLabel="닉네임">
             @context.User.DisplayName.Substring(0, 5)***
-        </MudTh>
-        <MudTh>
+        </MudTd>
+        <MudTd DataLabel="선택">
             <div>
             <img class="team-img success" src="@context.Picked[0].Flag" />
             <img class="team-img success" src="@context.Picked[1].Flag" />
             <img class="team-img success" src="@context.Picked[2].Flag" />
             <img class="team-img success" src="@context.Picked[3].Flag" />
             </div>
-        </MudTh>
-        <MudTh>
+        </MudTd>
+        <MudTd DataLabel="최종순위점수">
             @context.RankScore
-        </MudTh>
-        <MudTh>
+        </MudTd>
+        <MudTd DataLabel="결승전 점수">
             @context.FinalMatchScore
-        </MudTh>
-        <MudTh>
+        </MudTd>
+        <MudTd DataLabel="4강 점수">
             @context.SemiFinalMatchScore
-        </MudTh>
-        <MudTh>
+        </MudTd>
+        <MudTd DataLabel="점수 합계">
             @context.Score
-        </MudTh>
-        <MudTh>
+        </MudTd>
+        <MudTd DataLabel="배당금">
             @context.Reward.ToString("#,#")
-        </MudTh>
+        </MudTd>
     </RowTemplate>
 </MudTable>
