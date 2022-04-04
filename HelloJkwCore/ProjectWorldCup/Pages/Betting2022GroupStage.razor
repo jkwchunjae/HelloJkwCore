@@ -1,0 +1,51 @@
+﻿@inherits JkwPageBase
+
+@page "/worldcup/2022/betting/group-stage"
+
+<WcTitle>1라운드: 16강 진출팀 맞추기</WcTitle>
+
+@code {
+    string commonButtonStyle = "padding: 6px; border-radius: 6px; box-shadow: var(--mud-elevation-1); display: block; text-align: start; width: 100%; text-transform: initial;";
+}
+
+<div>
+    @foreach (var group in Groups)
+    {
+        <div class="row" style="padding-bottom: 5px;">
+            <div class="col-md-1 group-name" style="font-size: 30px;">@group.Name</div>
+            <div class="col-md-11">
+                <div class="row">
+                    @foreach (var team in group.Teams)
+                    {
+<div class="team col-md-3" style="padding-bottom: 2px;">
+@if (GetButtonType(team) == TeamButtonType.Pickable)
+{
+    var buttonStyle = $"{commonButtonStyle}";
+    <MudButton Class="team-inner" Style="@buttonStyle" OnClick="(async () => await PickTeam(team))">
+        <img class="team-img" src="@team?.Flag"/>
+        <span class="team-name">@team?.Name</span>
+    </MudButton>
+}
+else if (GetButtonType(team) == TeamButtonType.Picked)
+{
+    var buttonStyle = $"{commonButtonStyle} color: white; background: #56042C";
+    <MudButton Class="team-inner" Style="@buttonStyle" OnClick="(async () => await UnpickTeam(team))">
+        <img class="team-img" src="@team?.Flag"/>
+        <span class="team-name">@team?.Name</span>
+    </MudButton>
+}
+else
+{
+    <MudButton Class="team-inner" Style="@commonButtonStyle" Disabled="true">
+        <img class="team-img" src="@team?.Flag" style="filter: grayscale(0.7)"/>
+        <span class="team-name">@team?.Name</span>
+    </MudButton>
+}
+</div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

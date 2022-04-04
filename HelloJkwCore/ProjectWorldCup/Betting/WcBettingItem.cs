@@ -2,7 +2,7 @@
 
 public class WcBettingItem : IBettingResultItem
 {
-    public AppUser User { get; init; }
+    public AppUser User { get; set; }
     public List<Team> Picked { get; set; } = new();
     public List<Team> Fixed { get; set; } = new();
     public int Reward { get; set; }
