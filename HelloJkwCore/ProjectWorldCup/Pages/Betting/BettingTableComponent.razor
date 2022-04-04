@@ -1,0 +1,22 @@
+﻿@inherits JkwPageBase
+
+@if (BettingItems != null)
+{
+<MudTable Items="@BettingItems">
+    <HeaderContent>
+        <MudTh>닉네임</MudTh>
+        <MudTh>선택</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="닉네임">@context.User.DisplayName.Left(3)***</MudTd>
+        <MudTd>
+            <div>
+            @foreach (var s in context.Picked)
+            {
+                <img class="team-img success" src="@s.Flag"/>
+            }
+            </div>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+}

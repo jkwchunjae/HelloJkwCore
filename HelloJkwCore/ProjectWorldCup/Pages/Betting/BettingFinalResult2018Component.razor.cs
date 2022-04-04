@@ -3,20 +3,20 @@
 public partial class BettingFinalResult2018Component : JkwPageBase
 {
     [Parameter]
-    public List<WcFinalBettingItem> BettingItems { get; set; }
+    public List<WcFinalBettingItem<Team>> BettingItems { get; set; }
 
-    BettingResultTable<WcFinalBettingItem> BettingResult { get; set; }
+    BettingResultTable<WcFinalBettingItem<Team>> BettingResult { get; set; }
 
-    WcFinalBettingItem FirstItem => BettingResult?.FirstOrDefault();
+    WcFinalBettingItem<Team> FirstItem => BettingResult?.FirstOrDefault();
 
     public BettingFinalResult2018Component()
     {
-        BettingResult = new BettingResultTable<WcFinalBettingItem>(new List<WcFinalBettingItem>());
+        BettingResult = new BettingResultTable<WcFinalBettingItem<Team>>(new List<WcFinalBettingItem<Team>>());
     }
 
     protected override void OnPageParametersSet()
     {
-        BettingResult = new BettingResultTable<WcFinalBettingItem>(BettingItems, new BettingTableOption
+        BettingResult = new BettingResultTable<WcFinalBettingItem<Team>>(BettingItems, new BettingTableOption
         {
             RewardForUser = reward => (reward / 10) * 10,
         });

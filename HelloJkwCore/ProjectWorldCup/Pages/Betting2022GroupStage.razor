@@ -2,6 +2,8 @@
 
 @page "/worldcup/2022/betting/group-stage"
 
+@using ProjectWorldCup.Pages.Betting;
+
 <WcTitle>1라운드: 16강 진출팀 맞추기</WcTitle>
 
 @code {
@@ -49,3 +51,14 @@ else
     }
 </div>
 
+@if (BettingItems != null)
+{
+    if (DateTime.UtcNow < DateTime.Parse("2022-11-01"))
+    {
+        <BettingTableComponent BettingItems="BettingItems"></BettingTableComponent>
+    }
+    else
+    {
+        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
+    }
+}

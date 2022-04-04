@@ -1,10 +1,10 @@
 ﻿namespace ProjectWorldCup;
 
-public class WcBettingItem : IBettingResultItem
+public class WcBettingItem<TTeam> : IBettingResultItem where TTeam : Team
 {
     public AppUser User { get; set; }
-    public List<Team> Picked { get; set; } = new();
-    public List<Team> Fixed { get; set; } = new();
+    public List<TTeam> Picked { get; set; } = new();
+    public List<TTeam> Fixed { get; set; } = new();
     public int Reward { get; set; }
 
     public string Id
@@ -17,6 +17,6 @@ public class WcBettingItem : IBettingResultItem
         get => Success.Count;
         set { }
     }
-    public List<Team> Success => Picked.Where(s => Fixed.Contains(s)).ToList();
-    public List<Team> Fail => Picked.Where(s => !Fixed.Contains(s)).ToList();
+    public List<TTeam> Success => Picked.Where(s => Fixed.Contains(s)).ToList();
+    public List<TTeam> Fail => Picked.Where(s => !Fixed.Contains(s)).ToList();
 }

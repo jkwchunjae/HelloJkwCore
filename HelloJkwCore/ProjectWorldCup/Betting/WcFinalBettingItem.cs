@@ -1,6 +1,6 @@
 ﻿namespace ProjectWorldCup;
 
-public class WcFinalBettingItem : WcBettingItem
+public class WcFinalBettingItem<TTeam> : WcBettingItem<TTeam> where TTeam : Team
 {
     /// <summary> 각 순위에 대한 점수 </summary>
     public int RankScore

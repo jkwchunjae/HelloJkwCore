@@ -1,4 +1,6 @@
-﻿namespace ProjectWorldCup.Pages;
+﻿using Microsoft.JSInterop;
+
+namespace ProjectWorldCup.Pages;
 
 public partial class Betting2022GroupStage : JkwPageBase
 {
@@ -6,14 +8,18 @@ public partial class Betting2022GroupStage : JkwPageBase
     private IWorldCupService Service { get; set; }
     [Inject]
     private IBettingService BettingService { get; set; }
+    [Inject]
+    private IJSRuntime JS { get; set; }
 
     private List<WcGroup> Groups { get; set; } = new();
 
-    private WcBettingItem BettingItem { get; set; } = new();
+    private WcBettingItem<GroupTeam> BettingItem { get; set; } = new();
+    private List<WcBettingItem<GroupTeam>> BettingItems { get; set; }
 
     protected override async Task OnPageInitializedAsync()
     {
         Groups = await Service.GetGroupsAsync();
+        BettingItems = await BettingService.GetAllBettingItemsAsync(BettingType.GroupStage);
 
         if (IsAuthenticated)
         {
@@ -21,18 +27,21 @@ public partial class Betting2022GroupStage : JkwPageBase
         }
     }
 
-    private async Task PickTeam(Team team)
+    private async Task PickTeam(GroupTeam team)
     {
         var buttonType = GetButtonType(team);
 
         if (buttonType == TeamButtonType.Pickable)
         {
             BettingItem.Picked.Add(team);
+            BettingItem.Picked = BettingItem.Picked.OrderBy(x => x.Placeholder).ToList();
             await BettingService.SaveBettingItemAsync(BettingType.GroupStage, BettingItem);
+            BettingItems = await BettingService.GetAllBettingItemsAsync(BettingType.GroupStage);
+            StateHasChanged();
         }
     }
 
-    private async Task UnpickTeam(Team team)
+    private async Task UnpickTeam(GroupTeam team)
     {
         var buttonType = GetButtonType(team);
 
@@ -43,11 +52,13 @@ public partial class Betting2022GroupStage : JkwPageBase
             {
                 BettingItem.Picked.Remove(removeTeam);
                 await BettingService.SaveBettingItemAsync(BettingType.GroupStage, BettingItem);
+                BettingItems = await BettingService.GetAllBettingItemsAsync(BettingType.GroupStage);
+                StateHasChanged();
             }
         }
     }
 
-    private TeamButtonType GetButtonType(Team team)
+    private TeamButtonType GetButtonType(GroupTeam team)
     {
         if (BettingItem.Picked.Any(x => x.Id == team.Id))
         {

@@ -60,7 +60,7 @@ public class Result2018Test
     {
         var list = await _bettingService.Get2018GroupStageBettingResult();
 
-        var result = new BettingResultTable<WcBettingItem>(list, new BettingTableOption
+        var result = new BettingResultTable<WcBettingItem<Team>>(list, new BettingTableOption
         {
             RewardForUser = reward =>
             {
@@ -86,7 +86,7 @@ public class Result2018Test
     {
         var list = await _bettingService.Get2018FinalBettingResult();
 
-        var result = new BettingResultTable<WcFinalBettingItem>(list, new BettingTableOption
+        var result = new BettingResultTable<WcFinalBettingItem<Team>>(list, new BettingTableOption
         {
             RewardForUser = reward =>
             {
