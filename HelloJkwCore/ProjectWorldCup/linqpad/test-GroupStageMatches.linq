@@ -18,9 +18,11 @@ async Task Main()
 {
     var fifa = new Fifa2();
 	
-    var fifamatches = await fifa.GetGroupStageMatchesAsync();
-	
-	fifa.GetGroups2Async(fifamatches).Dump();
+    var fifamatches = await fifa.GetGroupStageMatches2Async();
+    
+	// fifamatches.Dump();
+	//
+	//fifa.GetGroups2Async(fifamatches).Dump();
 }
 
 public class Fifa2 : Fifa
@@ -29,14 +31,10 @@ public class Fifa2 : Fifa
 	{
 		return await GetFromCacheOrAsync<List<FifaMatchData>>("GroupStageMatchesCacheKey", async () =>
         {
-            var url = "https://www.fifa.com/tournaments/mens/worldcup/qatar2022";
+            var url = "https://www.fifa.com/tournaments/mens/worldcup/qatar2022/match-center";
             var pageData = await GetPageData(new Uri(url));
-            
-            var contents = pageData?["content"]?.ToArray();
-            
-            var groupPhaseMatches = contents
-                .Select(content => content["groupPhaseMatches"])
-                .FirstOrDefault(content => content != null);
+			
+            var groupPhaseMatches = pageData["matchesOverviewProps"]["groupPhaseMatches"].ToArray();
 
             return groupPhaseMatches
                 ?.SelectMany(x => x["matches"].Select(e => e.ToObject<FifaMatchData>()).ToList())
