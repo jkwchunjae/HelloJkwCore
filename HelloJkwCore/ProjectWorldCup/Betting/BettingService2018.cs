@@ -2,15 +2,16 @@
 
 namespace ProjectWorldCup;
 
-public partial class WorldCupService
+public partial class BettingService
 {
     private MemoryCache _cache2018 = new MemoryCache("Result2018");
+    private readonly IFileSystem _fs2018;
 
-    public async Task<List<WcBettingItem>> Get2018GroupStageBettingResult()
+    public async Task<List<WcBettingItem<Team>>> Get2018GroupStageBettingResult()
     {
         if (_cache2018.Contains(nameof(Get2018GroupStageBettingResult)))
         {
-            return (List<WcBettingItem>)_cache2018[nameof(Get2018GroupStageBettingResult)];
+            return (List<WcBettingItem<Team>>)_cache2018[nameof(Get2018GroupStageBettingResult)];
         }
 
         var bettingData = await _fs2018.ReadJsonAsync<BettingData2018>(path => path[WorldCupPath.Result2018GroupStage]);
@@ -22,11 +23,11 @@ public partial class WorldCupService
         return result;
     }
 
-    public async Task<List<WcBettingItem>> Get2018Round16BettingResult()
+    public async Task<List<WcBettingItem<Team>>> Get2018Round16BettingResult()
     {
         if (_cache2018.Contains(nameof(Get2018Round16BettingResult)))
         {
-            return (List<WcBettingItem>)_cache2018[nameof(Get2018Round16BettingResult)];
+            return (List<WcBettingItem<Team>>)_cache2018[nameof(Get2018Round16BettingResult)];
         }
 
         var bettingData = await _fs2018.ReadJsonAsync<BettingData2018>(path => path[WorldCupPath.Result2018Round16]);
@@ -38,11 +39,11 @@ public partial class WorldCupService
         return result;
     }
 
-    public async Task<List<WcFinalBettingItem>> Get2018FinalBettingResult()
+    public async Task<List<WcFinalBettingItem<Team>>> Get2018FinalBettingResult()
     {
         if (_cache2018.Contains(nameof(Get2018FinalBettingResult)))
         {
-            return (List<WcFinalBettingItem>)_cache2018[nameof(Get2018FinalBettingResult)];
+            return (List<WcFinalBettingItem<Team>>)_cache2018[nameof(Get2018FinalBettingResult)];
         }
 
         var bettingData = await _fs2018.ReadJsonAsync<BettingData2018>(path => path[WorldCupPath.Result2018Final]);
@@ -54,7 +55,7 @@ public partial class WorldCupService
         return result;
     }
 
-    private List<WcBettingItem> ToWcBettingItem(BettingData2018 data)
+    private List<WcBettingItem<Team>> ToWcBettingItem(BettingData2018 data)
     {
         var @fixed = data.TargetList
             .Select(e => MakeFakeTeam(e))
@@ -62,7 +63,7 @@ public partial class WorldCupService
 
         return data.UserBettingList.Values
             .Where(x => x.BettingGroup == "A")
-            .Select(x => new WcBettingItem
+            .Select(x => new WcBettingItem<Team>
             {
                 User = new AppUser { Id = AppUser.UserId("fake", x.Username), UserName = x.Username },
                 Picked = x.BettingList
@@ -73,7 +74,7 @@ public partial class WorldCupService
             .ToList();
     }
 
-    private List<WcFinalBettingItem> ToWcFinalBettingItem(BettingData2018 data)
+    private List<WcFinalBettingItem<Team>> ToWcFinalBettingItem(BettingData2018 data)
     {
         var @fixed = data.TargetList
             .Select(e => MakeFakeTeam(e))
@@ -89,7 +90,7 @@ public partial class WorldCupService
 
         return data.UserBettingList.Values
             .Where(x => x.BettingGroup == "A")
-            .Select(x => new WcFinalBettingItem
+            .Select(x => new WcFinalBettingItem<Team>
             {
                 User = new AppUser { Id = AppUser.UserId("fake", x.Username), UserName = x.Username },
                 Picked = x.BettingList

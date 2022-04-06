@@ -1,12 +1,12 @@
 ﻿namespace ProjectWorldCup;
 
-public class League
+public class League<TMatch, TTeam> where TMatch : Match<TTeam> where TTeam : Team
 {
     public string Name { get; set; }
-    public IReadOnlyList<Team> Teams => _teams;
-    public IReadOnlyList<Match> Matches => _matches;
+    public IReadOnlyList<TTeam> Teams => _teams;
+    public IReadOnlyList<TMatch> Matches => _matches;
     [JsonIgnore]
-    public List<TeamStanding> Stands
+    public IReadOnlyList<TeamStanding<TTeam>> Stands
     {
         get
         {
@@ -19,13 +19,13 @@ public class League
         }
     }
 
-    private List<Team> _teams = new();
-    private List<Match> _matches = new();
-    private List<TeamStanding> _standings;
+    private List<TTeam> _teams = new();
+    private List<TMatch> _matches = new();
+    private List<TeamStanding<TTeam>> _standings;
 
-    private List<TeamStanding> CalcStandings()
+    private List<TeamStanding<TTeam>> CalcStandings()
     {
-        var list = Teams.Select(team => new TeamStanding { Team = team }).ToList();
+        var list = Teams.Select(team => new TeamStanding<TTeam> { Team = team }).ToList();
 
         foreach (var match in Matches.Where(x => x.Status == MatchStatus.Done))
         {
@@ -63,31 +63,32 @@ public class League
             }
         }
 
-        list = list.OrderByDescending(x => x.Point)
+        var sortedTeamList = list
+            .OrderByDescending(x => x.Point)
             .ThenByDescending(x => x.Gd)
             .ThenByDescending(x => x.Gf)
             .ToList();
 
         var rank = 1;
-        foreach (var team in list)
+        foreach (var team in sortedTeamList)
         {
             team.Rank = rank++;
         }
 
-        return list;
+        return sortedTeamList;
     }
 
-    public bool AddTeam(Team team)
+    public bool AddTeam(TTeam team)
     {
-        if (_teams.Any(x => x.Id == team.Id))
+        if (_teams.Empty(x => x.Id == team.Id))
         {
-            return false;
+            _teams.Add(team);
+            return true;
         }
-        _teams.Add(team);
-        return true;
+        return false;
     }
 
-    public bool AddMatch(Match match)
+    public bool AddMatch(TMatch match)
     {
         var homeTeam = Teams.FirstOrDefault(x => x.Id == match.HomeTeam.Id);
         var awayTeam = Teams.FirstOrDefault(x => x.Id == match.AwayTeam.Id);

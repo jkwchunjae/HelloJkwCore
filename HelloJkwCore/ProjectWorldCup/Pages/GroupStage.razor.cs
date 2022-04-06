@@ -5,7 +5,7 @@ public partial class GroupStage : JkwPageBase
     [Inject]
     private IWorldCupService Service { get; set; }
 
-    private List<League> Groups { get; set; } = new();
+    private List<WcGroup> Groups { get; set; } = new();
 
     protected override async Task OnPageInitializedAsync()
     {

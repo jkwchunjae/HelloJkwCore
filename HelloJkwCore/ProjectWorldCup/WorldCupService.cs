@@ -3,7 +3,6 @@
 public partial class WorldCupService : IWorldCupService
 {
     private readonly IFileSystem _fs;
-    private readonly IFileSystem _fs2018;
     private IFifa _fifa;
 
     public WorldCupService(
@@ -13,7 +12,6 @@ public partial class WorldCupService : IWorldCupService
     {
         _fifa = fifa;
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
-        _fs2018 = fsService.GetFileSystem(option.FileSystemSelect2018, option.Path);
     }
 
     public async Task<List<Team>> Get2022QualifiedTeamsAsync()
@@ -36,33 +34,6 @@ public partial class WorldCupService : IWorldCupService
         return teams;
     }
 
-    public async Task<List<League>> GetGroupsAsync()
-    {
-        return await CreateDummyGroupsAsync();
-    }
-
-    private async Task<List<League>> CreateDummyGroupsAsync()
-    {
-        var groupNames = new string[] { "A", "B", "C", "D", "E", "F", "G", "H" };
-        var qTeams = await Get2022QualifiedTeamsAsync();
-        var Qatar = qTeams.First(x => x.Name == "Qatar");
-        var result = Enumerable.Range(0, 32).Select(x => x % 4 + 1)
-            .Chunk(4)
-            .Zip(groupNames, (teamNumbers, groupName) =>
-            {
-                var group = new League { Name = groupName };
-                var teams = teamNumbers.Select(index => new Team { Id = $"{groupName}{index}", Name = $"{groupName}{index}" }).ToList();
-                if (groupName == "A")
-                    teams[0] = Qatar;
-                foreach (var team in teams)
-                    group.AddTeam(team);
-                return group;
-            })
-            .ToList();
-
-        return result;
-    }
-
     public Task<List<RankingTeamData>> GetLastRankingTeamDataAsync(Gender gender)
     {
         return _fifa.GetLastRankingAsync(gender);
@@ -73,11 +44,11 @@ public partial class WorldCupService : IWorldCupService
         var knockoutMatches = await _fifa.GetKnockoutStageMatchesAsync();
         return new KnockoutStageData
         {
-            Round16 = knockoutMatches.Where(x => x.StageName == "Round of 16").Select(x => Match.CreateFromFifaMatchData(x)).ToList(),
-            QuarterFinals = knockoutMatches.Where(x => x.StageName == "Quarter-finals").Select(x => Match.CreateFromFifaMatchData(x)).ToList(),
-            SemiFinals = knockoutMatches.Where(x => x.StageName == "Semi-finals").Select(x => Match.CreateFromFifaMatchData(x)).ToList(),
-            ThirdPlacePlayOff = knockoutMatches.Where(x => x.StageName == "Play-off for third place").Select(x => Match.CreateFromFifaMatchData(x)).First(),
-            Final = knockoutMatches.Where(x => x.StageName == "Final").Select(x => Match.CreateFromFifaMatchData(x)).First(),
+            Round16 = knockoutMatches.Where(x => x.StageName == "Round of 16").Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList(),
+            QuarterFinals = knockoutMatches.Where(x => x.StageName == "Quarter-finals").Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList(),
+            SemiFinals = knockoutMatches.Where(x => x.StageName == "Semi-finals").Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList(),
+            ThirdPlacePlayOff = knockoutMatches.Where(x => x.StageName == "Play-off for third place").Select(x => KnMatch.CreateFromFifaMatchData(x)).First(),
+            Final = knockoutMatches.Where(x => x.StageName == "Final").Select(x => KnMatch.CreateFromFifaMatchData(x)).First(),
         };
     }
 
@@ -87,9 +58,9 @@ public partial class WorldCupService : IWorldCupService
 
         teams = teams.Concat(teams).Concat(teams).ToList();
         var index = 0;
-        Func<Match> createMatch = () =>
+        Func<KnMatch> createMatch = () =>
         {
-            return new Match
+            return new KnMatch
             {
                 //HomeTeam = teams[index++],
                 //AwayTeam = teams[index++],
@@ -101,25 +72,18 @@ public partial class WorldCupService : IWorldCupService
         {
             Final = createMatch(),
             ThirdPlacePlayOff = createMatch(),
-            SemiFinals = new List<Match> { createMatch(), createMatch() },
-            QuarterFinals = new List<Match> { createMatch(), createMatch(), createMatch(), createMatch() },
-            Round16 = new List<Match> { createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch() },
+            SemiFinals = new List<KnMatch> { createMatch(), createMatch() },
+            QuarterFinals = new List<KnMatch> { createMatch(), createMatch(), createMatch(), createMatch() },
+            Round16 = new List<KnMatch> { createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch() },
         };
 
         return data;
     }
 
-    public async Task<List<Match>> GetGroupStageMatchesAsync()
-    {
-        var matches = await _fifa.GetGroupStageMatchesAsync();
-
-        return matches.Select(x => Match.CreateFromFifaMatchData(x)).ToList();
-    }
-
-    public async Task<List<Match>> GetKnockOutStageMatchesAsync()
+    public async Task<List<KnMatch>> GetKnockOutStageMatchesAsync()
     {
         var matches = await _fifa.GetKnockoutStageMatchesAsync();
 
-        return matches.Select(x => Match.CreateFromFifaMatchData(x)).ToList();
+        return matches.Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList();
     }
 }
