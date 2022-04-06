@@ -1,4 +1,5 @@
 ﻿@inherits JkwLayoutBase
+@using ProjectTrip.Pages
 
 <MudThemeProvider Theme="currentTheme" />
 <MudDialogProvider />
@@ -13,6 +14,19 @@
         <MudSpacer />
         <MudIconButton Icon="@Icons.Filled.Brightness4" Color="Color.Inherit" Edge="Edge.End" OnClick="() => ToggleTheme()" />
     </MudAppBar>
+@if (Navi.Uri.Contains("/trip"))
+{
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <TripNavMenu />
+    </MudDrawer>
+    <MudMainContent Style="height: 100%;">
+        <MudPaper Elevation="0" Style="background-color: inherit; height: 100%">
+            @Body
+        </MudPaper>
+    </MudMainContent>
+}
+else
+{
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
     </MudDrawer>
@@ -23,5 +37,6 @@
             </MudContainer>
         </MudPaper>
     </MudMainContent>
+}
 </MudLayout>
 

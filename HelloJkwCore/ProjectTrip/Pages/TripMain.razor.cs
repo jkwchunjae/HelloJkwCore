@@ -11,10 +11,10 @@ public partial class TripMain : JkwPageBase
 
     KakaoMapComponent kakaoMapComponent;
     IKakaoMap KakaoMap => kakaoMapComponent?.Instance;
-    MapCreateOption mapCreateOption = new MapCreateOption(new LatLng(33.450701, 126.570667))
+    MapCreateOption mapCreateOption = new MapCreateOption(new LatLng(36.55506321886859, 127.61013231891525))
     {
         MapTypeId = MapType.RoadMap,
-        Level = 3,
+        Level = 12,
     };
 
     protected override Task OnPageAfterRenderAsync(bool firstRender)
