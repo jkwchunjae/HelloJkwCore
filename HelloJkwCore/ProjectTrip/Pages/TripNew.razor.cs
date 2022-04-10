@@ -146,7 +146,7 @@ public partial class TripNew : JkwPageBase
             NewTrip.EndTime = DateRange.End.Value;
 
             await JS.InvokeVoidAsync("console.log", "CreateTrip2", NewTrip);
-            await TripService.CreateOrUpdateTripAsync(NewTrip);
+            await TripService.CreateTripAsync(NewTrip);
             Navi.NavigateTo($"/trip/trip/{NewTrip.Id}");
         }
     }
