@@ -28,7 +28,7 @@ public partial class TripNew : JkwPageBase
     MudForm _form;
     AppUser searchPartner;
     IList<AppUser> _allUsers;
-    List<string> DuplicatedTripId = new();
+    List<string> DuplicatedTripId = new() { "trip" };
 
     bool FormSuccess;
     bool FormSuccessed => FormSuccess && NewTrip.Positions.Any() && IsAuthenticated;
