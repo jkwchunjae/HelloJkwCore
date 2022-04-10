@@ -1,4 +1,5 @@
-﻿using KakaoMapBlazor.Marker;
+﻿using KakaoMapBlazor.InfoWindow;
+using KakaoMapBlazor.Marker;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -9,6 +10,9 @@ public partial class TripMain : JkwPageBase
     [Inject]
     private IJSRuntime JS { get; set; }
 
+    [Inject]
+    private ITripService TripService { get; set; }
+
     KakaoMapComponent kakaoMapComponent;
     IKakaoMap KakaoMap => kakaoMapComponent?.Instance;
     MapCreateOption mapCreateOption = new MapCreateOption(new LatLng(36.55506321886859, 127.61013231891525))
@@ -17,23 +21,44 @@ public partial class TripMain : JkwPageBase
         Level = 12,
     };
 
-    protected override Task OnPageAfterRenderAsync(bool firstRender)
+    protected override async Task OnPageAfterRenderAsync(bool firstRender)
     {
         if (firstRender && KakaoMap != null)
         {
-            KakaoMap.Click += async (s, e) =>
+            if (IsAuthenticated)
             {
-                await JS.InvokeVoidAsync("console.log", e.LatLng);
-                var marker = await KakaoMap.CreateMarker(new MarkerCreateOptionInMap()
-                {
-                    Position = e.LatLng,
-                });
-                marker.Click += async (s, _) =>
-                {
-                    await JS.InvokeVoidAsync("console.log", "marker clicked");
-                };
-            };
+                await Task.Delay(100);
+                await LoadUserTripListAsync();
+            }
         }
-        return Task.CompletedTask;
+    }
+
+    private async Task LoadUserTripListAsync()
+    {
+        var trips = await TripService.GetTripsAsync(User);
+        await JS.InvokeVoidAsync("console.log", trips);
+        foreach (Trip trip in trips)
+        {
+            foreach (var position in trip.Positions)
+            {
+                var marker = await KakaoMap.CreateMarker(new MarkerCreateOptionInMap
+                {
+                    Position = position,
+                });
+                var info = await KakaoMap.CreateInfoWindow(new InfoWindowCreateOption(trip.Title.Name));
+                marker.MouseOver += async (s, e) =>
+                {
+                    await info.Open(marker);
+                };
+                marker.MouseOut += async (s, e) =>
+                {
+                    await info.Close();
+                };
+                marker.Click += (s, e) =>
+                {
+                    Navi.NavigateTo($"/trip/trip/{trip.Id}");
+                };
+            }
+        }
     }
 }

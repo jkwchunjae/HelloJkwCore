@@ -3,5 +3,5 @@
 public class UserData
 {
     public UserId UserId { get; set; }
-    public List<StringId> TripList { get; set; }
+    public List<TripId> TripList { get; set; }
 }

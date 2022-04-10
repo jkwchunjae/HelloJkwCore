@@ -21,7 +21,7 @@ public class TripService : ITripService
             await _fs.UpdateUserDataAsync(userData);
         }
 
-        await _fs.UpdateUserDataAsync(userData);
+        await _fs.UpdateTripAsync(trip);
     }
 
     public Task DeleteTripAsync(AppUser user, Trip trip)

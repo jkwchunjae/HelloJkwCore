@@ -4,4 +4,17 @@
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
         Home
     </MudNavLink>
+    <MudNavLink Href="trip" Icon="@Icons.Material.Filled.AirplaneTicket">
+        여행
+    </MudNavLink>
+    @foreach (var trip in Trips)
+    {
+        var tripUrl = $"/trip/trip/{trip.Id}";
+        <MudNavLink Href="@tripUrl">
+            @trip.Title
+        </MudNavLink>
+    }
+    <MudNavLink Href="trip/new" Icon="@Icons.Material.Filled.Add">
+        새 여행
+    </MudNavLink>
 </MudNavMenu>
