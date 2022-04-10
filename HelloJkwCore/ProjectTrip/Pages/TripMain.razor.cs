@@ -13,23 +13,19 @@ public partial class TripMain : JkwPageBase
     [Inject]
     private ITripService TripService { get; set; }
 
-    KakaoMapComponent kakaoMapComponent;
-    IKakaoMap KakaoMap => kakaoMapComponent?.Instance;
+    IKakaoMap KakaoMap;
     MapCreateOption mapCreateOption = new MapCreateOption(new LatLng(36.55506321886859, 127.61013231891525))
     {
         MapTypeId = MapType.RoadMap,
         Level = 12,
     };
 
-    protected override async Task OnPageAfterRenderAsync(bool firstRender)
+    protected async Task OnMapCreated(IKakaoMap map)
     {
-        if (firstRender && KakaoMap != null)
+        KakaoMap = map;
+        if (IsAuthenticated)
         {
-            if (IsAuthenticated)
-            {
-                await Task.Delay(100);
-                await LoadUserTripListAsync();
-            }
+            await LoadUserTripListAsync();
         }
     }
 

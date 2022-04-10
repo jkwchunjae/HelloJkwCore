@@ -17,8 +17,7 @@ public partial class TripNew : JkwPageBase
     private UserManager<AppUser> UserManager { get; set; }
 
 
-    KakaoMapComponent kakaoMapComponent;
-    IKakaoMap KakaoMap => kakaoMapComponent?.Instance;
+    IKakaoMap KakaoMap;
     MapCreateOption mapCreateOption = new MapCreateOption(new LatLng(36.55506321886859, 127.61013231891525))
     {
         MapTypeId = MapType.RoadMap,
@@ -39,25 +38,23 @@ public partial class TripNew : JkwPageBase
     DateRange DateRange = new DateRange(DateTime.Now.Date, DateTime.Now.Date);
     List<AppUser> TripPartners = new();
 
-    protected override Task OnPageAfterRenderAsync(bool firstRender)
+    protected Task OnMapCreated(IKakaoMap map)
     {
-        if (firstRender)
+        KakaoMap = map;
+        KakaoMap.Click += async (s, e) =>
         {
-            KakaoMap.Click += async (s, e) =>
+            var position = e.LatLng;
+            var marker = await KakaoMap.CreateMarker(
+                new MarkerCreateOptionInMap { Position = position });
+            NewTrip.Positions.Add(position);
+            StateHasChanged();
+            marker.Click += async (s, e) =>
             {
-                var position = e.LatLng;
-                var marker = await KakaoMap.CreateMarker(
-                    new MarkerCreateOptionInMap { Position = position });
-                NewTrip.Positions.Add(position);
+                NewTrip.Positions.Remove(position);
                 StateHasChanged();
-                marker.Click += async (s, e) =>
-                {
-                    NewTrip.Positions.Remove(position);
-                    StateHasChanged();
-                    await marker.Close();
-                };
+                await marker.Close();
             };
-        }
+        };
 
         return Task.CompletedTask;
     }
