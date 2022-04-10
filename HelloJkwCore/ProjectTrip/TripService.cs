@@ -32,12 +32,19 @@ public class TripService : ITripService
         throw new NotImplementedException();
     }
 
-    public Task DeleteTripByUrlAsync(AppUser user, StringId tripId)
+    public Task DeleteTripByUrlAsync(AppUser user, TripId tripId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Trip> GetTripByUrlAsync(AppUser user, StringId tripId)
+    public async Task<bool> ExistsTripIdAsync(TripId tripId)
+    {
+        var trip = await _fs.ReadTripAsync(tripId);
+
+        return trip != null;
+    }
+
+    public async Task<Trip> GetTripByUrlAsync(AppUser user, TripId tripId)
     {
         var trip = await _fs.ReadTripAsync(tripId);
 

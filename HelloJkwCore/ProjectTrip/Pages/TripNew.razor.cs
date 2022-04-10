@@ -28,9 +28,10 @@ public partial class TripNew : JkwPageBase
     MudForm _form;
     AppUser searchPartner;
     IList<AppUser> _allUsers;
+    List<string> DuplicatedTripId = new();
 
     bool FormSuccess;
-    bool FormSuccessed => FormSuccess && NewTrip.Positions.Any();
+    bool FormSuccessed => FormSuccess && NewTrip.Positions.Any() && IsAuthenticated;
 
     Trip NewTrip = new();
     string TripTitle;
@@ -84,10 +85,17 @@ public partial class TripNew : JkwPageBase
         {
             yield return "여행 ID는 10자 이상으로 해주세요.";
         }
+        else if (DuplicatedTripId.Any(id => id.Equals(tripId, StringComparison.OrdinalIgnoreCase)))
+        {
+            yield return "여행 ID가 중복되었습니다. 다른 ID를 정해주세요.";
+        }
     }
 
     private async Task<IEnumerable<AppUser>> SearchPartner(string keyword)
     {
+        if (!IsAuthenticated)
+            return new List<AppUser>();
+
         if (_allUsers == null)
         {
             _allUsers = await UserManager.GetUsersInRoleAsync("all");
@@ -124,6 +132,15 @@ public partial class TripNew : JkwPageBase
 
         if (FormSuccessed)
         {
+            var duplicated = await TripService.ExistsTripIdAsync(new TripId(TripId));
+            if (duplicated)
+            {
+                if (!DuplicatedTripId.Contains(TripId))
+                    DuplicatedTripId.Add(TripId);
+                await _form.Validate();
+                return;
+            }
+
             NewTrip.Title = new TripTitle(TripTitle);
             NewTrip.Id = new TripId(TripId);
             NewTrip.AddUser(User);

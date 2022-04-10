@@ -8,7 +8,7 @@ public static class TripFileSystemHelper
         return tripUserPath;
     }
 
-    private static Func<Paths, string> GetTripDataPath(StringId tripId)
+    private static Func<Paths, string> GetTripDataPath(TripId tripId)
     {
         Func<Paths, string> tripDataPath = path => path["Trips"] + $"/trip.{tripId}.json";
         return tripDataPath;
@@ -44,7 +44,7 @@ public static class TripFileSystemHelper
         return await fs.WriteJsonAsync(tripUserPath, tripUserData);
     }
 
-    public static async Task<Trip> ReadTripAsync(this IFileSystem fs, StringId tripId)
+    public static async Task<Trip> ReadTripAsync(this IFileSystem fs, TripId tripId)
     {
         var tripPath = GetTripDataPath(tripId);
 
