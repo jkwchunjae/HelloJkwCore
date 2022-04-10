@@ -60,18 +60,11 @@ public class TripService : ITripService
         return trip != null;
     }
 
-    public async Task<Trip> GetTripByUrlAsync(AppUser user, TripId tripId)
+    public async Task<Trip> GetTripByUrlAsync(TripId tripId)
     {
         var trip = await _fs.ReadTripAsync(tripId);
 
-        if (trip?.Users?.Contains(user.Id) ?? false)
-        {
-            return trip;
-        }
-        else
-        {
-            return null;
-        }
+        return trip;
     }
 
     public async Task<List<Trip>> GetTripsAsync(AppUser user)
