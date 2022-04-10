@@ -11,14 +11,17 @@ public class TripService : ITripService
         _fs = fsService.GetFileSystem(tripOption.FileSystemSelect, tripOption.Path);
     }
 
-    public async Task CreateOrUpdateTripAsync(AppUser user, Trip trip)
+    public async Task CreateOrUpdateTripAsync(Trip trip)
     {
-        var userData = await _fs.ReadUserDataAsync(user);
-
-        if (!userData.TripList.Contains(trip.Id))
+        foreach (var userId in trip.Users)
         {
-            userData.TripList.Add(trip.Id);
-            await _fs.UpdateUserDataAsync(userData);
+            var userData = await _fs.ReadUserDataAsync(userId);
+
+            if (!userData.TripList.Contains(trip.Id))
+            {
+                userData.TripList.Add(trip.Id);
+                await _fs.UpdateUserDataAsync(userData);
+            }
         }
 
         await _fs.UpdateTripAsync(trip);

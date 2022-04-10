@@ -16,7 +16,12 @@ public static class TripFileSystemHelper
 
     public static async Task<UserData> ReadUserDataAsync(this IFileSystem fs, AppUser user)
     {
-        var tripUserPath = GetTripUserPath(user.Id);
+        return await fs.ReadUserDataAsync(user.Id);
+    }
+
+    public static async Task<UserData> ReadUserDataAsync(this IFileSystem fs, UserId userId)
+    {
+        var tripUserPath = GetTripUserPath(userId);
         if (await fs.FileExistsAsync(tripUserPath))
         {
             var userData = await fs.ReadJsonAsync<UserData>(tripUserPath);
@@ -26,7 +31,7 @@ public static class TripFileSystemHelper
         {
             return new UserData
             {
-                UserId = user.Id,
+                UserId = userId,
                 TripList = new(),
             };
         }
