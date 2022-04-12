@@ -1,0 +1,27 @@
+﻿<MudDialog>
+  <DialogContent>
+    <div>
+      if (Partners.Count == 1)
+      {
+        <MudChip>@Partners.First().DisplayName</MudChip>
+      }
+      else
+      {
+        @foreach (var partner in Partners)
+        {
+          <MudChip OnClose="@(() => RemovePartner(partner))">
+            @partner.DisplayName</MudChip>
+        }
+      }
+    </div>
+    <MudAutocomplete T="AppUser" Label="동반인 추가" @bind-Value="searchPartner"
+      SearchFunc="@SearchPartner"
+      ToStringFunc="@(user => user?.DisplayName)"
+      SelectOnClick="true"
+      @onselect="OnPartnerSelect" />
+  </DialogContent>
+  <DialogActions>
+    <MudButton OnClick="Cancel">Cancel</MudButton>
+    <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+  </DialogActions>
+</MudDialog>

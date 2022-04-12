@@ -4,6 +4,8 @@ global using System.Linq;
 global using System.Text;
 global using System.Threading.Tasks;
 global using JkwExtensions;
+global using MudBlazor;
+global using MudBlazor.Dialog;
 global using Common;
 global using KakaoMapBlazor;
 global using KakaoMapBlazor.Map;
