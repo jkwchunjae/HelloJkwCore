@@ -1,7 +1,7 @@
 ﻿<MudDialog>
   <DialogContent>
     <div>
-      if (Companions.Count == 1)
+      @if (Companions.Count == 1)
       {
         <MudChip>@Companions.First().DisplayName</MudChip>
       }
