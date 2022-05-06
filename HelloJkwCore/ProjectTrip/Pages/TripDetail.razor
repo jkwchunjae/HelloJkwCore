@@ -3,22 +3,51 @@
 @using KakaoMapBlazor;
 
 <KakaoMapComponent
-    OnMapCreated="OnMapCreated"
-    Style="width: 100%; height: 100%;"
+  OnMapCreated="OnMapCreated"
+  Style="width: 100%; height: 100%;"
 ></KakaoMapComponent>
 
 @if (trip != null)
 {
 <div style="width: 600px; top: 0; left: 0; z-index: 1; position: absolute;">
-    <div style="padding: 15px;">
-        <h3>@trip.Title (@trip.BeginTime.ToString("yyyy.M.d") - @trip.EndTime.ToString("M.d"))</h3>
-        <div>
-            @foreach (var user in partners)
-            {
-                <MudChip Size="Size.Small">@user.DisplayName</MudChip>
-            }
-            <MudIconButton Icon="@Icons.Filled.Add" OnClick="OpenPartnerDialog" Size="Size.Small"></MudIconButton>
-        </div>
+  <div style="padding: 15px;">
+    <h3>@trip.TitleWithDate</h3>
+    <div>
+      @foreach (var user in Companions)
+      {
+        <MudChip Size="Size.Small">@user.DisplayName</MudChip>
+      }
+      <MudIconButton Icon="@Icons.Filled.Add" OnClick="OpenCompanionsDialog" Size="Size.Small"></MudIconButton>
     </div>
+    <div>
+      @foreach (var visited in trip.VisitedPlaces)
+      {
+        <div>
+        <MudChip>@visited.Name</MudChip>
+        </div>
+      }
+      <MudButton StartIcon="@Icons.Filled.AddLocation"
+        OnClick="OpenNewVisitedPlaceDialog"
+        >장소 추가</MudButton>
+    </div>
+    @if (NewPlaceData != null)
+    {
+    <div style="max-width: 200px;">
+      <MudTextField @bind-Value="NewPlaceData.PlaceName" Label="장소 이름" />
+      <MudDatePicker @bind-Date="NewPlaceData.StartDate" />
+      <MudTimePicker @bind-Time="NewPlaceData.StartTime" AutoClose="true"/>
+      <MudNumericField @bind-Value="NewPlaceData.Expense" Label="지출" HideSpinButtons="true" />
+      <MudField>
+        @foreach (var marker in NewPlaceData.Markers)
+        {
+          <MudIcon Icon="@Icons.Filled.AddLocation" />
+        }
+      </MudField>
+      <MudTextField @bind-Value="NewPlaceData.Review" Label="리뷰" />
+      <MudButton OnClick="AddNewPlace">추가</MudButton>
+      <MudButton OnClick="CancelNewPlace">취소</MudButton>
+    </div>
+    }
+  </div>
 </div>
 }
