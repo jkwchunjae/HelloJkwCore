@@ -21,15 +21,15 @@ public static class Json
             WriteIndented = true,
         };
     }
-    public static T Deserialize<T>(string jsonText)
+    public static T Deserialize<T>(string jsonText, params JsonConverter[] converters)
     {
-        return JsonConvert.DeserializeObject<T>(jsonText);
+        return JsonConvert.DeserializeObject<T>(jsonText, converters);
         //return JsonSerializer.Deserialize<T>(jsonText, _options);
     }
 
-    public static string Serialize<T>(T value)
+    public static string Serialize<T>(T value, params JsonConverter[] converters)
     {
-        return JsonConvert.SerializeObject(value, Formatting.Indented);
+        return JsonConvert.SerializeObject(value, Formatting.Indented, converters);
         //return JsonSerializer.Serialize<T>(value, _options);
     }
 

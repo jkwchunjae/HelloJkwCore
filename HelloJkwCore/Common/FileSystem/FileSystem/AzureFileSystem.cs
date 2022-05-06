@@ -124,7 +124,7 @@ public class AzureFileSystem : IFileSystem
         return _pathOf;
     }
 
-    public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default(CancellationToken))
+    public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, JsonConverter[] converters = null, CancellationToken ct = default(CancellationToken))
     {
         var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
         _logger?.LogDebug("ReadJsonAsync. container: {container}, path: {path}", containerName, path);
@@ -138,7 +138,7 @@ public class AzureFileSystem : IFileSystem
             var reader = new StreamReader(response.Value.Content);
             string text = await reader.ReadToEndAsync();
 
-            return Json.Deserialize<T>(text);
+            return Json.Deserialize<T>(text, converters);
         }
         catch (RequestFailedException ex)
         {
@@ -211,6 +211,29 @@ public class AzureFileSystem : IFileSystem
         catch (Exception ex)
         {
             _logger?.LogError(ex, "[Error] WriteTextAsync. container: {container}, path: {path}", containerName, path);
+            throw;
+        }
+    }
+
+    public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, JsonConverter[] converters, CancellationToken ct = default)
+    {
+        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        _logger?.LogDebug("WriteJsonAsync. container: {container}, path: {path}", containerName, path);
+        try
+        {
+            var client = await GetContainerClient(containerName);
+            var blobClient = client.GetBlobClient(path);
+
+            var data = Json.Serialize(obj, converters);
+            using (var stream = new MemoryStream(_encoding.GetBytes(data)))
+            {
+                var response = await blobClient.UploadAsync(stream, overwrite: true, cancellationToken: ct);
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "[Error] WriteJsonAsync. container: {container}, path: {path}", containerName, path);
             throw;
         }
     }

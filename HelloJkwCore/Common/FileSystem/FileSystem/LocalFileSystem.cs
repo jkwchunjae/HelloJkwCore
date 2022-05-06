@@ -66,14 +66,14 @@ public class LocalFileSystem : IFileSystem
         return _pathOf;
     }
 
-    public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, JsonConverter[] converters, CancellationToken ct = default)
     {
         var path = pathFunc(GetPathOf());
         if (!File.Exists(path))
             return default(T);
 
         var text = await File.ReadAllTextAsync(path, _encoding);
-        return Json.Deserialize<T>(text);
+        return Json.Deserialize<T>(text, converters);
     }
 
     public async Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
@@ -95,6 +95,18 @@ public class LocalFileSystem : IFileSystem
             Directory.CreateDirectory(dir.FullName);
         }
         await File.WriteAllTextAsync(path, Json.Serialize(obj), _encoding, ct);
+        return true;
+    }
+
+    public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, JsonConverter[] converters, CancellationToken ct = default)
+    {
+        var path = pathFunc(GetPathOf());
+        var dir = Directory.GetParent(path);
+        if (!Directory.Exists(dir.FullName))
+        {
+            Directory.CreateDirectory(dir.FullName);
+        }
+        await File.WriteAllTextAsync(path, Json.Serialize(obj, converters), _encoding, ct);
         return true;
     }
 

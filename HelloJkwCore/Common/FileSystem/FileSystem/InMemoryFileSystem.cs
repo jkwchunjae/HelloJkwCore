@@ -64,7 +64,7 @@ public class InMemoryFileSystem : IFileSystem
         return _pathOf;
     }
 
-    public Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    public Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, JsonConverter[] converters, CancellationToken ct = default)
     {
         var path = pathFunc(GetPathOf());
 
@@ -72,7 +72,7 @@ public class InMemoryFileSystem : IFileSystem
             return Task.FromResult(default(T));
 
         var text = _files[path];
-        return Task.FromResult(Json.Deserialize<T>(text));
+        return Task.FromResult(Json.Deserialize<T>(text, converters));
     }
 
     public Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
@@ -90,6 +90,13 @@ public class InMemoryFileSystem : IFileSystem
     {
         var path = pathFunc(GetPathOf());
         _files[path] = Json.Serialize(obj);
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, JsonConverter[] converters, CancellationToken ct = default)
+    {
+        var path = pathFunc(GetPathOf());
+        _files[path] = Json.Serialize(obj, converters);
         return Task.FromResult(true);
     }
 

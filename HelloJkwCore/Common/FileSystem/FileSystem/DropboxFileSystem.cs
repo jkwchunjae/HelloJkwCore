@@ -99,12 +99,12 @@ public class DropboxFileSystem : IFileSystem
             .ToList();
     }
 
-    public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, JsonConverter[] converters, CancellationToken ct = default)
     {
         var path = pathFunc(_paths);
         try
         {
-            return await _client.ReadJsonAsync<T>(path);
+            return await _client.ReadJsonAsync<T>(path, converters);
         }
         catch (ApiException<DownloadError>)
         {
@@ -139,6 +139,24 @@ public class DropboxFileSystem : IFileSystem
         try
         {
             await _client.WriteJsonAsync(path, obj, _encoding);
+            return true;
+        }
+        catch (ApiException<UploadError>)
+        {
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, JsonConverter[] converters, CancellationToken ct = default)
+    {
+        var path = pathFunc(_paths);
+        try
+        {
+            await _client.WriteJsonAsync(path, obj, converters, _encoding);
             return true;
         }
         catch (ApiException<UploadError>)

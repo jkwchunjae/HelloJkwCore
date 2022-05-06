@@ -15,10 +15,10 @@ public static class DropboxExtensions
             dropboxOption.ClientSecret);
     }
 
-    public static async Task<T> ReadJsonAsync<T>(this DropboxClient client, string path)
+    public static async Task<T> ReadJsonAsync<T>(this DropboxClient client, string path, JsonConverter[] converters)
     {
         var fileText = await client.ReadTextAsync(path);
-        return Json.Deserialize<T>(fileText);
+        return Json.Deserialize<T>(fileText, converters);
     }
     public static async Task<string> ReadTextAsync(this DropboxClient client, string path)
     {
@@ -42,6 +42,12 @@ public static class DropboxExtensions
     public static async Task<FileMetadata> WriteJsonAsync<T>(this DropboxClient client, string path, T obj, Encoding encoding = null)
     {
         var text = Json.Serialize(obj);
+        return await client.WriteTextAsync(path, text, encoding);
+    }
+
+    public static async Task<FileMetadata> WriteJsonAsync<T>(this DropboxClient client, string path, T obj, JsonConverter[] converters, Encoding encoding = null)
+    {
+        var text = Json.Serialize(obj, converters);
         return await client.WriteTextAsync(path, text, encoding);
     }
 }
