@@ -14,6 +14,36 @@ public class Trip
     /// <summary> 대표 위치, 요약 화면에서 사용함. </summary>
     public List<LatLng> Positions { get; set; } = new();
 
+    [JsonIgnore]
+    public string TitleWithDate
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Title.Name))
+                return string.Empty;
+
+            if (BeginTime.Year == EndTime.Year
+                && BeginTime.Month == EndTime.Month
+                && BeginTime.Day == EndTime.Day)
+            {
+                return $"{Title} {BeginTime:yyyy.M.d}";
+            }
+            else if (BeginTime.Year == EndTime.Year
+                && BeginTime.Month == EndTime.Month)
+            {
+                return $"{Title} {BeginTime:yyyy.M.d} - {EndTime.Day}";
+            }
+            else if (BeginTime.Year == EndTime.Year)
+            {
+                return $"{Title} {BeginTime:yyyy.M.d} - {EndTime:M.d}";
+            }
+            else
+            {
+                return $"{Title} {BeginTime:yyyy.M.d} - {EndTime:yyyy.M.d}";
+            }
+        }
+    }
+
     public void AddUser(AppUser user)
     {
         Companions ??= new();
