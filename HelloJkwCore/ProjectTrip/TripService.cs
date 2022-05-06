@@ -17,7 +17,7 @@ public class TripService : ITripService
         if (exists)
             return;
 
-        foreach (var userId in trip.Users)
+        foreach (var userId in trip.Companions)
         {
             var userData = await _fs.ReadUserDataAsync(userId);
 
@@ -76,7 +76,7 @@ public class TripService : ITripService
             .WhenAll();
 
         var myTrips = trips
-            .Where(trip => trip?.Users?.Contains(user.Id) ?? false)
+            .Where(trip => trip?.Companions?.Contains(user.Id) ?? false)
             .ToList();
 
         return myTrips;

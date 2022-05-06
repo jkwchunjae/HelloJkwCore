@@ -10,17 +10,17 @@ public class Trip
     public DateTime BeginTime { get; set; }
     public DateTime EndTime { get; set; }
     public List<VisitedPlace> VisitedPlaces { get; set; } = new();
-    public List<UserId> Users { get; set; } = new();
+    public List<UserId> Companions { get; set; } = new();
     /// <summary> 대표 위치, 요약 화면에서 사용함. </summary>
     public List<LatLng> Positions { get; set; } = new();
 
     public void AddUser(AppUser user)
     {
-        Users ??= new();
+        Companions ??= new();
 
-        if (!Users.Contains(user.Id))
+        if (!Companions.Contains(user.Id))
         {
-            Users.Add(user.Id);
+            Companions.Add(user.Id);
         }
     }
 
