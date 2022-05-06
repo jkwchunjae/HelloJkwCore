@@ -120,7 +120,7 @@ public partial class TripDetail : JkwPageBase
 
             if (place != null)
             {
-                await TripService.UpdateTripAsync(trip.Id, trip =>
+                this.trip = await TripService.UpdateTripAsync(trip.Id, trip =>
                 {
                     trip.VisitedPlaces.Add(place);
                     return ValueTask.FromResult(trip);
@@ -128,6 +128,8 @@ public partial class TripDetail : JkwPageBase
 
                 NewPlaceData = null;
                 KakaoMap.Click -= KakaoMap_Click_NewPlace;
+
+                StateHasChanged();
             }
         }
     }
