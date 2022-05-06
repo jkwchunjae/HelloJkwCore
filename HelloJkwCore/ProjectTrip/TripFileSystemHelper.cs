@@ -1,7 +1,14 @@
-﻿namespace ProjectTrip;
+﻿using Newtonsoft.Json;
+
+namespace ProjectTrip;
 
 public static class TripFileSystemHelper
 {
+    private static JsonConverter[] Converters = new[]
+    {
+        new LatLngJsonConverter(),
+    };
+
     private static Func<Paths, string> GetTripUserPath(UserId userId)
     {
         Func<Paths, string> tripUserPath = path => path["Users"] + $"/tripuser.{userId}.json";
@@ -50,7 +57,7 @@ public static class TripFileSystemHelper
 
         if (await fs.FileExistsAsync(tripPath))
         {
-            var trip = await fs.ReadJsonAsync<Trip>(tripPath);
+            var trip = await fs.ReadJsonAsync<Trip>(tripPath, Converters);
             return trip;
         }
         else
@@ -63,6 +70,6 @@ public static class TripFileSystemHelper
     {
         var tripPath = GetTripDataPath(trip.Id);
 
-        return await fs.WriteJsonAsync(tripPath, trip);
+        return await fs.WriteJsonAsync(tripPath, trip, Converters);
     }
 }
