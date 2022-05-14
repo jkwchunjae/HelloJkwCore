@@ -5,12 +5,15 @@ public partial class DiaryService : IDiaryService
     private readonly IFileSystem _fs;
     private readonly IDiarySearchService _diarySearchService;
     private readonly Dictionary<DiaryName, List<DiaryFileName>> _filesCache = new();
+    private readonly IBackgroundTaskQueue _backgroundQueue;
 
     public DiaryService(
         DiaryOption option,
+        IBackgroundTaskQueue backgroundQueue,
         IDiarySearchService diarySearchService,
         IFileSystemService fsService)
     {
+        _backgroundQueue = backgroundQueue;
         _diarySearchService = diarySearchService;
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
     }
@@ -93,11 +96,11 @@ public partial class DiaryService : IDiaryService
 
         if (!diary.IsSecret)
         {
-            if (_diarySearchService != null)
+            _backgroundQueue?.QueueBackgroundWorkItem(async token =>
             {
-                await _diarySearchService.AppendDiaryTextAsync(diary.DiaryName, diaryFileName, text);
-                await _diarySearchService.SaveDiaryTrie(diary.DiaryName);
-            }
+                await _diarySearchService?.AppendDiaryTextAsync(diary.DiaryName, diaryFileName, text);
+                await _diarySearchService?.SaveDiaryTrie(diary.DiaryName);
+            });
         }
 
         return content;

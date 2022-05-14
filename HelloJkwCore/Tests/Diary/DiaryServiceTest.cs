@@ -39,7 +39,7 @@ public class DiaryServiceTest
 
         var fileSystemService = new FileSystemService(fsOption, null, null);
 
-        _diaryService = new DiaryService(diaryOption, null, fileSystemService);
+        _diaryService = new DiaryService(diaryOption, null, null, fileSystemService);
 
         _user = new AppUser("Test", "1234")
         {
