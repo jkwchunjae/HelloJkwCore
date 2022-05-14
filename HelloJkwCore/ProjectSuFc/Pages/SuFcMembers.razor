@@ -1,0 +1,24 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+@page "/sufc/members"
+
+<h1>맴버</h1>
+
+<MudSimpleTable>
+    <tbody>
+        @foreach (var member in Members)
+        {
+            <tr>
+                <td>@member.Name</td>
+            </tr>
+        }
+        <tr>
+            <td>
+                <MudTextField T="string" @bind-Value="NewMemberName" Variant="Variant.Text"></MudTextField>
+                <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Color="Color.Info"
+                    OnClick="(async () => await AddNewMember(NewMemberName))"
+                    >추가</MudButton>
+            </td>
+        </tr>
+    </tbody>
+</MudSimpleTable>
