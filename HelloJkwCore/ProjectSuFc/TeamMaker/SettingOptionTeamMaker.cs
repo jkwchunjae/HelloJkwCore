@@ -38,9 +38,9 @@ public class SettingOptionTeamMaker : TeamMaker
 
         var score = 0;
 
-        if (option.SplitOptions?.Any() ?? false)
+        if (option?.SplitOptions?.Any() ?? false)
         {
-            foreach (var splitOption in option.SplitOptions)
+            foreach (var splitOption in option.SplitOptions.Where(x => x.Names?.Count >= 2))
             {
                 var teams = splitOption.Names
                     .Select(name => result.Players.FirstOrDefault(x => x.MemberName == name).TeamName)
@@ -51,9 +51,9 @@ public class SettingOptionTeamMaker : TeamMaker
             }
         }
 
-        if (option.MergeOptions?.Any() ?? false)
+        if (option?.MergeOptions?.Any() ?? false)
         {
-            foreach (var mergeOption in option.MergeOptions)
+            foreach (var mergeOption in option.MergeOptions.Where(x => x.Names?.Count >= 2))
             {
                 var teams = mergeOption.Names
                     .Select(name => result.Players.FirstOrDefault(x => x.MemberName == name).TeamName)

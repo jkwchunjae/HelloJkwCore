@@ -50,33 +50,8 @@ public partial class SuFcSplitTeam : JkwPageBase
             strategy: TeamMakerStrategy.TeamSetting,
             option: teamSettingOption);
 
-        var arrayLength = result.GroupByTeam.Max(team => team.Value.Count);
-
-        Teams = new MemberName[arrayLength][];
-        for (int i = 0; i < arrayLength; i++)
-        {
-            Teams[i] = new MemberName[result.TeamNames.Count];
-            for (var j = 0; j < result.TeamNames.Count; j++)
-            {
-                var teamName = result.TeamNames[j];
-                Teams[i][j] = result.GroupByTeam[teamName].GetMemberName(i);
-            }
-        }
+        Teams = result.NamesForTable;
         TeamResult = result;
     }
 }
 
-static class Extensions
-{
-    public static MemberName GetMemberName(this List<MemberName> members, int index)
-    {
-        if (index < members.Count)
-        {
-            return members[index];
-        }
-        else
-        {
-            return null;
-        }
-    }
-}

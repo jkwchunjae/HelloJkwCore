@@ -1,0 +1,41 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+@page "/sufc/team-setting"
+
+<span>선택하면 자동 저장됩니다.</span>
+<h2>이 분들은 떨어뜨려야 합니다</h2>
+<MudSimpleTable>
+    <thead>
+        <tr>
+            <th>번호</th>
+            <th>이름</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var (split, index) in teamSettingOption.SplitOptions.Select((split, index) => (split, index + 1)))
+    {
+        <tr>
+            <td>@index</td>
+            <td>
+                <div>
+                @foreach (var member in Members)
+                {
+                    var checkedMember = split.Names.Contains(member.Name);
+                    <MudCheckBox T="bool" Checked="@checkedMember" Label="@member.Name.Name" Dense="true" Style="margin-right: 10px;"
+                        CheckedChanged="(async () => await (checkedMember ? Uncheck(split, member) : Check(split, member)))"></MudCheckBox>
+                }
+                </div>
+                @if (split.Names?.Count >= 2)
+                {
+                    string names = split.Names.StringJoin(", ");
+                <div>
+                    <span>@names 님은 되도록 한 팀에 만나지 않도록 설정합니다.</span>
+                </div>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</MudSimpleTable>
+
+<h2>이 사람들은 붙여놔야 합니다</h2>
