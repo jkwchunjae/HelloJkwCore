@@ -1,0 +1,19 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+
+<div>
+@foreach (var member in Members)
+{
+    var checkedMember = MergeSplitOption.Names?.Contains(member.Name) ?? false;
+    <MudCheckBox T="bool" Checked="@checkedMember" Label="@member.Name.Name" Dense="true" Style="margin-right: 10px;"
+        CheckedChanged="(async () => await (checkedMember ? Uncheck(member) : Check(member)))"></MudCheckBox>
+}
+</div>
+@if (MergeSplitOption.Names?.Count >= 2)
+{
+    string names = MergeSplitOption.Names.StringJoin(", ");
+    string message = MessageTemplate(names);
+    <div>
+        <span>@message</span>
+    </div>
+}

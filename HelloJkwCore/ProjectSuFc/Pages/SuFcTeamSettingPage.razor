@@ -14,28 +14,47 @@
     <tbody>
     @foreach (var (split, index) in teamSettingOption.SplitOptions.Select((split, index) => (split, index + 1)))
     {
+        Func<string, string> mt = (string names) => $"{names} 님은 되도록 한 팀이 되지 않도록 설정합니다.";
         <tr>
             <td>@index</td>
             <td>
-                <div>
-                @foreach (var member in Members)
-                {
-                    var checkedMember = split.Names.Contains(member.Name);
-                    <MudCheckBox T="bool" Checked="@checkedMember" Label="@member.Name.Name" Dense="true" Style="margin-right: 10px;"
-                        CheckedChanged="(async () => await (checkedMember ? Uncheck(split, member) : Check(split, member)))"></MudCheckBox>
-                }
-                </div>
-                @if (split.Names?.Count >= 2)
-                {
-                    string names = split.Names.StringJoin(", ");
-                <div>
-                    <span>@names 님은 되도록 한 팀에 만나지 않도록 설정합니다.</span>
-                </div>
-                }
+                <MergeSplitCheckComponent
+                    Members="Members"
+                    MergeSplitOption="split"
+                    Checked="(async (member) => await Check(split, member))"
+                    Unchecked="(async (member) => await Uncheck(split, member))"
+                    MessageTemplate="mt"
+                ></MergeSplitCheckComponent>
             </td>
         </tr>
     }
     </tbody>
 </MudSimpleTable>
 
-<h2>이 사람들은 붙여놔야 합니다</h2>
+<h2>이 분들은 붙여놔야 합니다</h2>
+<MudSimpleTable>
+    <thead>
+        <tr>
+            <th>번호</th>
+            <th>이름</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var (merge, index) in teamSettingOption.MergeOptions.Select((merge, index) => (merge, index + 1)))
+    {
+        Func<string, string> mt = (string names) => $"{names} 님은 되도록 한 팀이 되도록 설정합니다.";
+        <tr>
+            <td>@index</td>
+            <td>
+                <MergeSplitCheckComponent
+                    Members="Members"
+                    MergeSplitOption="merge"
+                    Checked="(async (member) => await Check(merge, member))"
+                    Unchecked="(async (member) => await Uncheck(merge, member))"
+                    MessageTemplate="mt"
+                ></MergeSplitCheckComponent>
+            </td>
+        </tr>
+    }
+    </tbody>
+</MudSimpleTable>
