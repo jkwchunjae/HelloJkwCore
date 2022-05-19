@@ -6,7 +6,11 @@
 
 <h3>참석자 선택</h3>
 
+@if (User?.HasRole(UserRole.SuFcAdmin) ?? false)
+{
 <MudLink Href="sufc/members">맴버 추가</MudLink>
+<MudLink Href="sufc/team-setting-option">팀 세팅 옵션 설정</MudLink>
+}
 
 <div>
     @foreach (var member in Members)
