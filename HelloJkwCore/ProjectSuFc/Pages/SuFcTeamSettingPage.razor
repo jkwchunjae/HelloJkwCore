@@ -14,7 +14,7 @@
     <tbody>
     @foreach (var (split, index) in teamSettingOption.SplitOptions.Select((split, index) => (split, index + 1)))
     {
-        Func<string, string> mt = (string names) => $"{names} 님은 되도록 한 팀이 되지 않도록 설정합니다.";
+        Func<IEnumerable<MemberName>, string> mt = (memberNames) => $"{memberNames.StringJoin(", ")} 님은 되도록 한 팀이 되지 않도록 설정합니다.";
         <tr>
             <td>@index</td>
             <td>
@@ -42,7 +42,7 @@
     <tbody>
     @foreach (var (merge, index) in teamSettingOption.MergeOptions.Select((merge, index) => (merge, index + 1)))
     {
-        Func<string, string> mt = (string names) => $"{names} 님은 되도록 한 팀이 되도록 설정합니다.";
+        Func<IEnumerable<MemberName>, string> mt = (memberNames) => $"{memberNames.StringJoin(", ")} 님은 되도록 한 팀이 되도록 설정합니다.";
         <tr>
             <td>@index</td>
             <td>

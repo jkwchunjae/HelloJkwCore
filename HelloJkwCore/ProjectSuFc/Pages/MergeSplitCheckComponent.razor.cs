@@ -6,7 +6,7 @@ public partial class MergeSplitCheckComponent : JkwPageBase
     [Parameter] public MergeSplitOption MergeSplitOption { get; set; }
     [Parameter] public EventCallback<Member> Checked { get; set; }
     [Parameter] public EventCallback<Member> Unchecked { get; set; }
-    [Parameter] public Func<string, string> MessageTemplate { get; set; }
+    [Parameter] public Func<IEnumerable<MemberName>, string> MessageTemplate { get; set; }
 
     private async Task Uncheck(Member member)
     {
