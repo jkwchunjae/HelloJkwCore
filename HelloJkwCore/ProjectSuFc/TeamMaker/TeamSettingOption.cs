@@ -2,7 +2,7 @@
 
 public class MergeSplitOption
 {
-    public List<MemberName> Names { get; set; }
+    public List<MemberName> Names { get; set; } = new();
     public double Probability { get; set; }
 }
 public class TeamSettingOption

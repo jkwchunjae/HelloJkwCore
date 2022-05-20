@@ -26,7 +26,7 @@ public class SuFcTeamMakerTest
     }
 
     [Fact]
-    public void SplitOptionTest_분리조건_사람수가_팀_수보다_적은경우()
+    public async Task SplitOptionTest_분리조건_사람수가_팀_수보다_적은경우()
     {
         var teamMaker = new SettingOptionTeamMaker();
 
@@ -36,7 +36,7 @@ public class SuFcTeamMakerTest
             SplitOptions = new () { new () { Names = new () { _names[0], _names[1] }, }, },
         };
 
-        var teamResult = teamMaker.MakeTeam_Internal(_names, teamCount, settingOption);
+        var teamResult = await teamMaker.MakeTeam_Internal(_names, teamCount, settingOption);
 
         var p0 = teamResult.Players.First(x => x.MemberName == _names[0]);
         var p1 = teamResult.Players.First(x => x.MemberName == _names[1]);
@@ -52,7 +52,7 @@ public class SuFcTeamMakerTest
     }
 
     [Fact]
-    public void SplitOptionTest_분리조건_사람수가_팀_수보다_많은경우()
+    public async Task SplitOptionTest_분리조건_사람수가_팀_수보다_많은경우()
     {
         var teamMaker = new SettingOptionTeamMaker();
 
@@ -63,7 +63,7 @@ public class SuFcTeamMakerTest
             SplitOptions = new () { new () { Names = splitNames }, },
         };
 
-        var result = teamMaker.MakeTeam_Internal(_names, teamCount, settingOption);
+        var result = await teamMaker.MakeTeam_Internal(_names, teamCount, settingOption);
 
         var splitPlayers = result.Players.Where(x => splitNames.Any(name => name == x.MemberName));
         var grouped = splitPlayers
@@ -79,7 +79,7 @@ public class SuFcTeamMakerTest
     }
 
     [Fact]
-    public void SplitOptionTest_분리조건이_여러가지인_경우()
+    public async Task SplitOptionTest_분리조건이_여러가지인_경우()
     {
         var teamMaker = new SettingOptionTeamMaker();
 
@@ -93,7 +93,7 @@ public class SuFcTeamMakerTest
             },
         };
 
-        var result = teamMaker.MakeTeam_Internal(_names, teamCount, settingOption);
+        var result = await teamMaker.MakeTeam_Internal(_names, teamCount, settingOption);
 
         var team0 = result.Players.First(x => x.MemberName == _names[0]);
         var team1 = result.Players.First(x => x.MemberName == _names[1]);

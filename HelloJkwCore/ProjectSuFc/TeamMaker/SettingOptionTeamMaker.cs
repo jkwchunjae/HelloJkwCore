@@ -2,81 +2,69 @@
 
 public class SettingOptionTeamMaker : TeamMaker
 {
-    public override Task<TeamResult> MakeTeamAsync(List<MemberName> names, int teamCount, TeamSettingOption option)
+    public override async Task<TeamResult> MakeTeamAsync(List<MemberName> names, int teamCount, TeamSettingOption option)
     {
-        var result = MakeTeam_Internal(names, teamCount, option);
-        return Task.FromResult(result);
+        var result = await MakeTeam_Internal(names, teamCount, option);
+        return result;
     }
 
-    public TeamResult MakeTeam_Internal(List<MemberName> names, int teamCount, TeamSettingOption option)
+    public async Task<TeamResult> MakeTeam_Internal(List<MemberName> names, int teamCount, TeamSettingOption option)
     {
-        var teamResult = new TeamResult(teamCount);
+        var ramdomTeamMaker = new FullRandomTeamMaker();
 
-        foreach (var splitOption in option.SplitOptions)
+        TeamResult result = null;
+        int resultScore = 0;
+
+        foreach (var _ in Enumerable.Range(1, 100))
         {
-            var remainNames = splitOption.Names.Where(x => teamResult.Players.Empty(e => e.MemberName == x)).ToList();
-            var userCount = remainNames.Count; // userCount = 5, teamCount = 3
-            var teamSetCount = userCount / teamCount; // teamSetCount = 1
-            var teamNames = Enumerable.Range(1, teamSetCount)
-                .SelectMany(_ => MakeTeamNameList(teamCount))
-                .ToList(); // ABC
-            var additionalTeamNames = MakeTeamNameList(teamCount)
-                .RandomShuffle()
-                .Take(userCount % teamCount); // BC
-            teamNames.AddRange(additionalTeamNames); // ABCBC
+            var randomResult = await ramdomTeamMaker.MakeTeamAsync(names, teamCount, option);
+            var randomScore = CalcTeamResult(randomResult, option);
 
-            var splitResult = remainNames.Zip(teamNames.RandomShuffle(), (n, t) => (n, t)).ToList();
-
-            teamResult.Players.AddRange(splitResult);
+            if (result == null || resultScore < randomScore)
+            {
+                result = randomResult;
+                resultScore = randomScore;
+            }
         }
 
-        var remains = names
-            .Where(x => teamResult.Players.Empty(e => e.MemberName == x))
-            .RandomShuffle()
-            .ToList();
-
-        foreach (var name in remains)
-        {
-            var newTeam = GetNextTeamName(teamResult);
-
-            teamResult.Players.Add((name, newTeam));
-        }
-
-        teamResult.Score = teamResult.Players
-            .ToDictionary(x => x.MemberName, x => WhereIs(option.SplitOptions, x.MemberName));
-
-        return teamResult;
+        return result;
     }
 
-    private TeamName GetNextTeamName(TeamResult teamResult)
+    private int CalcTeamResult(TeamResult result, TeamSettingOption option)
     {
-        var ordered = teamResult.TeamNames
-            .Select(x => new { TeamName = x, Count = teamResult.Players.Count(e => e.TeamName == x) })
-            .OrderBy(x => x.Count)
-            .ToList();
+        // 점수가 높으면 잘 됐다는 뜻.
+        // 분리해야 하는데 합쳐져 있으면 -1
+        // 합쳐야 하는데 안 합쳐져 있으면 -1
 
-        if (ordered.First().Count == ordered.Last().Count)
+        var score = 0;
+
+        if (option?.SplitOptions?.Any() ?? false)
         {
-            // 모든 팀의 멤버 수가 다 같은 상태
-            // 아무거나 골라 주자
-            var result = ordered
-                .RandomShuffle()
-                .First()
-                .TeamName;
-            return result;
+            foreach (var splitOption in option.SplitOptions.Where(x => x.Names?.Count >= 2))
+            {
+                var teams = splitOption.Names
+                    .Select(name => result.Players.FirstOrDefault(x => x.MemberName == name).TeamName)
+                    .ToList();
+                var splitScore = teams.Count - teams.Distinct().Count();
+
+                score -= splitScore;
+            }
         }
-        else
+
+        if (option?.MergeOptions?.Any() ?? false)
         {
-            var result = ordered.First().TeamName;
-            return result;
+            foreach (var mergeOption in option.MergeOptions.Where(x => x.Names?.Count >= 2))
+            {
+                var teams = mergeOption.Names
+                    .Select(name => result.Players.FirstOrDefault(x => x.MemberName == name).TeamName)
+                    .ToList();
+
+                var mergeScore = teams.Distinct().Count() - 1;
+
+                score -= mergeScore;
+            }
         }
-    }
 
-    private double WhereIs(List<MergeSplitOption> options, MemberName name)
-    {
-        return options.Select((x, i) => new { Option = x, Index = i + 1 })
-            .FirstOrDefault(x => x.Option.Names.Contains(name))
-            ?.Index ?? 0;
-
+        return score;
     }
 }

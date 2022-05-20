@@ -21,6 +21,26 @@ public class TeamResult
     [JsonIgnore]
     public int MaximumTeamSize => GroupByTeam.MaxOrNull(x => x.Value.Count) ?? 0;
 
+    [JsonIgnore]
+    public MemberName[][] NamesForTable
+    {
+        get
+        {
+            var teams = new MemberName[MaximumTeamSize][];
+            for (int i = 0; i < MaximumTeamSize; i++)
+            {
+                teams[i] = new MemberName[TeamNames.Count];
+                for (var j = 0; j < TeamNames.Count; j++)
+                {
+                    var teamName = TeamNames[j];
+                    teams[i][j] = GroupByTeam[teamName].GetMemberName(i);
+                }
+            }
+
+            return teams;
+        }
+    }
+
     public TeamResult()
     {
     }
@@ -30,5 +50,20 @@ public class TeamResult
         var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         var teams = Enumerable.Range(0, teamCount).Select(x => new TeamName { Id = alpha.Substring(x, 1) }).ToList();
         TeamNames = teams;
+    }
+}
+
+static class MemberNameExtensions
+{
+    public static MemberName GetMemberName(this List<MemberName> members, int index)
+    {
+        if (index < members.Count)
+        {
+            return members[index];
+        }
+        else
+        {
+            return null;
+        }
     }
 }
