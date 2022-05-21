@@ -10,16 +10,16 @@ public partial class UserList : JkwPageBase
     private List<AppUser> Users { get; set; }
 
     private IEnumerable<AppUser> FilteredUsers => Users
-        ?.Where(x => CheckedRoles.Empty() ? true :
-            CheckedRoles.All(e => x.Roles.Contains(e)));
+        ?.Where(user => CheckedRoles.Empty() ? true :
+            CheckedRoles.All(role => user.Roles?.Contains(role) ?? false));
 
-    private IEnumerable<UserRole> CheckedRolesData { get; set; }
+    private List<UserRole> CheckedRolesData { get; set; }
 
-    private IEnumerable<UserRole> CheckedRoles = new List<UserRole>();
+    private HashSet<UserRole> CheckedRoles = new();
 
     public UserList()
     {
-        CheckedRolesData = typeof(UserRole).GetValues<UserRole>();
+        CheckedRolesData = typeof(UserRole).GetValues<UserRole>().ToList();
     }
 
     protected override async Task OnPageInitializedAsync()
@@ -44,9 +44,19 @@ public partial class UserList : JkwPageBase
         }
     }
 
-    private async Task UserRoleToggleAsync(AppUser user, UserRole role)
+    private Task FilterRoleChangedAsync(UserRole role, bool check)
     {
-        var check = !user.Roles.Contains(role);
-        await UserRoleChangedAsync(user, role, check);
+        if (check)
+        {
+            CheckedRoles.Add(role);
+        }
+        else
+        {
+            CheckedRoles.Remove(role);
+        }
+
+        StateHasChanged();
+
+        return Task.CompletedTask;
     }
 }

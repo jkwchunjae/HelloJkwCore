@@ -3,30 +3,62 @@
 
 <PageTitle>유저 관리</PageTitle>
 
-<h2>UserList</h2>
-
-<MudTable Items="FilteredUsers">
+<MudTable Items="FilteredUsers" Dense="true">
     <HeaderContent>
         <MudTh>ID</MudTh>
-        <MudTh>이름</MudTh>
-        <MudTh>닉네임</MudTh>
-        <MudTh>이메일</MudTh>
-        <MudTh>가입일</MudTh>
-        <MudTh>권한</MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<AppUser, object>(user => user.UserName)">
+                이름
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<AppUser, object>(user => user.NickName ?? string.Empty)">
+                닉네임
+            </MudTableSortLabel>
+        </MudTh>
+        @*<MudTh>이메일</MudTh>*@
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<AppUser, object>(user => user.CreateTime)">
+                가입일
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<AppUser, object>(user => user.LastLoginTime)">
+                마지막 접속
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <span>권한</span>
+            <div>
+                @foreach (var role in CheckedRolesData)
+                {
+                    var isChecked = CheckedRoles?.Contains(role) ?? false;
+                    <MudCheckBox T="bool" Checked="isChecked" Label="@role.ToString()"
+                                CheckedChanged="(async check => await FilterRoleChangedAsync(role, check))"/>
+                }
+            </div>
+        </MudTh>
     </HeaderContent>
     <RowTemplate Context="user">
         <MudTd>@user.Id</MudTd>
         <MudTd>@user.UserName</MudTd>
         <MudTd>@user.NickName</MudTd>
-        <MudTd>@user.Email</MudTd>
-        <MudTd>@user.CreateTime</MudTd>
+        @*<MudTd>@user.Email</MudTd>*@
+        <MudTd>
+            <span class="date-time">@user.CreateTime.ToString("yyyy. M. d.")</span>
+            <span class="date-time">@user.CreateTime.ToString("HH:mm:ss")</span>
+        </MudTd>
+        <MudTd>
+            <span class="date-time">@user.LastLoginTime.ToString("yyyy. M. d.")</span>
+            <span class="date-time">@user.LastLoginTime.ToString("HH:mm:ss")</span>
+        </MudTd>
         <MudTd>
             @foreach (var role in typeof(UserRole).GetValues<UserRole>())
             {
                 bool isChecked = user.Roles?.Contains(role) ?? false;
-                var componentName = $"Checkbox_{user.Id}_{role.ToString()}";
 
-                <MudCheckBox T="bool" Checked="isChecked" Label="@role.ToString()" CheckedChanged="@(async args => await UserRoleChangedAsync(user, role, args))"/>
+                <MudCheckBox T="bool" Checked="isChecked" Label="@role.ToString()"
+                            CheckedChanged="(async check => await UserRoleChangedAsync(user, role, check))"/>
             }
         </MudTd>
     </RowTemplate>
