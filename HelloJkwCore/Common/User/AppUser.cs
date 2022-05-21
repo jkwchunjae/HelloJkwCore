@@ -9,6 +9,7 @@ public class AppUser
 
     public UserId Id { get; set; }
     public DateTime CreateTime { get; set; }
+    public DateTime LastLoginTime { get; set; }
     public string UserName { get; set; }
     public string NickName { get; set; }
     [JsonIgnore] public string DisplayName => !string.IsNullOrEmpty(NickName) ? NickName : UserName;

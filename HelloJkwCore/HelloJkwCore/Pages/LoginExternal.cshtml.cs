@@ -39,6 +39,12 @@ public class LoginExternalModel : PageModel
         var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: true);
         if (result.Succeeded)
         {
+            var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (user != null)
+            {
+                user.LastLoginTime = DateTime.Now;
+                await _userManager.UpdateAsync(user);
+            }
             await HttpContext.SignInAsync(info.Principal);
         }
         else
