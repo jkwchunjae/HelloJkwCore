@@ -59,7 +59,7 @@ public class Startup
         var kakaoAuthOption = authUtil.GetAuthOption(AuthProvider.KakaoTalk);
 
         services.AddIdentityCore<AppUser>()
-            .AddUserManager<AppUserManager<AppUser>>()
+            .AddUserManager<UserManager<AppUser>>()
             .AddSignInManager<SignInManager<AppUser>>()
             .AddRoles<IdentityRole>()
             .AddRoleStore<RoleStore>();
