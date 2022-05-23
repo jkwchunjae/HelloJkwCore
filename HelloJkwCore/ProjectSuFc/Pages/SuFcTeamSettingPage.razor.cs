@@ -4,7 +4,6 @@ namespace ProjectSuFc.Pages;
 
 public partial class SuFcTeamSettingPage : JkwPageBase
 {
-    [Inject] IJSRuntime JS { get; set; }
     [Inject] ISuFcService Service { get; set; }
 
     TeamSettingOption teamSettingOption = new();

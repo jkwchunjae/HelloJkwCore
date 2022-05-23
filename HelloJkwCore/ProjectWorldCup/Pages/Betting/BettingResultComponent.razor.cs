@@ -6,8 +6,6 @@ namespace ProjectWorldCup.Pages.Betting;
 public partial class BettingResultComponent : JkwPageBase
 {
     [Inject]
-    public IJSRuntime JS { get; set; }
-    [Inject]
     public IWorldCupService WorldCupService { get; set; }
 
     [Parameter]

@@ -4,7 +4,6 @@ namespace ProjectSuFc.Pages;
 
 public partial class SuFcSplitTeam : JkwPageBase
 {
-    [Inject] IJSRuntime JS { get; set; }
     [Inject] ISuFcService Service { get; set; }
 
     List<Member> Members = new();

@@ -10,17 +10,12 @@ namespace Common;
 
 public class JkwPageBase : ComponentBase, IDisposable
 {
-    [Inject]
-    protected IJSRuntime JsRuntime { get; set; }
-    [Inject]
-    protected IUserStore<AppUser> UserStore { get; set; }
-    [Inject]
-    protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-    [Inject]
-    protected NavigationManager NavigationManager { get; set; }
+    [Inject] protected IJSRuntime Js { get; set; }
+    [Inject] protected IUserStore<AppUser> UserStore { get; set; }
+    [Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+    [Inject] protected NavigationManager NavigationManager { get; set; }
+    [Inject] protected IHttpContextAccessor HttpContextAccessor { get; set; }
     protected NavigationManager Navi => NavigationManager;
-    [Inject]
-    protected IHttpContextAccessor HttpContextAccessor { get; set; }
 
     [CascadingParameter]
     private AuthenticationState _authenticationState { get; set; }

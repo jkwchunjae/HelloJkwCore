@@ -8,8 +8,6 @@ public partial class Betting2022GroupStage : JkwPageBase
     private IWorldCupService Service { get; set; }
     [Inject]
     private IBettingService BettingService { get; set; }
-    [Inject]
-    private IJSRuntime JS { get; set; }
 
     private List<WcGroup> Groups { get; set; } = new();
 
