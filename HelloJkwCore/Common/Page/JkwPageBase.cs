@@ -62,6 +62,12 @@ public class JkwPageBase : ComponentBase, IDisposable
         {
             var userId = _authenticationState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             User = await UserStore.FindByIdAsync(userId, CancellationToken.None);
+
+            if (DateTime.Now - User.LastLoginTime > TimeSpan.FromDays(1))
+            {
+                User.LastLoginTime = DateTime.Now;
+                await UserStore.UpdateAsync(User, default);
+            }
         }
         else
         {
