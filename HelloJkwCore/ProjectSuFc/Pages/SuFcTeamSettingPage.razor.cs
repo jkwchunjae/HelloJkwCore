@@ -33,6 +33,14 @@ public partial class SuFcTeamSettingPage : JkwPageBase
         option.Names.Add(member.Name);
 
         await Service.SaveTeamSettingOption(teamSettingOption);
+
+        var options = teamSettingOption.SplitOptions.Contains(option)
+            ? teamSettingOption.SplitOptions
+            : teamSettingOption.MergeOptions;
+        if (options.All(x => x.Filled) && options.Count < 30)
+        {
+            options.Add(new MergeSplitOption());
+        }
     }
 
     private async Task Uncheck(MergeSplitOption option, Member member)

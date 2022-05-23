@@ -4,6 +4,8 @@ public class MergeSplitOption
 {
     public List<MemberName> Names { get; set; } = new();
     public double Probability { get; set; }
+
+    [JsonIgnore] public bool Filled => (Names?.Count ?? 0) >= 2;
 }
 public class TeamSettingOption
 {

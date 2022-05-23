@@ -40,7 +40,7 @@ public class SettingOptionTeamMaker : TeamMaker
 
         if (option?.SplitOptions?.Any() ?? false)
         {
-            foreach (var splitOption in option.SplitOptions.Where(x => x.Names?.Count >= 2))
+            foreach (var splitOption in option.SplitOptions.Where(x => x.Filled))
             {
                 var teams = splitOption.Names
                     .Select(name => result.Players.FirstOrDefault(x => x.MemberName == name).TeamName)
@@ -53,7 +53,7 @@ public class SettingOptionTeamMaker : TeamMaker
 
         if (option?.MergeOptions?.Any() ?? false)
         {
-            foreach (var mergeOption in option.MergeOptions.Where(x => x.Names?.Count >= 2))
+            foreach (var mergeOption in option.MergeOptions.Where(x => x.Filled))
             {
                 var teams = mergeOption.Names
                     .Select(name => result.Players.FirstOrDefault(x => x.MemberName == name).TeamName)
