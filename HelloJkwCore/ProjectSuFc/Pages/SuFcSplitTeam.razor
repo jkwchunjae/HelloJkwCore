@@ -1,6 +1,9 @@
 ﻿@inherits JkwPageBase
 @using MudBlazor;
+@using Microsoft.AspNetCore.Components.Web
 @page "/sufc/split"
+
+<PageTitle>수FC 팀 나누기</PageTitle>
 
 <h1>팀 나누기</h1>
 
@@ -47,17 +50,17 @@
     <MudSimpleTable>
         <thead>
             <tr>
-            @foreach (var teamName in TeamResult.TeamNames)
+      @foreach (var teamName in TeamResult.TeamNames)
       {
         <th>@teamName</th>
       }
             </tr>
         </thead>
         <tbody>
-            @foreach (var asdf in Teams)
+      @foreach (var asdf in Teams)
       {
         <tr>
-            @foreach (var name in asdf)
+          @foreach (var name in asdf)
           {
             <td>@name</td>
           }

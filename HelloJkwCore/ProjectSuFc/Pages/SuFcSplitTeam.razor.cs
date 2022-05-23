@@ -8,9 +8,8 @@ public partial class SuFcSplitTeam : JkwPageBase
 
     List<Member> Members = new();
     List<MemberName> CheckedList = new();
-    MemberName[][] Teams = new MemberName[1][];
-
-    TeamResult TeamResult { get; set; }
+    MemberName[][] Teams = default;
+    TeamResult TeamResult = null;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -26,9 +25,7 @@ public partial class SuFcSplitTeam : JkwPageBase
 
     Task UncheckMember(Member user)
     {
-        CheckedList = CheckedList
-            .Where(memberName => memberName != user.Name)
-            .ToList();
+        CheckedList.RemoveAll(x => x == user.Name);
         return Task.CompletedTask;
     }
 
