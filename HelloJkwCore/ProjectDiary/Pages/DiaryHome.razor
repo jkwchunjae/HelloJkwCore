@@ -89,6 +89,12 @@ else if (HasDiaryContent)
                 암호
             </MudButton>
         }
+        @if (DiaryInfo.CanManage(User.Id))
+        {
+            <MudButton Link="@DiaryUrl.Settings(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Default">
+                공개설정
+            </MudButton>
+        }
     </div>
     </div>
 

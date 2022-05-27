@@ -71,4 +71,9 @@ public static class DiaryUrl
     {
         return $"/diary/setpassword";
     }
+
+    public static string Settings(DiaryName diaryName)
+    {
+        return $"/diary/settings/{diaryName}";
+    }
 }
