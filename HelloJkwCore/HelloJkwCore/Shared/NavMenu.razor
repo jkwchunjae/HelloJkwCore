@@ -16,13 +16,9 @@
             </MudNavLink>
         </Authorized>
     </AuthorizeView>
-    <AuthorizeView Policy="Diary">
-        <Authorized>
-            <MudNavLink Href="diary" Icon="@Icons.Material.Filled.MenuBook">
-                일기장
-            </MudNavLink>
-        </Authorized>
-    </AuthorizeView>
+    <MudNavLink Href="diary" Icon="@Icons.Material.Filled.MenuBook">
+        일기장
+    </MudNavLink>
     <AuthorizeView Roles="Admin">
         <Authorized>
             <MudNavLink Href="diary/admintool" Icon="@Icons.Material.Filled.MenuBook">
