@@ -1,0 +1,11 @@
+﻿
+@if (User != null)
+{
+  if (Icon != null)
+  {
+    <MudIcon Icon="Icon"/>
+  }
+  <MudElement HtmlTag="span">
+    @User.DisplayName
+  </MudElement>
+}

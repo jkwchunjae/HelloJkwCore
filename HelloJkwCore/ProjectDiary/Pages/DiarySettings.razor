@@ -1,0 +1,68 @@
+﻿@inherits JkwPageBase
+@page "/diary/settings/{DiaryName}"
+
+<PageTitle>일기장 설정</PageTitle>
+
+@if (DiaryInfo?.CanManage(User?.Id) ?? false)
+{
+  <h3>@DiaryInfo.DiaryName 일기장의 공개 범위를 설정합니다. </h3>
+
+<MudPaper MaxWidth="500px">
+  <MudList>
+    <MudListSubheader>
+      <h5> 관리자 </h5>
+    </MudListSubheader>
+    <MudListItem Icon="@Icons.Filled.Face">
+      <DiaryUser UserId="DiaryInfo.Owner"></DiaryUser>
+    </MudListItem>
+  </MudList>
+</MudPaper>
+
+<MudPaper MaxWidth="500px" Style="margin-top: 30px;">
+  <MudList>
+    <MudListSubheader>
+      <h5> 일기를 쓸 수 있는 사람들 </h5>
+    </MudListSubheader>
+    @foreach (var writer in DiaryInfo.Writers)
+    {
+    <MudListItem Icon="@Icons.Filled.Person">
+      <DiaryUser UserId="writer"></DiaryUser>
+    </MudListItem>
+    }
+    <MudListItem>
+      <MudAutocomplete T="AppUser" Label="일기 쓸 수 있는 사람을 추가합니다" @bind-Value="SearchedWriter"
+        SearchFunc="@SearchUser"
+        ToStringFunc="@(user => user?.DisplayName)"
+        SelectOnClick="true"
+        @onselect="@(async () => await OnWriterSelect())"
+      />
+    </MudListItem>
+  </MudList>
+</MudPaper>
+
+<MudPaper MaxWidth="500px" Style="margin-top: 30px;">
+  <MudList>
+    <MudListSubheader>
+      <h5> 일기를 읽을 수 있는 사람들 </h5>
+    </MudListSubheader>
+    @foreach (var viewer in DiaryInfo.Viewers)
+    {
+    <MudListItem Icon="@Icons.Filled.Person">
+      <DiaryUser UserId="viewer"></DiaryUser>
+    </MudListItem>
+    }
+    <MudListItem>
+      <MudAutocomplete T="AppUser" Label="일기를 읽을 수 있는 사람을 추가합니다" @bind-Value="SearchedViewer"
+        SearchFunc="@SearchUser"
+        ToStringFunc="@(user => user?.DisplayName)"
+        SelectOnClick="true"
+        @onselect="@(async () => await OnViewerSelect())"
+      />
+    </MudListItem>
+  </MudList>
+</MudPaper>
+}
+else
+{
+  <span>이 일기장을 설정할 수 있는 권한이 없습니다.</span>
+}
