@@ -50,6 +50,11 @@ public partial class DiarySettings : JkwPageBase
 
             userDiaryInfo.WriterList ??= new();
             userDiaryInfo.WriterList.Add(DiaryInfo.DiaryName);
+
+            if (userDiaryInfo.ViewList?.Contains(DiaryInfo.DiaryName) ?? false)
+            {
+                userDiaryInfo.ViewList.Remove(DiaryInfo.DiaryName);
+            }
             return true;
         });
 
@@ -60,6 +65,11 @@ public partial class DiarySettings : JkwPageBase
 
             diaryInfo.Writers ??= new();
             diaryInfo.Writers.Add(writer.Id);
+
+            if (diaryInfo.Viewers?.Contains(writer.Id) ?? false)
+            {
+                diaryInfo.Viewers.Remove(writer.Id);
+            }
             return true;
         });
 
