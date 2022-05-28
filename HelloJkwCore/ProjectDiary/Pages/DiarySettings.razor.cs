@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MudBlazor;
 
 namespace ProjectDiary.Pages;
 
@@ -6,6 +7,7 @@ public partial class DiarySettings : JkwPageBase
 {
     [Parameter] public string DiaryName { get; set; }
 
+    [Inject] public ISnackbar Snackbar { get; set; }
     [Inject] public IDiaryService DiaryService { get; set; }
     [Inject] public UserManager<AppUser> UserManager { get; set; }
 
@@ -13,6 +15,8 @@ public partial class DiarySettings : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
         if (IsAuthenticated)
         {
             DiaryInfo = await GetDiaryInfoAsync(new DiaryName(DiaryName));
@@ -34,7 +38,10 @@ public partial class DiarySettings : JkwPageBase
         SearchedWriter = null;
 
         if (DiaryInfo.Owner == writer.Id)
+        {
+            Snackbar.Add("일기장 주인은 추가할 수 없습니다.", Severity.Warning);
             return;
+        }
 
         await DiaryService.UpdateUserDiaryInfoAsync(writer, userDiaryInfo =>
         {
@@ -71,7 +78,15 @@ public partial class DiarySettings : JkwPageBase
         SearchedViewer = null;
 
         if (DiaryInfo.Owner == viewer.Id)
+        {
+            Snackbar.Add("일기장 주인은 추가할 수 없습니다.");
             return;
+        }
+        if (DiaryInfo.Writers?.Contains(viewer.Id) ?? false)
+        {
+            Snackbar.Add("일기장에 글을 쓸 수 있는 사람은 추가할 수 없습니다.");
+            return;
+        }
 
         await DiaryService.UpdateUserDiaryInfoAsync(viewer, userDiaryInfo =>
         {
