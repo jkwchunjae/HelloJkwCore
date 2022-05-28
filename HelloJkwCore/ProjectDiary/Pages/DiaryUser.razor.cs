@@ -5,8 +5,8 @@ namespace ProjectDiary.Pages;
 
 public partial class DiaryUser
 {
-    [Parameter] public UserId UserId { get; set; }
-    [Parameter] public AppUser User { get; set; }
+    [Parameter] public UserId UserId { get; set; } = null;
+    [Parameter] public AppUser User { get; set; } = null;
     [Parameter] public MudIcon Icon { get; set; } = null;
 
     [Inject] public UserManager<AppUser> UserManager { get; set; }

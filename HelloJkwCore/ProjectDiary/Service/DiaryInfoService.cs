@@ -4,12 +4,12 @@ namespace ProjectDiary;
 
 public partial class DiaryService : IDiaryService
 {
-    private async Task<UserDiaryInfo> CreateUserDiaryInfoAsync(AppUser user)
+    public async Task<UserDiaryInfo> GetOrCreateUserDiaryInfoAsync(AppUser user)
     {
-        Func<Paths, string> path = pathof => pathof.UserDiaryInfo(user);
-        if (await _fs.FileExistsAsync(path))
+        Func<Paths, string> userDiaryPath = path => path.UserDiaryInfo(user);
+        if (await _fs.FileExistsAsync(userDiaryPath))
         {
-            return await _fs.ReadJsonAsync<UserDiaryInfo>(path);
+            return await _fs.ReadJsonAsync<UserDiaryInfo>(userDiaryPath);
         }
 
         var userDiaryInfo = new UserDiaryInfo
@@ -17,7 +17,7 @@ public partial class DiaryService : IDiaryService
             UserId = user.Id,
         };
 
-        var success = await _fs.WriteJsonAsync(path, userDiaryInfo);
+        var success = await _fs.WriteJsonAsync(userDiaryPath, userDiaryInfo);
 
         if (success)
         {
@@ -62,7 +62,7 @@ public partial class DiaryService : IDiaryService
         }
 
         // 일단 만들자.
-        var userDiaryInfo = await CreateUserDiaryInfoAsync(user);
+        var userDiaryInfo = await GetOrCreateUserDiaryInfoAsync(user);
         if (userDiaryInfo == null)
         {
             // 만들지 못했거나 읽기 실패
@@ -132,11 +132,38 @@ public partial class DiaryService : IDiaryService
         return viewableDiaryList.ToList();
     }
 
-    public async Task UpdateDiaryInfoAsync(AppUser user, DiaryInfo diaryInfo)
+    public async Task<(bool, DiaryInfo)> UpdateDiaryInfoAsync(AppUser owner, DiaryName diaryName, Func<DiaryInfo, bool> updator)
     {
-        if (diaryInfo.CanManage(user.Id) || user.HasRole(UserRole.Admin))
+        var diaryInfo = await GetDiaryInfoAsync(owner, diaryName);
+
+        if (diaryInfo == null)
+            return (false, null);
+
+        if (diaryInfo.CanManage(owner.Id))
         {
-            await _fs.WriteJsonAsync(path => path.DiaryInfo(diaryInfo.DiaryName), diaryInfo);
+            if (updator(diaryInfo))
+            {
+                await _fs.WriteJsonAsync(path => path.DiaryInfo(diaryInfo.DiaryName), diaryInfo);
+                return (true, diaryInfo);
+            }
         }
+
+        return (false, null);
+    }
+
+    public async Task<(bool, UserDiaryInfo)> UpdateUserDiaryInfoAsync(AppUser user, Func<UserDiaryInfo, bool> updator)
+    {
+        var userDiaryInfo = await GetOrCreateUserDiaryInfoAsync(user);
+
+        if (userDiaryInfo == null)
+            return (false, null);
+
+        if (updator(userDiaryInfo))
+        {
+            await _fs.WriteJsonAsync(path => path.UserDiaryInfo(user), userDiaryInfo);
+            return (true, userDiaryInfo);
+        }
+
+        return (false, null);
     }
 }

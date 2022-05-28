@@ -24,23 +24,79 @@ public partial class DiarySettings : JkwPageBase
         var diaryInfo = await DiaryService.GetDiaryInfoAsync(User, diaryName);
         return diaryInfo;
     }
-    private Task OnWriterSelect()
+
+    private async Task OnWriterSelect()
     {
-        if (SearchedWriter != null)
+        if (SearchedWriter == null)
+            return;
+
+        var writer = SearchedWriter;
+        SearchedWriter = null;
+
+        if (DiaryInfo.Owner == writer.Id)
+            return;
+
+        await DiaryService.UpdateUserDiaryInfoAsync(writer, userDiaryInfo =>
         {
-            DiaryInfo.Writers.Add(SearchedWriter.Id);
-            SearchedWriter = null;
+            if (userDiaryInfo.WriterList?.Contains(DiaryInfo.DiaryName) ?? false)
+                return false;
+
+            userDiaryInfo.WriterList ??= new();
+            userDiaryInfo.WriterList.Add(DiaryInfo.DiaryName);
+            return true;
+        });
+
+        var result = await DiaryService.UpdateDiaryInfoAsync(User, DiaryInfo.DiaryName, diaryInfo =>
+        {
+            if (diaryInfo.Writers?.Contains(writer.Id) ?? false)
+                return false;
+
+            diaryInfo.Writers ??= new();
+            diaryInfo.Writers.Add(writer.Id);
+            return true;
+        });
+
+        if (result.Success)
+        {
+            DiaryInfo = result.Result;
         }
-        return Task.CompletedTask;
     }
-    private Task OnViewerSelect()
+
+    private async Task OnViewerSelect()
     {
-        if (SearchedViewer != null)
+        if (SearchedViewer == null)
+            return;
+
+        var viewer = SearchedViewer;
+        SearchedViewer = null;
+
+        if (DiaryInfo.Owner == viewer.Id)
+            return;
+
+        await DiaryService.UpdateUserDiaryInfoAsync(viewer, userDiaryInfo =>
         {
-            DiaryInfo.Viewers.Add(SearchedViewer.Id);
-            SearchedViewer = null;
+            if (userDiaryInfo.ViewList?.Contains(DiaryInfo.DiaryName) ?? false)
+                return false;
+
+            userDiaryInfo.ViewList ??= new();
+            userDiaryInfo.ViewList.Add(DiaryInfo.DiaryName);
+            return true;
+        });
+
+        var result = await DiaryService.UpdateDiaryInfoAsync(User, DiaryInfo.DiaryName, diaryInfo =>
+        {
+            if (diaryInfo.Viewers?.Contains(viewer.Id) ?? false)
+                return false;
+
+            diaryInfo.Viewers ??= new();
+            diaryInfo.Viewers.Add(viewer.Id);
+            return true;
+        });
+
+        if (result.Success)
+        {
+            DiaryInfo = result.Result;
         }
-        return Task.CompletedTask;
     }
 
     #region Search User
