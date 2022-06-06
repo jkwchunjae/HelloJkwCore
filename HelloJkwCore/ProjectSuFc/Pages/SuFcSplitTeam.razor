@@ -9,8 +9,16 @@
 
 @if (User?.HasRole(UserRole.SuFcAdmin) ?? false)
 {
-<MudLink Href="sufc/members">맴버 추가</MudLink>
-<MudLink Href="sufc/team-setting">팀 세팅 옵션 설정</MudLink>
+<div style="margin-bottom: 30px;">
+<MudButton Variant="Variant.Outlined" Color="Color.Info"
+    Href="sufc/members">
+    맴버 추가
+</MudButton>
+<MudButton Variant="Variant.Outlined" Color="Color.Info"
+    Href="sufc/team-setting">
+    팀 세팅 옵션 설정
+</MudButton>
+</div>
 }
 
 <h3>참석자 선택</h3>
