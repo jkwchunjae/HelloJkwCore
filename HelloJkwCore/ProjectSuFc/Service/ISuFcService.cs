@@ -6,6 +6,7 @@ public interface ISuFcService
     Task<List<Member>> GetAllMember();
     Task<Member> FindMember(MemberName memberName);
     Task<bool> SaveMember(Member player);
+    Task<bool> DeleteMember(MemberName memberName);
     #endregion
 
     #region Team
