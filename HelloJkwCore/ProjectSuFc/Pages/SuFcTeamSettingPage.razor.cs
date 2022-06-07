@@ -23,6 +23,11 @@ public partial class SuFcTeamSettingPage : JkwPageBase
         {
             teamSettingOption.MergeOptions.Add(new MergeSplitOption());
         }
+        teamSettingOption.ClassOptions ??= new List<MergeSplitOption>();
+        while (teamSettingOption.ClassOptions.Count < 5)
+        {
+            teamSettingOption.ClassOptions.Add(new MergeSplitOption());
+        }
 
         Members = await Service.GetAllMember();
     }

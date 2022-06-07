@@ -27,6 +27,7 @@ public class MemberClassTeamMaker : TeamMaker
         var classNames = (option.ClassOptions ?? Enumerable.Empty<MergeSplitOption>())
             .Select((option, index) => option.Names.RandomShuffle().Select(name => (name, index)))
             .SelectMany(names => names)
+            .GroupBy(x => x.name, (key, names) => (name: key, index: names.Min(x => x.index)))
             .ToList();
 
         var filterdClassNames = classNames

@@ -34,26 +34,29 @@
     </tbody>
 </MudSimpleTable>
 
-<h2>이 분들은 붙여놔야 합니다</h2>
+<h2>등급을 지정합니다</h2>
+
 <MudSimpleTable>
     <thead>
         <tr>
-            <th>번호</th>
+            <th>등급</th>
             <th>이름</th>
         </tr>
     </thead>
     <tbody>
-    @foreach (var (merge, index) in teamSettingOption.MergeOptions.Select((merge, index) => (merge, index + 1)))
+    @foreach (var (grade, index) in teamSettingOption.ClassOptions.Select((grade, index) => (grade, index)))
     {
-        Func<IEnumerable<MemberName>, string> mt = (memberNames) => $"{memberNames.StringJoin(", ")} 님은 되도록 한 팀이 되도록 설정합니다.";
+        string alphabet = "ABCDEFGHIJ";
+        string gradeName = alphabet.Substring(index, 1);
+        Func<IEnumerable<MemberName>, string> mt = (memberNames) => $"{memberNames.StringJoin(", ")} 님을 {gradeName} 등급으로 설정합니다.";
         <tr>
-            <td>@index</td>
+            <td>@gradeName</td>
             <td>
                 <MergeSplitCheckComponent
                     Members="Members"
-                    MergeSplitOption="merge"
-                    Checked="(async (member) => await Check(merge, member))"
-                    Unchecked="(async (member) => await Uncheck(merge, member))"
+                    MergeSplitOption="grade"
+                    Checked="(async (member) => await Check(grade, member))"
+                    Unchecked="(async (member) => await Uncheck(grade, member))"
                     MessageTemplate="mt"
                 ></MergeSplitCheckComponent>
             </td>
