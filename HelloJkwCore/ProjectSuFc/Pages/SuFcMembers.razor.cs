@@ -11,7 +11,10 @@ public partial class SuFcMembers : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        Members = await Service.GetAllMember();
+        if (User?.HasRole(UserRole.SuFcAdmin) ?? false)
+        {
+            Members = await Service.GetAllMember();
+        }
     }
 
     private async Task AddNewMember(string memberNameText)

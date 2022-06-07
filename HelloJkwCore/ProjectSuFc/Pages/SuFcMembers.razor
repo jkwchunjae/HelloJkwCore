@@ -5,29 +5,34 @@
 
 <PageTitle>수FC 회원</PageTitle>
 
+<MudButton Variant="Variant.Outlined" Color="Color.Info"
+  Href="sufc">
+  수FC 홈으로 이동
+</MudButton>
+
 <MudSimpleTable>
-    <tbody>
-        @foreach (var member in Members)
-        {
-            <tr>
-                <td>@member.Name</td>
-                <td>
-                    <MudButton StartIcon="@Icons.Filled.Cancel" Variant="Variant.Outlined"
-                        OnClick="@(async () => await DeleteAction(member))">
-                        삭제
-                    </MudButton>
-                </td>
-            </tr>
-        }
-        <tr>
-            <td>
-                <MudTextField T="string" @bind-Value="NewMemberName" Variant="Variant.Text"></MudTextField>
-            </td>
-            <td>
-                <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Color="Color.Info"
-                    OnClick="(async () => await AddNewMember(NewMemberName))"
-                    >추가</MudButton>
-            </td>
-        </tr>
-    </tbody>
+  <tbody>
+    @foreach (var member in Members)
+    {
+      <tr>
+        <td>@member.Name</td>
+        <td>
+          <MudButton StartIcon="@Icons.Filled.Cancel" Variant="Variant.Outlined"
+            OnClick="@(async () => await DeleteAction(member))">
+            삭제
+          </MudButton>
+        </td>
+      </tr>
+    }
+    <tr>
+      <td>
+        <MudTextField T="string" @bind-Value="NewMemberName" Variant="Variant.Text"></MudTextField>
+      </td>
+      <td>
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Color="Color.Info"
+          OnClick="(async () => await AddNewMember(NewMemberName))"
+          >추가</MudButton>
+      </td>
+    </tr>
+  </tbody>
 </MudSimpleTable>

@@ -11,25 +11,28 @@ public partial class SuFcTeamSettingPage : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        teamSettingOption = await Service.GetTeamSettingOption();
+        if (User?.HasRole(UserRole.SuFcAdmin) ?? false)
+        {
+            teamSettingOption = await Service.GetTeamSettingOption();
 
-        teamSettingOption.SplitOptions ??= new List<MergeSplitOption>();
-        while (teamSettingOption.SplitOptions.Count < 3)
-        {
-            teamSettingOption.SplitOptions.Add(new MergeSplitOption());
-        }
-        teamSettingOption.MergeOptions ??= new List<MergeSplitOption>();
-        while (teamSettingOption.MergeOptions.Count < 3)
-        {
-            teamSettingOption.MergeOptions.Add(new MergeSplitOption());
-        }
-        teamSettingOption.ClassOptions ??= new List<MergeSplitOption>();
-        while (teamSettingOption.ClassOptions.Count < 5)
-        {
-            teamSettingOption.ClassOptions.Add(new MergeSplitOption());
-        }
+            teamSettingOption.SplitOptions ??= new List<MergeSplitOption>();
+            while (teamSettingOption.SplitOptions.Count < 3)
+            {
+                teamSettingOption.SplitOptions.Add(new MergeSplitOption());
+            }
+            teamSettingOption.MergeOptions ??= new List<MergeSplitOption>();
+            while (teamSettingOption.MergeOptions.Count < 3)
+            {
+                teamSettingOption.MergeOptions.Add(new MergeSplitOption());
+            }
+            teamSettingOption.ClassOptions ??= new List<MergeSplitOption>();
+            while (teamSettingOption.ClassOptions.Count < 5)
+            {
+                teamSettingOption.ClassOptions.Add(new MergeSplitOption());
+            }
 
-        Members = await Service.GetAllMember();
+            Members = await Service.GetAllMember();
+        }
     }
 
     private async Task Check(MergeSplitOption option, Member member)
