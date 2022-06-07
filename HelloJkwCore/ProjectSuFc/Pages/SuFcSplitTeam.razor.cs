@@ -10,10 +10,12 @@ public partial class SuFcSplitTeam : JkwPageBase
     List<MemberName> CheckedList = new();
     MemberName[][] Teams = default;
     TeamResult TeamResult = null;
+    TeamSettingOption TeamSettingOption;
 
     protected override async Task OnPageInitializedAsync()
     {
         Members = await Service.GetAllMember();
+        TeamSettingOption = await Service.GetTeamSettingOption();
     }
 
     Task CheckMember(Member user)
@@ -38,16 +40,49 @@ public partial class SuFcSplitTeam : JkwPageBase
         if (teamSize <= 1)
             return;
 
-        var teamSettingOption = await Service.GetTeamSettingOption();
+        TeamSettingOption = await Service.GetTeamSettingOption();
 
         var result = await Service.MakeTeam(
             players: CheckedList,
             teamCount: teamSize,
-            strategy: TeamMakerStrategy.TeamSetting,
-            option: teamSettingOption);
+            strategy: TeamMakerStrategy.TeamSettingAndClass,
+            option: TeamSettingOption);
 
         Teams = result.NamesForTable;
         TeamResult = result;
+    }
+
+    bool VisibleMemberOption = false;
+    Task ToggleMemberOption()
+    {
+        VisibleMemberOption = !VisibleMemberOption;
+        return Task.CompletedTask;
+    }
+
+    string GetMemberOption(MemberName name)
+    {
+        string result = string.Empty;
+
+        var splitData = TeamSettingOption.SplitOptions
+            .Select((option, index) => (option, index))
+            .FirstOrDefault(x => x.option?.Names?.Contains(name) ?? false);
+
+        if (splitData != default)
+        {
+            result += $"{splitData.index + 1}";
+        }
+
+        var groupData = TeamSettingOption.ClassOptions
+            .Select((option, index) => (option, index))
+            .FirstOrDefault(x => x.option?.Names?.Contains(name) ?? false);
+
+        if (groupData != default)
+        {
+            var groupName = "ABCDEFGHIJ".Substring(groupData.index, 1);
+            result += groupName;
+        }
+
+        return result;
     }
 }
 
