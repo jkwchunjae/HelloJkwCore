@@ -53,4 +53,24 @@ public partial class SuFcService : ISuFcService
 
         return result;
     }
+
+    public async Task<bool> DeleteMember(MemberName memberName)
+    {
+        var fileName = $"{memberName}.json";
+
+        if (fileName.HasInvalidFileNameChar())
+        {
+            return false;
+        }
+
+        var list = await GetAllMember();
+        if (list.Any(x => x.Name == memberName))
+        {
+            _memberList.RemoveAll(member => member.Name == memberName);
+        }
+
+        var result = await _fs.DeleteFileAsync(path => path[SuFcPathType.SuFcMembersPath] + "/" + fileName);
+
+        return result;
+    }
 }

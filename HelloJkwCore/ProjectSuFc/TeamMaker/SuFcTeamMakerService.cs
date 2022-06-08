@@ -11,6 +11,7 @@ public partial class SuFcService : ISuFcService
         _strategy.Add(TeamMakerStrategy.Manual, new ManualTeamMaker());
         //_strategy.Add(TeamMakerStrategy.AttendProb, new AttendProbTeamMaker());
         _strategy.Add(TeamMakerStrategy.TeamSetting, new SettingOptionTeamMaker());
+        _strategy.Add(TeamMakerStrategy.TeamSettingAndClass, new MemberClassTeamMaker());
     }
 
     public async Task<TeamResult> MakeTeam(List<MemberName> members, int teamCount, TeamMakerStrategy strategy, TeamSettingOption option)

@@ -11,4 +11,5 @@ public class TeamSettingOption
 {
     public List<MergeSplitOption> SplitOptions { get; set; } = new();
     public List<MergeSplitOption> MergeOptions { get; set; } = new();
+    public List<MergeSplitOption> ClassOptions { get; set; } = new();
 }

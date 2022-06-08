@@ -9,64 +9,85 @@
 
 @if (User?.HasRole(UserRole.SuFcAdmin) ?? false)
 {
-<MudLink Href="sufc/members">맴버 추가</MudLink>
-<MudLink Href="sufc/team-setting">팀 세팅 옵션 설정</MudLink>
+<div style="margin-bottom: 30px;">
+<MudButton Variant="Variant.Outlined" Color="Color.Info"
+  Href="sufc/members">
+  맴버 추가
+</MudButton>
+<MudButton Variant="Variant.Outlined" Color="Color.Info"
+  Href="sufc/team-setting">
+  팀 세팅 옵션 설정
+</MudButton>
+<MudCheckBox T="bool" Label="회원 옵션 값 보기" Checked="@VisibleMemberOption"
+    CheckedChanged="(async () => await ToggleMemberOption())"></MudCheckBox>
+</div>
 }
 
 <h3>참석자 선택</h3>
 
+<MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Dark"
+    OnClick="CheckAll"
+    >전체선택</MudButton>
+
 <div>
-    @foreach (var member in Members)
+  @foreach (var member in Members)
+  {
+    @if (CheckedList.Contains(member.Name))
     {
-        @if (CheckedList.Contains(member.Name))
-        {
-            <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Success"
-                OnClick="(async () => await UncheckMember(member))">
-                @member.Name
-            </MudButton>
-        }
-        else
-        {
-            <MudButton Size="Size.Large" Variant="Variant.Outlined"
-                OnClick="(async () => await CheckMember(member))">
-                @member.Name
-            </MudButton>
-        }
+      <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Success"
+        OnClick="(async () => await UncheckMember(member))">
+        @member.Name
+      </MudButton>
     }
+    else
+    {
+      <MudButton Size="Size.Large" Variant="Variant.Outlined"
+        OnClick="(async () => await CheckMember(member))">
+        @member.Name
+      </MudButton>
+    }
+  }
 </div>
 <div style="margin-top: 30px;">
-    <MudButton Size="Size.Large" Variant="Variant.Outlined"
-        OnClick="(async () => await MakeTeam(2))">
-        2팀 으로
-    </MudButton>
-    <MudButton Size="Size.Large" Variant="Variant.Outlined"
-        OnClick="(async () => await MakeTeam(3))">
-        3팀 으로
-    </MudButton>
+  <MudButton Size="Size.Large" Variant="Variant.Outlined"
+    OnClick="(async () => await MakeTeam(2))">
+    2팀 으로
+  </MudButton>
+  <MudButton Size="Size.Large" Variant="Variant.Outlined"
+    OnClick="(async () => await MakeTeam(3))">
+    3팀 으로
+  </MudButton>
 </div>
 @if (TeamResult != null)
 {
 <div>
-    <MudSimpleTable>
-        <thead>
-            <tr>
-      @foreach (var teamName in TeamResult.TeamNames)
+  <MudSimpleTable>
+    <thead>
+      <tr>
+    @foreach (var teamName in TeamResult.TeamNames)
+    {
+    <th>@teamName</th>
+    }
+      </tr>
+    </thead>
+    <tbody>
+    @foreach (var asdf in Teams)
+    {
+    <tr>
+      @foreach (var name in asdf)
       {
-        <th>@teamName</th>
-      }
-            </tr>
-        </thead>
-        <tbody>
-      @foreach (var asdf in Teams)
-      {
-        <tr>
-          @foreach (var name in asdf)
+      <td>
+          <span style="font-size: x-large;">@name</span>
+          @if (VisibleMemberOption)
           {
-            <td style="font-size: x-large;">@name</td>
+            var memberOption = GetMemberOption(name);
+            <span>@memberOption</span>
           }
-        </tr>
+      </td>
       }
-        </tbody>
-    </MudSimpleTable>
+    </tr>
+    }
+    </tbody>
+  </MudSimpleTable>
 </div>
 }
