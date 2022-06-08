@@ -18,6 +18,19 @@ public partial class SuFcSplitTeam : JkwPageBase
         TeamSettingOption = await Service.GetTeamSettingOption();
     }
 
+    Task CheckAll()
+    {
+        if (CheckedList.Count == Members.Count)
+        {
+            CheckedList.Clear();
+        }
+        else
+        {
+            CheckedList = Members.Select(x => x.Name).ToList();
+        }
+        return Task.CompletedTask;
+    }
+
     Task CheckMember(Member user)
     {
         CheckedList.Add(user.Name);

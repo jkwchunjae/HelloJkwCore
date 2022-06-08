@@ -35,6 +35,7 @@ public class MemberClassTeamMaker : TeamMaker
             .ToList();
         var notClassedNames = names // names 중에 class 정의가 안 되어있는 회원
             .Where(name => !filterdClassNames.Any(x => x.name == name))
+            .RandomShuffle()
             .ToList();
 
         var result = new TeamResult(teamCount);
