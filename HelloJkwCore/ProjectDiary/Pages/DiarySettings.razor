@@ -26,7 +26,8 @@
     @foreach (var writer in DiaryInfo.Writers)
     {
     <MudListItem Icon="@Icons.Filled.Person">
-      <DiaryUser UserId="writer"></DiaryUser>
+      <DiaryUser UserId="writer"
+          OnDelete="(async (user) => await OnDeleteWriter(user))"/>
     </MudListItem>
     }
     <MudListItem>
@@ -48,7 +49,8 @@
     @foreach (var viewer in DiaryInfo.Viewers)
     {
     <MudListItem Icon="@Icons.Filled.Person">
-      <DiaryUser UserId="viewer"></DiaryUser>
+      <DiaryUser UserId="viewer"
+          OnDelete="(async (user) => await OnDeleteViewer(user))"/>
     </MudListItem>
     }
     <MudListItem>

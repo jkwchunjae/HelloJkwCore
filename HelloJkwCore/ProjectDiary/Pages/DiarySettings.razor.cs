@@ -124,6 +124,62 @@ public partial class DiarySettings : JkwPageBase
         }
     }
 
+    private async Task OnDeleteWriter(AppUser writer)
+    {
+        var diaryName = DiaryInfo.DiaryName;
+        var result1 = await DiaryService.UpdateUserDiaryInfoAsync(writer, userDiaryInfo =>
+        {
+            if (userDiaryInfo.WriterList?.Contains(diaryName) ?? false)
+            {
+                userDiaryInfo.WriterList.Remove(diaryName);
+                return true;
+            }
+            return false;
+        });
+
+        if (!result1.Success)
+            return;
+
+        var result2 = await DiaryService.UpdateDiaryInfoAsync(User, DiaryInfo.DiaryName, diaryInfo =>
+        {
+            diaryInfo.Writers.RemoveAll(id => id == writer?.Id);
+            return true;
+        });
+
+        if (result2.Success)
+        {
+            DiaryInfo = result2.Result;
+        }
+    }
+
+    private async Task OnDeleteViewer(AppUser viewer)
+    {
+        var diaryName = DiaryInfo.DiaryName;
+        var result1 = await DiaryService.UpdateUserDiaryInfoAsync(viewer, userDiaryInfo =>
+        {
+            if (userDiaryInfo.ViewList?.Contains(diaryName) ?? false)
+            {
+                userDiaryInfo.ViewList.Remove(diaryName);
+                return true;
+            }
+            return false;
+        });
+
+        if (!result1.Success)
+            return;
+
+        var result2 = await DiaryService.UpdateDiaryInfoAsync(User, DiaryInfo.DiaryName, diaryInfo =>
+        {
+            diaryInfo.Viewers.RemoveAll(id => id == viewer?.Id);
+            return true;
+        });
+
+        if (result2.Success)
+        {
+            DiaryInfo = result2.Result;
+        }
+    }
+
     #region Search User
 
     private AppUser SearchedWriter;

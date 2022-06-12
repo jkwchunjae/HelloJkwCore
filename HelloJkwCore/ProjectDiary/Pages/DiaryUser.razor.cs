@@ -8,6 +8,7 @@ public partial class DiaryUser
     [Parameter] public UserId UserId { get; set; } = null;
     [Parameter] public AppUser User { get; set; } = null;
     [Parameter] public MudIcon Icon { get; set; } = null;
+    [Parameter] public EventCallback<AppUser> OnDelete { get; set; }
 
     [Inject] public UserManager<AppUser> UserManager { get; set; }
 
@@ -20,5 +21,10 @@ public partial class DiaryUser
                 User = await UserManager.FindByIdAsync(UserId.Id);
             }
         }
+    }
+
+    private async Task DeleteButtonClicked()
+    {
+        await OnDelete.InvokeAsync(User);
     }
 }

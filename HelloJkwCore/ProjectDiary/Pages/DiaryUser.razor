@@ -8,4 +8,9 @@
   <MudElement HtmlTag="span">
     @User.DisplayName
   </MudElement>
+
+  if (OnDelete.HasDelegate)
+  {
+    <MudButton OnClick="DeleteButtonClicked">삭제</MudButton>
+  }
 }
