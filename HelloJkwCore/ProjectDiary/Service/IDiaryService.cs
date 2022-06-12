@@ -8,7 +8,9 @@ public interface IDiaryService
     Task<DiaryInfo> GetDiaryInfoAsync(AppUser user, DiaryName diaryName);
     Task<List<DiaryInfo>> GetWritableDiaryInfoAsync(AppUser user);
     Task<List<DiaryInfo>> GetViewableDiaryInfoAsync(AppUser user);
-    Task UpdateDiaryInfoAsync(AppUser user, DiaryInfo diaryInfo);
+    Task<(bool Success, DiaryInfo Result)> UpdateDiaryInfoAsync(AppUser owner, DiaryName diaryName, Func<DiaryInfo, bool> updator);
+    Task<UserDiaryInfo> GetOrCreateUserDiaryInfoAsync(AppUser user);
+    Task<(bool Success, UserDiaryInfo Result)> UpdateUserDiaryInfoAsync(AppUser user, Func<UserDiaryInfo, bool> updator);
     #endregion
 
     #region GetDiaryView

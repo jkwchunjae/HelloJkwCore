@@ -2,17 +2,12 @@
 
 public partial class DiaryHome : JkwPageBase
 {
-    [Inject]
-    private IDiaryService DiaryService { get; set; }
-    [Inject]
-    private UserInstantData UserData { get; set; }
-    [Inject]
-    private ILogger<DiaryHome> Logger { get; set; }
+    [Inject] private IDiaryService DiaryService { get; set; }
+    [Inject] private UserInstantData UserData { get; set; }
+    [Inject] private ILogger<DiaryHome> Logger { get; set; }
 
-    [Parameter]
-    public string DiaryName { get; set; }
-    [Parameter]
-    public string Date { get; set; }
+    [Parameter] public string DiaryName { get; set; }
+    [Parameter] public string Date { get; set; }
 
     private bool Loading = true;
 

@@ -60,9 +60,12 @@ else if (HasDiaryContent)
         </MudButton>
     </div>
     <div id="button-right-group">
+        @if (DiaryInfo.CanWrite(User.Id))
+        {
             <MudButton Link="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
                 전체보기
             </MudButton>
+        }
         @if (DiaryInfo.IsSecret == false && DiaryInfo.CanWrite(User.Id))
         {
             <MudButton Link="@DiaryUrl.Search(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
@@ -89,6 +92,12 @@ else if (HasDiaryContent)
                 암호
             </MudButton>
         }
+        @if (User?.HasRole(UserRole.Admin) ?? false)
+        {
+            <MudButton Link="@DiaryUrl.Settings(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Default">
+                공개설정
+            </MudButton>
+        }
     </div>
     </div>
 
@@ -100,3 +109,5 @@ else if (HasDiaryContent)
         </Authorized>
     </AuthorizeView>
 }
+
+<DiaryViewableList/>

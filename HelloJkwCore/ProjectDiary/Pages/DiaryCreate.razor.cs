@@ -4,8 +4,7 @@ namespace ProjectDiary.Pages;
 
 public partial class DiaryCreate : JkwPageBase
 {
-    [Inject]
-    IDiaryService DiaryService { get; set; }
+    [Inject] IDiaryService DiaryService { get; set; }
 
     bool success;
 

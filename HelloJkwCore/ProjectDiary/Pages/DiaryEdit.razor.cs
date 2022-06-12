@@ -2,15 +2,11 @@
 
 public partial class DiaryEdit : JkwPageBase
 {
-    [Inject]
-    public IDiaryService DiaryService { get; set; }
-    [Inject]
-    private UserInstantData UserData { get; set; }
+    [Inject] public IDiaryService DiaryService { get; set; }
+    [Inject] private UserInstantData UserData { get; set; }
 
-    [Parameter]
-    public string DiaryName { get; set; }
-    [Parameter]
-    public string Date { get; set; }
+    [Parameter] public string DiaryName { get; set; }
+    [Parameter] public string Date { get; set; }
 
     private DiaryInfo DiaryInfo { get; set; }
     private DiaryView View { get; set; }

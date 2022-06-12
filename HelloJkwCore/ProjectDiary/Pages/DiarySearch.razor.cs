@@ -2,13 +2,10 @@
 
 public partial class DiarySearch : JkwPageBase
 {
-    [Parameter]
-    public string DiaryName { get; set; }
+    [Parameter] public string DiaryName { get; set; }
 
-    [Inject]
-    public IDiaryService DiaryService { get; set; }
-    [Inject]
-    public IDiarySearchService DiarySearchService { get; set; }
+    [Inject] public IDiaryService DiaryService { get; set; }
+    [Inject] public IDiarySearchService DiarySearchService { get; set; }
 
     DiaryInfo DiaryInfo { get; set; }
     List<DiaryContent> DiaryContentList { get; set; } = null;

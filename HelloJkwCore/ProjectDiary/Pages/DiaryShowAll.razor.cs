@@ -2,11 +2,9 @@
 
 public partial class DiaryShowAll : JkwPageBase
 {
-    [Parameter]
-    public string DiaryName { get; set; }
+    [Parameter] public string DiaryName { get; set; }
 
-    [Inject]
-    public IDiaryService DiaryService { get; set; }
+    [Inject] public IDiaryService DiaryService { get; set; }
 
     DiaryInfo DiaryInfo { get; set; }
     List<DateTime> DateList { get; set; } = new();

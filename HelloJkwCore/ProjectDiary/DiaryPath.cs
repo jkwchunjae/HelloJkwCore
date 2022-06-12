@@ -30,6 +30,11 @@ public static class DiaryPath
         return $"{paths.DiaryInfoList()}/userdiary.{user.Id}.json";
     }
 
+    public static string UserDiaryInfo(this Paths paths, UserId userId)
+    {
+        return $"{paths.DiaryInfoList()}/userdiary.{userId}.json";
+    }
+
     public static string DiaryInfo(this Paths paths, DiaryName diaryName)
     {
         return $"{paths.DiaryInfoList()}/diary.{diaryName}.json";

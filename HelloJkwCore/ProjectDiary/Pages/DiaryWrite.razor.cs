@@ -6,10 +6,8 @@ public partial class DiaryWrite : JkwPageBase
     [Inject] private IDiaryTemporaryService DiaryTemporaryService { get; set; }
     [Inject] private UserInstantData UserData { get; set; }
 
-    [Parameter]
-    public string DiaryName { get; set; }
-    [Parameter]
-    public string DiaryDate { get; set; }
+    [Parameter] public string DiaryName { get; set; }
+    [Parameter] public string DiaryDate { get; set; }
 
     private DiaryInfo DiaryInfo { get; set; }
     private DateTime? Date { get; set; }

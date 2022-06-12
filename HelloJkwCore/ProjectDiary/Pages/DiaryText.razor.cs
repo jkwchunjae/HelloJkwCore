@@ -4,17 +4,10 @@ namespace ProjectDiary.Pages;
 
 public partial class DiaryText : JkwPageBase
 {
-    [Parameter]
-    public string Text { get; set; }
-
-    [Parameter]
-    public EventCallback<string> TextChanged { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> ErrorStateChanged { get; set; }
-
-    [Parameter]
-    public bool AutoFocus { get; set; } = false;
+    [Parameter] public string Text { get; set; }
+    [Parameter] public EventCallback<string> TextChanged { get; set; }
+    [Parameter] public EventCallback<bool> ErrorStateChanged { get; set; }
+    [Parameter] public bool AutoFocus { get; set; } = false;
 
     private bool WarningTooLongWord { get; set; }
     private string LongWord { get; set; }
