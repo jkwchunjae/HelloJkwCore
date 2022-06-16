@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F0A3A004
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests\Tests.csproj", "{C010E7FD-89ED-47DA-AD12-4DA12CE214D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectPingpong", "ProjectPingpong\ProjectPingpong.csproj", "{911C27E1-4061-443F-834F-37C46B454935}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{C010E7FD-89ED-47DA-AD12-4DA12CE214D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C010E7FD-89ED-47DA-AD12-4DA12CE214D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C010E7FD-89ED-47DA-AD12-4DA12CE214D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{911C27E1-4061-443F-834F-37C46B454935}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{911C27E1-4061-443F-834F-37C46B454935}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{911C27E1-4061-443F-834F-37C46B454935}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{911C27E1-4061-443F-834F-37C46B454935}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
