@@ -3,9 +3,43 @@
 internal class MatchId : StringId
 {
     public static readonly MatchId Default = new MatchId(string.Empty);
+    public static class Types
+    {
+        public static readonly string LeagueMatch = "league.match";
+        public static readonly string KnockoutMatch = "knockout.match";
+        public static readonly string FreeMatch = "free.match";
+    }
+
+    public string Type { get; private set; }
+    public CompetitionName CompetitionName { get; private set; }
+
     public MatchId(string id)
         : base(id)
     {
+        (Type, CompetitionName) = Parse(id);
+    }
+    public MatchId(CompetitionName competitionName, LeagueId leagueId, PlayerName playerName1, PlayerName playerName2)
+        : this($"{Types.LeagueMatch}-{competitionName}-{leagueId}-{playerName1}-{playerName2}")
+    {
+    }
+    public MatchId(CompetitionName competitionName, KnockoutId knockoutId, KnockoutDepth knockoutDepth, int index)
+        : this($"{Types.KnockoutMatch}-{competitionName}-{knockoutId}-{knockoutDepth}-{index}")
+    {
+    }
+
+    private (string type, CompetitionName cName) Parse(string id)
+    {
+        if (id == string.Empty)
+        {
+            return (string.Empty, CompetitionName.Default);
+        }
+        else
+        {
+            var arr = id.Split('-');
+            var type = arr[0];
+            var cName = new CompetitionName(arr[1]);
+            return (type, cName);
+        }
     }
 }
 internal class MatchData
