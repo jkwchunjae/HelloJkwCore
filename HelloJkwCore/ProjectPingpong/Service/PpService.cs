@@ -68,6 +68,10 @@ public class PpService : IPpService
 
         var success = await _fs.WriteJsonAsync(path => GetCompetitionFilePath(path, competitionName), competitionData);
 
+        var competitions = await GetAllCompetitionsAsync();
+        competitions.Add(competitionName);
+        await _fs.WriteJsonAsync(path => path[PingpongPathType.CompetitionListFilePath], competitions);
+
         if (success)
         {
             return competitionData;
