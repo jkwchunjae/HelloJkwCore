@@ -10,20 +10,51 @@ internal class MatchId : StringId
         public static readonly string FreeMatch = "free.match";
     }
 
-    public string Type { get; private set; }
-    public CompetitionName CompetitionName { get; private set; }
+    private string _type = string.Empty;
+    private CompetitionName _competitionName = CompetitionName.Default;
+
+    public string Type
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_competitionName?.Id))
+            {
+                (_type, _competitionName) = Parse(Id);
+            }
+            return _type;
+        }
+        set
+        {
+            _type = value;
+        }
+    }
+    public CompetitionName CompetitionName
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_competitionName?.Id))
+            {
+                (_type, _competitionName) = Parse(Id);
+            }
+            return _competitionName;
+        }
+        set
+        {
+            _competitionName = value;
+        }
+    }
 
     public MatchId(string id)
         : base(id)
     {
         (Type, CompetitionName) = Parse(id);
     }
-    public MatchId(CompetitionName competitionName, LeagueId leagueId, PlayerName playerName1, PlayerName playerName2)
-        : this($"{Types.LeagueMatch}-{competitionName}-{leagueId}-{playerName1}-{playerName2}")
+    public MatchId(LeagueId leagueId, PlayerName playerName1, PlayerName playerName2)
+        : this($"{Types.LeagueMatch}-{leagueId}-{playerName1}-{playerName2}")
     {
     }
-    public MatchId(CompetitionName competitionName, KnockoutId knockoutId, KnockoutDepth knockoutDepth, int index)
-        : this($"{Types.KnockoutMatch}-{competitionName}-{knockoutId}-{knockoutDepth}-{index}")
+    public MatchId(KnockoutId knockoutId, KnockoutDepth knockoutDepth, int index)
+        : this($"{Types.KnockoutMatch}-{knockoutId}-{knockoutDepth}-{index}")
     {
     }
 
