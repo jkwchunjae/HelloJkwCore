@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj" />
+    <ProjectReference Include="..\..\ProjectPingpong\ProjectPingpong.csproj" />
     <ProjectReference Include="..\..\ProjectWorldCup\ProjectWorldCup.csproj" />
   </ItemGroup>
 </Project>
