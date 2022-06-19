@@ -129,3 +129,16 @@ public class StringIdTextJsonConverter<T> : System.Text.Json.Serialization.JsonC
         writer.WriteStringValue(value.ToString());
     }
 }
+
+public static class StringIdExtension
+{
+    public static bool HasInvalidFileNameChar(this StringId stringId)
+    {
+        return Path.GetInvalidFileNameChars().Any(chr => stringId.Id.Contains(chr));
+    }
+
+    public static bool HasInvalidPathChar(this StringId stringId)
+    {
+        return Path.GetInvalidPathChars().Any(chr => stringId.Id.Contains(chr));
+    }
+}
