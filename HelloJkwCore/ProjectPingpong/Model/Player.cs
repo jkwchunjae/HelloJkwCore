@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-internal class PlayerName : StringName
+public class PlayerName : StringName
 {
     public static readonly PlayerName Default = new PlayerName(string.Empty);
     public PlayerName(string name)
@@ -9,7 +9,7 @@ internal class PlayerName : StringName
     }
 }
 
-internal class Player
+public class Player
 {
     public PlayerName Name { get; set; } = PlayerName.Default;
     public int Class { get; set; } = default;

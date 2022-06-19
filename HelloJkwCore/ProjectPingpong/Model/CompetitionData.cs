@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-internal class CompetitionName : StringName
+public class CompetitionName : StringName
 {
     public static readonly CompetitionName Default = new CompetitionName(string.Empty);
     public CompetitionName(string name)
@@ -8,7 +8,7 @@ internal class CompetitionName : StringName
     {
     }
 }
-internal class CompetitionData
+public class CompetitionData
 {
     public CompetitionName Name { get; set; } = CompetitionName.Default;
     public DateTime? StartTime { get; set; }

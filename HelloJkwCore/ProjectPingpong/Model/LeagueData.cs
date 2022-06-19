@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-internal class LeagueId : StringId
+public class LeagueId : StringId
 {
     public static readonly LeagueId Default = new LeagueId(string.Empty);
 
@@ -44,7 +44,7 @@ internal class LeagueId : StringId
         }
     }
 }
-internal class LeagueData
+public class LeagueData
 {
     public LeagueId Id { get; set; } = LeagueId.Default;
     public CompetitionName CompetitionName { get; set; } = CompetitionName.Default;

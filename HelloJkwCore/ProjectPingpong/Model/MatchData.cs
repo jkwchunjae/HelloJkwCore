@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-internal class MatchId : StringId
+public class MatchId : StringId
 {
     public static readonly MatchId Default = new MatchId(string.Empty);
     public static class Types
@@ -73,7 +73,7 @@ internal class MatchId : StringId
         }
     }
 }
-internal class MatchData
+public class MatchData
 {
     public MatchId Id { get; set; } = MatchId.Default;
     public Player? LeftPlayer { get; set; }
@@ -93,7 +93,7 @@ internal class MatchData
     [JsonIgnore] public bool LeftWin => LeftPlayer == Winner;
     [JsonIgnore] public bool RightWin => RightPlayer == Winner;
 }
-internal class KnockoutMatchData : MatchData
+public class KnockoutMatchData : MatchData
 {
     public KnockoutDepth Depth { get; set; } = KnockoutDepth.None;
     public int Index { get; set; } = default;

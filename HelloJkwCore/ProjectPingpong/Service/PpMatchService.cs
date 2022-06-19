@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-internal interface IPpMatchService
+public interface IPpMatchService
 {
     Task<T?> CreateMatchAsync<T>(MatchId matchId) where T : MatchData, new();
     Task<T> GetMatchDataAsync<T>(MatchId matchId) where T : MatchData;
@@ -8,7 +8,7 @@ internal interface IPpMatchService
     Task DeleteMatchDataAsync(MatchId matchId);
 }
 
-internal class PpMatchService : IPpMatchService
+public class PpMatchService : IPpMatchService
 {
     private IFileSystem _fs;
 

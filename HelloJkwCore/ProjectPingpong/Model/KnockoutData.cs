@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-internal class KnockoutId : StringId
+public class KnockoutId : StringId
 {
     public static readonly KnockoutId Default = new KnockoutId(string.Empty);
     private CompetitionName _competitionName = CompetitionName.Default;
@@ -44,7 +44,7 @@ internal class KnockoutId : StringId
     }
 
 }
-internal class KnockoutData
+public class KnockoutData
 {
     public KnockoutId Id { get; set; } = KnockoutId.Default;
     public CompetitionName CompetitionName { get; set; } = CompetitionName.Default;

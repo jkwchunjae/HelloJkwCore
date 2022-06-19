@@ -1,7 +1,7 @@
 ﻿namespace ProjectPingpong;
 
 [JsonConverter(typeof(StringEnumConverter))]
-internal enum KnockoutDepth
+public enum KnockoutDepth
 {
     None,
     Final,

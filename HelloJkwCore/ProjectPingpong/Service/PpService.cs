@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-internal interface IPpService
+public interface IPpService
 {
     Task<List<CompetitionName>> GetAllCompetitionsAsync();
     Task<CompetitionData?> CreateCompetitionAsync(CompetitionName competitionName);
@@ -16,7 +16,7 @@ internal interface IPpService
     Task<KnockoutData?> UpdateKnockoutAsync(KnockoutId knockoutId, Func<KnockoutData, KnockoutData> funcUpdate);
 }
 
-internal class PpService : IPpService
+public class PpService : IPpService
 {
     private IFileSystem _fs;
     private IPpMatchService _matchService;

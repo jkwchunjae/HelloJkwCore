@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-internal class PingpongPathType
+public class PingpongPathType
 {
     public static readonly string CompetitionPath = nameof(CompetitionPath);
     public static readonly string CompetitionListFilePath = nameof(CompetitionListFilePath);
