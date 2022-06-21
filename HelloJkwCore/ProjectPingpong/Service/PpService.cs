@@ -152,7 +152,8 @@ public class PpService : IPpService
             Id = leagueId,
         };
 
-        competitionData = await CompetitionData.AddLeague(this, competitionData.Name, leagueData);
+        var competition = new CompetitionUpdator(competitionData, this);
+        competitionData = await competition.AddLeague(leagueData);
 
         if (competitionData == null)
             return (null, null);
@@ -219,7 +220,8 @@ public class PpService : IPpService
             Id = knockoutId,
         };
 
-        competitionData = await CompetitionData.AddKnockout(this, competitionData.Name, knockoutData);
+        var competition = new CompetitionUpdator(competitionData, this);
+        competitionData = await competition.AddKnockout(knockoutData);
 
         if (competitionData == null)
             return (null, null);

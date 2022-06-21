@@ -18,10 +18,21 @@ public class CompetitionData
     public List<KnockoutId>? KnockoutIdList { get; set; }
     [JsonIgnore] public List<LeagueData>? LeagueList { get; set; }
     [JsonIgnore] public List<KnockoutData>? KnockoutList { get; set; }
+}
+public class CompetitionUpdator
+{
+    CompetitionData _competitionData;
+    IPpService _service;
 
-    public static async Task<CompetitionData?> AddLeague(IPpService service, CompetitionName competitionName, LeagueData leagueData)
+    public CompetitionUpdator(CompetitionData competitionData, IPpService service)
     {
-        return await service.UpdateCompetitionAsync(competitionName, competitionData =>
+        _competitionData = competitionData;
+        _service = service;
+    }
+
+    public async Task<CompetitionData> AddLeague(LeagueData leagueData)
+    {
+        var competitionData = await _service.UpdateCompetitionAsync(_competitionData.Name, competitionData =>
         {
             competitionData.LeagueIdList ??= new();
             competitionData.LeagueIdList.Add(leagueData.Id);
@@ -30,11 +41,17 @@ public class CompetitionData
 
             return competitionData;
         });
+
+        if (competitionData != null)
+        {
+            _competitionData = competitionData;
+        }
+        return _competitionData;
     }
 
-    public static async Task<CompetitionData?> AddKnockout(IPpService service, CompetitionName competitionName, KnockoutData knockoutData)
+    public async Task<CompetitionData> AddKnockout(KnockoutData knockoutData)
     {
-        return await service.UpdateCompetitionAsync(competitionName, competitionData =>
+        var competitionData = await _service.UpdateCompetitionAsync(_competitionData.Name, competitionData =>
         {
             competitionData.KnockoutIdList ??= new();
             competitionData.KnockoutIdList.Add(knockoutData.Id);
@@ -43,5 +60,11 @@ public class CompetitionData
 
             return competitionData;
         });
+
+        if (competitionData != null)
+        {
+            _competitionData = competitionData;
+        }
+        return _competitionData;
     }
 }
