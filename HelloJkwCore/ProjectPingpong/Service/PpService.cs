@@ -52,7 +52,7 @@ public class PpService : IPpService
 
     public async Task<CompetitionData?> CreateCompetitionAsync(CompetitionName competitionName)
     {
-        if (competitionName.HasInvalidFileNameChar())
+        if (competitionName.HasInvalidFileNameChar() || competitionName.Contains("."))
         {
             return null;
         }
@@ -142,7 +142,7 @@ public class PpService : IPpService
 
     public async Task<(CompetitionData? CompetitionData, LeagueData? LeagueData)> CreateLeagueAsync(LeagueId leagueId)
     {
-        if (leagueId.HasInvalidFileNameChar() || string.IsNullOrWhiteSpace(leagueId.Id))
+        if (leagueId.HasInvalidFileNameChar() || string.IsNullOrWhiteSpace(leagueId.Id) || leagueId.Contains("."))
             return (null, null);
 
         var competitionData = await GetCompetitionDataAsync(leagueId.CompetitionName);
@@ -213,7 +213,7 @@ public class PpService : IPpService
 
     public async Task<(CompetitionData? CompetitionData, KnockoutData? KnockoutData)> CreateKnockoutAsync(KnockoutId knockoutId)
     {
-        if (knockoutId.HasInvalidFileNameChar() || string.IsNullOrWhiteSpace(knockoutId.Id))
+        if (knockoutId.HasInvalidFileNameChar() || string.IsNullOrWhiteSpace(knockoutId.Id) || knockoutId.Contains("."))
             return (null, null);
 
         var competitionData = await GetCompetitionDataAsync(knockoutId.CompetitionName);

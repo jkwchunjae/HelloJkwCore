@@ -6,9 +6,9 @@ public class MatchId : StringId
     public static readonly MatchId Default = new MatchId(string.Empty);
     public static class Types
     {
-        public static readonly string LeagueMatch = "league.match";
-        public static readonly string KnockoutMatch = "knockout.match";
-        public static readonly string FreeMatch = "free.match";
+        public static readonly string LeagueMatch = "leaguematch";
+        public static readonly string KnockoutMatch = "knockoutmatch";
+        public static readonly string FreeMatch = "freematch";
     }
 
     private string _type = string.Empty;
@@ -52,11 +52,11 @@ public class MatchId : StringId
         (Type, CompetitionName) = Parse(id);
     }
     public MatchId(LeagueId leagueId, PlayerName playerName1, PlayerName playerName2)
-        : this($"{Types.LeagueMatch}-{leagueId}-{playerName1}-{playerName2}")
+        : this($"{Types.LeagueMatch}.{leagueId}.{playerName1}.{playerName2}")
     {
     }
     public MatchId(KnockoutId knockoutId, KnockoutDepth knockoutDepth, int index)
-        : this($"{Types.KnockoutMatch}-{knockoutId}-{knockoutDepth}-{index}")
+        : this($"{Types.KnockoutMatch}.{knockoutId}.{knockoutDepth}.{index}")
     {
     }
 
@@ -68,7 +68,7 @@ public class MatchId : StringId
         }
         else
         {
-            var arr = id.Split('-');
+            var arr = id.Split('.');
             var type = arr[0];
             var cName = new CompetitionName(arr[1]);
             return (type, cName);

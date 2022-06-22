@@ -27,7 +27,7 @@ public class KnockoutId : StringId
         CompetitionName = Parse(id);
     }
     public KnockoutId(CompetitionName competitionName, string knockoutId)
-        : this($"{competitionName}-{knockoutId}")
+        : this($"{competitionName}.{knockoutId}")
     {
     }
 
@@ -39,7 +39,7 @@ public class KnockoutId : StringId
         }
         else
         {
-            var arr = id.Split('-');
+            var arr = id.Split('.');
             var cName = new CompetitionName(arr[0]);
             return cName;
         }

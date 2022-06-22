@@ -33,6 +33,11 @@ public class PpMatchService : IPpMatchService
 
     public async Task<T?> CreateMatchAsync<T>(MatchId matchId) where T : MatchData, new()
     {
+        if (matchId.HasInvalidFileNameChar() || string.IsNullOrEmpty(matchId.Id) || matchId.Contains("."))
+        {
+            return null;
+        }
+
         var matchData = new T
         {
             Id = matchId,

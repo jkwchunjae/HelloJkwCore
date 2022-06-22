@@ -28,7 +28,7 @@ public class LeagueId : StringId
         CompetitionName = Parse(id);
     }
     public LeagueId(CompetitionName competitionName, string leagueId)
-        : this($"{competitionName}-{leagueId}")
+        : this($"{competitionName}.{leagueId}")
     {
     }
 
@@ -40,7 +40,7 @@ public class LeagueId : StringId
         }
         else
         {
-            var arr = id.Split('-');
+            var arr = id.Split('.');
             var cName = new CompetitionName(arr[0]);
             return cName;
         }
