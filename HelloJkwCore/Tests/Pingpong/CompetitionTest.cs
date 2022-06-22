@@ -82,4 +82,76 @@ public class CompetitionTest
 
         Assert.Equal(startTime, updated.StartTime);
     }
+
+    [Fact]
+    public async Task 대회에선수를추가할수있어야한다()
+    {
+        var competitionName = new CompetitionName("test-competition");
+        var competitionData = await _service.CreateCompetitionAsync(competitionName);
+
+        var competitionUpdator = new CompetitionUpdator(competitionData, _service);
+        competitionData = await competitionUpdator.AddPlayers(new[]
+        {
+            new Player { Name = new PlayerName("p1"), Class = 3 },
+            new Player { Name = new PlayerName("p2"), Class = 1 },
+        });
+
+        Assert.NotNull(competitionData.PlayerList);
+        Assert.Equal(2, competitionData.PlayerList.Count);
+        Assert.Equal("p1", competitionData.PlayerList[0].Name.Name);
+        Assert.Equal(3, competitionData.PlayerList[0].Class);
+        Assert.Equal("p2", competitionData.PlayerList[1].Name.Name);
+        Assert.Equal(1, competitionData.PlayerList[1].Class);
+    }
+
+    [Fact]
+    public async Task 대회에선수를수정할수있어야한다()
+    {
+        var competitionName = new CompetitionName("test-competition");
+        var competitionData = await _service.CreateCompetitionAsync(competitionName);
+
+        var competitionUpdator = new CompetitionUpdator(competitionData, _service);
+        competitionData = await competitionUpdator.AddPlayers(new[]
+        {
+            new Player { Name = new PlayerName("p1"), Class = 3 },
+            new Player { Name = new PlayerName("p2"), Class = 1 },
+        });
+        competitionData = await competitionUpdator.AddPlayers(new[]
+        {
+            new Player { Name = new PlayerName("p1"), Class = 5 },
+        });
+        competitionData = await competitionUpdator.AddPlayers(new[]
+        {
+            new Player { Name = new PlayerName("p2"), Class = 9 },
+            new Player { Name = new PlayerName("p3"), Class = 1 },
+        });
+
+        Assert.NotNull(competitionData.PlayerList);
+        Assert.Equal(3, competitionData.PlayerList.Count);
+        Assert.Equal("p1", competitionData.PlayerList[0].Name.Name);
+        Assert.Equal(5, competitionData.PlayerList[0].Class);
+        Assert.Equal("p2", competitionData.PlayerList[1].Name.Name);
+        Assert.Equal(9, competitionData.PlayerList[1].Class);
+    }
+
+    [Fact]
+    public async Task 대회에선수를삭제할수있어야한다()
+    {
+        var competitionName = new CompetitionName("test-competition");
+        var competitionData = await _service.CreateCompetitionAsync(competitionName);
+
+        var competitionUpdator = new CompetitionUpdator(competitionData, _service);
+        competitionData = await competitionUpdator.AddPlayers(new[]
+        {
+            new Player { Name = new PlayerName("p1"), Class = 3 },
+            new Player { Name = new PlayerName("p2"), Class = 1 },
+        });
+        competitionData = await competitionUpdator.RemovePlayer(new PlayerName("p2"));
+
+        Assert.NotNull(competitionData.PlayerList);
+        Assert.Single(competitionData.PlayerList);
+        Assert.Equal("p1", competitionData.PlayerList[0].Name.Name);
+        Assert.Equal(3, competitionData.PlayerList[0].Class);
+    }
+
 }
