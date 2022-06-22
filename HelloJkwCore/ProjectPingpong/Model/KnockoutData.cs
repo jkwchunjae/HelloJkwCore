@@ -53,6 +53,15 @@ public class KnockoutData
     public List<PlayerName>? PlayerList { get; set; }
     public List<MatchId>? MatchIdList { get; set; }
     [JsonIgnore] public List<KnockoutMatchData>? MatchList { get; set; }
+
+    public KnockoutData()
+    {
+    }
+
+    public KnockoutData(KnockoutId id)
+    {
+        Id = id;
+    }
 }
 public class KnockoutUpdator
 {

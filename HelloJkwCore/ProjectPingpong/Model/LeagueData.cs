@@ -53,4 +53,13 @@ public class LeagueData
     public List<PlayerName>? PlayerList { get; set; }
     public List<MatchId>? MatchIdList { get; set; }
     [JsonIgnore] public List<MatchData>? MatchList { get; set; }
+
+    public LeagueData()
+    {
+    }
+
+    public LeagueData(LeagueId id)
+    {
+        Id = id;
+    }
 }

@@ -84,6 +84,36 @@ public class CompetitionTest
     }
 
     [Fact]
+    public async Task 대회_loadChildData_false정상동작해야한다()
+    {
+        var competitionName = new CompetitionName("test-competition");
+        var competitionData = await _service.CreateCompetitionAsync(competitionName);
+        var leagueData = await _service.CreateLeagueAsync(new LeagueId(competitionName, "A"));
+        var competitionUpdator = new CompetitionUpdator(competitionData, _service);
+
+        await competitionUpdator.AddLeague(leagueData);
+
+        competitionData = await _service.GetCompetitionDataAsync(competitionName);
+        Assert.Contains(leagueData.Id, competitionData.LeagueIdList);
+        Assert.Null(competitionData.LeagueList);
+    }
+
+    [Fact]
+    public async Task 대회_loadChildData_true정상동작해야한다()
+    {
+        var competitionName = new CompetitionName("test-competition");
+        var competitionData = await _service.CreateCompetitionAsync(competitionName);
+        var leagueData = await _service.CreateLeagueAsync(new LeagueId(competitionName, "A"));
+        var competitionUpdator = new CompetitionUpdator(competitionData, _service);
+
+        await competitionUpdator.AddLeague(leagueData);
+
+        competitionData = await _service.GetCompetitionDataAsync(competitionName, loadChildData: true);
+        Assert.Contains(leagueData.Id, competitionData.LeagueIdList);
+        Assert.Single(competitionData.LeagueList);
+    }
+
+    [Fact]
     public async Task 대회에선수를추가할수있어야한다()
     {
         var competitionName = new CompetitionName("test-competition");
@@ -154,4 +184,32 @@ public class CompetitionTest
         Assert.Equal(3, competitionData.PlayerList[0].Class);
     }
 
+    [Fact]
+    public async Task 대회에리그를추가할수있어야한다()
+    {
+        var competitionName = new CompetitionName("test-competition");
+        var competitionData = await _service.CreateCompetitionAsync(competitionName);
+        var competitionUpdator = new CompetitionUpdator(competitionData, _service);
+
+        var leagueData = await _service.CreateLeagueAsync(new LeagueId(competitionName, "A"));
+        await competitionUpdator.AddLeague(leagueData);
+
+        competitionData = await _service.GetCompetitionDataAsync(competitionName);
+        Assert.Contains(leagueData.Id, competitionData.LeagueIdList);
+    }
+
+    [Fact]
+    public async Task 대회에리그를삭제할수있어야한다()
+    {
+        var competitionName = new CompetitionName("test-competition");
+        var competitionData = await _service.CreateCompetitionAsync(competitionName);
+        var competitionUpdator = new CompetitionUpdator(competitionData, _service);
+
+        var leagueData = await _service.CreateLeagueAsync(new LeagueId(competitionName, "A"));
+        await competitionUpdator.AddLeague(leagueData);
+        await competitionUpdator.RemoveLeague(leagueData.Id);
+
+        competitionData = await _service.GetCompetitionDataAsync(competitionName);
+        Assert.Empty(competitionData.LeagueIdList);
+    }
 }

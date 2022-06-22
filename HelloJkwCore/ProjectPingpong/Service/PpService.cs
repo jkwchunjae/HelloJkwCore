@@ -7,11 +7,11 @@ public interface IPpService
     Task<CompetitionData?> GetCompetitionDataAsync(CompetitionName competitionName, bool loadChildData = false);
     Task<CompetitionData?> UpdateCompetitionAsync(CompetitionName competitionName, Func<CompetitionData, CompetitionData> funcUpdate);
 
-    Task<(CompetitionData? CompetitionData, LeagueData? LeagueData)> CreateLeagueAsync(LeagueId leagueId);
+    Task<LeagueData?> CreateLeagueAsync(LeagueId leagueId);
     Task<LeagueData?> GetLeagueDataAsync(LeagueId leagueId, bool loadChildData = false);
     Task<LeagueData?> UpdateLeagueAsync(LeagueId leagueId, Func<LeagueData, LeagueData> funcUpdate);
 
-    Task<(CompetitionData? CompetitionData, KnockoutData? KnockoutData)> CreateKnockoutAsync(KnockoutId knockoutId);
+    Task<KnockoutData?> CreateKnockoutAsync(KnockoutId knockoutId);
     Task<KnockoutData?> GetKnockoutDataAsync(KnockoutId knockoutId, bool loadChildData = false);
     Task<KnockoutData?> UpdateKnockoutAsync(KnockoutId knockoutId, Func<KnockoutData, KnockoutData> funcUpdate);
 }
@@ -52,7 +52,7 @@ public class PpService : IPpService
 
     public async Task<CompetitionData?> CreateCompetitionAsync(CompetitionName competitionName)
     {
-        if (competitionName.HasInvalidFileNameChar() || competitionName.Contains("."))
+        if (competitionName.HasInvalidFileNameChar())
         {
             return null;
         }
@@ -140,30 +140,21 @@ public class PpService : IPpService
         return $"{path[PingpongPathType.CompetitionPath]}/{leagueId.CompetitionName}/league/{leagueId}.json";
     }
 
-    public async Task<(CompetitionData? CompetitionData, LeagueData? LeagueData)> CreateLeagueAsync(LeagueId leagueId)
+    public async Task<LeagueData?> CreateLeagueAsync(LeagueId leagueId)
     {
-        if (leagueId.HasInvalidFileNameChar() || string.IsNullOrWhiteSpace(leagueId.Id) || leagueId.Contains("."))
-            return (null, null);
+        if (leagueId.HasInvalidFileNameChar() || string.IsNullOrWhiteSpace(leagueId.Id))
+            return null;
 
         var competitionData = await GetCompetitionDataAsync(leagueId.CompetitionName);
 
         if (competitionData == null)
-            return (null, null);
+            return null;
 
-        var leagueData = new LeagueData
-        {
-            Id = leagueId,
-        };
-
-        var competition = new CompetitionUpdator(competitionData, this);
-        competitionData = await competition.AddLeague(leagueData);
-
-        if (competitionData == null)
-            return (null, null);
+        var leagueData = new LeagueData(leagueId);
 
         await _fs.WriteJsonAsync(path => GetLeagueFilePath(path, leagueId), leagueData);
 
-        return (competitionData, leagueData);
+        return leagueData;
     }
 
     public async Task<LeagueData?> GetLeagueDataAsync(LeagueId leagueId, bool loadChildData = false)
@@ -211,30 +202,21 @@ public class PpService : IPpService
         return $"{path[PingpongPathType.CompetitionPath]}/{knockoutId.CompetitionName}/knockout/{knockoutId}.json";
     }
 
-    public async Task<(CompetitionData? CompetitionData, KnockoutData? KnockoutData)> CreateKnockoutAsync(KnockoutId knockoutId)
+    public async Task<KnockoutData?> CreateKnockoutAsync(KnockoutId knockoutId)
     {
-        if (knockoutId.HasInvalidFileNameChar() || string.IsNullOrWhiteSpace(knockoutId.Id) || knockoutId.Contains("."))
-            return (null, null);
+        if (knockoutId.HasInvalidFileNameChar() || string.IsNullOrWhiteSpace(knockoutId.Id))
+            return null;
 
         var competitionData = await GetCompetitionDataAsync(knockoutId.CompetitionName);
 
         if (competitionData == null)
-            return (null, null);
+            return null;
 
-        var knockoutData = new KnockoutData
-        {
-            Id = knockoutId,
-        };
-
-        var competition = new CompetitionUpdator(competitionData, this);
-        competitionData = await competition.AddKnockout(knockoutData);
-
-        if (competitionData == null)
-            return (null, null);
+        var knockoutData = new KnockoutData(knockoutId);
 
         await _fs.WriteJsonAsync(path => GetKnockoutFilePath(path, knockoutId), knockoutData);
 
-        return (competitionData, knockoutData);
+        return knockoutData;
     }
 
     public async Task<KnockoutData?> GetKnockoutDataAsync(KnockoutId knockoutId, bool loadChildData = false)

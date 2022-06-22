@@ -1,8 +1,10 @@
 ﻿namespace ProjectPingpong;
 
+[JsonConverter(typeof(StringIdJsonConverter<CompetitionName>))]
 public class CompetitionName : StringName
 {
     public static readonly CompetitionName Default = new CompetitionName(string.Empty);
+    public CompetitionName() { }
     public CompetitionName(string name)
         : base(name)
     {
