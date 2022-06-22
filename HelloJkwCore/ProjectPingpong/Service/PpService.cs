@@ -4,15 +4,15 @@ public interface IPpService
 {
     Task<List<CompetitionName>> GetAllCompetitionsAsync();
     Task<CompetitionData?> CreateCompetitionAsync(CompetitionName competitionName);
-    Task<CompetitionData?> GetCompetitionDataAsync(CompetitionName competitionName);
+    Task<CompetitionData?> GetCompetitionDataAsync(CompetitionName competitionName, bool loadChildData = false);
     Task<CompetitionData?> UpdateCompetitionAsync(CompetitionName competitionName, Func<CompetitionData, CompetitionData> funcUpdate);
 
     Task<(CompetitionData? CompetitionData, LeagueData? LeagueData)> CreateLeagueAsync(LeagueId leagueId);
-    Task<LeagueData?> GetLeagueDataAsync(LeagueId leagueId);
+    Task<LeagueData?> GetLeagueDataAsync(LeagueId leagueId, bool loadChildData = false);
     Task<LeagueData?> UpdateLeagueAsync(LeagueId leagueId, Func<LeagueData, LeagueData> funcUpdate);
 
     Task<(CompetitionData? CompetitionData, KnockoutData? KnockoutData)> CreateKnockoutAsync(KnockoutId knockoutId);
-    Task<KnockoutData?> GetKnockoutDataAsync(KnockoutId knockoutId);
+    Task<KnockoutData?> GetKnockoutDataAsync(KnockoutId knockoutId, bool loadChildData = false);
     Task<KnockoutData?> UpdateKnockoutAsync(KnockoutId knockoutId, Func<KnockoutData, KnockoutData> funcUpdate);
 }
 
@@ -82,31 +82,34 @@ public class PpService : IPpService
         }
     }
 
-    public async Task<CompetitionData?> GetCompetitionDataAsync(CompetitionName competitionName)
+    public async Task<CompetitionData?> GetCompetitionDataAsync(CompetitionName competitionName, bool loadChildData = false)
     {
         if (await _fs.FileExistsAsync(path => GetCompetitionFilePath(path, competitionName)))
         {
             var competitionData = await _fs.ReadJsonAsync<CompetitionData>(path => GetCompetitionFilePath(path, competitionName));
 
-            if (competitionData.LeagueIdList?.Any() ?? false)
+            if (loadChildData)
             {
-                var leagues = await competitionData.LeagueIdList
-                    .Select(async leagueId => await GetLeagueDataAsync(leagueId))
-                    .WhenAll();
-                competitionData.LeagueList = leagues
-                    .Where(league => league != null)
-                    .Select(league => league!)
-                    .ToList();
-            }
-            if (competitionData.KnockoutIdList?.Any() ?? false)
-            {
-                var knockouts = await competitionData.KnockoutIdList
-                    .Select(async knockoutId => await GetKnockoutDataAsync(knockoutId))
-                    .WhenAll();
-                competitionData.KnockoutList = knockouts
-                    .Where(knockout => knockout != null)
-                    .Select(knockout => knockout!)
-                    .ToList();
+                if (competitionData.LeagueIdList?.Any() ?? false)
+                {
+                    var leagues = await competitionData.LeagueIdList
+                        .Select(async leagueId => await GetLeagueDataAsync(leagueId))
+                        .WhenAll();
+                    competitionData.LeagueList = leagues
+                        .Where(league => league != null)
+                        .Select(league => league!)
+                        .ToList();
+                }
+                if (competitionData.KnockoutIdList?.Any() ?? false)
+                {
+                    var knockouts = await competitionData.KnockoutIdList
+                        .Select(async knockoutId => await GetKnockoutDataAsync(knockoutId))
+                        .WhenAll();
+                    competitionData.KnockoutList = knockouts
+                        .Where(knockout => knockout != null)
+                        .Select(knockout => knockout!)
+                        .ToList();
+                }
             }
 
             return competitionData;
@@ -163,19 +166,22 @@ public class PpService : IPpService
         return (competitionData, leagueData);
     }
 
-    public async Task<LeagueData?> GetLeagueDataAsync(LeagueId leagueId)
+    public async Task<LeagueData?> GetLeagueDataAsync(LeagueId leagueId, bool loadChildData = false)
     {
         if (await _fs.FileExistsAsync(path => GetLeagueFilePath(path, leagueId)))
         {
             var leagueData = await _fs.ReadJsonAsync<LeagueData>(path => GetLeagueFilePath(path, leagueId));
 
-            if (leagueData.MatchIdList?.Any() ?? false)
+            if (loadChildData)
             {
-                var matches = await leagueData.MatchIdList
-                    .Select(async matchId => await _matchService.GetMatchDataAsync<MatchData>(matchId))
-                    .WhenAll();
+                if (leagueData.MatchIdList?.Any() ?? false)
+                {
+                    var matches = await leagueData.MatchIdList
+                        .Select(async matchId => await _matchService.GetMatchDataAsync<MatchData>(matchId))
+                        .WhenAll();
 
-                leagueData.MatchList = matches.ToList();
+                    leagueData.MatchList = matches.ToList();
+                }
             }
             return leagueData;
         }
@@ -231,19 +237,22 @@ public class PpService : IPpService
         return (competitionData, knockoutData);
     }
 
-    public async Task<KnockoutData?> GetKnockoutDataAsync(KnockoutId knockoutId)
+    public async Task<KnockoutData?> GetKnockoutDataAsync(KnockoutId knockoutId, bool loadChildData = false)
     {
         if (await _fs.FileExistsAsync(path => GetKnockoutFilePath(path, knockoutId)))
         {
             var knockoutData = await _fs.ReadJsonAsync<KnockoutData>(path => GetKnockoutFilePath(path, knockoutId));
 
-            if (knockoutData.MatchIdList?.Any() ?? false)
+            if (loadChildData)
             {
-                var matches = await knockoutData.MatchIdList
-                    .Select(async matchId => await _matchService.GetMatchDataAsync<KnockoutMatchData>(matchId))
-                    .WhenAll();
+                if (knockoutData.MatchIdList?.Any() ?? false)
+                {
+                    var matches = await knockoutData.MatchIdList
+                        .Select(async matchId => await _matchService.GetMatchDataAsync<KnockoutMatchData>(matchId))
+                        .WhenAll();
 
-                knockoutData.MatchList = matches.ToList();
+                    knockoutData.MatchList = matches.ToList();
+                }
             }
             return knockoutData;
         }

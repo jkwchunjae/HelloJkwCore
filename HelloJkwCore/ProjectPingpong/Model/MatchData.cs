@@ -1,5 +1,6 @@
 ﻿namespace ProjectPingpong;
 
+[JsonConverter(typeof(StringIdJsonConverter<MatchId>))]
 public class MatchId : StringId
 {
     public static readonly MatchId Default = new MatchId(string.Empty);
@@ -44,6 +45,7 @@ public class MatchId : StringId
         }
     }
 
+    public MatchId() { }
     public MatchId(string id)
         : base(id)
     {
