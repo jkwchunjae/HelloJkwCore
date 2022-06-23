@@ -17,24 +17,16 @@ public class CompetitionTest
             },
         };
 
-        var fsOption = new FileSystemOption
-        {
-            MainFileSystem = new MainFileSystemOption
-            {
-                UseBackup = false,
-                MainFileSystem = FileSystemType.InMemory,
-            },
-        };
-
         var pingpongOption = new PingpongOption
         {
             FileSystemSelect = new FileSystemSelectOption
             {
-                UseMainFileSystem = true,
+                FileSystemType = FileSystemType.InMemory,
             },
             Path = pathOption,
         };
 
+        var fsOption = new FileSystemOption();
         IFileSystemService fsService = new FileSystemService(fsOption, null, null);
         IPpMatchService matchService = new PpMatchService(pingpongOption, fsService);
         _service = new PpService(pingpongOption, fsService, matchService);
