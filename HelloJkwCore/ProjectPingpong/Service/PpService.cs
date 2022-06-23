@@ -1,18 +1,22 @@
-﻿namespace ProjectPingpong;
+﻿using Microsoft.Extensions.Caching.Memory;
+
+namespace ProjectPingpong;
 
 public interface IPpService
 {
+    void ClearCache();
+
     Task<List<CompetitionName>> GetAllCompetitionsAsync();
     Task<CompetitionData?> CreateCompetitionAsync(CompetitionName competitionName);
-    Task<CompetitionData?> GetCompetitionDataAsync(CompetitionName competitionName, bool loadChildData = false);
+    Task<CompetitionData?> GetCompetitionDataAsync(CompetitionName competitionName);
     Task<CompetitionData?> UpdateCompetitionAsync(CompetitionName competitionName, Func<CompetitionData, CompetitionData> funcUpdate);
 
     Task<LeagueData?> CreateLeagueAsync(LeagueId leagueId);
-    Task<LeagueData?> GetLeagueDataAsync(LeagueId leagueId, bool loadChildData = false);
+    Task<LeagueData?> GetLeagueDataAsync(LeagueId leagueId);
     Task<LeagueData?> UpdateLeagueAsync(LeagueId leagueId, Func<LeagueData, LeagueData> funcUpdate);
 
     Task<KnockoutData?> CreateKnockoutAsync(KnockoutId knockoutId);
-    Task<KnockoutData?> GetKnockoutDataAsync(KnockoutId knockoutId, bool loadChildData = false);
+    Task<KnockoutData?> GetKnockoutDataAsync(KnockoutId knockoutId);
     Task<KnockoutData?> UpdateKnockoutAsync(KnockoutId knockoutId, Func<KnockoutData, KnockoutData> funcUpdate);
 }
 
@@ -21,6 +25,8 @@ public class PpService : IPpService
     private IFileSystem _fs;
     private IPpMatchService _matchService;
 
+    private IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
+
     public PpService(
         PingpongOption option,
         IFileSystemService fsService,
@@ -28,6 +34,13 @@ public class PpService : IPpService
     {
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
         _matchService = matchService;
+    }
+
+    public void ClearCache()
+    {
+        var cache = _cache;
+        _cache = new MemoryCache(new MemoryCacheOptions());
+        cache.Dispose();
     }
 
     #region Competition
@@ -66,58 +79,54 @@ public class PpService : IPpService
             Name = competitionName,
         };
 
-        var success = await _fs.WriteJsonAsync(path => GetCompetitionFilePath(path, competitionName), competitionData);
+        await _fs.WriteJsonAsync(path => GetCompetitionFilePath(path, competitionName), competitionData);
+        _cache.Set(competitionName, competitionData);
 
         var competitions = await GetAllCompetitionsAsync();
         competitions.Add(competitionName);
         await _fs.WriteJsonAsync(path => path[PingpongPathType.CompetitionListFilePath], competitions);
 
-        if (success)
-        {
-            return competitionData;
-        }
-        else
-        {
-            return null;
-        }
+        return competitionData;
     }
 
-    public async Task<CompetitionData?> GetCompetitionDataAsync(CompetitionName competitionName, bool loadChildData = false)
+    public async Task<CompetitionData?> GetCompetitionDataAsync(CompetitionName competitionName)
     {
-        if (await _fs.FileExistsAsync(path => GetCompetitionFilePath(path, competitionName)))
+        CompetitionData? competitionData = null;
+        if (_cache.TryGetValue(competitionName, out CompetitionData cached))
         {
-            var competitionData = await _fs.ReadJsonAsync<CompetitionData>(path => GetCompetitionFilePath(path, competitionName));
-
-            if (loadChildData)
-            {
-                if (competitionData.LeagueIdList?.Any() ?? false)
-                {
-                    var leagues = await competitionData.LeagueIdList
-                        .Select(async leagueId => await GetLeagueDataAsync(leagueId))
-                        .WhenAll();
-                    competitionData.LeagueList = leagues
-                        .Where(league => league != null)
-                        .Select(league => league!)
-                        .ToList();
-                }
-                if (competitionData.KnockoutIdList?.Any() ?? false)
-                {
-                    var knockouts = await competitionData.KnockoutIdList
-                        .Select(async knockoutId => await GetKnockoutDataAsync(knockoutId))
-                        .WhenAll();
-                    competitionData.KnockoutList = knockouts
-                        .Where(knockout => knockout != null)
-                        .Select(knockout => knockout!)
-                        .ToList();
-                }
-            }
-
-            return competitionData;
+            competitionData = cached;
         }
-        else
+        else if (await _fs.FileExistsAsync(path => GetCompetitionFilePath(path, competitionName)))
         {
+            competitionData = await _fs.ReadJsonAsync<CompetitionData>(path => GetCompetitionFilePath(path, competitionName));
+        }
+
+        if (competitionData == null)
             return null;
+
+        if (competitionData.LeagueIdList?.Any() ?? false)
+        {
+            var leagues = await competitionData.LeagueIdList
+                .Select(async leagueId => await GetLeagueDataAsync(leagueId))
+                .WhenAll();
+            competitionData.LeagueList = leagues
+                .Where(league => league != null)
+                .Select(league => league!)
+                .ToList();
         }
+        if (competitionData.KnockoutIdList?.Any() ?? false)
+        {
+            var knockouts = await competitionData.KnockoutIdList
+                .Select(async knockoutId => await GetKnockoutDataAsync(knockoutId))
+                .WhenAll();
+            competitionData.KnockoutList = knockouts
+                .Where(knockout => knockout != null)
+                .Select(knockout => knockout!)
+                .ToList();
+        }
+
+        _cache.Set(competitionName, competitionData);
+        return competitionData;
     }
 
     public async Task<CompetitionData?> UpdateCompetitionAsync(CompetitionName competitionName, Func<CompetitionData, CompetitionData> funcUpdate)
@@ -130,6 +139,7 @@ public class PpService : IPpService
         var updated = funcUpdate(competitionData);
 
         await _fs.WriteJsonAsync(path => GetCompetitionFilePath(path, competitionName), updated);
+        _cache.Set(competitionName, updated);
         return updated;
     }
     #endregion
@@ -153,33 +163,37 @@ public class PpService : IPpService
         var leagueData = new LeagueData(leagueId);
 
         await _fs.WriteJsonAsync(path => GetLeagueFilePath(path, leagueId), leagueData);
+        _cache.Set(leagueId, leagueData);
 
         return leagueData;
     }
 
-    public async Task<LeagueData?> GetLeagueDataAsync(LeagueId leagueId, bool loadChildData = false)
+    public async Task<LeagueData?> GetLeagueDataAsync(LeagueId leagueId)
     {
-        if (await _fs.FileExistsAsync(path => GetLeagueFilePath(path, leagueId)))
+        LeagueData? leagueData = null;
+        if (_cache.TryGetValue(leagueId, out LeagueData cached))
         {
-            var leagueData = await _fs.ReadJsonAsync<LeagueData>(path => GetLeagueFilePath(path, leagueId));
-
-            if (loadChildData)
-            {
-                if (leagueData.MatchIdList?.Any() ?? false)
-                {
-                    var matches = await leagueData.MatchIdList
-                        .Select(async matchId => await _matchService.GetMatchDataAsync<MatchData>(matchId))
-                        .WhenAll();
-
-                    leagueData.MatchList = matches.ToList();
-                }
-            }
-            return leagueData;
+            leagueData = cached;
         }
-        else
+        else if (await _fs.FileExistsAsync(path => GetLeagueFilePath(path, leagueId)))
         {
+            leagueData = await _fs.ReadJsonAsync<LeagueData>(path => GetLeagueFilePath(path, leagueId));
+        }
+
+        if (leagueData == null)
             return null;
+
+        if (leagueData.MatchIdList?.Any() ?? false)
+        {
+            var matches = await leagueData.MatchIdList
+                .Select(async matchId => await _matchService.GetMatchDataAsync<MatchData>(matchId))
+                .WhenAll();
+
+            leagueData.MatchList = matches.ToList();
         }
+
+        _cache.Set(leagueId, leagueData);
+        return leagueData;
     }
 
     public async Task<LeagueData?> UpdateLeagueAsync(LeagueId leagueId, Func<LeagueData, LeagueData> funcUpdate)
@@ -192,6 +206,7 @@ public class PpService : IPpService
         var updated = funcUpdate(leagueData);
 
         await _fs.WriteJsonAsync(path => GetLeagueFilePath(path, leagueId), updated);
+        _cache.Set(leagueId, leagueData);
         return updated;
     }
     #endregion
@@ -215,33 +230,37 @@ public class PpService : IPpService
         var knockoutData = new KnockoutData(knockoutId);
 
         await _fs.WriteJsonAsync(path => GetKnockoutFilePath(path, knockoutId), knockoutData);
+        _cache.Set(knockoutId, knockoutData);
 
         return knockoutData;
     }
 
-    public async Task<KnockoutData?> GetKnockoutDataAsync(KnockoutId knockoutId, bool loadChildData = false)
+    public async Task<KnockoutData?> GetKnockoutDataAsync(KnockoutId knockoutId)
     {
-        if (await _fs.FileExistsAsync(path => GetKnockoutFilePath(path, knockoutId)))
+        KnockoutData? knockoutData = null;
+        if (_cache.TryGetValue(knockoutId, out KnockoutData cached))
         {
-            var knockoutData = await _fs.ReadJsonAsync<KnockoutData>(path => GetKnockoutFilePath(path, knockoutId));
-
-            if (loadChildData)
-            {
-                if (knockoutData.MatchIdList?.Any() ?? false)
-                {
-                    var matches = await knockoutData.MatchIdList
-                        .Select(async matchId => await _matchService.GetMatchDataAsync<KnockoutMatchData>(matchId))
-                        .WhenAll();
-
-                    knockoutData.MatchList = matches.ToList();
-                }
-            }
-            return knockoutData;
+            knockoutData = cached;
         }
-        else
+        else if (await _fs.FileExistsAsync(path => GetKnockoutFilePath(path, knockoutId)))
         {
+            knockoutData = await _fs.ReadJsonAsync<KnockoutData>(path => GetKnockoutFilePath(path, knockoutId));
+        }
+
+        if (knockoutData == null)
             return null;
+
+        if (knockoutData.MatchIdList?.Any() ?? false)
+        {
+            var matches = await knockoutData.MatchIdList
+                .Select(async matchId => await _matchService.GetMatchDataAsync<KnockoutMatchData>(matchId))
+                .WhenAll();
+
+            knockoutData.MatchList = matches.ToList();
         }
+
+        _cache.Set(knockoutId, knockoutData);
+        return knockoutData;
     }
 
     public async Task<KnockoutData?> UpdateKnockoutAsync(KnockoutId knockoutId, Func<KnockoutData, KnockoutData> funcUpdate)
@@ -254,6 +273,7 @@ public class PpService : IPpService
         var updated = funcUpdate(knockoutData);
 
         await _fs.WriteJsonAsync(path => GetKnockoutFilePath(path, knockoutId), updated);
+        _cache.Set(knockoutId, updated);
         return updated;
     }
     #endregion

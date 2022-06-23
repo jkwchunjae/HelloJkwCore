@@ -32,9 +32,22 @@ public class CompetitionUpdator
         _service = service;
     }
 
-    public async Task<CompetitionData> AddLeague(LeagueData leagueData)
+    private async Task<CompetitionData> UpdateAsync(Func<CompetitionData, CompetitionData> funcUpdate)
     {
-        var competitionData = await _service.UpdateCompetitionAsync(_competitionData.Name, competitionData =>
+        var competitionData = await _service.UpdateCompetitionAsync(
+            _competitionData.Name, funcUpdate);
+
+        if (competitionData != null)
+        {
+            _competitionData = competitionData;
+        }
+        return _competitionData;
+
+    }
+
+    public Task<CompetitionData> AddLeague(LeagueData leagueData)
+    {
+        return UpdateAsync(competitionData =>
         {
             competitionData.LeagueIdList ??= new();
             competitionData.LeagueIdList.Add(leagueData.Id);
@@ -43,16 +56,22 @@ public class CompetitionUpdator
 
             return competitionData;
         });
-
-        if (competitionData != null)
-        {
-            _competitionData = competitionData;
-        }
-        return _competitionData;
     }
-    public async Task<CompetitionData> RemoveLeague(LeagueId leagueId)
+    public Task<CompetitionData> AddLeagues(IEnumerable<LeagueData> leagues)
     {
-        var competitionData = await _service.UpdateCompetitionAsync(_competitionData.Name, competitionData =>
+        return UpdateAsync(competitionData =>
+        {
+            competitionData.LeagueIdList ??= new();
+            competitionData.LeagueIdList.AddRange(leagues.Select(l => l.Id));
+            competitionData.LeagueList ??= new();
+            competitionData.LeagueList.AddRange(leagues);
+
+            return competitionData;
+        });
+    }
+    public Task<CompetitionData> RemoveLeague(LeagueId leagueId)
+    {
+        return UpdateAsync(competitionData =>
         {
             competitionData.LeagueIdList ??= new();
             competitionData.LeagueIdList.RemoveAll(id => id == leagueId);
@@ -61,17 +80,11 @@ public class CompetitionUpdator
 
             return competitionData;
         });
-
-        if (competitionData != null)
-        {
-            _competitionData = competitionData;
-        }
-        return _competitionData;
     }
 
-    public async Task<CompetitionData> AddKnockout(KnockoutData knockoutData)
+    public Task<CompetitionData> AddKnockout(KnockoutData knockoutData)
     {
-        var competitionData = await _service.UpdateCompetitionAsync(_competitionData.Name, competitionData =>
+        return UpdateAsync(competitionData =>
         {
             competitionData.KnockoutIdList ??= new();
             competitionData.KnockoutIdList.Add(knockoutData.Id);
@@ -80,16 +93,10 @@ public class CompetitionUpdator
 
             return competitionData;
         });
-
-        if (competitionData != null)
-        {
-            _competitionData = competitionData;
-        }
-        return _competitionData;
     }
-    public async Task<CompetitionData> RemoveKnockout(KnockoutId knockoutId)
+    public Task<CompetitionData> RemoveKnockout(KnockoutId knockoutId)
     {
-        var competitionData = await _service.UpdateCompetitionAsync(_competitionData.Name, competitionData =>
+        return UpdateAsync(competitionData =>
         {
             competitionData.KnockoutIdList ??= new();
             competitionData.KnockoutIdList.RemoveAll(id => id == knockoutId);
@@ -98,17 +105,11 @@ public class CompetitionUpdator
 
             return competitionData;
         });
-
-        if (competitionData != null)
-        {
-            _competitionData = competitionData;
-        }
-        return _competitionData;
     }
 
-    public async Task<CompetitionData> AddPlayers(IEnumerable<Player> players)
+    public Task<CompetitionData> AddPlayers(IEnumerable<Player> players)
     {
-        var competitionData = await _service.UpdateCompetitionAsync(_competitionData.Name, competitionData =>
+        return UpdateAsync(competitionData =>
         {
             competitionData.PlayerList ??= new();
 
@@ -131,27 +132,15 @@ public class CompetitionUpdator
 
             return competitionData;
         });
-
-        if (competitionData != null)
-        {
-            _competitionData = competitionData;
-        }
-        return _competitionData;
     }
-    public async Task<CompetitionData> RemovePlayer(PlayerName playerName)
+    public Task<CompetitionData> RemovePlayer(PlayerName playerName)
     {
-        var competitionData = await _service.UpdateCompetitionAsync(_competitionData.Name, competitionData =>
+        return UpdateAsync(competitionData =>
         {
             competitionData.PlayerList ??= new();
             competitionData.PlayerList.RemoveAll(p => p.Name == playerName);
 
             return competitionData;
         });
-
-        if (competitionData != null)
-        {
-            _competitionData = competitionData;
-        }
-        return _competitionData;
     }
 }
