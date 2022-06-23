@@ -63,3 +63,99 @@ public class LeagueData
         Id = id;
     }
 }
+public class LeagueUpdator
+{
+    LeagueData _leagueData;
+    IPpService _service;
+
+    public LeagueUpdator(LeagueData leagueData, IPpService service)
+    {
+        _leagueData = leagueData;
+        _service = service;
+    }
+
+    public async Task<LeagueData> AddPlayer(Player player)
+    {
+        var leagueData = await _service.UpdateLeagueAsync(_leagueData.Id, leagueData =>
+        {
+            leagueData.PlayerList ??= new();
+            leagueData.PlayerList.Add(player.Name);
+
+            return leagueData;
+        });
+
+        if (leagueData != null)
+        {
+            _leagueData = leagueData;
+        }
+        return _leagueData;
+    }
+    public async Task<LeagueData> RemovePlayer(PlayerName playerName)
+    {
+        var leagueData = await _service.UpdateLeagueAsync(_leagueData.Id, leagueData =>
+        {
+            leagueData.PlayerList ??= new();
+            leagueData.PlayerList.RemoveAll(name => name == playerName);
+
+            return leagueData;
+        });
+
+        if (leagueData != null)
+        {
+            _leagueData = leagueData;
+        }
+        return _leagueData;
+    }
+    public async Task<LeagueData> AddMatch(MatchData matchData)
+    {
+        var leagueData = await _service.UpdateLeagueAsync(_leagueData.Id, leagueData =>
+        {
+            leagueData.MatchIdList ??= new();
+            leagueData.MatchIdList.Add(matchData.Id);
+            leagueData.MatchList ??= new();
+            leagueData.MatchList.Add(matchData);
+
+            return leagueData;
+        });
+
+        if (leagueData != null)
+        {
+            _leagueData = leagueData;
+        }
+        return _leagueData;
+    }
+    public async Task<LeagueData> AddMatches(IEnumerable<MatchData> matches)
+    {
+        var leagueData = await _service.UpdateLeagueAsync(_leagueData.Id, leagueData =>
+        {
+            leagueData.MatchIdList ??= new();
+            leagueData.MatchIdList.AddRange(matches.Select(m => m.Id));
+            leagueData.MatchList ??= new();
+            leagueData.MatchList.AddRange(matches);
+
+            return leagueData;
+        });
+
+        if (leagueData != null)
+        {
+            _leagueData = leagueData;
+        }
+        return _leagueData;
+    }
+    public async Task<LeagueData> RemoveMatch(MatchId matchId)
+    {
+        var leagueData = await _service.UpdateLeagueAsync(_leagueData.Id, leagueData =>
+        {
+            leagueData.MatchIdList?.RemoveAll(id => id == matchId);
+            leagueData.MatchList?.RemoveAll(m => m.Id == matchId);
+
+            return leagueData;
+        });
+
+        if (leagueData != null)
+        {
+            _leagueData = leagueData;
+        }
+        return _leagueData;
+    }
+}
