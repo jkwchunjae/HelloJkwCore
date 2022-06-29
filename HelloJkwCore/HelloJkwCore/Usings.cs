@@ -3,6 +3,7 @@ global using Common;
 global using ProjectDiary;
 global using ProjectBaduk;
 global using ProjectSuFc;
+global using ProjectPingpong;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.AspNetCore.Components;

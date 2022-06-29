@@ -16,6 +16,7 @@
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\ProjectBaduk\ProjectBaduk.csproj" />
     <ProjectReference Include="..\ProjectDiary\ProjectDiary.csproj" />
+    <ProjectReference Include="..\ProjectPingpong\ProjectPingpong.csproj" />
     <ProjectReference Include="..\ProjectSuFc\ProjectSuFc.csproj" />
   </ItemGroup>
 </Project>
