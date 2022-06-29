@@ -1,4 +1,6 @@
-﻿namespace ProjectPingpong;
+﻿using ProjectPingpong.Utils;
+
+namespace ProjectPingpong;
 
 [JsonConverter(typeof(StringIdJsonConverter<LeagueId>))]
 public class LeagueId : StringId
@@ -123,6 +125,33 @@ public class LeagueUpdator
             _leagueData = leagueData;
         }
         return _leagueData;
+    }
+    /// <summary>
+    /// player를 기반으로 한 매치 생성
+    /// </summary>
+    /// <returns></returns>
+    public async Task<LeagueData> CreateMatches()
+    {
+        var competitionData = await _service.GetCompetitionDataAsync(_leagueData.CompetitionName);
+
+        if (competitionData?.PlayerList == null)
+            return _leagueData;
+
+        List<Player> players = _leagueData.PlayerList
+            ?.Join(competitionData.PlayerList, name => name, p => p.Name, (_, p) => p)
+            .ToList() ?? new();
+
+        ILeagueMatchGenerator matchGenerator = new LeagueMatchGenerator();
+        var matches = matchGenerator.CreateLeagueMatch(players)
+            .Select(x => new MatchData
+            {
+                Id = new MatchId(_leagueData.Id, x.Player1.Name, x.Player2.Name),
+                LeftPlayer = x.Player1,
+                RightPlayer = x.Player2,
+            })
+            .ToList();
+
+        return await AddMatches(matches);
     }
     public async Task<LeagueData> AddMatches(IEnumerable<MatchData> matches)
     {
