@@ -52,7 +52,7 @@ public class LeagueData
 {
     public LeagueId Id { get; set; } = LeagueId.Default;
     public CompetitionName CompetitionName { get; set; } = CompetitionName.Default;
-    public List<PlayerName>? PlayerList { get; set; }
+    public List<Player>? PlayerList { get; set; }
     public List<MatchId>? MatchIdList { get; set; }
     [JsonIgnore] public List<MatchData>? MatchList { get; set; }
 
@@ -81,7 +81,7 @@ public class LeagueUpdator
         var leagueData = await _service.UpdateLeagueAsync(_leagueData.Id, leagueData =>
         {
             leagueData.PlayerList ??= new();
-            leagueData.PlayerList.Add(player.Name);
+            leagueData.PlayerList.Add(player);
 
             return leagueData;
         });
@@ -97,7 +97,7 @@ public class LeagueUpdator
         var leagueData = await _service.UpdateLeagueAsync(_leagueData.Id, leagueData =>
         {
             leagueData.PlayerList ??= new();
-            leagueData.PlayerList.RemoveAll(name => name == playerName);
+            leagueData.PlayerList.RemoveAll(p => p.Name == playerName);
 
             return leagueData;
         });
@@ -132,17 +132,8 @@ public class LeagueUpdator
     /// <returns></returns>
     public async Task<LeagueData> CreateMatches()
     {
-        var competitionData = await _service.GetCompetitionDataAsync(_leagueData.CompetitionName);
-
-        if (competitionData?.PlayerList == null)
-            return _leagueData;
-
-        List<Player> players = _leagueData.PlayerList
-            ?.Join(competitionData.PlayerList, name => name, p => p.Name, (_, p) => p)
-            .ToList() ?? new();
-
         ILeagueMatchGenerator matchGenerator = new LeagueMatchGenerator();
-        var matches = matchGenerator.CreateLeagueMatch(players)
+        var matches = matchGenerator.CreateLeagueMatch(_leagueData.PlayerList ?? new())
             .Select(x => new MatchData
             {
                 Id = new MatchId(_leagueData.Id, x.Player1.Name, x.Player2.Name),

@@ -1,0 +1,35 @@
+﻿@inherits JkwPageBase
+@layout PpLayout
+@using MudBlazor
+@page "/jangtak9/competition/{CompetitionNameText}/settings"
+
+@if (CompetitionData == null)
+{
+  return;
+}
+
+<MudText Typo="Typo.h3">
+  @CompetitionData!.Name
+</MudText>
+
+<div style="margin-top: 30px; margin-bottom: 30px;">
+<MudText Typo="Typo.h5">참가자: @CompetitionData.PlayerList!.Count 명</MudText>
+<MudChipSet>
+  @foreach (var player in CompetitionData.PlayerList!.OrderBy(x => x.Class).ThenBy(x => x.Name))
+  {
+    <MudChip OnClick="@(async () => await RemovePlayer(player.Name))"
+        >
+      @player.Name ( @player.Class )
+    </MudChip>
+  }
+  <MudForm Style="max-width: 300px;">
+    <MudTextField T="string" @bind-Value="_inputPlayerName" Label="이름" Required="true" RequiredError="이름을 입력해주세요" @ref="inputElement" />
+    <MudTextField T="int" @bind-Value="_inputPlayerClass" Label="부수" Required="true" RequiredError="부수를 입력해주세요" />
+    <MudButton Variant="Variant.Outlined" OnClick="@(async () => await AddPlayer(_inputPlayerName, _inputPlayerClass))">등록</MudButton>
+  </MudForm>
+</MudChipSet>
+</div>
+
+<div style="margin-top: 30px; margin-bottom: 30px;">
+<MudText Typo="Typo.h5">리그</MudText>
+</div>

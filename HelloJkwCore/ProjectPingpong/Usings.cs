@@ -9,6 +9,7 @@ global using System.Linq;
 global using System.Threading;
 global using System.Threading.Tasks;
 global using System.IO;
+global using Microsoft.JSInterop;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.AspNetCore.Components.Routing;
 global using MudBlazor;

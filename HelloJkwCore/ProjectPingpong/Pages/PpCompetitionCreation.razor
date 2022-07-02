@@ -1,0 +1,10 @@
+﻿@inherits JkwPageBase
+@layout PpLayout
+@using MudBlazor
+@using Common
+
+
+<MudTextField T="string" @bind-Value="CompetitionNameText" Placeholder="대회이름 입력"/>
+<OneClickButton OnClick="(async () => await CreateCompetition(CompetitionNameText))" Reusable="false" Variant="Variant.Outlined">
+대회 생성
+</OneClickButton>

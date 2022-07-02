@@ -1,0 +1,17 @@
+﻿@inherits JkwPageBase
+@layout PpLayout
+@page "/jangtak9/competition/{CompetitionNameText}"
+@using MudBlazor
+@using ProjectPingpong.Utils
+
+@if (CompetitionData == null)
+{
+  return;
+}
+
+<MudText Typo="Typo.h3">
+  @CompetitionData!.Name
+</MudText>
+
+<MudLink Href="@(PpNaviHelper.CompetitionSettingPage(CompetitionData!.Name))">Settings</MudLink>
+

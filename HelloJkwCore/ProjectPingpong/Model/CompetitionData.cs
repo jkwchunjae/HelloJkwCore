@@ -13,6 +13,7 @@ public class CompetitionName : StringName
 public class CompetitionData
 {
     public CompetitionName Name { get; set; } = CompetitionName.Default;
+    public UserId? Owner { get; set; }
     public DateTime? StartTime { get; set; }
     public DateTime? EndTime { get; set; }
     public List<Player>? PlayerList { get; set; }
