@@ -4,5 +4,9 @@
 @using MudBlazor
 
 <PpCompetitionList/>
-<PpCompetitionCreation/>
+
+@if (IsAuthenticated && User.HasRole(UserRole.Admin))
+{
+  <PpCompetitionCreation/>
+}
 
