@@ -13,5 +13,10 @@
   @CompetitionData!.Name
 </MudText>
 
-<MudLink Href="@(PpNaviHelper.CompetitionSettingPage(CompetitionData!.Name))">Settings</MudLink>
+@if (CompetitionData.CanManage(User))
+{
+  <MudLink Href="@(PpNaviHelper.CompetitionSettingPage(CompetitionData!.Name))" Class="no-print">Settings</MudLink>
+}
+
+<PpCompetitionLeagueSetting @bind-CompetitionData="CompetitionData" Setting="@false"/>
 

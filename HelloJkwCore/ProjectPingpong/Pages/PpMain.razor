@@ -5,7 +5,7 @@
 
 <PpCompetitionList/>
 
-@if (IsAuthenticated && User.HasRole(UserRole.Admin))
+@if (IsAuthenticated && (User?.HasRole(UserRole.Admin) ?? false))
 {
   <PpCompetitionCreation/>
 }

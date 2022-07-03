@@ -1,17 +1,24 @@
 ﻿@inherits JkwPageBase
 @using MudBlazor
 
+@if (Setting)
+{
 <MudText Typo="Typo.h4">리그</MudText>
 
 <MudForm Style="max-width: 300px;" Class="no-print">
   <MudTextField T="int" @bind-Value="_inputLeagueCount" Label="리그 수" Required="true" RequiredError="리그를 몇 개 만드실건가요?" />
   <MudButton Variant="Variant.Outlined" OnClick="@(async () => await CreateLeagues(_inputLeagueCount))">만들기</MudButton>
 </MudForm>
-
+}
 @if ((CompetitionData?.PlayerList?.Any() ?? false) && (CompetitionData?.LeagueList?.Any() ?? false))
 {
-  <MudDropContainer T="Player" Items="CompetitionData.PlayerList" ItemsSelector="PlayerSelector" ItemDropped="ItemUpdated">
+  <MudDropContainer T="Player"
+      CanDrop="@((_, __) => Setting ? true : false)"
+      Items="CompetitionData.PlayerList" 
+      ItemsSelector="PlayerSelector" ItemDropped="ItemUpdated">
     <ChildContent>
+      @if (Setting)
+      {
       <div class="no-print">
         <MudDropZone T="Player" Identifier="NotMatched"
                    CanDropClass="mud-border-warning"
@@ -19,9 +26,11 @@
           <MudText Typo="Typo.h6" Class="mb-4">미지정 인원</MudText>
         </MudDropZone>
       </div>
+      }
       @foreach (var league in CompetitionData.LeagueList)
       {
         <MudDropZone T="Player" Identifier="@league.Id.Id"
+                 CanDrop="@((_) => Setting ? true : false)"
                  CanDropClass="mud-border-info"
                  Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
           <MudText Typo="Typo.h6" Class="mb-4">@league.Id.LeagueName</MudText>
@@ -40,6 +49,7 @@
   [Inject] IPpService? Service { get; set; }
   [Inject] IDialogService? DialogService { get; set; }
 
+  [Parameter] public bool Setting { get; set; } = false;
   [Parameter] public CompetitionData CompetitionData { get; set; }
   [Parameter] public EventCallback<CompetitionData> CompetitionDataChanged { get; set; }
 
@@ -140,6 +150,9 @@
 
   private async Task OnPlayerClicked(Player player)
   {
+    if (!Setting)
+      return;
+
     var param = new DialogParameters
       {
         ["Content"] = $"{player.Name}님을 어디로 보내시겠습니까?",

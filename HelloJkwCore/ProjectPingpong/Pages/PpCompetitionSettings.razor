@@ -17,5 +17,13 @@
 </div>
 
 <div style="margin-top: 30px; margin-bottom: 30px;">
-  <PpCompetitionLeagueSetting @bind-CompetitionData="CompetitionData" />
+  <PpCompetitionLeagueSetting @bind-CompetitionData="CompetitionData" Setting="@true"/>
 </div>
+
+@if (CompetitionData.CanManage(User))
+{
+  <div style="margin-top: 30px; margin-bottom: 30px;" class="no-print">
+    <PpCompetitionManagerSetting @bind-CompetitionData="CompetitionData" />
+  </div>
+}
+

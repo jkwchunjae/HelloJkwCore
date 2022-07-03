@@ -14,6 +14,7 @@ public class CompetitionData
 {
     public CompetitionName Name { get; set; } = CompetitionName.Default;
     public UserId? Owner { get; set; }
+    public List<UserId>? Manager { get; set; }
     public DateTime? StartTime { get; set; }
     public DateTime? EndTime { get; set; }
     public List<Player>? PlayerList { get; set; }
@@ -21,6 +22,23 @@ public class CompetitionData
     public List<KnockoutId>? KnockoutIdList { get; set; }
     [JsonIgnore] public List<LeagueData>? LeagueList { get; set; }
     [JsonIgnore] public List<KnockoutData>? KnockoutList { get; set; }
+
+    public bool CanManage(AppUser? user)
+    {
+        if (user == null)
+            return false;
+
+        if (user.HasRole(UserRole.Admin))
+            return true;
+
+        if (Owner == user.Id)
+            return true;
+
+        if (Manager?.Contains(user.Id) ?? false)
+            return true;
+
+        return false;
+    }
 }
 public class CompetitionUpdator
 {
