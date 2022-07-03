@@ -14,7 +14,7 @@ public class LeagueId : StringId
         {
             if (string.IsNullOrEmpty(_competitionName?.Id))
             {
-                _competitionName = Parse(Id);
+                (_competitionName, _leagueName) = Parse(Id);
             }
             return _competitionName;
         }
@@ -23,28 +23,47 @@ public class LeagueId : StringId
             _competitionName = value;
         }
     }
+    private string _leagueName = string.Empty;
+    public string LeagueName
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_leagueName))
+            {
+                (_competitionName, _leagueName) = Parse(Id);
+            }
+            return _leagueName;
+        }
+        set
+        {
+            _leagueName = value;
+        }
+    }
     public LeagueId() { }
     public LeagueId(string id)
         : base(id)
     {
-        CompetitionName = Parse(id);
+        (CompetitionName, LeagueName) = Parse(id);
     }
     public LeagueId(CompetitionName competitionName, string leagueId)
         : this($"{competitionName}.{leagueId}")
     {
+        _competitionName = competitionName;
+        _leagueName = leagueId;
     }
 
-    private CompetitionName Parse(string id)
+    private (CompetitionName, string LeagueName) Parse(string id)
     {
         if (id == string.Empty)
         {
-            return CompetitionName.Default;
+            return (CompetitionName.Default, string.Empty);
         }
         else
         {
             var arr = id.Split('.');
             var cName = new CompetitionName(arr[0]);
-            return cName;
+            var leagueName = arr[1];
+            return (cName, leagueName);
         }
     }
 }
@@ -94,6 +113,9 @@ public class LeagueUpdator
     }
     public async Task<LeagueData> RemovePlayer(PlayerName playerName)
     {
+        if (_leagueData.PlayerList?.Empty(p => p.Name == playerName) ?? true)
+            return _leagueData; // 이미 없음
+
         var leagueData = await _service.UpdateLeagueAsync(_leagueData.Id, leagueData =>
         {
             leagueData.PlayerList ??= new();

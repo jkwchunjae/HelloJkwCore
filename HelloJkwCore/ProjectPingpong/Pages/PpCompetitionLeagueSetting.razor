@@ -1,0 +1,134 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+
+<MudText Typo="Typo.h4">리그</MudText>
+
+<MudForm Style="max-width: 300px;" Class="no-print">
+  <MudTextField T="int" @bind-Value="_inputLeagueCount" Label="리그 수" Required="true" RequiredError="리그를 몇 개 만드실건가요?" />
+  <MudButton Variant="Variant.Outlined" OnClick="@(async () => await CreateLeagues(_inputLeagueCount))">만들기</MudButton>
+</MudForm>
+
+@if ((CompetitionData?.PlayerList?.Any() ?? false) && (CompetitionData?.LeagueList?.Any() ?? false))
+{
+  <MudDropContainer T="Player" Items="CompetitionData.PlayerList" ItemsSelector="PlayerSelector" ItemDropped="ItemUpdated">
+    <ChildContent>
+      <div class="no-print">
+        <MudDropZone T="Player" Identifier="NotMatched"
+                   CanDropClass="mud-border-warning"
+                   Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
+          <MudText Typo="Typo.h6" Class="mb-4">미지정 인원</MudText>
+        </MudDropZone>
+      </div>
+      @foreach (var league in CompetitionData.LeagueList)
+      {
+        <MudDropZone T="Player" Identifier="@league.Id.Id"
+                 CanDropClass="mud-border-info"
+                 Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
+          <MudText Typo="Typo.h6" Class="mb-4">@league.Id.LeagueName</MudText>
+        </MudDropZone>
+      }
+    </ChildContent>
+    <ItemRenderer>
+      <MudChip Variant="Variant.Outlined">
+        @context.Name ( @context.Class )
+      </MudChip>
+    </ItemRenderer>
+  </MudDropContainer>
+}
+
+@code {
+  [Inject] IPpService? Service { get; set; }
+  [Parameter] public CompetitionData CompetitionData { get; set; }
+  [Parameter] public EventCallback<CompetitionData> CompetitionDataChanged { get; set; }
+
+  private CompetitionUpdator? CompetitionUpdator;
+  private int _inputLeagueCount;
+
+  protected override void OnPageInitialized()
+  {
+    CompetitionUpdator = new CompetitionUpdator(CompetitionData, Service!);
+  }
+
+  private async Task CreateLeagues(int leagueCount)
+  {
+    CompetitionData!.LeagueList ??= new();
+    var leagues = CompetitionData!.LeagueList;
+
+    // 더 많다. 줄여야 한다.
+    while (leagues.Count > leagueCount)
+    {
+      var removeLeagueId = leagues.Last().Id;
+      CompetitionData = await CompetitionUpdator!.RemoveLeague(removeLeagueId);
+      leagues = CompetitionData.LeagueList!;
+    }
+
+    // 늘려야 한다.
+    while (leagues.Count < leagueCount)
+    {
+      var newLeagueId = new LeagueId(CompetitionData.Name, $"{leagues.Count + 1}조");
+      var newLeague = await Service!.CreateLeagueAsync(newLeagueId);
+      CompetitionData = await CompetitionUpdator!.AddLeague(newLeague!);
+      leagues = CompetitionData.LeagueList!;
+    }
+
+    await CompetitionDataChanged.InvokeAsync(CompetitionData);
+  }
+
+  private async Task ItemUpdated(MudItemDropInfo<Player> dropItem)
+  {
+    var dropzoneId = dropItem.DropzoneIdentifier;
+    var player = dropItem.Item;
+
+    var leagues = CompetitionData?.LeagueList;
+    if (leagues == null)
+      return;
+
+    foreach (var joinedLeague in leagues)
+    {
+      var leagueUpdator = new LeagueUpdator(joinedLeague, Service!);
+      await leagueUpdator.RemovePlayer(player.Name);
+    }
+
+    if (dropzoneId == "NotMatched")
+    {
+    }
+    else
+    {
+      var league = leagues.FirstOrDefault(league => league.Id == dropzoneId);
+      if (league == null)
+        return;
+
+      var leagueUpdator2 = new LeagueUpdator(league, Service!);
+      await leagueUpdator2.AddPlayer(player);
+    }
+
+    await CompetitionDataChanged.InvokeAsync(CompetitionData);
+  }
+
+  private bool PlayerSelector(Player player, string dropzoneId)
+  {
+    if (dropzoneId == "NotMatched")
+    {
+      var leagues = CompetitionData?.LeagueList;
+      if (leagues == null)
+        return true;
+
+      var notMatched = leagues.All(league => league.PlayerList?.Empty(p => p.Name == player.Name) ?? true);
+
+      return notMatched;
+    }
+    else
+    {
+      var leagues = CompetitionData?.LeagueList;
+      if (leagues == null)
+        return false;
+
+      var league = leagues.FirstOrDefault(league => league.Id == dropzoneId);
+      if (league == null)
+        return false;
+
+      return league.PlayerList?.Any(p => p.Name == player.Name) ?? false;
+    }
+  }
+
+}
