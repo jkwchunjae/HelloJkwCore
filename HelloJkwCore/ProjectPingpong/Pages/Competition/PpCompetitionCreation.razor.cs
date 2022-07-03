@@ -1,6 +1,6 @@
 ﻿using ProjectPingpong.Utils;
 
-namespace ProjectPingpong.Pages;
+namespace ProjectPingpong.Pages.Competition;
 
 public partial class PpCompetitionCreation : JkwPageBase
 {

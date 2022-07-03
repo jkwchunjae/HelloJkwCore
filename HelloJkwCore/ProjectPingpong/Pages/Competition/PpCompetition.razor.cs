@@ -1,4 +1,4 @@
-﻿namespace ProjectPingpong.Pages;
+﻿namespace ProjectPingpong.Pages.Competition;
 
 public partial class PpCompetition : JkwPageBase
 {
