@@ -38,6 +38,11 @@ public class PpMatchService : IPpMatchService
             return null;
         }
 
+        if (await _fs.FileExistsAsync(path => GetMatchFilePath(path, matchId)))
+        {
+            return await GetMatchDataAsync<T>(matchId);
+        }
+
         var matchData = new T
         {
             Id = matchId,

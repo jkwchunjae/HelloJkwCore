@@ -1,0 +1,16 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+
+@if (League?.MatchList?.Empty() ?? true)
+{
+  return;
+}
+
+<MudList>
+  @foreach (var match in League.MatchList)
+  {
+    <MudListItem>
+      @match.Id
+    </MudListItem>
+  }
+</MudList>

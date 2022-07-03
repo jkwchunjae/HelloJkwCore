@@ -189,7 +189,13 @@ public class PpService : IPpService
                 .Select(async matchId => await _matchService.GetMatchDataAsync<MatchData>(matchId))
                 .WhenAll();
 
-            leagueData.MatchList = matches.ToList();
+            leagueData.MatchList = matches
+                .Where(match => match != null)
+                .ToList();
+            leagueData.MatchIdList = matches
+                .Where(match => match != null)
+                .Select(match => match.Id)
+                .ToList();
         }
 
         _cache.Set(leagueId, leagueData);

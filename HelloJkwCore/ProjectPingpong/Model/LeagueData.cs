@@ -1,4 +1,5 @@
 ﻿using ProjectPingpong.Utils;
+using static Dropbox.Api.Files.ListRevisionsMode;
 
 namespace ProjectPingpong;
 
@@ -66,6 +67,11 @@ public class LeagueId : StringId
             return (cName, leagueName);
         }
     }
+
+    public string ToUrl()
+    {
+        return $"{CompetitionName}__{LeagueName}";
+    }
 }
 public class LeagueData
 {
@@ -83,16 +89,19 @@ public class LeagueData
     {
         Id = id;
     }
+
 }
 public class LeagueUpdator
 {
     LeagueData _leagueData;
     IPpService _service;
+    IPpMatchService _matchService;
 
-    public LeagueUpdator(LeagueData leagueData, IPpService service)
+    public LeagueUpdator(LeagueData leagueData, IPpService service, IPpMatchService matchService)
     {
         _leagueData = leagueData;
         _service = service;
+        _matchService = matchService;
     }
 
     public async Task<LeagueData> AddPlayer(Player player)
@@ -148,23 +157,42 @@ public class LeagueUpdator
         }
         return _leagueData;
     }
+
     /// <summary>
     /// player를 기반으로 한 매치 생성
     /// </summary>
     /// <returns></returns>
-    public async Task<LeagueData> CreateMatches()
+    public async Task<List<MatchData>> CreateMatches()
     {
         ILeagueMatchGenerator matchGenerator = new LeagueMatchGenerator();
-        var matches = matchGenerator.CreateLeagueMatch(_leagueData.PlayerList ?? new())
+
+        var players = (_leagueData.PlayerList ?? new())
+            .OrderBy(x => x.Class)
+            .ThenBy(x => x.Name)
+            .ToList();
+
+        var matches = await matchGenerator.CreateLeagueMatch(players)
             .Select(x => new MatchData
             {
                 Id = new MatchId(_leagueData.Id, x.Player1.Name, x.Player2.Name),
                 LeftPlayer = x.Player1,
                 RightPlayer = x.Player2,
             })
-            .ToList();
+            .Select(async match =>
+            {
+                var matchData = await _matchService.CreateMatchAsync<MatchData>(match.Id);
+                matchData = await _matchService.UpdateMatchDataAsync<MatchData>(match.Id, data =>
+                {
+                    data.LeftPlayer = match.LeftPlayer;
+                    data.RightPlayer = match.RightPlayer;
+                    return data;
+                });
 
-        return await AddMatches(matches);
+                return matchData;
+            })
+            .WhenAll();
+
+        return matches.ToList();
     }
     public async Task<LeagueData> AddMatches(IEnumerable<MatchData> matches)
     {
@@ -190,6 +218,25 @@ public class LeagueUpdator
         {
             leagueData.MatchIdList?.RemoveAll(id => id == matchId);
             leagueData.MatchList?.RemoveAll(m => m.Id == matchId);
+
+            return leagueData;
+        });
+
+        if (leagueData != null)
+        {
+            _leagueData = leagueData;
+        }
+        return _leagueData;
+    }
+    public async Task<LeagueData> RemoveMatches(IEnumerable<MatchId> matches)
+    {
+        var leagueData = await _service.UpdateLeagueAsync(_leagueData.Id, leagueData =>
+        {
+            foreach (var matchId in matches)
+            {
+                leagueData.MatchIdList?.RemoveAll(id => id == matchId);
+                leagueData.MatchList?.RemoveAll(m => m.Id == matchId);
+            }
 
             return leagueData;
         });

@@ -29,13 +29,13 @@
       }
       @foreach (var league in CompetitionData.LeagueList)
       {
-        var leagueUrl = @$"/jangtak9/league/{league.Id}";
+        var leagueUrl = @$"/jangtak9/league/{league.Id.ToUrl()}";
         <MudDropZone T="Player" Identifier="@league.Id.Id"
                  CanDrop="@((_) => Setting ? true : false)"
                  CanDropClass="mud-border-info"
                  Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
           <MudText Typo="Typo.h6" Class="mb-4">@league.Id.LeagueName</MudText>
-          <MudLink Href="@leagueUrl">입장</MudLink>
+          <MudLink Href="@leagueUrl" Class="no-print">입장</MudLink>
         </MudDropZone>
       }
     </ChildContent>
@@ -49,6 +49,7 @@
 
 @code {
   [Inject] IPpService? Service { get; set; }
+  [Inject] IPpMatchService? MatchService { get; set; }
   [Inject] IDialogService? DialogService { get; set; }
 
   [Parameter] public bool Setting { get; set; } = false;
@@ -104,7 +105,7 @@
 
     foreach (var joinedLeague in leagues)
     {
-      var leagueUpdator = new LeagueUpdator(joinedLeague, Service!);
+      var leagueUpdator = new LeagueUpdator(joinedLeague, Service!, MatchService!);
       await leagueUpdator.RemovePlayer(player.Name);
     }
 
@@ -117,7 +118,7 @@
       if (league == null)
         return;
 
-      var leagueUpdator2 = new LeagueUpdator(league, Service!);
+      var leagueUpdator2 = new LeagueUpdator(league, Service!, MatchService!);
       await leagueUpdator2.AddPlayer(player);
     }
 

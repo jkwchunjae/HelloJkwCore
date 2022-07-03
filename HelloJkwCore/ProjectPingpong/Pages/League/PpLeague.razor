@@ -1,0 +1,29 @@
+﻿@inherits JkwPageBase
+@page "/jangtak9/league/{LeagueIdText}"
+@layout PpLayout
+@using MudBlazor
+@using ProjectPingpong.Pages.League
+
+@if (League == null)
+{
+  return;
+}
+
+<MudText Typo="Typo.h3">
+  @League!.Id.CompetitionName
+</MudText>
+
+<MudText Typo="Typo.h4">
+  @League!.Id.LeagueName
+</MudText>
+
+<MudGrid>
+    <MudItem sm="3">
+        @* 경기 순서 *@
+        <PpLeagueMatchList @bind-League="League"/>
+    </MudItem>
+    <MudItem sm="9">
+        @* 순위표 *@
+        순위표
+    </MudItem>
+</MudGrid>
