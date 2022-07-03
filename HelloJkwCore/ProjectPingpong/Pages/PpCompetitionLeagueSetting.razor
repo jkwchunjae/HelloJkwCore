@@ -29,7 +29,7 @@
       }
     </ChildContent>
     <ItemRenderer>
-      <MudChip Variant="Variant.Outlined">
+      <MudChip Variant="Variant.Outlined" OnClick="@(async () => await OnPlayerClicked(context))">
         @context.Name ( @context.Class )
       </MudChip>
     </ItemRenderer>
@@ -38,6 +38,8 @@
 
 @code {
   [Inject] IPpService? Service { get; set; }
+  [Inject] IDialogService? DialogService { get; set; }
+
   [Parameter] public CompetitionData CompetitionData { get; set; }
   [Parameter] public EventCallback<CompetitionData> CompetitionDataChanged { get; set; }
 
@@ -79,6 +81,11 @@
     var dropzoneId = dropItem.DropzoneIdentifier;
     var player = dropItem.Item;
 
+    await MovePlayer(player, dropzoneId);
+  }
+
+  private async Task MovePlayer(Player player, string leagueId)
+  {
     var leagues = CompetitionData?.LeagueList;
     if (leagues == null)
       return;
@@ -89,12 +96,12 @@
       await leagueUpdator.RemovePlayer(player.Name);
     }
 
-    if (dropzoneId == "NotMatched")
+    if (leagueId == "NotMatched")
     {
     }
     else
     {
-      var league = leagues.FirstOrDefault(league => league.Id == dropzoneId);
+      var league = leagues.FirstOrDefault(league => league.Id == leagueId);
       if (league == null)
         return;
 
@@ -131,4 +138,21 @@
     }
   }
 
+  private async Task OnPlayerClicked(Player player)
+  {
+    var param = new DialogParameters
+      {
+        ["Content"] = $"{player.Name}님을 어디로 보내시겠습니까?",
+        ["SelectItems"] = new List<(string, string)> { ("NotMatched", "미지정") }
+            .Concat(CompetitionData!.LeagueList!
+                .Select(league => (league.Id.Id, league.Id.LeagueName))),
+      };
+    var dialog = DialogService!.Show<PpSelectDialog>("대회 관리", param);
+    var result = await dialog.Result;
+
+    if (result.Data is string selectedId && !string.IsNullOrEmpty(selectedId))
+    {
+      await MovePlayer(player, selectedId);
+    }
+  }
 }

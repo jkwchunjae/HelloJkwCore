@@ -1,0 +1,37 @@
+﻿@using MudBlazor
+
+<MudDialog>
+  <DialogContent>
+    @Content
+
+    <MudList>
+      @foreach (var item in SelectItems)
+      {
+        <MudListItem OnClick="@(() => Submit(item.Value))">
+          <MudButton OnClick="@(() => Submit(item.Value))" Variant="Variant.Outlined" FullWidth="true">
+              @item.Text
+          </MudButton>
+        </MudListItem>
+      }
+    </MudList>
+  </DialogContent>
+  <DialogActions>
+    <MudButton OnClick="Cancel" Variant="Variant.Outlined">취소</MudButton>
+  </DialogActions>
+</MudDialog>
+
+@code {
+  [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+  [Parameter] public string Content { get; set; } = string.Empty;
+  [Parameter] public IEnumerable<(string Value, string Text)>? SelectItems { get; set; }
+
+  void Cancel()
+  {
+    MudDialog.Cancel();
+  }
+
+  void Submit(string selected)
+  {
+    MudDialog.Close(DialogResult.Ok(selected));
+  }
+}
