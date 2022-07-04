@@ -15,13 +15,16 @@ public class LoginExternalModel : PageModel
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
+    private readonly ILogger<LoginExternalModel> _logger;
 
     public LoginExternalModel(
         UserManager<AppUser> userManager,
-        SignInManager<AppUser> signInManager)
+        SignInManager<AppUser> signInManager,
+        ILogger<LoginExternalModel> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _logger = logger;
     }
 
     public IActionResult OnGetAsync(string provider, string returnUrl = null)
@@ -51,6 +54,7 @@ public class LoginExternalModel : PageModel
         {
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
             var name = info.Principal.FindFirstValue(ClaimTypes.Name);
+            _logger?.LogInformation("Create user: {name}, {email}", name, email);
             var newUser = new AppUser(info.LoginProvider, info.ProviderKey)
             {
                 UserName = name,
