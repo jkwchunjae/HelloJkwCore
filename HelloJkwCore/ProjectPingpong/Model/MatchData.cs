@@ -94,6 +94,15 @@ public class MatchData
                                         LeftPlayer;
     [JsonIgnore] public bool LeftWin => LeftPlayer == Winner;
     [JsonIgnore] public bool RightWin => RightPlayer == Winner;
+    [JsonIgnore] public bool NotStarted => LeftSetScore == 0 && RightSetScore == 0;
+
+    public int MySetScore(Player player)
+    {
+        if (LeftPlayer?.Name == player.Name) return LeftSetScore;
+        if (RightPlayer?.Name == player.Name) return RightSetScore;
+        return 0;
+    }
+
 }
 public class KnockoutMatchData : MatchData
 {

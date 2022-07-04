@@ -20,10 +20,10 @@
 <MudGrid>
     <MudItem lg="3">
         @* 경기 순서 *@
-        <PpLeagueMatchList @bind-League="League"/>
+        <PpLeagueMatchList @bind-League="@League"/>
     </MudItem>
     <MudItem lg="9">
         @* 순위표 *@
-        순위표
+        <PpLeagueTable League="@League"/>
     </MudItem>
 </MudGrid>
