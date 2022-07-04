@@ -3,6 +3,7 @@
 public interface IPpMatchService
 {
     Task<T?> CreateMatchAsync<T>(MatchId matchId) where T : MatchData, new();
+    Task<T?> CreateMatchAsync<T>(MatchId matchId, T matchData) where T : MatchData, new();
     Task<T> GetMatchDataAsync<T>(MatchId matchId) where T : MatchData;
     Task<T> UpdateMatchDataAsync<T>(MatchId matchId, Func<T, T> funcUpdate) where T : MatchData;
     Task DeleteMatchDataAsync(MatchId matchId);
@@ -60,6 +61,30 @@ public class PpMatchService : IPpMatchService
         }
     }
 
+    public async Task<T?> CreateMatchAsync<T>(MatchId matchId, T matchData) where T : MatchData, new()
+    {
+        if (matchId.HasInvalidFileNameChar() || string.IsNullOrEmpty(matchId.Id))
+        {
+            return null;
+        }
+
+        if (await _fs.FileExistsAsync(path => GetMatchFilePath(path, matchId)))
+        {
+            return await GetMatchDataAsync<T>(matchId);
+        }
+
+        var success = await _fs.WriteJsonAsync(path => GetMatchFilePath(path, matchId), matchData);
+
+        if (success)
+        {
+            return matchData;
+        }
+        else
+        {
+            return default;
+        }
+    }
+
     public async Task<T> GetMatchDataAsync<T>(MatchId matchId) where T : MatchData
     {
         var matchData = await _fs.ReadJsonAsync<T>(path => GetMatchFilePath(path, matchId));
@@ -70,6 +95,7 @@ public class PpMatchService : IPpMatchService
     {
         var matchData = await _fs.ReadJsonAsync<T>(path => GetMatchFilePath(path, matchId));
         var updated = funcUpdate(matchData);
+        await _fs.WriteJsonAsync(path => GetMatchFilePath(path, matchId), updated);
         return updated;
     }
 

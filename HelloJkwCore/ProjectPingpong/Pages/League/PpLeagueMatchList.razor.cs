@@ -19,30 +19,28 @@ public partial class PpLeagueMatchList : JkwPageBase
 
     private async Task<LeagueData> UpdateLeagueMatch()
     {
-        var matches = await LeagueUpdator.CreateMatches();
-        var newMatches = matches
-            .Select(match =>
+        var matches = LeagueUpdator.CreateMatches();
+        foreach (var match in matches)
+        {
+            if (League!.MatchList?.Any(m => m.Id == match.Id) ?? false)
             {
-                var prevMatch = League.MatchList?.FirstOrDefault(m => m?.Id == match?.Id);
-
-                if (prevMatch == null)
-                    return match;
-
-                if (prevMatch.Winner != null)
-                    return prevMatch;
-
-                return match;
-            })
-            .ToList();
+                // 기존에 매치가 있는 경우. // 그냥 넘어가자.
+            }
+            else
+            {
+                // 기존에 매치가 없는 경우. 파일을 만들자.
+                await MatchService!.CreateMatchAsync(match.Id, match);
+            }
+        }
 
         var newLeagueData = await Service!.UpdateLeagueAsync(League!.Id, league =>
         {
-            league.MatchIdList = newMatches.Select(x => x.Id).ToList();
-            league.MatchList = newMatches;
+            league.MatchIdList = matches.Select(x => x.Id).ToList();
+            league.MatchList = matches;
 
             return league;
         });
 
-        return newLeagueData;
+        return newLeagueData!;
     }
 }

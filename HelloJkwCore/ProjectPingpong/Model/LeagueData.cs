@@ -162,7 +162,7 @@ public class LeagueUpdator
     /// player를 기반으로 한 매치 생성
     /// </summary>
     /// <returns></returns>
-    public async Task<List<MatchData>> CreateMatches()
+    public List<MatchData> CreateMatches()
     {
         ILeagueMatchGenerator matchGenerator = new LeagueMatchGenerator();
 
@@ -171,28 +171,16 @@ public class LeagueUpdator
             .ThenBy(x => x.Name)
             .ToList();
 
-        var matches = await matchGenerator.CreateLeagueMatch(players)
+        var matches = matchGenerator.CreateLeagueMatch(players)
             .Select(x => new MatchData
             {
                 Id = new MatchId(_leagueData.Id, x.Player1.Name, x.Player2.Name),
                 LeftPlayer = x.Player1,
                 RightPlayer = x.Player2,
             })
-            .Select(async match =>
-            {
-                var matchData = await _matchService.CreateMatchAsync<MatchData>(match.Id);
-                matchData = await _matchService.UpdateMatchDataAsync<MatchData>(match.Id, data =>
-                {
-                    data.LeftPlayer = match.LeftPlayer;
-                    data.RightPlayer = match.RightPlayer;
-                    return data;
-                });
+            .ToList();
 
-                return matchData;
-            })
-            .WhenAll();
-
-        return matches.ToList();
+        return matches;
     }
     public async Task<LeagueData> AddMatches(IEnumerable<MatchData> matches)
     {
