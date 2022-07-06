@@ -19,8 +19,15 @@ public partial class PpLeagueMatchList : JkwPageBase
 
     private async Task<LeagueData> UpdateLeagueMatch()
     {
-        var matches = LeagueUpdator.CreateMatches();
-        foreach (var match in matches)
+        var newMatches = LeagueUpdator.CreateMatches();
+        var merged = newMatches
+            .Select(match =>
+            {
+                var existMatch = League!.MatchList?.FirstOrDefault(m => m.Id == match.Id);
+                return existMatch ?? match;
+            })
+            .ToList();
+        foreach (var match in merged)
         {
             if (League!.MatchList?.Any(m => m.Id == match.Id) ?? false)
             {
@@ -35,8 +42,8 @@ public partial class PpLeagueMatchList : JkwPageBase
 
         var newLeagueData = await Service!.UpdateLeagueAsync(League!.Id, league =>
         {
-            league.MatchIdList = matches.Select(x => x.Id).ToList();
-            league.MatchList = matches;
+            league.MatchIdList = merged.Select(x => x.Id).ToList();
+            league.MatchList = merged;
 
             return league;
         });

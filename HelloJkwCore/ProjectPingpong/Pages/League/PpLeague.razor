@@ -18,12 +18,12 @@
 </MudText>
 
 <MudGrid>
-    <MudItem lg="3">
-        @* 경기 순서 *@
-        <PpLeagueMatchList @bind-League="@League"/>
-    </MudItem>
-    <MudItem lg="9">
+    <MudItem md="12">
         @* 순위표 *@
         <PpLeagueTable League="@League"/>
+    </MudItem>
+    <MudItem md="4">
+        @* 경기 순서 *@
+        <PpLeagueMatchList @bind-League="@League"/>
     </MudItem>
 </MudGrid>

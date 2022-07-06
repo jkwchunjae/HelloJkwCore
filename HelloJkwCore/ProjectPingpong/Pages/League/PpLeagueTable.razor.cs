@@ -29,17 +29,19 @@ public partial class PpLeagueTable : JkwPageBase
         ResultSet = League?.PlayerList
             ?.ToDictionary(p => p.Name, p => new PlayerResult(p, League.MatchList)) ?? new();
 
-        MatchMap = League.MatchList
-            .SelectMany(match =>
-            {
-                return new[]
+        if (League?.MatchList?.Any() ?? false)
+        {
+            MatchMap = League.MatchList
+                .SelectMany(match =>
                 {
+                    return new[]
+                    {
                     (match.LeftPlayer, match.RightPlayer, match),
                     (match.RightPlayer, match.LeftPlayer, match),
-                };
-            })
-            .GroupBy(x => x.Item1!.Name)
-            .ToDictionary(x => x.Key, x => x.GroupBy(e => e.Item2!.Name).ToDictionary(e => e.Key, e => e.First().match));
-
+                    };
+                })
+                .GroupBy(x => x.Item1!.Name)
+                .ToDictionary(x => x.Key, x => x.GroupBy(e => e.Item2!.Name).ToDictionary(e => e.Key, e => e.First().match));
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿@inherits JkwPageBase
 @using MudBlazor
 
-<MudPaper>
+<MudPaper onclick="@(() => GotoMatchCenter())" Style="cursor: pointer; text-align: center;">
     <MudChip Color="@LeftColor">@LeftName</MudChip>
     <div class="d-inline-block">
         <span>@Match.LeftSetScore</span>
@@ -22,5 +22,10 @@
 
   protected override void OnPageParametersSet()
   {
+  }
+
+  private void GotoMatchCenter()
+  {
+    Navi.NavigateTo($"/jangtak9/match/{Match.Id.ToUrl()}");
   }
 }
