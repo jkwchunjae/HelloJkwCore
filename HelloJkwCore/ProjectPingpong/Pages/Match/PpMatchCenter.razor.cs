@@ -10,6 +10,7 @@ public partial class PpMatchCenter : JkwPageBase
 
     private MatchData? Match { get; set; }
     private IPpNotifier<MatchData>? MatchNotify { get; set; }
+    private string? LeagueId { get; set; } = null;
 
     protected override async Task OnPageParametersSetAsync()
     {
@@ -20,6 +21,11 @@ public partial class PpMatchCenter : JkwPageBase
 
             MatchNotify = MatchService.Watch(MatchId);
             MatchNotify.Updated += MatchUpdator_Updated;
+        }
+
+        if (Navi.TryGetQueryString("league", out string leagueId))
+        {
+            LeagueId = leagueId;
         }
     }
 

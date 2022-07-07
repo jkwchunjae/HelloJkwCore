@@ -9,9 +9,14 @@
   return;
 }
 
-<MudText Typo="Typo.h3">
+@{
+  var competitionUrl = $"/jangtak9/competition/{League!.Id.CompetitionName}";
+}
+<MudLink Href="@competitionUrl">
+<MudText Typo="Typo.h3" Color="Color.Dark">
   @League!.Id.CompetitionName
 </MudText>
+</MudLink>
 
 <MudText Typo="Typo.h4">
   @League!.Id.LeagueName

@@ -10,48 +10,81 @@
 
 
 <MudGrid>
-  <MudItem xs="5">
+  <MudItem xs="4">
     <MudPaper Elevation="0" Style="text-align: center;">
-      <MudText Typo="Typo.h5">
+      <MudText Typo="Typo.h4">
         @Match.LeftPlayer?.Name
       </MudText>
-      @if (Match.HasPlayingSet)
-      {
-        <button class="score" onclick="@(async () => await IncreaseScore(Match.LeftPlayer))">
-          @Match.MyGamePoint(Match.LeftPlayer)
-        </button>
-      }
     </MudPaper>
   </MudItem>
-  <MudItem xs="2" Style="text-align: center;">
+  <MudItem xs="4" Style="text-align: center;">
     <MudText Typo="Typo.h4">
       <span> @Match.LeftSetScore </span>
       <span> : </span>
       <span> @Match.RightSetScore </span>
     </MudText>
 
-    @if (Match.HasPlayingSet)
-    {
-    <MudButton
-        Variant="Variant.Filled"
-        Color="Color.Warning"
-        OnClick="@(async () => await CancelSet())"
-        >게임 취소하기</MudButton>
-    }
   </MudItem>
-  <MudItem xs="5">
+  <MudItem xs="4">
     <MudPaper Elevation="0" Style="text-align: center;">
-      <MudText Typo="Typo.h5">
+      <MudText Typo="Typo.h4">
         @Match.RightPlayer?.Name
       </MudText>
+    </MudPaper>
+  </MudItem>
+  <MudItem xs="6">
+    <MudPaper Elevation="0" Style="text-align: center;">
       @if (Match.HasPlayingSet)
       {
-        <button class="score" onclick="@(async () => await IncreaseScore(Match.RightPlayer))">
-          @Match.MyGamePoint(Match.RightPlayer)
+        var myPoint = Match.MyGamePoint(Match.LeftPlayer);
+        var scoreClass = myPoint >= 10 ? "score-small" : "score";
+        <button class="@scoreClass" onclick="@(async () => await IncreaseScore(Match.LeftPlayer))">
+          @myPoint
         </button>
       }
     </MudPaper>
   </MudItem>
+
+@*  <MudItem xs="2" Style="text-align: center;">
+  </MudItem>
+*@
+  <MudItem xs="6">
+    <MudPaper Elevation="0" Style="text-align: center;">
+      @if (Match.HasPlayingSet)
+      {
+        var myPoint = Match.MyGamePoint(Match.RightPlayer);
+        var scoreClass = myPoint >= 10 ? "score-small" : "score";
+        <button class="@scoreClass" onclick="@(async () => await IncreaseScore(Match.RightPlayer))">
+          @myPoint
+        </button>
+      }
+    </MudPaper>
+  </MudItem>
+  <MudItem xs="4"></MudItem>
+  <MudItem xs="8" Class="d-flex" Style="justify-content: right;">
+    <div style="float: right;">
+    @if (Match.HasPlayingSet)
+    {
+        <MudButton OnClick="@(async () => await CancelSet())"
+               Class="common-action"
+               Variant="Variant.Outlined"
+               Color="Color.Default"
+            >게임 취소하기</MudButton>
+    }
+    @if (!string.IsNullOrEmpty(LeagueId))
+    {
+      string leagueUrl = $"/jangtak9/league/{LeagueId}";
+      <MudButton OnClick="@(() => Navi.NavigateTo(leagueUrl))"
+               Class="common-action"
+               Variant="Variant.Outlined"
+               Color="Color.Default"
+            >리그화면으로 돌아가기</MudButton>
+    }
+
+    </div>
+
+  </MudItem>
+
   @if (Match.Finished)
   {
     <MudItem xs="12">
@@ -103,11 +136,23 @@
   .score {
       width: 100%;
       text-align: center;
-      font-size: 50vh;
+      font-size: 20vh;
       line-height: 100%;
+      letter-spacing: -3vh;
+  }
+  .score-small {
+      width: 100%;
+      text-align: center;
+      font-size: 20vh;
+      line-height: 100%;
+      letter-spacing: -3vh;
   }
   .big {
       width: 100%;
       font-size: xx-large;
+  }
+  .common-action {
+      display: block;
+      margin-bottom: 10px;
   }
 </style>

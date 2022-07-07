@@ -13,6 +13,7 @@
 
 @code {
   [Parameter] public MatchData Match { get; set; }
+  [Parameter] public LeagueData? League { get; set; }
 
   private string LeftName => Match?.LeftPlayer != null ? $"{Match.LeftPlayer.Name} ({Match.LeftPlayer.Class})" : string.Empty;
   private string RightName => Match?.RightPlayer != null ? $"{Match.RightPlayer.Name} ({Match.RightPlayer.Class})" : string.Empty;
@@ -26,6 +27,13 @@
 
   private void GotoMatchCenter()
   {
-    Navi.NavigateTo($"/jangtak9/match/{Match.Id.ToUrl()}");
+    if (League != null)
+    {
+      Navi.NavigateTo($"/jangtak9/match/{Match.Id.ToUrl()}?league={League.Id.ToUrl()}");
+    }
+    else
+    {
+      Navi.NavigateTo($"/jangtak9/match/{Match.Id.ToUrl()}");
+    }
   }
 }
