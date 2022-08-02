@@ -14,5 +14,6 @@ global using System.Threading.Tasks;
 global using System.IO;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.AspNetCore.Components.Routing;
+global using ProjectWorldCup.FifaLibrary;
 
 namespace ProjectWorldCup;

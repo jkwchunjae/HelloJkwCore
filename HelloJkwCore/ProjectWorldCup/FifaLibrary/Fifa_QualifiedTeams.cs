@@ -1,4 +1,4 @@
-﻿namespace ProjectWorldCup;
+﻿namespace ProjectWorldCup.FifaLibrary;
 
 public class QualifiedTeam
 {

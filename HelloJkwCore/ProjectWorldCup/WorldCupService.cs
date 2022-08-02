@@ -39,18 +39,18 @@ public partial class WorldCupService : IWorldCupService
         return _fifa.GetLastRankingAsync(gender);
     }
 
-    public async Task<KnockoutStageData> GetKnockoutStageDataAsync()
-    {
-        var knockoutMatches = await _fifa.GetKnockoutStageMatchesAsync();
-        return new KnockoutStageData
-        {
-            Round16 = knockoutMatches.Where(x => x.StageName == "Round of 16").Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList(),
-            QuarterFinals = knockoutMatches.Where(x => x.StageName == "Quarter-finals").Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList(),
-            SemiFinals = knockoutMatches.Where(x => x.StageName == "Semi-finals").Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList(),
-            ThirdPlacePlayOff = knockoutMatches.Where(x => x.StageName == "Play-off for third place").Select(x => KnMatch.CreateFromFifaMatchData(x)).First(),
-            Final = knockoutMatches.Where(x => x.StageName == "Final").Select(x => KnMatch.CreateFromFifaMatchData(x)).First(),
-        };
-    }
+    //public async Task<KnockoutStageData> GetKnockoutStageDataAsync()
+    //{
+    //    var knockoutMatches = await _fifa.GetKnockoutStageMatchesAsync();
+    //    return new KnockoutStageData
+    //    {
+    //        Round16 = knockoutMatches.Where(x => x.StageName == "Round of 16").Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList(),
+    //        QuarterFinals = knockoutMatches.Where(x => x.StageName == "Quarter-finals").Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList(),
+    //        SemiFinals = knockoutMatches.Where(x => x.StageName == "Semi-finals").Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList(),
+    //        ThirdPlacePlayOff = knockoutMatches.Where(x => x.StageName == "Play-off for third place").Select(x => KnMatch.CreateFromFifaMatchData(x)).First(),
+    //        Final = knockoutMatches.Where(x => x.StageName == "Final").Select(x => KnMatch.CreateFromFifaMatchData(x)).First(),
+    //    };
+    //}
 
     private async Task<KnockoutStageData> CreateDummyKnockoutDataAsync()
     {

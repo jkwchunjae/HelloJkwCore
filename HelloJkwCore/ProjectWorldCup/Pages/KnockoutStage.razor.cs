@@ -22,7 +22,7 @@ public partial class KnockoutStage : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        Knockout = await Service.GetKnockoutStageDataAsync();
+        //Knockout = await Service.GetKnockoutStageDataAsync();
 
         KnockoutRounds = new List<Round>
         {

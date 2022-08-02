@@ -16,13 +16,13 @@ public partial class Betting2022GroupStage : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        Groups = await Service.GetGroupsAsync();
-        BettingItems = await BettingService.GetAllBettingItemsAsync(BettingType.GroupStage);
+        //Groups = await Service.GetGroupsAsync();
+        //BettingItems = await BettingService.GetAllBettingItemsAsync(BettingType.GroupStage);
 
-        if (IsAuthenticated)
-        {
-            BettingItem = await BettingService.GetBettingItemAsync(BettingType.GroupStage, User);
-        }
+        //if (IsAuthenticated)
+        //{
+        //    BettingItem = await BettingService.GetBettingItemAsync(BettingType.GroupStage, User);
+        //}
     }
 
     private async Task PickTeam(GroupTeam team)
@@ -32,7 +32,7 @@ public partial class Betting2022GroupStage : JkwPageBase
         if (buttonType == TeamButtonType.Pickable)
         {
             BettingItem.Picked.Add(team);
-            BettingItem.Picked = BettingItem.Picked.OrderBy(x => x.Placeholder).ToList();
+            BettingItem.Picked = BettingItem.Picked.OrderBy(x => x.Id).ToList();
             await BettingService.SaveBettingItemAsync(BettingType.GroupStage, BettingItem);
             BettingItems = await BettingService.GetAllBettingItemsAsync(BettingType.GroupStage);
             StateHasChanged();

@@ -1,11 +1,19 @@
 ﻿using System.Runtime.Caching;
 
-namespace ProjectWorldCup;
+namespace ProjectWorldCup.FifaLibrary;
 
 public partial class Fifa : IFifa
 {
+    private readonly IFileSystem _fs;
     private static HttpClient _httpClient = new();
     private MemoryCache _cache = new MemoryCache("FIFA");
+
+    public Fifa(
+        IFileSystemService fsService,
+        WorldCupOption option)
+    {
+        _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
+    }
 
     /// <summary> FIFA 는 __NEXT_DATA__ id 스크립트 안에 페이지에 포함될 json을 넣어놓는다. 그걸 가져와서 쓰자.  </summary>
     protected async Task<JObject> GetPageData(Uri uri)
@@ -29,6 +37,7 @@ public partial class Fifa : IFifa
 
     protected async Task<T> GetFromCacheOrAsync<T>(string cacheKey, Func<Task<T>> func)
     {
+        Func<Paths, string> cacheFilePath = paths => $"{paths["Cache"]}/{cacheKey}.json";
         try
         {
             if (_cache.Contains(cacheKey))
@@ -38,6 +47,7 @@ public partial class Fifa : IFifa
 
             var result = await func();
 
+            await _fs.WriteJsonAsync(cacheFilePath, result);
             _cache.Set(new CacheItem(cacheKey, result), new CacheItemPolicy
             {
                 AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5),
@@ -47,6 +57,10 @@ public partial class Fifa : IFifa
         }
         catch
         {
+            if (await _fs.FileExistsAsync(cacheFilePath))
+            {
+                return await _fs.ReadJsonAsync<T>(cacheFilePath);
+            }
             throw;
         }
     }

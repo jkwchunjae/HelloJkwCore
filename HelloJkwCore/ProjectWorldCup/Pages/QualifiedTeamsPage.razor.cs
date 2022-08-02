@@ -15,6 +15,6 @@ public partial class QualifiedTeamsPage : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        QualifiedTeams = await Service.Get2022QualifiedTeamsAsync();
+        //QualifiedTeams = await Service.Get2022QualifiedTeamsAsync();
     }
 }

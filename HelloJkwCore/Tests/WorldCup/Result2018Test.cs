@@ -6,8 +6,6 @@ public class Result2018Test
 
     public Result2018Test()
     {
-        IFifa fifa = new Fifa();
-
         var pathOption = new PathMap
         {
             Local = new()
