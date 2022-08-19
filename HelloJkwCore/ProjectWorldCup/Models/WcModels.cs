@@ -2,8 +2,8 @@
 
 public class GroupTeam : Team
 {
-    //public string Placeholder { get; set; }
     public string GroupName { get; set; }
+    public string Placement { get; set; }
 
     public static GroupTeam CreateFromFifaMatchTeam(FifaMatchTeam matchTeam, string groupName, string placeholder)
     {
@@ -32,8 +32,8 @@ public class GroupMatch : Match<GroupTeam>
             GroupName = homeTeam.GroupName,
             HomeTeam = homeTeam,
             AwayTeam = awayTeam,
-            //HomeScore = matchData.Home?.Score ?? 0,
-            //AwayScore = matchData.Away?.Score ?? 0,
+            HomeScore = matchData.Home?.Score ?? 0,
+            AwayScore = matchData.Away?.Score ?? 0,
             Status = MatchStatus.Before,
             Time = matchData.Date,
             Info = new()

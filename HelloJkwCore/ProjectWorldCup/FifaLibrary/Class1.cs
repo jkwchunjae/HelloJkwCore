@@ -29,6 +29,7 @@ public class FifaMatchTeam
 
     [JsonProperty("pictureUrl")]
     public string PictureUrl { get; set; }
+    public int Score { get; set; }
 }
 
 public class FifaMatchData

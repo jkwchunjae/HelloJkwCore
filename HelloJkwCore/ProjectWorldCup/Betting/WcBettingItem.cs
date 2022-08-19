@@ -17,6 +17,8 @@ public class WcBettingItem<TTeam> : IBettingResultItem where TTeam : Team
         get => Success.Count;
         set { }
     }
+    [JsonIgnore]
     public List<TTeam> Success => Picked.Where(s => Fixed.Contains(s)).ToList();
+    [JsonIgnore]
     public List<TTeam> Fail => Picked.Where(s => !Fixed.Contains(s)).ToList();
 }

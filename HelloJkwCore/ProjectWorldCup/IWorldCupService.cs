@@ -7,6 +7,6 @@ public interface IWorldCupService
     //Task<List<RankingTeamData>> GetLastRankingTeamDataAsync(Gender gender);
     //Task<List<GroupMatch>> GetGroupStageMatchesAsync();
     //Task<List<KnMatch>> GetKnockOutStageMatchesAsync();
-    //Task<List<WcGroup>> GetGroupsAsync();
+    Task<List<WcGroup>> GetGroupsAsync();
     //Task<KnockoutStageData> GetKnockoutStageDataAsync();
 }
