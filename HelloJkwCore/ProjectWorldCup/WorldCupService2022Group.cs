@@ -13,6 +13,7 @@ public partial class WorldCupService
     public async Task<List<WcGroup>> GetGroupsAsync()
     {
         var simpleGroups = await GetSimpleGroupsAsync();
+        var groupMatches = await _fifa.GetGroupStageMatchesAsync();
 
         var groups = simpleGroups
             .Select(sg =>
@@ -22,9 +23,9 @@ public partial class WorldCupService
                 {
                     Name = groupName,
                 };
-                sg.Teams
+                var teams = sg.Teams
                     .OrderBy(t => t.Placement)
-                    .ForEach(team =>
+                    .Select(team =>
                     {
                         var newTeam = new GroupTeam
                         {
@@ -34,48 +35,22 @@ public partial class WorldCupService
                             Name = team.Name,
                             Flag = team.Flag,
                         };
-                        league.AddTeam(newTeam);
-                    });
+                        return newTeam;
+                    })
+                    .ToList();
+                var matches = groupMatches
+                    .Where(x => x.GroupName == sg.Name)
+                    .Select(m => GroupMatch.CreateFromFifaMatchData(m, teams))
+                    .ToList();
+
+                teams.ForEach(team => league.AddTeam(team));
+                matches.ForEach(match => league.AddMatch(match));
+
                 return league;
             })
             .ToList();
 
         return groups;
-        //var fifamatches = await _fifa.GetGroupStageMatchesAsync();
-
-        //var teams = fifamatches
-        //    .SelectMany(x => GetTeamInfoFromFifaMatchData(x))
-        //    .GroupBy(x => x.Id)
-        //    .Select(x => x.First())
-        //    .OrderBy(x => x.Placeholder)
-        //    .ToList();
-
-        //var matches = fifamatches
-        //    .Select(matchData => GroupMatch.CreateFromFifaMatchData(matchData, teams))
-        //    .ToList();
-
-        //var groups = matches
-        //    .GroupBy(x => x.GroupName)
-        //    .Select(matches =>
-        //    {
-        //        var league = new WcGroup
-        //        {
-        //            Name = matches.Key,
-        //        };
-
-        //        var teams = matches.SelectMany(match => new[] { match.HomeTeam, match.AwayTeam })
-        //            .Distinct()
-        //            .OrderBy(team => team.Placeholder)
-        //            .ToList();
-
-        //        teams.ForEach(team => league.AddTeam(team));
-        //        matches.ForEach(match => league.AddMatch(match));
-
-        //        return league;
-        //    })
-        //    .ToList();
-
-        //return groups;
     }
 
     //public async Task<List<GroupMatch>> GetGroupStageMatchesAsync()

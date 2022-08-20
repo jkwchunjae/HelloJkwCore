@@ -18,6 +18,7 @@ public partial class Fifa : IFifa
         var matches = matches2
             .SelectMany(m => m)
             .GroupBy(match => match.IdMatch, (k, arr) => arr.First())
+            .Where(match => match.IdStage == "285063")
             .ToList();
 
         return matches;

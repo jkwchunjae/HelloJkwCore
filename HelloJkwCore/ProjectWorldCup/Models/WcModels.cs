@@ -24,25 +24,50 @@ public class GroupMatch : Match<GroupTeam>
 
     public static GroupMatch CreateFromFifaMatchData(FifaMatchData matchData, List<GroupTeam> teams)
     {
-        var homeTeam = teams.First(x => x.Name == matchData.Home.TeamName);
-        var awayTeam = teams.First(x => x.Name == matchData.Away.TeamName);
-
-        var match = new GroupMatch()
+        try
         {
-            GroupName = homeTeam.GroupName,
-            HomeTeam = homeTeam,
-            AwayTeam = awayTeam,
-            HomeScore = matchData.Home?.Score ?? 0,
-            AwayScore = matchData.Away?.Score ?? 0,
-            Status = MatchStatus.Before,
-            Time = matchData.Date,
-            Info = new()
-            {
-                [MatchInfoType.MatchNumber] = matchData.MatchNumber.ToString(),
-            },
-        };
+            var homeTeam = teams.First(x => x.Id == matchData.Home.Abbreviation);
+            var awayTeam = teams.First(x => x.Id == matchData.Away.Abbreviation);
 
-        return match;
+            var match = new GroupMatch()
+            {
+                GroupName = homeTeam.GroupName,
+                HomeTeam = homeTeam,
+                AwayTeam = awayTeam,
+                HomeScore = matchData.Home?.Score ?? 0,
+                AwayScore = matchData.Away?.Score ?? 0,
+                Status = MatchStatus.Before,
+                Time = matchData.Date,
+                Info = new()
+                {
+                    [MatchInfoType.MatchNumber] = matchData.MatchNumber.ToString(),
+                },
+            };
+
+            return match;
+        }
+        catch
+        {
+            var homeTeam = teams.FirstOrDefault(x => x.Id == matchData.Home.CountryId);
+            var awayTeam = teams.FirstOrDefault(x => x.Id == matchData.Away.CountryId);
+
+            var match = new GroupMatch()
+            {
+                GroupName = homeTeam.GroupName,
+                HomeTeam = homeTeam,
+                AwayTeam = awayTeam,
+                HomeScore = matchData.Home?.Score ?? 0,
+                AwayScore = matchData.Away?.Score ?? 0,
+                Status = MatchStatus.Before,
+                Time = matchData.Date,
+                Info = new()
+                {
+                    [MatchInfoType.MatchNumber] = matchData.MatchNumber.ToString(),
+                },
+            };
+
+            return match;
+        }
     }
 }
 
@@ -58,8 +83,8 @@ public class KnMatch : Match<Team>
         {
             Time = fifaMatchData.Date,
             Status = MatchStatus.Before,
-            HomeTeam = new Team { Id = fifaMatchData.Home?.CountryId, Name = fifaMatchData.Home?.TeamName },
-            AwayTeam = new Team { Id = fifaMatchData.Away?.CountryId, Name = fifaMatchData.Away?.TeamName },
+            HomeTeam = new Team { Id = fifaMatchData.Home?.CountryId, Name = fifaMatchData.Home?.TeamName, Flag = fifaMatchData.Home.PictureUrl },
+            AwayTeam = new Team { Id = fifaMatchData.Away?.CountryId, Name = fifaMatchData.Away?.TeamName, Flag = fifaMatchData.Away.PictureUrl },
             Info = new()
             {
                 [MatchInfoType.MatchNumber] = fifaMatchData.MatchNumber.ToString(),

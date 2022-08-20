@@ -13,6 +13,11 @@ public partial class BettingService : IBettingService
         _fs2018 = fsService.GetFileSystem(option.FileSystemSelect2018, option.Path);
     }
 
+    public Task<bool> CanIBetting2022(BettingType bettingType)
+    {
+        throw new NotImplementedException();
+    }
+
     public async ValueTask<List<WcBettingItem<GroupTeam>>> GetAllBettingItemsAsync(BettingType bettingType)
     {
         lock (_cache)
