@@ -24,7 +24,8 @@ public partial class Fifa : IFifa
     }
     public async Task<List<FifaMatchData>> GetMatches(DateTime date)
     {
-        return await GetFromCacheOrAsync<List<FifaMatchData>>(GroupStageMatchesCacheKey + date.ToString("yyyy.MM.dd"), async () =>
+        var retryCount = 5;
+        return await UseCacheIfError<List<FifaMatchData>>(GroupStageMatchesCacheKey + date.ToString("yyyy.MM.dd"), retryCount, async () =>
         {
             var url = $"https://cxm-api.fifa.com/fifaplusweb/api/sections/competitionpage/matches?competitionId=17&locale=en&date={date:yyyy-MM-dd}&timezoneoffset=-540";
             var res = await _httpClient.GetAsync(url);

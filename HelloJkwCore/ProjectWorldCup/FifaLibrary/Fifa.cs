@@ -64,4 +64,39 @@ public partial class Fifa : IFifa
             throw;
         }
     }
+
+    protected async Task<T> UseCacheIfError<T>(string cacheKey, int retryCount, Func<Task<T>> func)
+    {
+        Func<Paths, string> cacheFilePath = paths => $"{paths["Cache"]}/{cacheKey}.json";
+
+        while (retryCount-- > 0)
+        {
+            try
+            {
+                T result = await func();
+
+                await _fs.WriteJsonAsync(cacheFilePath, result);
+                _cache.Set(new CacheItem(cacheKey, result), new CacheItemPolicy
+                {
+                    AbsoluteExpiration = DateTimeOffset.Now.AddHours(1),
+                });
+
+                return result;
+            }
+            catch
+            {
+            }
+        }
+
+        if (_cache.Contains(cacheKey))
+        {
+            return (T)_cache.Get(cacheKey);
+        }
+        if (await _fs.FileExistsAsync(cacheFilePath))
+        {
+            return await _fs.ReadJsonAsync<T>(cacheFilePath);
+        }
+
+        return await func();
+    }
 }
