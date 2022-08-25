@@ -6,8 +6,10 @@ public interface IBettingService
     Task<List<WcBettingItem<Team>>> Get2018Round16BettingResult();
     Task<List<WcFinalBettingItem<Team>>> Get2018FinalBettingResult();
 
-    Task<WcBettingItem<GroupTeam>> GetBettingItemAsync(BettingType bettingType, AppUser user);
-    Task SaveBettingItemAsync(BettingType bettingType, WcBettingItem<GroupTeam> item);
+    Task<BettingUser> JoinBettingAsync(BettingUser user, BettingType bettingType);
+    Task<WcBettingItem<GroupTeam>> GetGroupStageBettingItemAsync(BettingUser user);
+    Task<WcBettingItem<GroupTeam>> PickTeamGroupStageAsync(BettingUser user, GroupTeam team);
+    Task<WcBettingItem<GroupTeam>> UnpickTeamGroupStageAsync(BettingUser user, GroupTeam team);
     ValueTask<List<WcBettingItem<GroupTeam>>> GetAllBettingItemsAsync(BettingType bettingType);
 
     #region Users
