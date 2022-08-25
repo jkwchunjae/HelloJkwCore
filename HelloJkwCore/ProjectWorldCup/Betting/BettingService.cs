@@ -37,6 +37,11 @@ public partial class BettingService : IBettingService
         return bettingItem;
     }
 
+    public Task<BettingUser> JoinBettingAsync(BettingUser user, BettingType bettingType)
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task SaveBettingItemAsync(BettingType bettingType, WcBettingItem<Team> item)
     {
         lock (_cache)

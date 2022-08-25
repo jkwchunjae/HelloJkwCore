@@ -11,17 +11,17 @@ public partial class Betting2022GroupStage : JkwPageBase
 
     private List<WcGroup> Groups { get; set; } = new();
 
+    private BettingUser BettingUser { get; set; }
     private WcBettingItem<GroupTeam> BettingItem { get; set; } = new();
-    private List<WcBettingItem<GroupTeam>> BettingItems { get; set; }
 
     protected override async Task OnPageInitializedAsync()
     {
         Groups = await Service.GetGroupsAsync();
-        BettingItems = await BettingService.GetAllBettingItemsAsync(BettingType.GroupStage);
+        BettingUser = await BettingService.GetBettingUserAsync(User);
 
-        if (IsAuthenticated)
+        if (IsAuthenticated && (BettingUser?.JoinedBetting?.Contains(BettingType.GroupStage) ?? false))
         {
-            BettingItem = await BettingService.GetBettingItemAsync(BettingType.GroupStage, User);
+            BettingItem = await BettingService.GetGroupStageBettingAsync(BettingUser);
         }
     }
 
@@ -31,10 +31,7 @@ public partial class Betting2022GroupStage : JkwPageBase
 
         if (buttonType == TeamButtonType.Pickable)
         {
-            BettingItem.Picked.Add(team);
-            BettingItem.Picked = BettingItem.Picked.OrderBy(x => x.GroupName).ThenBy(x => x.Placement).ToList();
-            await BettingService.SaveBettingItemAsync(BettingType.GroupStage, BettingItem);
-            BettingItems = await BettingService.GetAllBettingItemsAsync(BettingType.GroupStage);
+            BettingItem = await BettingService.PickTeamGroupStageAsync(BettingUser, team);
             StateHasChanged();
         }
     }
@@ -45,14 +42,8 @@ public partial class Betting2022GroupStage : JkwPageBase
 
         if (buttonType == TeamButtonType.Picked)
         {
-            var removeTeam = BettingItem.Picked.Find(x => x.Id == team.Id);
-            if (removeTeam != null)
-            {
-                BettingItem.Picked.Remove(removeTeam);
-                await BettingService.SaveBettingItemAsync(BettingType.GroupStage, BettingItem);
-                BettingItems = await BettingService.GetAllBettingItemsAsync(BettingType.GroupStage);
-                StateHasChanged();
-            }
+            BettingItem = await BettingService.UnpickTeamGroupStageAsync(BettingUser, team);
+            StateHasChanged();
         }
     }
 
