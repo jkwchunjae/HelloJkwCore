@@ -15,36 +15,36 @@ internal static class BettingFileSystemExtension
             = path => path["Betting2022"] + $"/{bettingType}";
         return itemPathFunc;
     }
-    public static async Task WriteBettingItemAsync(this IFileSystem fs, BettingType bettingType, WcBettingItem<GroupTeam> bettingItem)
+    public static async Task WriteBettingItemAsync(this IFileSystem fs, BettingType bettingType, WcBettingItem<Team> bettingItem)
     {
         await fs.WriteJsonAsync(BettingItemPath(bettingType, bettingItem.User.Id), bettingItem);
     }
 
-    public static async Task<WcBettingItem<GroupTeam>> ReadBettingItemAsync(this IFileSystem fs, BettingType bettingType, AppUser user)
+    public static async Task<WcBettingItem<Team>> ReadBettingItemAsync(this IFileSystem fs, BettingType bettingType, AppUser user)
     {
         if (await fs.FileExistsAsync(BettingItemPath(bettingType, user.Id)))
         {
-            var bettingItem = await fs.ReadJsonAsync<WcBettingItem<GroupTeam>>(BettingItemPath(bettingType, user.Id));
+            var bettingItem = await fs.ReadJsonAsync<WcBettingItem<Team>>(BettingItemPath(bettingType, user.Id));
             bettingItem.User = user;
             return bettingItem;
         }
         else
         {
-            return new WcBettingItem<GroupTeam>
+            return new WcBettingItem<Team>
             {
                 User = user,
             };
         }
     }
 
-    public static async Task<List<WcBettingItem<GroupTeam>>> ReadAllBettingItemsAsync(this IFileSystem fs, BettingType bettingType)
+    public static async Task<List<WcBettingItem<Team>>> ReadAllBettingItemsAsync(this IFileSystem fs, BettingType bettingType)
     {
         var directoryPath = BettingItemDirectoryPath(bettingType);
         if (await fs.DirExistsAsync(directoryPath))
         {
             var files = await fs.GetFilesAsync(directoryPath);
             var bettingItems = await files
-                .Select(async filename => await fs.ReadJsonAsync<WcBettingItem<GroupTeam>>(path => directoryPath(path) + $"/{filename}"))
+                .Select(async filename => await fs.ReadJsonAsync<WcBettingItem<Team>>(path => directoryPath(path) + $"/{filename}"))
                 .WhenAll();
             return bettingItems.ToList();
         }

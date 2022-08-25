@@ -3,7 +3,7 @@
 public partial class BettingService : IBettingService
 {
     private readonly IFileSystem _fs;
-    Dictionary<BettingType, List<WcBettingItem<GroupTeam>>> _cache = new();
+    Dictionary<BettingType, List<WcBettingItem<Team>>> _cache = new();
 
     public BettingService(
         IFileSystemService fsService,
@@ -13,12 +13,7 @@ public partial class BettingService : IBettingService
         _fs2018 = fsService.GetFileSystem(option.FileSystemSelect2018, option.Path);
     }
 
-    public Task<bool> CanIBetting2022(BettingType bettingType)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async ValueTask<List<WcBettingItem<GroupTeam>>> GetAllBettingItemsAsync(BettingType bettingType)
+    public async ValueTask<List<WcBettingItem<Team>>> GetAllBettingItemsAsync(BettingType bettingType)
     {
         lock (_cache)
         {
@@ -36,13 +31,13 @@ public partial class BettingService : IBettingService
         return bettingItems;
     }
 
-    public async Task<WcBettingItem<GroupTeam>> GetBettingItemAsync(BettingType bettingType, AppUser user)
+    public async Task<WcBettingItem<Team>> GetBettingItemAsync(BettingType bettingType, AppUser user)
     {
         var bettingItem = await _fs.ReadBettingItemAsync(bettingType, user);
         return bettingItem;
     }
 
-    public async Task SaveBettingItemAsync(BettingType bettingType, WcBettingItem<GroupTeam> item)
+    private async Task SaveBettingItemAsync(BettingType bettingType, WcBettingItem<Team> item)
     {
         lock (_cache)
         {
