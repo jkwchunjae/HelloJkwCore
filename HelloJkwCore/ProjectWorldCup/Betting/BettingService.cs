@@ -3,7 +3,6 @@
 public partial class BettingService : IBettingService
 {
     private readonly IFileSystem _fs;
-    Dictionary<BettingType, List<WcBettingItem<Team>>> _cache = new();
 
     public BettingService(
         IFileSystemService fsService,
@@ -13,47 +12,26 @@ public partial class BettingService : IBettingService
         _fs2018 = fsService.GetFileSystem(option.FileSystemSelect2018, option.Path);
     }
 
-    public async ValueTask<List<WcBettingItem<Team>>> GetAllBettingItemsAsync(BettingType bettingType)
-    {
-        lock (_cache)
-        {
-            if (_cache.TryGetValue(bettingType, out var bettingItemss))
-            {
-                return bettingItemss;
-            }
-        }
-
-        var bettingItems = await _fs.ReadAllBettingItemsAsync(bettingType);
-        lock (_cache)
-        {
-            _cache[bettingType] = bettingItems;
-        }
-        return bettingItems;
-    }
-
-    public async Task<WcBettingItem<Team>> GetBettingItemAsync(BettingType bettingType, AppUser user)
-    {
-        var bettingItem = await _fs.ReadBettingItemAsync(bettingType, user);
-        return bettingItem;
-    }
-
     public Task<BettingUser> JoinBettingAsync(BettingUser user, BettingType bettingType)
     {
         throw new NotImplementedException();
     }
 
-    private async Task SaveBettingItemAsync(BettingType bettingType, WcBettingItem<Team> item)
+    private async Task SaveBettingItemAsync(BettingType bettingType, IWcBettingItem<Team> item)
     {
         lock (_cache)
         {
             if (_cache.TryGetValue(bettingType, out var list))
             {
-                list.RemoveAll(x => x.User.Id == item.User.Id);
-                list.Add(item);
+                var newList = list
+                    .Where(x => x.User != item.User)
+                    .Concat(new[] { item })
+                    .ToList();
+                _cache[bettingType] = newList;
             }
             else
             {
-                _cache[bettingType] = new() { item };
+                _cache[bettingType] = new List<IWcBettingItem<Team>> { item };
             }
         }
 

@@ -1,6 +1,13 @@
 ﻿namespace ProjectWorldCup;
 
-public class WcBettingItem<TTeam> : IBettingResultItem where TTeam : Team
+public interface IWcBettingItem<out TTeam> : IBettingResultItem where TTeam : Team
+{
+    public AppUser User { get; }
+    public IEnumerable<TTeam> Picked { get; }
+    public IEnumerable<TTeam> Fixed { get; }
+}
+
+public class WcBettingItem<TTeam> : IWcBettingItem<TTeam> where TTeam : Team
 {
     public AppUser User { get; set; }
     public int Reward { get; set; }
@@ -16,8 +23,8 @@ public class WcBettingItem<TTeam> : IBettingResultItem where TTeam : Team
         get => Success.Count;
         set { }
     }
-    public List<TTeam> Picked { get; set; } = new();
-    public List<TTeam> Fixed { get; set; } = new();
+    public IEnumerable<TTeam> Picked { get; set; } = new List<TTeam>();
+    public IEnumerable<TTeam> Fixed { get; set; } = new List<TTeam>();
     [JsonIgnore]
     public List<TTeam> Success => Picked.Where(s => Fixed.Contains(s)).ToList();
     [JsonIgnore]
