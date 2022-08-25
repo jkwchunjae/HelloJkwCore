@@ -10,5 +10,11 @@ public interface IBettingService
     Task SaveBettingItemAsync(BettingType bettingType, WcBettingItem<GroupTeam> item);
     ValueTask<List<WcBettingItem<GroupTeam>>> GetAllBettingItemsAsync(BettingType bettingType);
 
-    Task<bool> CanIBetting2022(BettingType bettingType);
+    #region Users
+    Task<BettingUser> GetBettingUserAsync(AppUser appUser);
+    Task<BettingUser> MakeJoinRequestAsync(AppUser appUser);
+    Task ApproveUserAsync(BettingUser user);
+    Task CancelJoinRequestAsync(AppUser appUser);
+    Task<IEnumerable<BettingUser>> GetBettingUsersAsync();
+    #endregion
 }
