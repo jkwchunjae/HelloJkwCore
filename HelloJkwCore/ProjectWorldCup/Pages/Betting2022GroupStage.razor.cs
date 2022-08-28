@@ -5,9 +5,11 @@ namespace ProjectWorldCup.Pages;
 public partial class Betting2022GroupStage : JkwPageBase
 {
     [Inject]
-    private IWorldCupService Service { get; set; }
+    private IWorldCupService WcService { get; set; }
     [Inject]
     private IBettingService BettingService { get; set; }
+    [Inject]
+    private IBettingGroupStageService GroupStageService { get; set; }
 
     private List<WcGroup> Groups { get; set; } = new();
 
@@ -16,12 +18,12 @@ public partial class Betting2022GroupStage : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        Groups = await Service.GetGroupsAsync();
+        Groups = await WcService.GetGroupsAsync();
         BettingUser = await BettingService.GetBettingUserAsync(User);
 
         if (IsAuthenticated && (BettingUser?.JoinedBetting?.Contains(BettingType.GroupStage) ?? false))
         {
-            BettingItem = await BettingService.GetGroupStageBettingAsync(BettingUser);
+            BettingItem = await GroupStageService.GetBettingAsync(BettingUser);
         }
     }
 
@@ -31,7 +33,7 @@ public partial class Betting2022GroupStage : JkwPageBase
 
         if (buttonType == TeamButtonType.Pickable)
         {
-            BettingItem = await BettingService.PickTeamGroupStageAsync(BettingUser, team);
+            BettingItem = await GroupStageService.PickTeamAsync(BettingUser, team);
             StateHasChanged();
         }
     }
@@ -42,7 +44,7 @@ public partial class Betting2022GroupStage : JkwPageBase
 
         if (buttonType == TeamButtonType.Picked)
         {
-            BettingItem = await BettingService.UnpickTeamGroupStageAsync(BettingUser, team);
+            BettingItem = await GroupStageService.UnpickTeamAsync(BettingUser, team);
             StateHasChanged();
         }
     }

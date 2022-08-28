@@ -13,6 +13,7 @@ public static class WorldCupServiceHelper
         services.AddSingleton(option);
         services.AddSingleton<IWorldCupService, WorldCupService>();
         services.AddSingleton<IBettingService, BettingService>();
+        services.AddSingleton<IBettingGroupStageService, BettingGroupStageService>();
         services.AddSingleton<IFifa, Fifa>();
     }
 }

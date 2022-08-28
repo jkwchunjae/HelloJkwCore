@@ -7,10 +7,6 @@ public interface IBettingService
     Task<List<WcFinalBettingItem<Team>>> Get2018FinalBettingResult();
 
     Task<BettingUser> JoinBettingAsync(BettingUser user, BettingType bettingType);
-    ValueTask<List<WcBettingItem<GroupTeam>>> GetAllGroupStageBettingsAsync(BettingType bettingType);
-    Task<WcBettingItem<GroupTeam>> GetGroupStageBettingAsync(BettingUser user);
-    Task<WcBettingItem<GroupTeam>> PickTeamGroupStageAsync(BettingUser user, GroupTeam team);
-    Task<WcBettingItem<GroupTeam>> UnpickTeamGroupStageAsync(BettingUser user, GroupTeam team);
 
     #region Users
     Task<BettingUser> GetBettingUserAsync(AppUser appUser);

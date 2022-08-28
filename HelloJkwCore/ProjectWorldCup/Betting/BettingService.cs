@@ -17,24 +17,8 @@ public partial class BettingService : IBettingService
         throw new NotImplementedException();
     }
 
-    private async Task SaveBettingItemAsync(BettingType bettingType, IWcBettingItem<Team> item)
+    private Task SaveBettingItemAsync(BettingType bettingType, IWcBettingItem<Team> item)
     {
-        lock (_cache)
-        {
-            if (_cache.TryGetValue(bettingType, out var list))
-            {
-                var newList = list
-                    .Where(x => x.User != item.User)
-                    .Concat(new[] { item })
-                    .ToList();
-                _cache[bettingType] = newList;
-            }
-            else
-            {
-                _cache[bettingType] = new List<IWcBettingItem<Team>> { item };
-            }
-        }
-
-        await _fs.WriteBettingItemAsync(bettingType, item);
+        return Task.CompletedTask;
     }
 }
