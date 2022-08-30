@@ -35,6 +35,13 @@
     <MudNavLink Href="worldcup" Icon="@Icons.Material.Filled.SportsSoccer">
         월드컵
     </MudNavLink>
+    <AuthorizeView Roles="WcManager">
+        <Authorized>
+            <MudNavLink Href="worldcup/2022/users" Icon="@Icons.Material.Filled.SportsSoccer">
+                월드컵 유저 관리
+            </MudNavLink>
+        </Authorized>
+    </AuthorizeView>
     <MudNavLink Href="https://hellojkw.tistory.com" Icon="@Icons.Filled.EditNote" Target="_blank">
         블로그
     </MudNavLink>

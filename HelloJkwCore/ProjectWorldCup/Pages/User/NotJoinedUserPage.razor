@@ -23,7 +23,7 @@
         <span>각 단계별 참가금은 1만원이지만 처음에 총 2만원을 내고 시작하게 됩니다.</span>
         <span>입금을 하고 누군가에게 얘기하면 승인해줄겁니다.</span>
         <span>누가 승인할지 잘 모르겠는 분은 입금하지 마세요.</span>
-        <span>아래 QR코드를 스캔해서 입금을 해주세요.</span>
+        <span>아래 카카오 송금 QR코드를 스캔해서 입금을 해주세요.</span>
     </div>
 
     <div>
@@ -37,6 +37,13 @@
     <div>
         <span>승인 대기 중 입니다.</span>
         <MudLink Href="https://hellojkw.tistory.com/"> &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt; </MudLink>
+    </div>
+  }
+  else if (BettingUser?.JoinStatus == UserJoinStatus.Rejected)
+  {
+    <div>
+      <span>거절되었습니다.</span>
+      <MudLink Href="https://hellojkw.tistory.com/"> &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt; </MudLink>
     </div>
   }
 }

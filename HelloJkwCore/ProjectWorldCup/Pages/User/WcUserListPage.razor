@@ -1,0 +1,80 @@
+﻿@page "/worldcup/2022/users"
+@inherits JkwPageBase
+
+<WcTitle>내기 유저 관리</WcTitle>
+
+<div class="wc-users">
+@if (Users.Any(user => user.JoinStatus == UserJoinStatus.Requested))
+{
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Requested)">
+    <HeaderContent>
+      <MudTh>이름</MudTh>
+      <MudTh>신청시간</MudTh>
+      <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd>@context.AppUser.DisplayName</MudTd>
+      <MudTd>@context.LastJoinRequestTime()</MudTd>
+      <MudTd>
+        <MudButton OnClick="@(() => ApproveAsync(context))">
+          승인
+        </MudButton>
+        <MudButton OnClick="@(() => RejectAsync(context))">
+          거절
+        </MudButton>
+      </MudTd>
+    </RowTemplate>
+  </MudTable>
+}
+
+@if (Users.Any())
+{
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Joined)">
+    <HeaderContent>
+      <MudTh>이름</MudTh>
+      <MudTh>1차결과</MudTh>
+      <MudTh>2차결과</MudTh>
+      <MudTh>3차결과</MudTh>
+      <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd>@context.AppUser.DisplayName</MudTd>
+      <MudTd></MudTd>
+      <MudTd></MudTd>
+      <MudTd></MudTd>
+      <MudTd>
+        <MudButton OnClick="@(() => RejectAsync(context))">
+          거절
+        </MudButton>
+      </MudTd>
+    </RowTemplate>
+  </MudTable>
+}
+
+@if (Users.Any(user => user.JoinStatus == UserJoinStatus.Rejected))
+{
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Rejected)">
+    <HeaderContent>
+      <MudTh>이름</MudTh>
+      <MudTh>신청시간</MudTh>
+      <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd>@context.AppUser.DisplayName</MudTd>
+      <MudTd>@context.LastJoinRequestTime()</MudTd>
+      <MudTd>
+        <MudButton OnClick="@(() => ApproveAsync(context))">
+          승인
+        </MudButton>
+      </MudTd>
+    </RowTemplate>
+
+  </MudTable>
+}
+</div>
+
+<style>
+  div.wc-users div.mud-table {
+      margin-bottom: 20px;
+  }
+</style>

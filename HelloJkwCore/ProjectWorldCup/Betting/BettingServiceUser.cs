@@ -2,52 +2,79 @@
 
 public partial class BettingService : IBettingService
 {
+    object _usersCacheLock = new object();
     List<BettingUser> _bettingUsersCache;
 
     private async Task SaveUserAsync(BettingUser user)
     {
         Func<Paths, string> userPath = path => path[WorldCupPath.Betting2022Users] + @$"/{user.AppUser.Id}.json";
+
+        lock (_usersCacheLock)
+        {
+            if (_bettingUsersCache?.Any(x => x.AppUser == user.AppUser) ?? false)
+            {
+                var index = _bettingUsersCache.FindIndex(x => x.AppUser == user.AppUser);
+                _bettingUsersCache[index] = user;
+            }
+        }
         await _fs.WriteJsonAsync(userPath, user);
+    }
+    public async Task<BettingUser> MakeJoinRequestAsync(AppUser appUser)
+    {
+        var user = await GetBettingUserAsync(appUser);
+        user.JoinStatus = UserJoinStatus.Requested;
+        user.BettingHistories ??= new();
+        user.BettingHistories.Add(new BettingHistory
+        {
+            Type = HistoryType.JoinRequest,
+            Comment = "참가 신청",
+        });
+        await SaveUserAsync(user);
+
+        return user;
     }
     public async Task ApproveUserAsync(BettingUser user, AppUser approveBy)
     {
         user.JoinStatus = UserJoinStatus.Joined;
         user.BettingHistories.Add(new BettingHistory
         {
+            Type = HistoryType.JoinApproved,
             Comment = $"{approveBy.DisplayName}님에 의해 승인",
         });
         await SaveUserAsync(user);
     }
-
     public async Task RejectUserAsync(BettingUser user, AppUser rejectBy)
     {
-        user.JoinStatus = UserJoinStatus.None;
+        user.JoinStatus = UserJoinStatus.Rejected;
         user.BettingHistories.Add(new BettingHistory
         {
+            Type = HistoryType.JoinRejected,
             Comment = $"{rejectBy.DisplayName}님에 의해 거절",
         });
         await SaveUserAsync(user);
     }
-
     public async Task CancelJoinRequestAsync(AppUser appUser)
     {
         var user = await GetBettingUserAsync(appUser);
         user.JoinStatus = UserJoinStatus.None;
         user.BettingHistories.Add(new BettingHistory
         {
+            Type = HistoryType.CancelJoinRequest,
             Comment = "참가 신청 취소",
         });
         await SaveUserAsync(user);
     }
-
     public async Task<BettingUser> GetBettingUserAsync(AppUser appUser)
     {
-        if (_bettingUsersCache != null)
+        lock (_usersCacheLock)
         {
-            var user = _bettingUsersCache.FirstOrDefault(user => user.AppUser == appUser);
-            if (user != null)
+            if (_bettingUsersCache != null)
             {
-                return user;
+                var user = _bettingUsersCache.FirstOrDefault(user => user.AppUser == appUser);
+                if (user != null)
+                {
+                    return user;
+                }
             }
         }
 
@@ -65,12 +92,14 @@ public partial class BettingService : IBettingService
             };
         }
     }
-
     public async Task<IEnumerable<BettingUser>> GetBettingUsersAsync()
     {
-        if (_bettingUsersCache != null)
+        lock (_usersCacheLock)
         {
-            return _bettingUsersCache;
+            if (_bettingUsersCache != null)
+            {
+                return _bettingUsersCache;
+            }
         }
 
         var userfiles = await _fs.GetFilesAsync(path => path[WorldCupPath.Betting2022Users]);
@@ -78,22 +107,10 @@ public partial class BettingService : IBettingService
             .Select(filename => _fs.ReadJsonAsync<BettingUser>(path => path[WorldCupPath.Betting2022Users] + $@"/{filename}"))
             .WhenAll();
 
-        _bettingUsersCache = users.ToList();
-        return users;
-    }
-
-    public async Task<BettingUser> MakeJoinRequestAsync(AppUser appUser)
-    {
-        var user = await GetBettingUserAsync(appUser);
-        user.JoinStatus = UserJoinStatus.Requested;
-        user.BettingHistories ??= new();
-        user.BettingHistories.Add(new BettingHistory
+        lock (_usersCacheLock)
         {
-            Time = DateTime.UtcNow,
-            Comment = "참가 신청",
-        });
-        await SaveUserAsync(user);
-
-        return user;
+            _bettingUsersCache = users.ToList();
+        }
+        return users;
     }
 }
