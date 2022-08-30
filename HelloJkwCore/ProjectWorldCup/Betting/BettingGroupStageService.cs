@@ -38,9 +38,19 @@ public class BettingGroupStageService : IBettingGroupStageService
 
     public async Task<WcBettingItem<GroupTeam>> PickTeamAsync(BettingUser user, GroupTeam team)
     {
-        var bettingItem = await GetBettingAsync(user);
-        if (bettingItem == null)
-            return null;
+        if (user.JoinStatus != UserJoinStatus.Joined)
+        {
+            throw new NotJoinedException();
+        }
+        if (!(user.JoinedBetting?.Contains(BettingType.GroupStage) ?? false))
+        {
+            throw new NotJoinedException();
+        }
+        var bettingItem = await GetBettingAsync(user)
+            ?? new WcBettingItem<GroupTeam>
+            {
+                User = user.AppUser,
+            };
 
         if (bettingItem.Picked.Empty(picked => picked == team))
         {
