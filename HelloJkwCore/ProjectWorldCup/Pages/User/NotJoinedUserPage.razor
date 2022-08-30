@@ -1,0 +1,60 @@
+﻿@page "/worldcup/2022/welcome-betting"
+@inherits JkwPageBase
+
+<WcTitle>2022 월드컵 내기</WcTitle>
+
+<div class="description">
+@if (IsAuthenticated)
+{
+  @if (BettingUser?.JoinStatus == UserJoinStatus.None)
+  {
+    <div>
+        <span>환영합니다!</span>
+        <span>월드컵 내기는 총 3단계로 이뤄져있습니다.</span>
+        <span>1. 16강 진출팀 맞추기</span>
+        <span>2. 8강 진출팀 맞추기</span>
+        <span>3. 1, 2, 3, 4등 맞추기</span>
+        <span>모든 단계별로 1만원을 걸고 정해진 규칙에 의해서 상금을 타가는 방식입니다.</span>
+        <span>자세한 규칙은 블로그를 통해 확인하실 수 있습니다.</span>
+        <MudLink Href="https://hellojkw.tistory.com/"> &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt; </MudLink>
+    </div>
+
+    <div>
+        <span>각 단계별 참가금은 1만원이지만 처음에 총 2만원을 내고 시작하게 됩니다.</span>
+        <span>입금을 하고 누군가에게 얘기하면 승인해줄겁니다.</span>
+        <span>누가 승인할지 잘 모르겠는 분은 입금하지 마세요.</span>
+        <span>아래 QR코드를 스캔해서 입금을 해주세요.</span>
+    </div>
+
+    <div>
+        <OneClickButton OnClick="@(() => JoinAsync())" Variant="Variant.Filled" Color="Color.Success">
+            승인 요청
+        </OneClickButton>
+    </div>
+  }
+  else if (BettingUser?.JoinStatus == UserJoinStatus.Requested)
+  {
+    <div>
+        <span>승인 대기 중 입니다.</span>
+        <MudLink Href="https://hellojkw.tistory.com/"> &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt; </MudLink>
+    </div>
+  }
+}
+else
+{
+  <div>
+      <span>이곳은 2022 월드컵을 보며 내기하는 공간입니다.</span>
+      <span>로그인 후 이용하실 수 있습니다.</span>
+      <MudLink Href="/login"> &lt;&lt; 로그인 하러가기 &gt;&gt; </MudLink>
+  </div>
+}
+</div>
+<style>
+    div.description span {
+        display: block;
+        font-size: large;
+    }
+    div.description div {
+        margin-bottom: 10px;
+    }
+</style>
