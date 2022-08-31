@@ -1,4 +1,6 @@
-﻿namespace ProjectWorldCup;
+﻿using Common;
+
+namespace ProjectWorldCup;
 
 public partial class BettingService : IBettingService
 {
@@ -12,13 +14,29 @@ public partial class BettingService : IBettingService
         _fs2018 = fsService.GetFileSystem(option.FileSystemSelect2018, option.Path);
     }
 
-    public Task<BettingUser> JoinBettingAsync(BettingUser user, BettingType bettingType)
+    public async Task<BettingUser> JoinBettingAsync(BettingUser buser, BettingType bettingType)
     {
-        throw new NotImplementedException();
-    }
+        var user = await GetBettingUserAsync(buser.AppUser);
 
-    private Task SaveBettingItemAsync(BettingType bettingType, IWcBettingItem<Team> item)
-    {
-        return Task.CompletedTask;
+        if (user.JoinStatus != UserJoinStatus.Joined)
+        {
+            throw new Exception("참가신청을 먼저 해야 합니다.");
+        }
+
+        user.JoinedBetting ??= new();
+        user.JoinedBetting.Add(bettingType);
+
+        var bettingName = bettingType == BettingType.GroupStage ? "16강 진출팀 맞추기"
+            : bettingType == BettingType.Round16 ? "8강 진출팀 맞추기"
+            : "1,2,3,4 등 맞추기";
+        user.BettingHistories.Add(new BettingHistory
+        {
+            Type = HistoryType.Betting,
+            Value = -10000,
+            Comment = $"'{bettingName}'내기에 참가했습니다.",
+        });
+        await SaveUserAsync(user);
+
+        return user;
     }
 }

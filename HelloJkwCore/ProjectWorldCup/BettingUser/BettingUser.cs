@@ -37,6 +37,8 @@ public enum HistoryType
     JoinApproved,
     JoinRejected,
     CancelJoinRequest,
+    Betting,
+    Reward,
 }
 
 public class BettingHistory
