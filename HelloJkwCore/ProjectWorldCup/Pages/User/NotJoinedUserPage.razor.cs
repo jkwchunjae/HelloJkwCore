@@ -13,7 +13,7 @@ public partial class NotJoinedUserPage : JkwPageBase
 
             if (BettingUser?.JoinStatus == UserJoinStatus.Joined)
             {
-                Navi.NavigateTo(""); // TODO: 가입 한 사람이 가야할 곳으로 안내
+                Navi.NavigateTo("/worldcup/2022/betting"); // TODO: 가입 한 사람이 가야할 곳으로 안내
             }
         }
     }

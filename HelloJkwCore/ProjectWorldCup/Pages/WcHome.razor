@@ -2,6 +2,10 @@
 
 @page "/worldcup"
 
-<GroupStage></GroupStage>
-
-<Wc2018Result></Wc2018Result>
+@code {
+  protected override Task OnPageInitializedAsync()
+  {
+    Navi.NavigateTo("/worldcup/2022/welcome-betting");
+    return Task.CompletedTask;
+  }
+}

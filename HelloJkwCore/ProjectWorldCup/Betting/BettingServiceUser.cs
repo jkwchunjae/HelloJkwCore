@@ -39,6 +39,7 @@ public partial class BettingService : IBettingService
         user.BettingHistories.Add(new BettingHistory
         {
             Type = HistoryType.JoinApproved,
+            Value = 20000,
             Comment = $"{approveBy.DisplayName}님에 의해 승인",
         });
         await SaveUserAsync(user);
