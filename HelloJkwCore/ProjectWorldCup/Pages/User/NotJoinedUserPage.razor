@@ -45,6 +45,11 @@
             <img src="/images/wc/kakao_jkw_20000.png" alt="카카오송금 QR코드" width="100"/>
         </span>
     </div>
+    <div>
+        <OneClickButton OnClick="@(() => CancelAsync())" Variant="Variant.Filled" Color="Color.Tertiary">
+            취소
+        </OneClickButton>
+    </div>
   }
   else if (BettingUser?.JoinStatus == UserJoinStatus.Rejected)
   {

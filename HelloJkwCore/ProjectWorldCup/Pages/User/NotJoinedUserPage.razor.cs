@@ -3,6 +3,7 @@
 public partial class NotJoinedUserPage : JkwPageBase
 {
     [Inject] IBettingService Service { get; set; }
+    [Inject] ISnackbar Snackbar { get; set; }
 
     BettingUser BettingUser;
     protected override async Task OnPageInitializedAsync()
@@ -22,7 +23,31 @@ public partial class NotJoinedUserPage : JkwPageBase
     {
         if (IsAuthenticated)
         {
+            if (BettingUser?.BettingHistories?.Count > 13)
+            {
+                return;
+            }
             BettingUser = await Service.MakeJoinRequestAsync(User);
+            StateHasChanged();
+        }
+    }
+
+    private async Task CancelAsync()
+    {
+        if (IsAuthenticated && BettingUser?.JoinStatus == UserJoinStatus.Requested)
+        {
+            if (BettingUser.BettingHistories.Count > 15)
+            {
+                return;
+            }
+            if (BettingUser.BettingHistories.Count > 10)
+            {
+                Snackbar.Clear();
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+                Snackbar.Add("장난하지 마십시요", Severity.Error);
+            }
+            await Service.CancelJoinRequestAsync(User);
+            BettingUser = await Service.GetBettingUserAsync(User);
             StateHasChanged();
         }
     }
