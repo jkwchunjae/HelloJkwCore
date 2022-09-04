@@ -11,9 +11,10 @@ public interface IBettingService
     #region Users
     Task<BettingUser> GetBettingUserAsync(AppUser appUser);
     Task<BettingUser> MakeJoinRequestAsync(AppUser appUser);
-    Task ApproveUserAsync(BettingUser user, AppUser approveBy);
+    Task ApproveUserAsync(BettingUser user, int initValue, AppUser approveBy);
     Task RejectUserAsync(BettingUser user, AppUser rejectBy);
     Task CancelJoinRequestAsync(AppUser appUser);
     Task<IEnumerable<BettingUser>> GetBettingUsersAsync();
+    void ClearUserCache();
     #endregion
 }

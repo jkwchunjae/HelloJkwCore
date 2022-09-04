@@ -5,16 +5,31 @@ public partial class BettingService : IBettingService
     object _usersCacheLock = new object();
     List<BettingUser> _bettingUsersCache;
 
+    public void ClearUserCache()
+    {
+        lock (_usersCacheLock)
+        {
+            _bettingUsersCache = null;
+        }
+    }
     private async Task SaveUserAsync(BettingUser user)
     {
         Func<Paths, string> userPath = path => path[WorldCupPath.Betting2022Users] + @$"/{user.AppUser.Id}.json";
 
         lock (_usersCacheLock)
         {
-            if (_bettingUsersCache?.Any(x => x.AppUser == user.AppUser) ?? false)
+            if (_bettingUsersCache == null)
+            {
+
+            }
+            else if (_bettingUsersCache.Any(x => x.AppUser == user.AppUser))
             {
                 var index = _bettingUsersCache.FindIndex(x => x.AppUser == user.AppUser);
                 _bettingUsersCache[index] = user;
+            }
+            else
+            {
+                _bettingUsersCache.Add(user);
             }
         }
         await _fs.WriteJsonAsync(userPath, user);
@@ -33,13 +48,13 @@ public partial class BettingService : IBettingService
 
         return user;
     }
-    public async Task ApproveUserAsync(BettingUser user, AppUser approveBy)
+    public async Task ApproveUserAsync(BettingUser user, int initValue, AppUser approveBy)
     {
         user.JoinStatus = UserJoinStatus.Joined;
         user.BettingHistories.Add(new BettingHistory
         {
             Type = HistoryType.JoinApproved,
-            Value = 20000,
+            Value = initValue,
             Comment = $"{approveBy.DisplayName}님에 의해 승인",
         });
         await SaveUserAsync(user);
@@ -50,7 +65,7 @@ public partial class BettingService : IBettingService
         user.BettingHistories.Add(new BettingHistory
         {
             Type = HistoryType.JoinRejected,
-            Comment = $"{rejectBy.DisplayName}님에 의해 거절",
+            Comment = rejectBy == null ? "system에 의해 거절" : $"{rejectBy.DisplayName}님에 의해 거절",
         });
         await SaveUserAsync(user);
     }

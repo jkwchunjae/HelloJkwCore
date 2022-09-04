@@ -16,7 +16,7 @@
       <MudTd>@context.AppUser.DisplayName</MudTd>
       <MudTd>@context.LastJoinRequestTime()</MudTd>
       <MudTd>
-        <MudButton OnClick="@(() => ApproveAsync(context))">
+        <MudButton OnClick="@(() => ApproveAsync(context, 20000))">
           승인
         </MudButton>
         <MudButton OnClick="@(() => RejectAsync(context))">
@@ -51,19 +51,21 @@
   </MudTable>
 }
 
-@if (Users.Any(user => user.JoinStatus == UserJoinStatus.Rejected))
+@if (Users.Any(user => user.JoinStatus == UserJoinStatus.Rejected || user.JoinStatus == UserJoinStatus.None))
 {
-  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Rejected)">
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Rejected || user.JoinStatus == UserJoinStatus.None)">
     <HeaderContent>
       <MudTh>이름</MudTh>
+      <MudTh>상태</MudTh>
       <MudTh>신청시간</MudTh>
       <MudTh>Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
       <MudTd>@context.AppUser.DisplayName</MudTd>
+      <MudTd>@context.JoinStatus.ToString()</MudTd>
       <MudTd>@context.LastJoinRequestTime()</MudTd>
       <MudTd>
-        <MudButton OnClick="@(() => ApproveAsync(context))">
+        <MudButton OnClick="@(() => ApproveAsync(context, 20000))">
           승인
         </MudButton>
       </MudTd>
@@ -72,6 +74,11 @@
   </MudTable>
 }
 </div>
+
+@if (User?.HasRole(UserRole.Admin) ?? false)
+{
+    <MudButton OnClick="ClearUserCache" Variant="Variant.Outlined">유저 캐시 초기화</MudButton>
+}
 
 <style>
   div.wc-users div.mud-table {

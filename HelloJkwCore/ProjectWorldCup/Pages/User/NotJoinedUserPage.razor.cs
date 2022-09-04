@@ -25,6 +25,8 @@ public partial class NotJoinedUserPage : JkwPageBase
         {
             if (BettingUser?.BettingHistories?.Count > 13)
             {
+                await Service.RejectUserAsync(BettingUser, null);
+                BettingUser = await Service.GetBettingUserAsync(User);
                 return;
             }
             BettingUser = await Service.MakeJoinRequestAsync(User);
