@@ -21,7 +21,7 @@ public class League<TMatch, TTeam> where TMatch : Match<TTeam> where TTeam : Tea
 
     private List<TTeam> _teams = new();
     private List<TMatch> _matches = new();
-    private List<TeamStanding<TTeam>> _standings;
+    protected List<TeamStanding<TTeam>> _standings;
 
     private List<TeamStanding<TTeam>> CalcStandings()
     {

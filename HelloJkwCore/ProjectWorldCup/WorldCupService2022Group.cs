@@ -13,7 +13,6 @@ public partial class WorldCupService
     public async Task<List<WcGroup>> GetGroupsAsync()
     {
         var simpleGroups = await GetSimpleGroupsAsync();
-        var groupMatches = await _fifa.GetGroupStageMatchesAsync();
 
         var groups = simpleGroups
             .Select(sg =>
@@ -38,17 +37,15 @@ public partial class WorldCupService
                         return newTeam;
                     })
                     .ToList();
-                var matches = groupMatches
-                    .Where(x => x.GroupName == sg.Name)
-                    .Select(m => GroupMatch.CreateFromFifaMatchData(m, teams))
-                    .ToList();
 
                 teams.ForEach(team => league.AddTeam(team));
-                matches.ForEach(match => league.AddMatch(match));
 
                 return league;
             })
             .ToList();
+
+        var fifaStandings = await _fifa.GetStandingDataAsync();
+        groups.ForEach(group => group.WriteStanding(fifaStandings));
 
         return groups;
     }

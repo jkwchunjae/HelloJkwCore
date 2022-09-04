@@ -5,11 +5,39 @@ public class BettingGroupStageService : IBettingGroupStageService
     private readonly IFileSystem _fs;
     private object _lock = new object();
     private List<WcBettingItem<GroupTeam>> _cache = null;
+    private IWorldCupService _worldCupService;
+    private System.Timers.Timer _timer;
+
     public BettingGroupStageService(
         IFileSystemService fsService,
+        IWorldCupService worldCupService,
         WorldCupOption option)
     {
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
+        _worldCupService = worldCupService;
+
+        //_timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
+        //_timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
+        //_timer.AutoReset = true;
+        //_timer.Start();
+    }
+
+    private async Task UpdateStandingsAsync()
+    {
+        var groups = await _worldCupService.GetGroupsAsync();
+        var team16 = groups.SelectMany(group => group.Stands.Take(2))
+            .Select(s => s.Team)
+            .ToList();
+        var bettingItems = await GetAllBettingsAsync();
+        bettingItems.ForEach(bettingItem => bettingItem.Fixed = team16);
+        var result = new BettingResultTable<WcBettingItem<GroupTeam>>(bettingItems);
+
+        await bettingItems
+            .Select(async item =>
+            {
+                await SaveBettingItemAsync(item);
+            })
+            .WhenAll();
     }
 
     public async ValueTask<List<WcBettingItem<GroupTeam>>> GetAllBettingsAsync()
@@ -32,6 +60,13 @@ public class BettingGroupStageService : IBettingGroupStageService
 
     public async Task<WcBettingItem<GroupTeam>> GetBettingAsync(BettingUser user)
     {
+        lock (_lock)
+        {
+            if (_cache?.Any(x => x.User == user.AppUser) ?? false)
+            {
+                return _cache.First(x => x.User == user.AppUser);
+            }
+        }
         var bettingItem = await _fs.ReadBettingItemAsync<GroupTeam>(BettingType.GroupStage, user.AppUser);
         return bettingItem;
     }

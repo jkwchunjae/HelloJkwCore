@@ -73,6 +73,26 @@ public class GroupMatch : Match<GroupTeam>
 
 public class WcGroup : League<GroupMatch, GroupTeam>
 {
+    public void WriteStanding(List<FifaStandingData> fifaStandings)
+    {
+        var standings = Teams
+            .Where(team => fifaStandings.Any(fs => fs.TeamName == team.Name))
+            .Select(team =>
+            {
+                var fifaStanding = fifaStandings.FirstOrDefault(s => s.TeamName == team.Name);
+                var standing = new TeamStanding<GroupTeam> { Team = team };
+                standing.Rank = fifaStanding.Position;
+                standing.Won = fifaStanding.Won;
+                standing.Drawn = fifaStanding.Drawn;
+                standing.Lost = fifaStanding.Lost;
+                standing.Gf = fifaStanding.For;
+                standing.Ga = fifaStanding.Against;
+                return standing;
+            })
+            .ToList();
+
+        _standings = standings;
+    }
 }
 
 public class KnMatch : Match<Team>

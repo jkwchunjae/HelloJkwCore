@@ -17,14 +17,10 @@ public partial class BettingResultComponent : JkwPageBase
     {
     }
 
-    private async Task BettingItemsUpdated()
+    private Task BettingItemsUpdated()
     {
-        var groups = await WorldCupService.GetGroupsAsync();
-        var team16 = groups.SelectMany(group => group.Stands.Take(2))
-            .Select(s => s.Team)
-            .ToList();
-        BettingItems.ForEach(bettingItem => bettingItem.Fixed = team16);
         BettingResult = new BettingResultTable<WcBettingItem<GroupTeam>>(BettingItems);
+        return Task.CompletedTask;
     }
 
     protected override async Task OnPageInitializedAsync()
