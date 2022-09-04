@@ -15,16 +15,25 @@ public partial class Betting2022GroupStage : JkwPageBase
 
     private BettingUser BettingUser { get; set; }
     private WcBettingItem<GroupTeam> BettingItem { get; set; } = new();
+    private List<WcBettingItem<GroupTeam>> BettingItems { get; set; }
 
     protected override async Task OnPageInitializedAsync()
     {
         Groups = await WcService.GetGroupsAsync();
         BettingUser = await BettingService.GetBettingUserAsync(User);
 
+        if (BettingUser?.JoinStatus != UserJoinStatus.Joined)
+        {
+            Navi.NavigateTo("/worldcup");
+            return;
+        }
+
         if (IsAuthenticated && (BettingUser?.JoinedBetting?.Contains(BettingType.GroupStage) ?? false))
         {
             BettingItem = await GroupStageService.GetBettingAsync(BettingUser);
         }
+
+        BettingItems = await GroupStageService.GetAllBettingsAsync();
     }
 
     private async Task PickTeam(GroupTeam team)

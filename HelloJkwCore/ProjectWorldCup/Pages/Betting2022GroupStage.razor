@@ -51,6 +51,17 @@ else
     }
 </div>
 
+@if (BettingItems?.Any() ?? false)
+{
+    @if (User?.HasRole(UserRole.Admin) ?? false)
+    {
+        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
+    }
+    else
+    {
+        <BettingTableComponent BettingItems="BettingItems"></BettingTableComponent>
+    }
+}
 @*
 @if (BettingItems != null)
 {
