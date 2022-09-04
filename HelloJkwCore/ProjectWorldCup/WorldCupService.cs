@@ -52,38 +52,51 @@ public partial class WorldCupService : IWorldCupService
     //    };
     //}
 
-    private async Task<KnockoutStageData> CreateDummyKnockoutDataAsync()
-    {
-        var teams = await Get2022QualifiedTeamsAsync();
-
-        teams = teams.Concat(teams).Concat(teams).ToList();
-        var index = 0;
-        Func<KnMatch> createMatch = () =>
-        {
-            return new KnMatch
-            {
-                //HomeTeam = teams[index++],
-                //AwayTeam = teams[index++],
-                HomeTeam = null,
-                AwayTeam = null,
-            };
-        };
-        var data = new KnockoutStageData
-        {
-            Final = createMatch(),
-            ThirdPlacePlayOff = createMatch(),
-            SemiFinals = new List<KnMatch> { createMatch(), createMatch() },
-            QuarterFinals = new List<KnMatch> { createMatch(), createMatch(), createMatch(), createMatch() },
-            Round16 = new List<KnMatch> { createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch(), createMatch() },
-        };
-
-        return data;
-    }
-
     public async Task<List<KnMatch>> GetKnockOutStageMatchesAsync()
     {
         var matches = await _fifa.GetKnockoutStageMatchesAsync();
 
-        return matches.Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList();
+        return matches
+            .Select(x => KnMatch.CreateFromFifaMatchData(x)).ToList();
+    }
+
+    public async Task<List<KnMatch>> GetRound16MatchesAsync()
+    {
+        var matches = await _fifa.GetKnockoutStageMatchesAsync();
+        var standing = await _fifa.GetStandingDataAsync();
+        return matches
+            .Where(match => match.IdStage == Fifa.Round16StageId)
+            .Select(m =>
+            {
+                var match = KnMatch.CreateFromFifaMatchData(m);
+                if (m.Home == null && !string.IsNullOrEmpty(m.PlaceHolderA))
+                {
+                    var standingData = standing.FirstOrDefault(s => s.GroupName.Contains(m.PlaceHolderA.Right(1)) && s.Position == m.PlaceHolderA.Left(1).ToInt());
+                    if (standingData != null)
+                    {
+                        match.HomeTeam = new Team
+                        {
+                            Name = standingData.TeamName,
+                            Id = standingData.TeamLogo.Right(3),
+                            Flag = standingData.TeamLogo.Replace("{format}", "sq").Replace("{size}", "2"),
+                        };
+                    }
+                }
+                if (m.Away == null && !string.IsNullOrEmpty(m.PlaceHolderB))
+                {
+                    var standingData = standing.FirstOrDefault(s => s.GroupName.Contains(m.PlaceHolderB.Right(1)) && s.Position == m.PlaceHolderB.Left(1).ToInt());
+                    if (standingData != null)
+                    {
+                        match.AwayTeam = new Team
+                        {
+                            Name = standingData.TeamName,
+                            Id = standingData.TeamLogo.Right(3),
+                            Flag = standingData.TeamLogo.Replace("{format}", "sq").Replace("{size}", "2"),
+                        };
+                    }
+                }
+                return match;
+            })
+            .ToList();
     }
 }

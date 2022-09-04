@@ -31,8 +31,8 @@ public class League<TMatch, TTeam> where TMatch : Match<TTeam> where TTeam : Tea
         {
             if (match.IsDraw)
             {
-                var team1 = list.FirstOrDefault(x => x.Team.Id == match.HomeTeam.Id);
-                var team2 = list.FirstOrDefault(x => x.Team.Id == match.AwayTeam.Id);
+                var team1 = list.FirstOrDefault(x => x.Team == match.HomeTeam);
+                var team2 = list.FirstOrDefault(x => x.Team == match.AwayTeam);
 
                 if (team1 != null && team2 != null)
                 {
@@ -47,8 +47,8 @@ public class League<TMatch, TTeam> where TMatch : Match<TTeam> where TTeam : Tea
             }
             else
             {
-                var winner = list.FirstOrDefault(x => x.Team.Id == match.Winner.Team.Id);
-                var looser = list.FirstOrDefault(x => x.Team.Id == match.Looser.Team.Id);
+                var winner = list.FirstOrDefault(x => x.Team == match.Winner.Team);
+                var looser = list.FirstOrDefault(x => x.Team == match.Looser.Team);
 
                 if (winner != null && looser != null)
                 {
@@ -80,7 +80,7 @@ public class League<TMatch, TTeam> where TMatch : Match<TTeam> where TTeam : Tea
 
     public bool AddTeam(TTeam team)
     {
-        if (_teams.Empty(x => x.Id == team.Id))
+        if (_teams.Empty(x => x == team))
         {
             _teams.Add(team);
             return true;
@@ -90,8 +90,8 @@ public class League<TMatch, TTeam> where TMatch : Match<TTeam> where TTeam : Tea
 
     public bool AddMatch(TMatch match)
     {
-        var homeTeam = Teams.FirstOrDefault(x => x.Id == match.HomeTeam.Id);
-        var awayTeam = Teams.FirstOrDefault(x => x.Id == match.AwayTeam.Id);
+        var homeTeam = Teams.FirstOrDefault(x => x == match.HomeTeam);
+        var awayTeam = Teams.FirstOrDefault(x => x == match.AwayTeam);
 
         if (homeTeam != null && awayTeam != null)
         {

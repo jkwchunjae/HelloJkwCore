@@ -15,7 +15,7 @@ public class Team : IEquatable<Team>, IComparable<Team>
 
     public bool Equals(Team other)
     {
-        return Id == other?.Id;
+        return Id == other?.Id || Name == other?.Name;
     }
 
     public static bool operator ==(Team obj1, Team obj2)

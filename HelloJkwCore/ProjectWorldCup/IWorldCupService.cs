@@ -6,7 +6,8 @@ public interface IWorldCupService
     //Task<List<Team>> Get2022QualifiedTeamsAsync();
     //Task<List<RankingTeamData>> GetLastRankingTeamDataAsync(Gender gender);
     //Task<List<GroupMatch>> GetGroupStageMatchesAsync();
-    //Task<List<KnMatch>> GetKnockOutStageMatchesAsync();
+    Task<List<KnMatch>> GetKnockOutStageMatchesAsync();
+    Task<List<KnMatch>> GetRound16MatchesAsync();
     Task<List<WcGroup>> GetGroupsAsync();
     //Task<KnockoutStageData> GetKnockoutStageDataAsync();
 }

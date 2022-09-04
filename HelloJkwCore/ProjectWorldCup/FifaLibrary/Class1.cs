@@ -85,6 +85,12 @@ public class FifaMatchData
 
     [JsonProperty("matchDetailsSectionUrl")]
     public string MatchDetailsSectionUrl { get; set; }
+
+    [JsonProperty("placeHolderA")]
+    public string PlaceHolderA { get; set; }
+
+    [JsonProperty("placeHolderB")]
+    public string PlaceHolderB { get; set; }
 }
 
 public class ActiveSeason

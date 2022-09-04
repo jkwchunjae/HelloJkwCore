@@ -60,13 +60,13 @@ public partial class Betting2022GroupStage : JkwPageBase
 
     private TeamButtonType GetButtonType(GroupTeam team)
     {
-        if (BettingItem.Picked.Any(x => x.Id == team.Id))
+        if (BettingItem.Picked.Any(x => x == team))
         {
             return TeamButtonType.Picked;
         }
 
-        var groupTeams = Groups.First(g => g.Teams.Any(t => t.Id == team.Id));
-        var groupPickCount = groupTeams.Teams.Count(t => BettingItem.Picked.Any(x => x.Id == t.Id));
+        var groupTeams = Groups.First(g => g.Teams.Any(t => t == team));
+        var groupPickCount = groupTeams.Teams.Count(t => BettingItem.Picked.Any(x => x == t));
 
         if (groupPickCount == 2)
         {
