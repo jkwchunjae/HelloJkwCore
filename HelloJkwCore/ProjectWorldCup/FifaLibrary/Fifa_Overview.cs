@@ -19,4 +19,22 @@ public partial class Fifa : IFifa
             return dataRoot.Groups;
         });
     }
+
+    public async Task<List<FifaStandingData>> GetStandingDataAsync()
+    {
+        return await UseCacheIfError<List<FifaStandingData>>(nameof(GetStandingDataAsync), 5, async () =>
+        {
+            var today = DateTime.Now;
+            var url = $"https://cxm-api.fifa.com/fifaplusweb/api/sections/competitionpage/standings?competitionId=17&locale=en&date={today:yyyy-MM-dd}";
+            var res = await _httpClient.GetAsync(url);
+            var text = await res.Content.ReadAsStringAsync();
+            var dataRoot = Json.Deserialize<FifaStandingDataRoot>(text);
+
+            return dataRoot.Standings
+                .First()
+                .Standing
+                .ToList();
+        });
+
+    }
 }

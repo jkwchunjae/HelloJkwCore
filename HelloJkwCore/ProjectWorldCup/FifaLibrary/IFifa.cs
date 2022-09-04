@@ -7,4 +7,5 @@ public interface IFifa
     Task<List<RankingTeamData>> GetLastRankingAsync(Gender gender);
     Task<List<FifaMatchData>> GetGroupStageMatchesAsync();
     Task<List<FifaMatchData>> GetKnockoutStageMatchesAsync();
+    Task<List<FifaStandingData>> GetStandingDataAsync();
 }
