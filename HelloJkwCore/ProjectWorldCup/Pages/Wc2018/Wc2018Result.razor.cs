@@ -1,4 +1,4 @@
-﻿namespace ProjectWorldCup.Pages;
+﻿namespace ProjectWorldCup.Pages.Wc2018;
 
 public partial class Wc2018Result : JkwPageBase
 {

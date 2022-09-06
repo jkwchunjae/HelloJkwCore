@@ -1,6 +1,6 @@
 ﻿namespace ProjectWorldCup.Pages.User;
 
-public partial class NotJoinedUserPage : JkwPageBase
+public partial class WelcomeWc2022 : JkwPageBase
 {
     [Inject] IBettingService Service { get; set; }
     [Inject] ISnackbar Snackbar { get; set; }

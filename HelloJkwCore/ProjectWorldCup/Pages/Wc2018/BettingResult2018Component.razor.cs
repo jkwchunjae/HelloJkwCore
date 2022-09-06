@@ -1,4 +1,4 @@
-﻿namespace ProjectWorldCup.Pages.Betting;
+﻿namespace ProjectWorldCup.Pages.Wc2018;
 
 public partial class BettingResult2018Component : JkwPageBase
 {

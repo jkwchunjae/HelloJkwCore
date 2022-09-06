@@ -1,11 +1,6 @@
 ﻿@inherits JkwPageBase
-
 @page "/worldcup"
+@using ProjectWorldCup.Pages.User
 
-@code {
-  protected override Task OnPageInitializedAsync()
-  {
-    Navi.NavigateTo("/worldcup/2022/welcome-betting");
-    return Task.CompletedTask;
-  }
-}
+<WelcomeWc2022/>
+

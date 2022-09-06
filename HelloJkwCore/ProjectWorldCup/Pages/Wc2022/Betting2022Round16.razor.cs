@@ -1,6 +1,4 @@
-﻿using static Dropbox.Api.TeamLog.EventCategory;
-
-namespace ProjectWorldCup.Pages;
+﻿namespace ProjectWorldCup.Pages.Wc2022;
 
 public partial class Betting2022Round16 : JkwPageBase
 {

@@ -1,12 +1,16 @@
-﻿@page "/worldcup/2022/welcome-betting"
-@inherits JkwPageBase
+﻿@inherits JkwPageBase
+@page "/worldcup/2022/welcome-betting"
+@using ProjectWorldCup.Pages.Wc2018
 
 <WcTitle>2022 월드컵 내기</WcTitle>
 
 <div class="description">
 @if (IsAuthenticated)
 {
-  @if (BettingUser?.JoinStatus == UserJoinStatus.None)
+  @if (BettingUser?.JoinStatus == UserJoinStatus.Joined)
+  {
+  }
+  else if (BettingUser?.JoinStatus == UserJoinStatus.None)
   {
     <div>
         <span>환영합니다!</span>
@@ -67,7 +71,11 @@ else
   </div>
 }
 </div>
+
+
   <Wc2018Result></Wc2018Result>
+
+
 <style>
     div.description span {
         display: block;

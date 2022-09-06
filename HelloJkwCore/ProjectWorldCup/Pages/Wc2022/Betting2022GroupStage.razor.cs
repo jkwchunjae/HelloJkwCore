@@ -1,6 +1,4 @@
-﻿using Microsoft.JSInterop;
-
-namespace ProjectWorldCup.Pages;
+﻿namespace ProjectWorldCup.Pages.Wc2022;
 
 public partial class Betting2022GroupStage : JkwPageBase
 {
