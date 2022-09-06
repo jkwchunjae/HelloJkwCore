@@ -14,7 +14,7 @@ public class BettingUser
 
         if (data.Any())
         {
-            return data.Last().Time.AddHours(9);
+            return data.Last().Time;
         }
         return default;
     }
@@ -38,7 +38,9 @@ public enum HistoryType
     JoinRejected,
     CancelJoinRequest,
     Betting,
-    Reward,
+    Reward1,
+    Reward2,
+    Reward3,
 }
 
 public class BettingHistory

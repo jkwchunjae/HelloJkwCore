@@ -48,6 +48,16 @@ public partial class BettingService : IBettingService
 
         return user;
     }
+    public async Task SetRequestStateAsync(BettingUser user, AppUser operateBy)
+    {
+        user.JoinStatus = UserJoinStatus.Requested;
+        user.BettingHistories.Add(new BettingHistory
+        {
+            Type = HistoryType.None,
+            Comment = $"{operateBy.DisplayName}님에 의해 신청상태로 변경",
+        });
+        await SaveUserAsync(user);
+    }
     public async Task ApproveUserAsync(BettingUser user, int initValue, AppUser approveBy)
     {
         user.JoinStatus = UserJoinStatus.Joined;

@@ -11,6 +11,7 @@ public interface IBettingService
     #region Users
     Task<BettingUser> GetBettingUserAsync(AppUser appUser);
     Task<BettingUser> MakeJoinRequestAsync(AppUser appUser);
+    Task SetRequestStateAsync(BettingUser user, AppUser operateBy);
     Task ApproveUserAsync(BettingUser user, int initValue, AppUser approveBy);
     Task RejectUserAsync(BettingUser user, AppUser rejectBy);
     Task CancelJoinRequestAsync(AppUser appUser);

@@ -16,10 +16,10 @@
       <MudTd>@context.AppUser.DisplayName</MudTd>
       <MudTd>@context.LastJoinRequestTime()</MudTd>
       <MudTd>
-        <MudButton OnClick="@(() => ApproveAsync(context, 20000))">
+        <MudButton OnClick="@(() => ApproveAsync(context, 20000))" Variant="Variant.Outlined">
           승인
         </MudButton>
-        <MudButton OnClick="@(() => RejectAsync(context))">
+          <MudButton OnClick="@(() => RejectAsync(context))" Variant="Variant.Outlined">
           거절
         </MudButton>
       </MudTd>
@@ -29,7 +29,7 @@
 
 @if (Users.Any())
 {
-  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Joined)">
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Joined)" Context="user">
     <HeaderContent>
       <MudTh>이름</MudTh>
       <MudTh>1차결과</MudTh>
@@ -38,12 +38,21 @@
       <MudTh>Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
-      <MudTd>@context.AppUser.DisplayName</MudTd>
-      <MudTd></MudTd>
-      <MudTd></MudTd>
-      <MudTd></MudTd>
+      <MudTd>@user.AppUser.DisplayName</MudTd>
       <MudTd>
-        <MudButton OnClick="@(() => RejectAsync(context))">
+        @GetValue(user, HistoryType.Reward1)
+      </MudTd>
+      <MudTd>
+        @GetValue(user, HistoryType.Reward1)
+      </MudTd>
+      <MudTd>
+        @GetValue(user, HistoryType.Reward1)
+      </MudTd>
+      <MudTd>
+        <MudButton OnClick="@(() => RequestAsync(user))" Variant="Variant.Outlined">
+          신청
+        </MudButton>
+        <MudButton OnClick="@(() => RejectAsync(user))" Variant="Variant.Outlined">
           거절
         </MudButton>
       </MudTd>
@@ -65,7 +74,10 @@
       <MudTd>@context.JoinStatus.ToString()</MudTd>
       <MudTd>@context.LastJoinRequestTime()</MudTd>
       <MudTd>
-        <MudButton OnClick="@(() => ApproveAsync(context, 20000))">
+        <MudButton OnClick="@(() => RequestAsync(context))" Variant="Variant.Outlined">
+          신청
+        </MudButton>
+        <MudButton OnClick="@(() => ApproveAsync(context, 20000))" Variant="Variant.Outlined">
           승인
         </MudButton>
       </MudTd>

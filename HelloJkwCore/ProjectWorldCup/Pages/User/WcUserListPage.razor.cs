@@ -32,6 +32,16 @@ public partial class WcUserListPage : JkwPageBase
         }
     }
 
+    private async Task RequestAsync(BettingUser targetUser)
+    {
+        if (HasRole)
+        {
+            await Service.SetRequestStateAsync(targetUser, User);
+            Users = await Service.GetBettingUsersAsync();
+            StateHasChanged();
+        }
+    }
+
     private async Task RejectAsync(BettingUser targetUser)
     {
         if (HasRole)
@@ -50,5 +60,14 @@ public partial class WcUserListPage : JkwPageBase
             Users = await Service.GetBettingUsersAsync();
             StateHasChanged();
         }
+    }
+
+    private string GetValue(BettingUser user, HistoryType historyType)
+    {
+        var value = user.BettingHistories
+            ?.FirstOrDefault(x => x.Type == historyType)
+            ?.Value;
+
+        return value?.ToString("#,0") ?? "-";
     }
 }
