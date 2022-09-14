@@ -10,4 +10,8 @@ public interface IFifa
     Task<List<FifaMatchData>> GetRound16MatchesAsync();
     Task<List<FifaMatchData>> GetAfterRound16MatchesAsync();
     Task<List<FifaStandingData>> GetStandingDataAsync();
+
+    Task<IEnumerable<string>> GetFailoverList();
+    Task<string> GetFailoverData(string filename);
+    Task SaveFailoverData(string title, string value);
 }
