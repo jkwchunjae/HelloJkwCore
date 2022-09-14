@@ -27,7 +27,18 @@ public partial class Fifa : IFifa
             .Where(match => match.IdStage == GroupStageId)
             .ToList();
 
-        return matches;
+        if (matches.Count == 48)
+        {
+            if ((await GetFailoverData("GroupStageMatches.json")) == string.Empty)
+            {
+                await SaveFailoverData("GroupStageMatches.json", matches);
+            }
+            return matches;
+        }
+        else
+        {
+            return await GetFailoverData<List<FifaMatchData>>("GroupStageMatches.json");
+        }
     }
     public async Task<List<FifaMatchData>> GetMatches(DateTime date)
     {
@@ -83,15 +94,39 @@ public partial class Fifa : IFifa
         var round16Matches = matches
             .Where(match => match.IdStage == Round16StageId)
             .ToList();
-        return round16Matches;
+
+        if (round16Matches.Count == 8)
+        {
+            if ((await GetFailoverData("Round16Matches.json")) == string.Empty)
+            {
+                await SaveFailoverData("Round16Matches.json", matches);
+            }
+            return round16Matches;
+        }
+        else
+        {
+            return await GetFailoverData<List<FifaMatchData>>("Round16Matches.json");
+        }
     }
 
-    public async Task<List<FifaMatchData>> GetAfterRound16MatchesAsync()
+    public async Task<List<FifaMatchData>> GetFinalMatchesAsync()
     {
         var matches = await GetKnockoutStageMatchesAsync();
         var afterMatches = matches
             .Where(match => match.IdStage != Round16StageId)
             .ToList();
-        return afterMatches;
+
+        if (afterMatches.Count == 8)
+        {
+            if ((await GetFailoverData("FinalMatches.json")) == string.Empty)
+            {
+                await SaveFailoverData("FinalMatches.json", matches);
+            }
+            return afterMatches;
+        }
+        else
+        {
+            return await GetFailoverData<List<FifaMatchData>>("FinalMatches.json");
+        }
     }
 }

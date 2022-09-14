@@ -8,7 +8,7 @@ public interface IFifa
     Task<List<FifaMatchData>> GetGroupStageMatchesAsync();
     Task<List<FifaMatchData>> GetKnockoutStageMatchesAsync();
     Task<List<FifaMatchData>> GetRound16MatchesAsync();
-    Task<List<FifaMatchData>> GetAfterRound16MatchesAsync();
+    Task<List<FifaMatchData>> GetFinalMatchesAsync();
     Task<List<FifaStandingData>> GetStandingDataAsync();
 
     Task<IEnumerable<string>> GetFailoverList();
