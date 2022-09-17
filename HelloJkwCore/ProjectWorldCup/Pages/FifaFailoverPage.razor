@@ -11,9 +11,12 @@
   }
   </MudSelect>
 
-@if (!string.IsNullOrEmpty(@Value))
+@if (!string.IsNullOrEmpty(@SelectedTitle))
 {
-  <MudButton OnClick="@(() => DownloadFile())" Variant="Variant.Outlined">다운로드</MudButton>
+  @if (!string.IsNullOrEmpty(@Value))
+  {
+    <MudButton OnClick="@(() => DownloadFile())" Variant="Variant.Outlined">다운로드</MudButton>
+  }
 
   <InputFile id="fileInput" OnChange="SelectFile" hidden accept=".json"/>
   <MudButton HtmlTag="label" Variant="Variant.Outlined" for="fileInput">파일 업로드</MudButton>
