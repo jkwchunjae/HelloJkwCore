@@ -9,14 +9,12 @@ public partial class Betting2022Round16 : JkwPageBase
 
     List<KnMatch> Round16Matches = new();
     WcBettingItem<Team> BettingItem = new();
-    private List<WcBettingItem<Team>> BettingItems { get; set; }
 
     protected override async Task OnPageInitializedAsync()
     {
         Round16Matches = await WorldCupService.GetRound16MatchesAsync();
         var bettingUser = await BettingService.GetBettingUserAsync(User);
         BettingItem = await BettingRound16Service.GetBettingAsync(bettingUser);
-        BettingItems = await BettingRound16Service.GetAllBettingsAsync();
     }
 
     private async Task PickTeamAsync(Team team)

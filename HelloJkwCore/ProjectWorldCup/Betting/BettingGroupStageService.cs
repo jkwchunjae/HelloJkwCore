@@ -50,7 +50,7 @@ public class BettingGroupStageService : IBettingGroupStageService
             }
         }
 
-        var bettingItems = await _fs.ReadAllBettingItemsAsync<GroupTeam>(BettingType.GroupStage);
+        var bettingItems = await _fs.ReadAllBettingItemsAsync<WcBettingItem<GroupTeam>, GroupTeam>(BettingType.GroupStage);
         lock (_lock)
         {
             _cache = bettingItems;
@@ -67,7 +67,7 @@ public class BettingGroupStageService : IBettingGroupStageService
                 return _cache.First(x => x.User == user.AppUser);
             }
         }
-        var bettingItem = await _fs.ReadBettingItemAsync<GroupTeam>(BettingType.GroupStage, user.AppUser);
+        var bettingItem = await _fs.ReadBettingItemAsync<WcBettingItem<GroupTeam>, GroupTeam>(BettingType.GroupStage, user.AppUser);
         return bettingItem;
     }
 

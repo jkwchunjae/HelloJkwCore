@@ -2,7 +2,7 @@
 
 public interface IWcBettingItem<out TTeam> : IBettingResultItem where TTeam : Team
 {
-    public AppUser User { get; }
+    public AppUser User { get; set; }
     public IEnumerable<TTeam> Picked { get; }
     public IEnumerable<TTeam> Fixed { get; }
 }

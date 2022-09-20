@@ -38,6 +38,18 @@ public class Match<TTeam> where TTeam : Team
         ? (HomeScore < AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))
         : (HomePenaltyScore < AwayPenaltyScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore));
 
+    public Match()
+    {
+    }
 
-
+    public Match(Match<TTeam> match)
+    {
+        Time = match.Time;
+        Status = match.Status;
+        HomeTeam = match.HomeTeam;
+        AwayTeam = match.AwayTeam;
+        HomeScore = match.HomeScore;
+        AwayTeam = match.AwayTeam;
+        Info = match.Info;
+    }
 }

@@ -54,7 +54,7 @@ public class BettingRound16Service : IBettingRound16Service
             }
         }
 
-        var bettingItems = await _fs.ReadAllBettingItemsAsync<Team>(BettingType.Round16);
+        var bettingItems = await _fs.ReadAllBettingItemsAsync<WcBettingItem<Team>, Team>(BettingType.Round16);
         lock (_lock)
         {
             _cache = bettingItems;
@@ -71,7 +71,7 @@ public class BettingRound16Service : IBettingRound16Service
                 return _cache.First(x => x.User == user.AppUser);
             }
         }
-        var bettingItem = await _fs.ReadBettingItemAsync<Team>(BettingType.Round16, user.AppUser);
+        var bettingItem = await _fs.ReadBettingItemAsync<WcBettingItem<Team>, Team>(BettingType.Round16, user.AppUser);
         return bettingItem;
     }
 

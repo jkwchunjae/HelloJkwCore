@@ -120,7 +120,7 @@ public partial class Fifa : IFifa
         {
             if ((await GetFailoverData("FinalMatches.json")) == string.Empty)
             {
-                await SaveFailoverData("FinalMatches.json", matches);
+                await SaveFailoverData("FinalMatches.json", afterMatches);
             }
             return afterMatches;
         }

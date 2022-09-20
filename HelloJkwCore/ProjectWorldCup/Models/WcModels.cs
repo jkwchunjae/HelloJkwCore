@@ -116,4 +116,14 @@ public class KnMatch : Match<Team>
         };
     }
 
+    public KnMatch()
+    {
+    }
+
+    public KnMatch(KnMatch match)
+        : base(match)
+    {
+        StageId = match.StageId;
+        MatchId = match.MatchId;
+    }
 }

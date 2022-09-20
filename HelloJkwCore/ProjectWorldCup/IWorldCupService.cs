@@ -8,6 +8,8 @@ public interface IWorldCupService
     //Task<List<GroupMatch>> GetGroupStageMatchesAsync();
     Task<List<KnMatch>> GetKnockOutStageMatchesAsync();
     Task<List<KnMatch>> GetRound16MatchesAsync();
+    Task<List<KnMatch>> GetQuarterFinalMatchesAsync();
+    Task<List<KnMatch>> GetFinalMatchesAsync();
     Task<List<WcGroup>> GetGroupsAsync();
     //Task<KnockoutStageData> GetKnockoutStageDataAsync();
 }

@@ -99,4 +99,42 @@ public partial class WorldCupService : IWorldCupService
             })
             .ToList();
     }
+
+    public async Task<List<KnMatch>> GetQuarterFinalMatchesAsync()
+    {
+        var matches = await _fifa.GetFinalMatchesAsync();
+
+        var matches16 = await GetRound16MatchesAsync();
+
+        return matches
+            .Where(match => match.IdStage == Fifa.Round8StageId)
+            .Select(match => KnMatch.CreateFromFifaMatchData(match))
+            .Select((match, i) =>
+            {
+                if (match.HomeTeam?.Name == null)
+                {
+                    match.HomeTeam = matches16[i * 2].HomeTeam;
+                }
+                if (match.AwayTeam?.Name == null)
+                {
+                    match.AwayTeam = matches16[i * 2 + 1].AwayTeam;
+                }
+                if (StaticRandom.Next() > 0.5)
+                {
+                    //throw new Exception(Json.Serialize(match));
+                }
+                return match;
+            })
+            .ToList();
+    }
+
+    public async Task<List<KnMatch>> GetFinalMatchesAsync()
+    {
+        var matches = await _fifa.GetFinalMatchesAsync();
+
+        return matches
+            .Where(match => match.IdStage != Fifa.Round16StageId)
+            .Select(match => KnMatch.CreateFromFifaMatchData(match))
+            .ToList();
+    }
 }

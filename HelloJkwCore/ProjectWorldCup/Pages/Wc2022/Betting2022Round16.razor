@@ -2,7 +2,6 @@
 
 @page "/worldcup/2022/betting/round16"
 
-@using ProjectWorldCup.Pages.Betting;
 @code {
   string commonButtonStyle = "padding: 6px; border-radius: 6px; box-shadow: var(--mud-elevation-1); display: block; text-align: start; width: 100%; text-transform: initial;";
 }
@@ -11,37 +10,37 @@
 <WcTitle>2라운드: 8강 진출팀 맞추기</WcTitle>
 
 <div class="desc">
-    <span>각 경기가 시작하기 전에 투표를 하셔야 합니다 !!</span>
+    <span>각 경기가 시작하기 전에 선택해야 합니다 !!</span>
 </div>
 
 <div class="matches">
-@foreach (var matchData in Round16Matches)
-{
+  @foreach (var matchData in Round16Matches)
+  {
     var remainTimeText = GetRemainTime(matchData.Time);
     var homeType = GetButtonType(matchData.HomeTeam);
     var awayType = GetButtonType(matchData.AwayTeam);
     var homeButtonStyle = homeType == TeamButtonType.Picked ? $"{commonButtonStyle} color: white; background: #56042C"
-        : commonButtonStyle;
+    : commonButtonStyle;
     var awayButtonStyle = awayType == TeamButtonType.Picked ? $"{commonButtonStyle} color: white; background: #56042C"
-        : commonButtonStyle;
+    : commonButtonStyle;
 
     <div class="match16 row">
-        <div class="remain-time col-md-3">
-            @remainTimeText
-        </div>
-        <div class="team col-md-3">
+      <div class="remain-time col-md-3">
+        @remainTimeText
+      </div>
+      <div class="team col-md-3">
         <MudButton Class="team-inner" Style="@homeButtonStyle" OnClick="(async () => await PickTeamAsync(matchData.HomeTeam))" Disabled="@(homeType == TeamButtonType.Disabled)">
           <img class="team-img" src="@matchData?.HomeTeam?.Flag" />
           <span class="team-name">@matchData?.HomeTeam?.Name</span>
         </MudButton>
-        </div>
-        <div class="team col-md-3">
+      </div>
+      <div class="team col-md-3">
         <MudButton Class="team-inner" Style="@awayButtonStyle" OnClick="(async () => await PickTeamAsync(matchData.AwayTeam))" Disabled="@(awayType == TeamButtonType.Disabled)">
           <img class="team-img" src="@matchData?.AwayTeam?.Flag" />
           <span class="team-name">@matchData?.AwayTeam?.Name</span>
         </MudButton>
-        </div>
+      </div>
     </div>
-}
+  }
 </div>
 

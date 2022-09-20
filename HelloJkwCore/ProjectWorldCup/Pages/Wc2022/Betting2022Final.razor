@@ -1,0 +1,64 @@
+﻿@inherits JkwPageBase
+
+@page "/worldcup/2022/betting/final"
+
+@code {
+  string commonButtonStyle = "padding: 6px; border-radius: 6px; box-shadow: var(--mud-elevation-1); display: block; text-align: start; width: 100%; text-transform: initial;";
+}
+
+<WcTitle>3라운드: 1,2,3,4등 맞추기</WcTitle>
+
+<div class="desc">
+  <span>8강 첫 경기가 시작하기 전에 우승팀까지 선택해야 합니다</span>
+
+  @if (StageMatches.Any(s => s.StageId == Fifa.Round8StageId))
+  {
+    string remainTimeText = GetRemainTime(StageMatches.First(s => s.StageId == Fifa.Round8StageId).Matches);
+    <span>@remainTimeText</span>
+  }
+</div>
+
+@foreach (var stageData in StageMatches)
+{
+  string stageId = stageData.StageId;
+  var matches = stageData.Matches;
+
+  <div class="matches">
+    <div class="stage-name">@StageName[stageId]</div>
+  @foreach (var matchData in matches)
+  {
+    var matchId = matchData?.MatchId;
+    var homeType = GetButtonType(stageId, matchData?.HomeTeam);
+    var awayType = GetButtonType(stageId, matchData?.AwayTeam);
+    var homeButtonStyle = homeType == TeamButtonType.Picked ? $"{commonButtonStyle} color: white; background: #56042C"
+    : commonButtonStyle;
+    var awayButtonStyle = awayType == TeamButtonType.Picked ? $"{commonButtonStyle} color: white; background: #56042C"
+    : commonButtonStyle;
+
+    <div class="match row">
+      <div class="team col-md-3">
+        <MudButton Class="team-inner" Style="@homeButtonStyle" OnClick="(async () => await PickTeamAsync(stageId, matchId, matchData?.HomeTeam))" Disabled="@(homeType == TeamButtonType.Disabled)">
+          <img class="team-img" src="@matchData?.HomeTeam?.Flag" />
+          <span class="team-name">@matchData?.HomeTeam?.Name</span>
+        </MudButton>
+      </div>
+      <div class="team col-md-3">
+        <MudButton Class="team-inner" Style="@awayButtonStyle" OnClick="(async () => await PickTeamAsync(stageId, matchId, matchData?.AwayTeam))" Disabled="@(awayType == TeamButtonType.Disabled)">
+          <img class="team-img" src="@matchData?.AwayTeam?.Flag" />
+          <span class="team-name">@matchData?.AwayTeam?.Name</span>
+        </MudButton>
+      </div>
+    </div>
+  }
+</div>
+}
+
+@if (BettingItem?.Picked?.Count(x => x != null) == 4)
+{
+  <div>
+    @foreach (var team in BettingItem.Picked)
+    {
+      <img class="team-img" src="@team.Flag"/>
+    }
+  </div>
+}
