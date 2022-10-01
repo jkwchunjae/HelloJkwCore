@@ -8,13 +8,27 @@
 
 <WcTitle>3라운드: 1,2,3,4등 맞추기</WcTitle>
 
+<WcRemainTime
+    ClassName="final-remain-time-text"
+    RemainSeconds="@((int)(WorldCupConst.Round8StartTime - DateTime.Now).TotalSeconds)"
+    TimeOver="@(() => TimeOver = true)"
+/>
+
 <div class="desc">
   <span>8강 첫 경기가 시작하기 전에 우승팀까지 선택해야 합니다</span>
 
-  @if (StageMatches.Any(s => s.StageId == Fifa.Round8StageId))
+  @if (TimeOver)
   {
-    string remainTimeText = GetRemainTime(StageMatches.First(s => s.StageId == Fifa.Round8StageId).Matches);
-    <span>@remainTimeText</span>
+  <div>
+    <span>선택 시간이 끝났습니다.</span>
+  </div>
+  }
+  else
+  {
+  <div>
+    <span class="final-remain-time-text"></span>
+    <span>남았습니다</span>
+  </div>
   }
 </div>
 

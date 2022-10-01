@@ -8,6 +8,7 @@ public partial class Betting2022Final : JkwPageBase
     [Inject] IBettingService BettingService { get; set; }
     [Inject] IBettingFinalService BettingFinalService { get; set; }
 
+    private BettingUser BettingUser { get; set; }
     List<(string StageId, List<KnMatch> Matches)> StageMatches { get; set; } = new();
 
     List<KnMatch> Matches { get; set; } = new();
@@ -15,14 +16,17 @@ public partial class Betting2022Final : JkwPageBase
 
     Dictionary<string, string> StageName = new Dictionary<string, string>
     {
-        [Fifa.Round8StageId] = "8강",
-        [Fifa.Round4StageId] = "4강",
-        [Fifa.ThirdStageId] = "3,4위",
-        [Fifa.FinalStageId] = "결승",
+        [Fifa.Round8StageId] = "8강전",
+        [Fifa.Round4StageId] = "4강전",
+        [Fifa.ThirdStageId] = "3,4위전",
+        [Fifa.FinalStageId] = "결승전",
     };
+
+    bool TimeOver = false;
 
     protected override async Task OnPageInitializedAsync()
     {
+        BettingUser = await BettingService.GetBettingUserAsync(User);
         Matches = await WorldCupService.GetFinalMatchesAsync();
 
         var quarterFinalMatches = await WorldCupService.GetQuarterFinalMatchesAsync();
@@ -50,12 +54,6 @@ public partial class Betting2022Final : JkwPageBase
         }
     }
 
-    private string GetRemainTime(List<KnMatch> quarters)
-    {
-        var startTime = quarters.Min(match => match.Time);
-        return startTime.ToString();
-    }
-
     private TeamButtonType GetButtonType(string stageId, Team team)
     {
         return BettingFinalService.GetButtonType(stageId, team, StageMatches, BettingItem);
@@ -63,7 +61,9 @@ public partial class Betting2022Final : JkwPageBase
 
     private async Task PickTeamAsync(string stageId, string matchId, Team team)
     {
-        await Js.InvokeVoidAsync("console.log", stageId, matchId, team);
+        if (TimeOver)
+            return;
+
         StageMatches = BettingFinalService.PickTeamAsync(stageId, matchId, team, StageMatches, Matches);
 
         if (stageId == Fifa.ThirdStageId)
@@ -93,6 +93,7 @@ public partial class Betting2022Final : JkwPageBase
 
         if (BettingItem.Picked?.Count(x => x != null) == 4)
         {
+            await BettingFinalService.SaveTeamsAsync(BettingUser, BettingItem);
         }
     }
 }
