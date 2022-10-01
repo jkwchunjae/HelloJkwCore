@@ -89,6 +89,7 @@ public class WcGroup : League<GroupMatch, GroupTeam>
                 standing.Ga = fifaStanding.Against;
                 return standing;
             })
+            .OrderBy(s => s.Rank)
             .ToList();
 
         _standings = standings;

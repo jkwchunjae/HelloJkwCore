@@ -1,4 +1,8 @@
-﻿div.team {
+﻿.remain-text {
+    font-size: x-large;
+}
+
+div.team {
     /*padding: 6px;*/
     display: inline-block;
 }

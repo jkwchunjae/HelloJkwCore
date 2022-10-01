@@ -10,6 +10,9 @@ public partial class WorldCupService
             .ToList();
     }
 
+    /// <summary>
+    /// 순위정보를 반영함
+    /// </summary>
     public async Task<List<WcGroup>> GetGroupsAsync()
     {
         var simpleGroups = await GetSimpleGroupsAsync();

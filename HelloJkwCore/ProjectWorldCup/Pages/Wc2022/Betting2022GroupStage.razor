@@ -10,6 +10,23 @@
     string commonButtonStyle = "padding: 6px; border-radius: 6px; box-shadow: var(--mud-elevation-1); display: block; text-align: start; width: 100%; text-transform: initial;";
 }
 
+@if (TimeOver)
+{
+    <div>투표 시간이 끝났습니다.</div>
+}
+else
+{
+<WcRemainTime
+    ClassName="group-stage-remain-time"
+    RemainSeconds="@(GroupStageService.GetRemainSeconds())"
+    TimeOver="@(() => OnTimeOver())"/>
+
+<div class="remain-text">
+    <span class="group-stage-remain-time"></span>
+    <span>남았습니다.</span>
+</div>
+}
+
 <div>
     @foreach (var group in Groups)
     {
@@ -55,11 +72,12 @@ else
 {
     @if (User?.HasRole(UserRole.Admin) ?? false)
     {
+        <BettingTableComponent BettingItems="BettingItems" Visible="@TimeOver"></BettingTableComponent>
         <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
     }
     else
     {
-        <BettingTableComponent BettingItems="BettingItems"></BettingTableComponent>
+        <BettingTableComponent BettingItems="BettingItems" Visible="@TimeOver"></BettingTableComponent>
     }
 }
 @*

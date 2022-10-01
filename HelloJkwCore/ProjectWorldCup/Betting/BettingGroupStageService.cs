@@ -3,10 +3,12 @@
 public class BettingGroupStageService : IBettingGroupStageService
 {
     private readonly IFileSystem _fs;
+    /// <summary> for _cache </summary>
     private object _lock = new object();
     private List<WcBettingItem<GroupTeam>> _cache = null;
     private IWorldCupService _worldCupService;
     private System.Timers.Timer _timer;
+    private readonly DateTime _gameStartTime = WorldCupConst.GroupStageStartTime;
 
     public BettingGroupStageService(
         IFileSystemService fsService,
@@ -25,11 +27,14 @@ public class BettingGroupStageService : IBettingGroupStageService
     private async Task UpdateStandingsAsync()
     {
         var groups = await _worldCupService.GetGroupsAsync();
-        var team16 = groups.SelectMany(group => group.Stands.Take(2))
+        var team16 = groups
+            .SelectMany(group => group.Stands.Take(2))
             .Select(s => s.Team)
             .ToList();
         var bettingItems = await GetAllBettingsAsync();
         bettingItems.ForEach(bettingItem => bettingItem.Fixed = team16);
+
+        // 객체를 생성하면서 Reward를 계산한다.
         var result = new BettingResultTable<WcBettingItem<GroupTeam>>(bettingItems);
 
         await bettingItems
@@ -38,6 +43,11 @@ public class BettingGroupStageService : IBettingGroupStageService
                 await SaveBettingItemAsync(item);
             })
             .WhenAll();
+    }
+
+    public int GetRemainSeconds()
+    {
+        return (int)(_gameStartTime - DateTime.Now).TotalSeconds;
     }
 
     public async ValueTask<List<WcBettingItem<GroupTeam>>> GetAllBettingsAsync()
@@ -117,8 +127,24 @@ public class BettingGroupStageService : IBettingGroupStageService
         return bettingItem;
     }
 
-    private async Task SaveBettingItemAsync(IWcBettingItem<GroupTeam> item)
+    private async Task SaveBettingItemAsync(WcBettingItem<GroupTeam> item)
     {
         await _fs.WriteBettingItemAsync(BettingType.GroupStage, item);
+
+        if (_cache?.Any() ?? false)
+        {
+            lock (_lock)
+            {
+                var index = _cache.FindIndex(x => x.User == item.User);
+                if (index >= 0)
+                {
+                    _cache[index] = item;
+                }
+                else
+                {
+                    _cache.Add(item);
+                }
+            }
+        }
     }
 }

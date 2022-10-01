@@ -1,4 +1,6 @@
-﻿namespace ProjectWorldCup.Pages.Wc2022;
+﻿using Microsoft.JSInterop;
+
+namespace ProjectWorldCup.Pages.Wc2022;
 
 public partial class Betting2022GroupStage : JkwPageBase
 {
@@ -14,6 +16,8 @@ public partial class Betting2022GroupStage : JkwPageBase
     private BettingUser BettingUser { get; set; }
     private WcBettingItem<GroupTeam> BettingItem { get; set; } = new();
     private List<WcBettingItem<GroupTeam>> BettingItems { get; set; }
+
+    bool TimeOver { get; set; } = false;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -36,6 +40,9 @@ public partial class Betting2022GroupStage : JkwPageBase
 
     private async Task PickTeam(GroupTeam team)
     {
+        if (TimeOver)
+            return;
+
         var buttonType = GetButtonType(team);
 
         if (buttonType == TeamButtonType.Pickable)
@@ -47,6 +54,9 @@ public partial class Betting2022GroupStage : JkwPageBase
 
     private async Task UnpickTeam(GroupTeam team)
     {
+        if (TimeOver)
+            return;
+
         var buttonType = GetButtonType(team);
 
         if (buttonType == TeamButtonType.Picked)
@@ -74,5 +84,11 @@ public partial class Betting2022GroupStage : JkwPageBase
         {
             return TeamButtonType.Pickable;
         }
+    }
+
+    private void OnTimeOver()
+    {
+        TimeOver = true;
+        StateHasChanged();
     }
 }

@@ -2,7 +2,6 @@
 
 @if (BettingItems != null)
 {
-  var visible = false;
   <MudTable Items="@BettingItems">
     <HeaderContent>
         <MudTh>닉네임</MudTh>
@@ -11,7 +10,7 @@
     <RowTemplate>
         <MudTd DataLabel="닉네임">@context.User.DisplayName.Left(3)***</MudTd>
         <MudTd>
-                @if (visible)
+                @if (Visible)
                 {
             <div>
             @foreach (var s in context.Picked)
