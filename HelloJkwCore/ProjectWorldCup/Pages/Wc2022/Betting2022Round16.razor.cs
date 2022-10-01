@@ -10,6 +10,8 @@ public partial class Betting2022Round16 : JkwPageBase
     List<KnMatch> Round16Matches = new();
     WcBettingItem<Team> BettingItem = new();
 
+    bool[] TimeOver = new[] { false, false, false, false, false, false, false, false };
+
     protected override async Task OnPageInitializedAsync()
     {
         Round16Matches = await WorldCupService.GetRound16MatchesAsync();
@@ -17,8 +19,11 @@ public partial class Betting2022Round16 : JkwPageBase
         BettingItem = await BettingRound16Service.GetBettingAsync(bettingUser);
     }
 
-    private async Task PickTeamAsync(Team team)
+    private async Task PickTeamAsync(int matchIndex, Team team)
     {
+        if (TimeOver[matchIndex])
+            return;
+
         var bettingUser = await BettingService.GetBettingUserAsync(User);
         if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
         {
@@ -31,27 +36,6 @@ public partial class Betting2022Round16 : JkwPageBase
         }
         BettingItem = await BettingRound16Service.PickTeamAsync(bettingUser, team);
         StateHasChanged();
-    }
-
-    private string GetRemainTime(DateTime utcTime)
-    {
-        if (DateTime.UtcNow > utcTime)
-        {
-            return "경기가 이미 시작했습니다";
-        }
-        var sub = utcTime - DateTime.UtcNow;
-
-        List<string> result = new();
-        if (sub.TotalDays > 0)
-            result.Add($"{(int)sub.TotalDays}일");
-        if (sub.Hours > 0)
-            result.Add($"{sub.Hours}시간");
-        if (sub.Minutes > 0)
-            result.Add($"{sub.Minutes}분");
-        if (sub.Seconds > 0)
-            result.Add($"{sub.Seconds}초");
-
-        return result.StringJoin(" ") + "남았습니다";
     }
 
     private TeamButtonType GetButtonType(Team team)
@@ -71,5 +55,17 @@ public partial class Betting2022Round16 : JkwPageBase
             return TeamButtonType.Disabled;
 
         return TeamButtonType.Pickable;
+    }
+
+    private void OnTimeOver(int index)
+    {
+        TimeOver[index] = true;
+        if (index == 2)
+        {
+            for (var i = 2; i < 8; i++)
+            {
+                TimeOver[i] = true;
+            }
+        }
     }
 }

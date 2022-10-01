@@ -6,17 +6,33 @@
   string commonButtonStyle = "padding: 6px; border-radius: 6px; box-shadow: var(--mud-elevation-1); display: block; text-align: start; width: 100%; text-transform: initial;";
 }
 
+<WcRemainTime
+    ClassName="remain1"
+    RemainSeconds="@((int)(WorldCupConst.Round16Match1StartTime - DateTime.Now).TotalSeconds)"
+    TimeOver="@(() => OnTimeOver(0))"
+/>
+<WcRemainTime
+    ClassName="remain2"
+    RemainSeconds="@((int)(WorldCupConst.Round16Match2StartTime - DateTime.Now).TotalSeconds)"
+    TimeOver="@(() => OnTimeOver(1))"
+/>
+<WcRemainTime
+    ClassName="remain3"
+    RemainSeconds="@((int)(WorldCupConst.Round16Match3StartTime - DateTime.Now).TotalSeconds)"
+    TimeOver="@(() => OnTimeOver(2))"
+/>
+
 
 <WcTitle>2라운드: 8강 진출팀 맞추기</WcTitle>
 
-<div class="desc">
-    <span>각 경기가 시작하기 전에 선택해야 합니다 !!</span>
-</div>
+<span class="test"></span>
 
 <div class="matches">
-  @foreach (var matchData in Round16Matches)
+  @foreach (var match in Round16Matches.Select((x, i) => new { Index = i, MatchData = x }))
   {
-    var remainTimeText = GetRemainTime(matchData.Time);
+    var index = match.Index;
+    var matchData = match.MatchData;
+    var remainTimeClass = $"remain{(index < 2 ? index + 1 : 3)}"; // 1, 2, 3, 3, 3, 3, 3, 3
     var homeType = GetButtonType(matchData.HomeTeam);
     var awayType = GetButtonType(matchData.AwayTeam);
     var homeButtonStyle = homeType == TeamButtonType.Picked ? $"{commonButtonStyle} color: white; background: #56042C"
@@ -25,17 +41,27 @@
     : commonButtonStyle;
 
     <div class="match16 row">
+      @if (TimeOver[index])
+      {
       <div class="remain-time col-md-3">
-        @remainTimeText
+          <span>투표 시간이 끝났습니다.</span>
       </div>
+      }
+      else
+      {
+      <div class="remain-time col-md-3">
+          <span class="@remainTimeClass"></span>
+          <span>남았습니다</span>
+      </div>
+      }
       <div class="team col-md-3">
-        <MudButton Class="team-inner" Style="@homeButtonStyle" OnClick="(async () => await PickTeamAsync(matchData.HomeTeam))" Disabled="@(homeType == TeamButtonType.Disabled)">
+        <MudButton Class="team-inner" Style="@homeButtonStyle" OnClick="(async () => await PickTeamAsync(index, matchData.HomeTeam))" Disabled="@(homeType == TeamButtonType.Disabled)">
           <img class="team-img" src="@matchData?.HomeTeam?.Flag" />
           <span class="team-name">@matchData?.HomeTeam?.Name</span>
         </MudButton>
       </div>
       <div class="team col-md-3">
-        <MudButton Class="team-inner" Style="@awayButtonStyle" OnClick="(async () => await PickTeamAsync(matchData.AwayTeam))" Disabled="@(awayType == TeamButtonType.Disabled)">
+        <MudButton Class="team-inner" Style="@awayButtonStyle" OnClick="(async () => await PickTeamAsync(index, matchData.AwayTeam))" Disabled="@(awayType == TeamButtonType.Disabled)">
           <img class="team-img" src="@matchData?.AwayTeam?.Flag" />
           <span class="team-name">@matchData?.AwayTeam?.Name</span>
         </MudButton>
