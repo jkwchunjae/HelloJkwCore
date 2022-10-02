@@ -50,7 +50,7 @@ public partial class Fifa : IFifa
         else
         {
             var cacheTime = DateTime.Now.ToString("yyyyMMdd.HHmm").Left(12); // 분의 앞자리만 쓴다. 10분에 한 번 캐시
-            cacheKey = $"{MatchesCacheKey}_{date:yyyyMMdd}_{cacheTime}";
+            cacheKey = $"{MatchesCacheKey}_{date:yyyyMMdd}_{cacheTime}0";
         }
         return await GetFromCacheOrAsync<List<FifaMatchData>>(cacheKey, async () =>
         {

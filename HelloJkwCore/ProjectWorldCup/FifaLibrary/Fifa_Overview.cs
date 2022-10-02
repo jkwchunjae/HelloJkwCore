@@ -32,7 +32,7 @@ public partial class Fifa : IFifa
         try
         {
             var cacheTime = DateTime.Now.ToString("yyyyMMdd.HHmm").Left(12); // 분의 앞자리만 쓴다. 10분에 한 번 캐시
-            return await GetFromCacheOrAsync<List<FifaStandingData>>($"{nameof(GetStandingDataAsync)}_{cacheTime}", async () =>
+            return await GetFromCacheOrAsync<List<FifaStandingData>>($"{nameof(GetStandingDataAsync)}_{cacheTime}0", async () =>
             {
                 var startDate = new DateTime(2022, 11, 19);
                 var searchDate = DateTime.Now > startDate ? DateTime.Now : startDate;
