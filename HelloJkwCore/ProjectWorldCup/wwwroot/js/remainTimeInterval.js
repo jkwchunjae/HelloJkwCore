@@ -3,8 +3,12 @@ export function createRemainTimeInterval(instance, selectorClass, remainSeconds)
 }
 class RemainTimeInterval {
     timer = null;
+    initTime;
+    initRemainSeconds;
     remainSeconds;
     constructor(instance, selectorClass, remainSeconds) {
+        this.initTime = Date.now() / 1000;
+        this.initRemainSeconds = remainSeconds;
         this.remainSeconds = remainSeconds;
         if (this.remainSeconds <= 0) {
             instance.invokeMethodAsync("OnTimeOver");
@@ -15,7 +19,8 @@ class RemainTimeInterval {
             elem.innerText = this.text(this.remainSeconds);
         }
         this.timer = setInterval(() => {
-            this.remainSeconds--;
+            const now = Date.now() / 1000;
+            this.remainSeconds = this.initRemainSeconds - Math.floor(now - this.initTime);
             if (this.remainSeconds <= 0) {
                 instance.invokeMethodAsync("OnTimeOver");
                 this.dispose();
