@@ -1,4 +1,5 @@
 ﻿using ProjectWorldCup.Pages;
+using static MudBlazor.CategoryTypes;
 
 namespace ProjectWorldCup;
 
@@ -29,19 +30,55 @@ public class BettingFinalService : IBettingFinalService
 
     public async ValueTask<List<WcFinalBettingItem<Team>>> GetAllBettingsAsync()
     {
+        lock (_lock)
+        {
+            if (_cache != null)
+            {
+                return _cache;
+            }
+        }
         var items = await _fs.ReadAllBettingItemsAsync<WcFinalBettingItem<Team>, Team>(BettingType.Final);
+        lock (_lock)
+        {
+            _cache = items;
+        }
         return items;
     }
 
     public async Task<WcFinalBettingItem<Team>> GetBettingAsync(BettingUser user)
     {
+        lock (_lock)
+        {
+            if (_cache?.Any(x => x.User == user.AppUser) ?? false)
+            {
+                return _cache.First(x => x.User == user.AppUser);
+            }
+        }
         var bettingItem = await _fs.ReadBettingItemAsync<WcFinalBettingItem<Team>, Team>(BettingType.Final, user.AppUser);
         return bettingItem;
     }
-    public async Task SaveTeamsAsync(BettingUser user, WcFinalBettingItem<Team> bettingItem)
+    public async Task SaveTeamsAsync(BettingUser user, WcFinalBettingItem<Team> item)
     {
-        await _fs.WriteBettingItemAsync(BettingType.Final, bettingItem);
+        await _fs.WriteBettingItemAsync(BettingType.Final, item);
+
+        if (_cache?.Any() ?? false)
+        {
+            lock (_lock)
+            {
+                var index = _cache.FindIndex(x => x.User == item.User);
+                if (index >= 0)
+                {
+                    _cache[index] = item;
+                }
+                else
+                {
+                    _cache.Add(item);
+                }
+            }
+        }
     }
+
+    #region Front
     public List<(string StageId, List<KnMatch> Matches)> EvaluateUserBetting(List<KnMatch> quarters, WcFinalBettingItem<Team> userBetting, List<KnMatch> matches)
     {
         if (userBetting?.Picked?.Count() == 4)
@@ -210,10 +247,8 @@ public class BettingFinalService : IBettingFinalService
                     var third = stageMatches.First(s => s.StageId == Fifa.ThirdStageId).Matches;
                     if (third.Any())
                     {
-                        if (third[0].HomeTeam == prevTeam)
-                            third[0].HomeTeam = null;
-                        if (third[0].AwayTeam == prevTeam)
-                            third[0].AwayTeam = null;
+                        third[0].HomeTeam = null;
+                        third[0].AwayTeam = null;
                     }
                 }
                 if (stageMatches.Any(s => s.StageId == Fifa.FinalStageId))
@@ -221,10 +256,8 @@ public class BettingFinalService : IBettingFinalService
                     var final = stageMatches.First(s => s.StageId == Fifa.FinalStageId).Matches;
                     if (final.Any())
                     {
-                        if (final[0].HomeTeam == prevTeam)
-                            final[0].HomeTeam = null;
-                        if (final[0].AwayTeam == prevTeam)
-                            final[0].AwayTeam = null;
+                        final[0].HomeTeam = null;
+                        final[0].AwayTeam = null;
                     }
                 }
             }
@@ -263,4 +296,5 @@ public class BettingFinalService : IBettingFinalService
         }
         return stageMatches;
     }
+    #endregion
 }

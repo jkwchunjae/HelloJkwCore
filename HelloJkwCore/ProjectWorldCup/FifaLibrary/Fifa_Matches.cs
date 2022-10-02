@@ -58,7 +58,7 @@ public partial class Fifa : IFifa
             var res = await _httpClient.GetAsync(url);
             var text = await res.Content.ReadAsStringAsync();
             var root = JsonConvert.DeserializeObject<MatchDataRoot>(text);
-            if (root.Competition.ActiveSeasons.Any())
+            if (root?.Competition?.ActiveSeasons?.Any() ?? false)
             {
                 return root.Competition.ActiveSeasons[0].Matches;
             }

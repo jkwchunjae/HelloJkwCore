@@ -9,9 +9,9 @@ public partial class BettingResultComponent : JkwPageBase
     public IWorldCupService WorldCupService { get; set; }
 
     [Parameter]
-    public List<WcBettingItem<GroupTeam>> BettingItems { get; set; }
+    public IEnumerable<IWcBettingItem<ITeam>> BettingItems { get; set; }
 
-    BettingResultTable<WcBettingItem<GroupTeam>> BettingResult { get; set; }
+    IBettingResultTable<IWcBettingItem<ITeam>> BettingResult { get; set; }
 
     public BettingResultComponent()
     {
@@ -19,7 +19,7 @@ public partial class BettingResultComponent : JkwPageBase
 
     private Task BettingItemsUpdated()
     {
-        BettingResult = new BettingResultTable<WcBettingItem<GroupTeam>>(BettingItems);
+        BettingResult = new BettingResultTable<IWcBettingItem<ITeam>>(BettingItems);
         return Task.CompletedTask;
     }
 

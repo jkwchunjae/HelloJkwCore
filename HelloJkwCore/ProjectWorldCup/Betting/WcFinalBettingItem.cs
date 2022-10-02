@@ -33,8 +33,10 @@ public class WcFinalBettingItem<TTeam> : WcBettingItem<TTeam> where TTeam : Team
         {
             var score = 0;
 
-            if (Pick0 == Fix0 || Pick0 == Fix1) score += 5;
-            if (Pick1 == Fix0 || Pick1 == Fix1) score += 5;
+            if (Pick0 == Fix0 || Pick0 == Fix1 || (FinalTeams?.Contains(Pick0) ?? false))
+                score += 5;
+            if (Pick1 == Fix0 || Pick1 == Fix1 || (FinalTeams?.Contains(Pick1) ?? false))
+                score += 5;
 
             return score;
         }
@@ -47,10 +49,14 @@ public class WcFinalBettingItem<TTeam> : WcBettingItem<TTeam> where TTeam : Team
         {
             var score = 0;
 
-            if (Fixed.Contains(Pick0)) score += 1;
-            if (Fixed.Contains(Pick1)) score += 1;
-            if (Fixed.Contains(Pick2)) score += 1;
-            if (Fixed.Contains(Pick3)) score += 1;
+            if (Fixed.Contains(Pick0) || (SemiFinalTeams?.Contains(Pick0) ?? false) || (FinalTeams?.Contains(Pick0) ?? false))
+                score += 1;
+            if (Fixed.Contains(Pick1) || (SemiFinalTeams?.Contains(Pick1) ?? false) || (FinalTeams?.Contains(Pick1) ?? false))
+                score += 1;
+            if (Fixed.Contains(Pick2) || (SemiFinalTeams?.Contains(Pick2) ?? false) || (FinalTeams?.Contains(Pick2) ?? false))
+                score += 1;
+            if (Fixed.Contains(Pick3) || (SemiFinalTeams?.Contains(Pick3) ?? false) || (FinalTeams?.Contains(Pick3) ?? false))
+                score += 1;
 
             return score;
         }
@@ -62,4 +68,7 @@ public class WcFinalBettingItem<TTeam> : WcBettingItem<TTeam> where TTeam : Team
         get => RankScore + FinalMatchScore + SemiFinalMatchScore;
         set { }
     }
+
+    public List<TTeam> SemiFinalTeams { get; set; }
+    public List<TTeam> FinalTeams { get; set; }
 }

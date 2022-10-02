@@ -1,5 +1,5 @@
 ﻿@inherits JkwPageBase
-
+@using ProjectWorldCup.Pages.Betting
 @page "/worldcup/2022/betting/final"
 
 @code {
@@ -76,3 +76,16 @@
     }
   </div>
 }
+
+@if (BettingItems?.Any() ?? false)
+{
+    @if (User?.HasRole(UserRole.Admin) ?? false)
+    {
+        <BettingFinalResultComponent BettingItems="BettingItems" Visible="true"></BettingFinalResultComponent>
+    }
+    else
+    {
+        <BettingFinalResultComponent BettingItems="BettingItems" Visible="@TimeOver"></BettingFinalResultComponent>
+    }
+}
+

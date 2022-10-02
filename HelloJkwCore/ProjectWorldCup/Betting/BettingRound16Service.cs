@@ -23,6 +23,8 @@ public class BettingRound16Service : IBettingRound16Service
         //_timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
         //_timer.AutoReset = true;
         //_timer.Start();
+
+        UpdateStandingsAsync();
     }
 
     private async Task UpdateStandingsAsync()
@@ -103,21 +105,34 @@ public class BettingRound16Service : IBettingRound16Service
             if (match == null)
                 return bettingItem;
 
-            if (match.Time < DateTime.UtcNow)
-                return bettingItem;
-
             bettingItem.Picked = bettingItem.Picked
                 .Where(picked => match.HomeTeam != picked && match.AwayTeam != picked)
                 .Concat(new[] { team })
-                .OrderBy(picked => matches?.FirstOrDefault(m => m.HomeTeam == team || m.AwayTeam == team)?.Time ?? DateTime.Now)
+                .OrderBy(picked => matches?.FirstOrDefault(m => m.HomeTeam == picked || m.AwayTeam == picked)?.Time ?? DateTime.Now)
                 .ToList();
             await SaveBettingItemAsync(bettingItem);
         }
         return bettingItem;
     }
 
-    private async Task SaveBettingItemAsync(IWcBettingItem<Team> item)
+    private async Task SaveBettingItemAsync(WcBettingItem<Team> item)
     {
         await _fs.WriteBettingItemAsync(BettingType.Round16, item);
+
+        if (_cache?.Any() ?? false)
+        {
+            lock (_lock)
+            {
+                var index = _cache.FindIndex(x => x.User == item.User);
+                if (index >= 0)
+                {
+                    _cache[index] = item;
+                }
+                else
+                {
+                    _cache.Add(item);
+                }
+            }
+        }
     }
 }

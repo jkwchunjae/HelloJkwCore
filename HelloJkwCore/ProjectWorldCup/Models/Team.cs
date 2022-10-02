@@ -1,6 +1,12 @@
 ﻿namespace ProjectWorldCup;
 
-public class Team : IEquatable<Team>, IComparable<Team>
+public interface ITeam
+{
+    string Id { get; set; }
+    string Name { get; set; }
+    string Flag { get; set; }
+}
+public class Team : ITeam, IEquatable<Team>, IComparable<Team>
 {
     public string Id { get; set; }
     public string Name { get; set; }

@@ -1,7 +1,13 @@
 ﻿namespace ProjectWorldCup;
 
-public class BettingResultTable<T> : IEnumerable<T>
-    where T : IBettingResultItem, new()
+public interface IBettingResultTable<out T> : IEnumerable<T>
+    where T : IBettingResultItem
+{
+
+}
+
+public class BettingResultTable<T> : IBettingResultTable<T>
+    where T : IBettingResultItem
 {
     private IEnumerable<T> _items { get; set; }
 
@@ -12,9 +18,16 @@ public class BettingResultTable<T> : IEnumerable<T>
 
         foreach (var item in list)
         {
-            var ratio = item.Score / totalScore;
-            var reward = (int)(totalMoney * ratio);
-            item.Reward = bettingTableOption?.RewardForUser?.Invoke(reward) ?? RewardForUser(reward);
+            if (totalScore == 0)
+            {
+                item.Reward = 10000;
+            }
+            else
+            {
+                var ratio = item.Score / totalScore;
+                var reward = (int)(totalMoney * ratio);
+                item.Reward = bettingTableOption?.RewardForUser?.Invoke(reward) ?? RewardForUser(reward);
+            }
         }
 
         _items = list.OrderByDescending(x => x.Reward).ToList();

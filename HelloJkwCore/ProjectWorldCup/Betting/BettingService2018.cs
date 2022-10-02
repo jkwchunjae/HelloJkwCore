@@ -103,7 +103,7 @@ public partial class BettingService
             .ToList();
     }
 
-    private Team MakeFakeTeam(ITeam data)
+    private Team MakeFakeTeam(I2018Team data)
     {
         if (_cache2018.Contains(data.Value))
         {

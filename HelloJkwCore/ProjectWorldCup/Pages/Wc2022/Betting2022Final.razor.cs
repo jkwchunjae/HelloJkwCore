@@ -13,6 +13,7 @@ public partial class Betting2022Final : JkwPageBase
 
     List<KnMatch> Matches { get; set; } = new();
     WcFinalBettingItem<Team> BettingItem { get; set; }
+    List<WcFinalBettingItem<Team>> BettingItems { get; set; }
 
     Dictionary<string, string> StageName = new Dictionary<string, string>
     {
@@ -34,6 +35,7 @@ public partial class Betting2022Final : JkwPageBase
 
         var bettingUser = await BettingService.GetBettingUserAsync(User);
         BettingItem = await BettingFinalService.GetBettingAsync(bettingUser);
+        BettingItems = await BettingFinalService.GetAllBettingsAsync();
         EvaluateUserBetting();
     }
 
@@ -66,7 +68,15 @@ public partial class Betting2022Final : JkwPageBase
 
         StageMatches = BettingFinalService.PickTeamAsync(stageId, matchId, team, StageMatches, Matches);
 
-        if (stageId == Fifa.ThirdStageId)
+        if (stageId == Fifa.Round8StageId)
+        {
+            BettingItem.Picked = new List<Team> { null, null, null, null };
+        }
+        if (stageId == Fifa.Round4StageId)
+        {
+            BettingItem.Picked = new List<Team> { null, null, null, null };
+        }
+        else if (stageId == Fifa.ThirdStageId)
         {
             var third = StageMatches.First(s => s.StageId == Fifa.ThirdStageId).Matches[0];
             var loser = third.HomeTeam == team ? third.AwayTeam : third.HomeTeam;

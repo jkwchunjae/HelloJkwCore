@@ -47,7 +47,7 @@ public class BettingHistory
 {
     public DateTime Time { get; set; } = DateTime.UtcNow;
     public HistoryType Type { get; set; }
-    /// <summary> 첫 가입금 (양수), 내기 참가금 (음수), 배당금 (양수) </summary>
+    /// <summary> 첫 가입금 (양수), 내기 참가금 (음수), 상금 (양수) </summary>
     public long Value { get; set; }
     public string Comment { get; set; }
     /// <summary> 결과를 확인할 수 있는 페이지 주소 </summary>

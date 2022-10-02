@@ -1,8 +1,7 @@
 ﻿@inherits JkwPageBase
-
+@using ProjectWorldCup.Pages.Betting;
 @page "/worldcup/2022/betting/group-stage"
 
-@using ProjectWorldCup.Pages.Betting;
 
 <WcTitle>1라운드: 16강 진출팀 맞추기</WcTitle>
 
@@ -72,7 +71,7 @@ else
 {
     @if (User?.HasRole(UserRole.Admin) ?? false)
     {
-        <BettingTableComponent BettingItems="BettingItems" Visible="@TimeOver"></BettingTableComponent>
+        <BettingTableComponent BettingItems="BettingItems" Visible="true"></BettingTableComponent>
         <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
     }
     else

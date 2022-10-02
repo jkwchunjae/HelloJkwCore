@@ -8,7 +8,7 @@
         <MudTh>성공</MudTh>
         <MudTh>실패</MudTh>
         <MudTh>점수</MudTh>
-        <MudTh>배당금</MudTh>
+        <MudTh>상금</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="닉네임">@context.User.DisplayName.Left(3)***</MudTd>
@@ -29,7 +29,7 @@
             </div>
         </MudTd>
         <MudTd DataLabel="점수">@context.Score</MudTd>
-        <MudTd DataLabel="배당금">@context.Reward</MudTd>
+        <MudTd DataLabel="상금">@context.Reward</MudTd>
     </RowTemplate>
 </MudTable>
 }

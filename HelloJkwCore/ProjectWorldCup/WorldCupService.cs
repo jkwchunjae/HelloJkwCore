@@ -62,7 +62,7 @@ public partial class WorldCupService : IWorldCupService
 
     public async Task<List<KnMatch>> GetRound16MatchesAsync()
     {
-        var matches = await _fifa.GetKnockoutStageMatchesAsync();
+        var matches = await _fifa.GetRound16MatchesAsync();
         var standing = await _fifa.GetStandingDataAsync();
         return matches
             .Where(match => match.IdStage == Fifa.Round16StageId)
@@ -71,7 +71,7 @@ public partial class WorldCupService : IWorldCupService
                 var match = KnMatch.CreateFromFifaMatchData(m);
                 if (m.Home == null && !string.IsNullOrEmpty(m.PlaceHolderA))
                 {
-                    var standingData = standing.FirstOrDefault(s => s.GroupName.Contains(m.PlaceHolderA.Right(1)) && s.Position == m.PlaceHolderA.Left(1).ToInt());
+                    var standingData = standing.FirstOrDefault(s => s.GroupName.Right(1) == m.PlaceHolderA.Right(1) && s.Position == m.PlaceHolderA.Left(1).ToInt());
                     if (standingData != null)
                     {
                         match.HomeTeam = new Team
@@ -84,7 +84,7 @@ public partial class WorldCupService : IWorldCupService
                 }
                 if (m.Away == null && !string.IsNullOrEmpty(m.PlaceHolderB))
                 {
-                    var standingData = standing.FirstOrDefault(s => s.GroupName.Contains(m.PlaceHolderB.Right(1)) && s.Position == m.PlaceHolderB.Left(1).ToInt());
+                    var standingData = standing.FirstOrDefault(s => s.GroupName.Right(1) == m.PlaceHolderB.Right(1) && s.Position == m.PlaceHolderB.Left(1).ToInt());
                     if (standingData != null)
                     {
                         match.AwayTeam = new Team
@@ -95,6 +95,7 @@ public partial class WorldCupService : IWorldCupService
                         };
                     }
                 }
+                match.HomeScore = 3;
                 return match;
             })
             .ToList();
