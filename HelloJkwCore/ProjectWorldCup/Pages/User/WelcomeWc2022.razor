@@ -20,7 +20,10 @@
         <span>3. 1, 2, 3, 4등 맞추기</span>
         <span>모든 단계별로 1만원을 걸고 정해진 규칙에 의해서 상금을 타가는 방식입니다.</span>
         <span>자세한 규칙은 블로그를 통해 확인하실 수 있습니다.</span>
-        <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule"> &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt; </MudLink>
+        <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Target="_blank"
+             onclick="@(() => OnClickBlogLink())">
+            &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt;
+        </MudLink>
     </div>
 
     <div>
@@ -37,7 +40,14 @@
     </div>
 
     <div>
-        <OneClickButton OnClick="@(() => JoinAsync())" Variant="Variant.Filled" Color="Color.Success">
+        <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Target="_blank"
+             onclick="@(() => OnClickBlogLink())">
+          &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt;
+        </MudLink>
+        <MudCheckBox T="bool" CheckedChanged="@((bool check) => ChangeCheckboxBlogRead(check))" Checked="CheckBoxReadBlog"
+            Label="블로그의 규칙을 읽고 이해했습니다"
+            />
+        <OneClickButton OnClick="@(() => JoinAsync())" Variant="Variant.Filled" Color="Color.Success" Disabled="@(CheckBoxReadBlog == false)">
             승인 요청
         </OneClickButton>
     </div>

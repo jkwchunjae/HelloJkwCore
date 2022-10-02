@@ -1,4 +1,6 @@
-﻿namespace ProjectWorldCup.Pages.User;
+﻿using Microsoft.JSInterop;
+
+namespace ProjectWorldCup.Pages.User;
 
 public partial class WelcomeWc2022 : JkwPageBase
 {
@@ -6,6 +8,8 @@ public partial class WelcomeWc2022 : JkwPageBase
     [Inject] ISnackbar Snackbar { get; set; }
 
     BettingUser BettingUser;
+    bool ReadBlog = false;
+    bool CheckBoxReadBlog = false;
     protected override async Task OnPageInitializedAsync()
     {
         if (IsAuthenticated)
@@ -23,6 +27,7 @@ public partial class WelcomeWc2022 : JkwPageBase
     {
         if (IsAuthenticated)
         {
+            if (CheckBoxReadBlog)
             if (BettingUser?.BettingHistories?.Count > 13)
             {
                 await Service.RejectUserAsync(BettingUser, null);
@@ -51,6 +56,26 @@ public partial class WelcomeWc2022 : JkwPageBase
             await Service.CancelJoinRequestAsync(User);
             BettingUser = await Service.GetBettingUserAsync(User);
             StateHasChanged();
+        }
+    }
+
+    private void OnClickBlogLink()
+    {
+        ReadBlog = true;
+    }
+
+    private void ChangeCheckboxBlogRead(bool check)
+    {
+        if (ReadBlog)
+        {
+            CheckBoxReadBlog = check;
+        }
+        else
+        {
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add("블로그를 읽어주세요", Severity.Warning);
+            CheckBoxReadBlog = false;
         }
     }
 }
