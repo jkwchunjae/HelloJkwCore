@@ -90,6 +90,12 @@ public partial class BettingService : IBettingService
         });
         await SaveUserAsync(user);
     }
+    public async Task<BettingUser> AddHistoryAsync(BettingUser user, BettingHistory history)
+    {
+        user.BettingHistories.Add(history);
+        await SaveUserAsync(user);
+        return user;
+    }
     public async Task<BettingUser> GetBettingUserAsync(AppUser appUser)
     {
         lock (_usersCacheLock)

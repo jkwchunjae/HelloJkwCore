@@ -41,6 +41,7 @@ public enum HistoryType
     Reward1,
     Reward2,
     Reward3,
+    ChangeNickname,
 }
 
 public class BettingHistory
