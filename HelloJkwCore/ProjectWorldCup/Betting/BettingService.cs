@@ -1,4 +1,5 @@
 ﻿using Common;
+using Microsoft.AspNetCore.Identity;
 
 namespace ProjectWorldCup;
 
@@ -8,10 +9,12 @@ public partial class BettingService : IBettingService
 
     public BettingService(
         IFileSystemService fsService,
-        WorldCupOption option)
+        WorldCupOption option,
+        IUserStore<AppUser> userStore)
     {
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
         _fs2018 = fsService.GetFileSystem(option.FileSystemSelect2018, option.Path);
+        _userStore = userStore;
     }
 
     public async Task<BettingUser> JoinBettingAsync(BettingUser buser, BettingType bettingType)

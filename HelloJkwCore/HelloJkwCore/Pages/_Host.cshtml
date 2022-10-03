@@ -52,6 +52,9 @@
         anchorElement.remove();
         URL.revokeObjectURL(url);
       }
+      window.getTimezone = () => {
+        return (new Date()).getTimezoneOffset();
+      }
     </script>
 </body>
 </html>

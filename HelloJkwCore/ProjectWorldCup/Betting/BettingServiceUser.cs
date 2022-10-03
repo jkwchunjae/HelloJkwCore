@@ -1,9 +1,12 @@
-﻿namespace ProjectWorldCup;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ProjectWorldCup;
 
 public partial class BettingService : IBettingService
 {
     object _usersCacheLock = new object();
     List<BettingUser> _bettingUsersCache;
+    private readonly IUserStore<AppUser> _userStore;
 
     public void ClearUserCache()
     {
@@ -43,6 +46,7 @@ public partial class BettingService : IBettingService
         {
             Type = HistoryType.JoinRequest,
             Comment = "참가 신청",
+            Value = 20000,
         });
         await SaveUserAsync(user);
 
@@ -64,7 +68,7 @@ public partial class BettingService : IBettingService
         user.BettingHistories.Add(new BettingHistory
         {
             Type = HistoryType.JoinApproved,
-            Value = initValue,
+            // Value = initValue,
             Comment = $"{approveBy.DisplayName}님에 의해 승인",
         });
         await SaveUserAsync(user);
@@ -105,6 +109,7 @@ public partial class BettingService : IBettingService
                 var user = _bettingUsersCache.FirstOrDefault(user => user.AppUser == appUser);
                 if (user != null)
                 {
+                    user.AppUser = appUser;
                     return user;
                 }
             }
@@ -114,6 +119,7 @@ public partial class BettingService : IBettingService
         if (await _fs.FileExistsAsync(userPath))
         {
             var bettingUser = await _fs.ReadJsonAsync<BettingUser>(userPath);
+            bettingUser.AppUser = appUser;
             return bettingUser;
         }
         else

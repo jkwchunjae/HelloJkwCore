@@ -1,24 +1,7 @@
 ﻿@inherits JkwPageBase
 @page "/worldcup/userhome"
 
-@if (IsAuthenticated)
+@if (BettingUser != null)
 {
-  @if (string.IsNullOrEmpty(User?.NickName))
-  {
-    <MudTextField T="string" @bind-Value="@InputNickname" Label="닉네임"></MudTextField>
-    <OneClickButton OnClick="@(() => ChangeNickname())" Variant="Variant.Outlined">
-      닉네임 설정 (한번만 가능)
-    </OneClickButton>
-  }
-  else
-  {
-    <MudTextField T="string" Value="@User.DisplayName" Label="닉네임" ReadOnly="true"></MudTextField>
-    @*@if (User.NickName != InputNickname)
-    {
-      <OneClickButton OnClick="@(() => ChangeNickname500())" Variant="Variant.Outlined" Reusable="true">
-        500원 내고 닉네임 변경
-      </OneClickButton>
-    }*@
-  }
+  <WcUserComponent TargetUser="BettingUser"/>
 }
-
