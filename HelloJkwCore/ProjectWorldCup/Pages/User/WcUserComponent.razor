@@ -1,9 +1,11 @@
 ﻿@if (string.IsNullOrEmpty(TargetUser?.AppUser?.NickName))
 {
+<div>
   <MudTextField T="string" @bind-Value="@InputNickname" Label="닉네임"></MudTextField>
   <OneClickButton OnClick="@(() => ChangeNickname())" Variant="Variant.Outlined">
     닉네임 설정 (한번만 가능)
   </OneClickButton>
+</div>
 }
 else
 {
@@ -27,19 +29,42 @@ else
         <MudTh>내용</MudTh>
         <MudTh>금액</MudTh>
         <MudTh></MudTh>
+        @if (ByManager)
+        {
+          <MudTh></MudTh>
+        }
       </HeaderContent>
       <RowTemplate>
         <MudTd DataLabel="시간">@(TimeZoneInfo.ConvertTimeFromUtc(context.Time, LocalTimeZone))</MudTd>
-          <MudTd DataLabel="내용">@context.Comment</MudTd>
-          <MudTd DataLabel="금액">
-            @context.Value
-          </MudTd>
-          <MudTd>
-          @if (!string.IsNullOrEmpty(context.ResultUrl))
-          {
-            <MudLink Href="@context.ResultUrl">LINK</MudLink>
-          }
+        <MudTd DataLabel="내용">@context.Comment</MudTd>
+        <MudTd DataLabel="금액">
+          @context.Value
         </MudTd>
+        <MudTd>
+        @if (!string.IsNullOrEmpty(context.ResultUrl))
+        {
+          <MudLink Href="@context.ResultUrl">LINK</MudLink>
+        }
+        </MudTd>
+        @if (ByManager)
+        {
+          <MudTd>
+          @if (ReadyToDelete.Contains(context))
+          {
+            <MudIconButton
+              OnClick="@(() => DeleteHistoryAsync(context))"
+              Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+            />
+          }
+          else
+          {
+            <MudIconButton
+              OnClick="@(() => ConfirmDeleteHistory(context))"
+              Icon="@Icons.Material.Filled.Delete" Size="Size.Small" 
+            />
+          }
+          </MudTd>
+        }
       </RowTemplate>
     </MudTable>
   }

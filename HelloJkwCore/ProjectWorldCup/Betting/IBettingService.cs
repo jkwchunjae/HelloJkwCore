@@ -16,7 +16,8 @@ public interface IBettingService
     Task RejectUserAsync(BettingUser user, AppUser rejectBy);
     Task CancelJoinRequestAsync(AppUser appUser);
     Task<BettingUser> AddHistoryAsync(BettingUser user, BettingHistory history);
-    Task<IEnumerable<BettingUser>> GetBettingUsersAsync();
+    Task<BettingUser> DeleteHistoryAsync(BettingUser user, BettingHistory history);
+    Task<IEnumerable<BettingUser>> GetBettingUsersAsync(bool updateAppUser = false);
     void ClearUserCache();
     #endregion
 }

@@ -11,7 +11,7 @@ public partial class WcUserListPage : JkwPageBase
     {
         if (HasRole)
         {
-            Users = await Service.GetBettingUsersAsync();
+            Users = await Service.GetBettingUsersAsync(updateAppUser: true);
         }
     }
 
@@ -27,7 +27,7 @@ public partial class WcUserListPage : JkwPageBase
         {
             await Service.ApproveUserAsync(targetUser, initValue, User);
             await Service.JoinBettingAsync(targetUser, BettingType.GroupStage);
-            Users = await Service.GetBettingUsersAsync();
+            Users = await Service.GetBettingUsersAsync(updateAppUser: true);
             StateHasChanged();
         }
     }
@@ -37,7 +37,7 @@ public partial class WcUserListPage : JkwPageBase
         if (HasRole)
         {
             await Service.SetRequestStateAsync(targetUser, User);
-            Users = await Service.GetBettingUsersAsync();
+            Users = await Service.GetBettingUsersAsync(updateAppUser: true);
             StateHasChanged();
         }
     }
@@ -47,7 +47,7 @@ public partial class WcUserListPage : JkwPageBase
         if (HasRole)
         {
             await Service.RejectUserAsync(targetUser, User);
-            Users = await Service.GetBettingUsersAsync();
+            Users = await Service.GetBettingUsersAsync(updateAppUser: true);
             StateHasChanged();
         }
     }
@@ -57,7 +57,7 @@ public partial class WcUserListPage : JkwPageBase
         if (User?.HasRole(UserRole.Admin) ?? false)
         {
             Service.ClearUserCache();
-            Users = await Service.GetBettingUsersAsync();
+            Users = await Service.GetBettingUsersAsync(updateAppUser: true);
             StateHasChanged();
         }
     }

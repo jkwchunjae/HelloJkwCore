@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Common;
+using Microsoft.AspNetCore.Identity;
 
 namespace ProjectWorldCup;
 
@@ -100,6 +101,12 @@ public partial class BettingService : IBettingService
         await SaveUserAsync(user);
         return user;
     }
+    public async Task<BettingUser> DeleteHistoryAsync(BettingUser user, BettingHistory history)
+    {
+        user.BettingHistories.Remove(history);
+        await SaveUserAsync(user);
+        return user;
+    }
     public async Task<BettingUser> GetBettingUserAsync(AppUser appUser)
     {
         lock (_usersCacheLock)
@@ -130,25 +137,45 @@ public partial class BettingService : IBettingService
             };
         }
     }
-    public async Task<IEnumerable<BettingUser>> GetBettingUsersAsync()
+    public async Task<IEnumerable<BettingUser>> GetBettingUsersAsync(bool updateAppUser = false)
     {
+        IEnumerable<BettingUser> users = null;
         lock (_usersCacheLock)
         {
             if (_bettingUsersCache != null)
             {
-                return _bettingUsersCache;
+                users = _bettingUsersCache;
             }
+        }
+        if (users != null)
+        {
+            return updateAppUser ? await FillAppUsers(users) : users;
         }
 
         var userfiles = await _fs.GetFilesAsync(path => path[WorldCupPath.Betting2022Users]);
-        var users = await userfiles
+        users = await userfiles
             .Select(filename => _fs.ReadJsonAsync<BettingUser>(path => path[WorldCupPath.Betting2022Users] + $@"/{filename}"))
             .WhenAll();
+        if (updateAppUser)
+        {
+            users = await FillAppUsers(users);
+        }
 
         lock (_usersCacheLock)
         {
             _bettingUsersCache = users.ToList();
         }
         return users;
+
+        async Task<IEnumerable<BettingUser>> FillAppUsers(IEnumerable<BettingUser> bettingUsers)
+        {
+            return await bettingUsers
+                .Select(async user =>
+                {
+                    user.AppUser = await _userStore.FindByIdAsync(user.AppUser.Id.ToString(), default);
+                    return user;
+                })
+                .WhenAll();
+        }
     }
 }

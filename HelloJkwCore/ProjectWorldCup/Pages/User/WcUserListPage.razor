@@ -8,18 +8,22 @@
 {
   <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Requested)">
     <HeaderContent>
+      <MudTh>ID</MudTh>
       <MudTh>이름</MudTh>
+      <MudTh>닉네임</MudTh>
       <MudTh>신청시간</MudTh>
       <MudTh>Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
-      <MudTd>@context.AppUser.DisplayName</MudTd>
-      <MudTd>@context.LastJoinRequestTime()</MudTd>
+      <MudTd>@context.AppUser.Id</MudTd>
+      <MudTd>@context.AppUser.UserName</MudTd>
+      <MudTd>@context.AppUser.NickName</MudTd>
+      <MudTd>@context.LastJoinRequestTime().UtcToKst()</MudTd>
       <MudTd>
         <MudButton OnClick="@(() => ApproveAsync(context, 20000))" Variant="Variant.Outlined">
           승인
         </MudButton>
-          <MudButton OnClick="@(() => RejectAsync(context))" Variant="Variant.Outlined">
+        <MudButton OnClick="@(() => RejectAsync(context))" Variant="Variant.Outlined">
           거절
         </MudButton>
       </MudTd>
@@ -31,14 +35,18 @@
 {
   <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Joined)" Context="user">
     <HeaderContent>
+      <MudTh>ID</MudTh>
       <MudTh>이름</MudTh>
+      <MudTh>닉네임</MudTh>
       <MudTh>1차결과</MudTh>
       <MudTh>2차결과</MudTh>
       <MudTh>3차결과</MudTh>
       <MudTh>Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
-      <MudTd>@user.AppUser.DisplayName</MudTd>
+      <MudTd>@user.AppUser.Id</MudTd>
+      <MudTd>@user.AppUser.UserName</MudTd>
+      <MudTd>@user.AppUser.NickName</MudTd>
       <MudTd>
         @GetValue(user, HistoryType.Reward1)
       </MudTd>
@@ -55,6 +63,9 @@
         <MudButton OnClick="@(() => RejectAsync(user))" Variant="Variant.Outlined">
           거절
         </MudButton>
+        <MudLink Href="@($"/worldcup/user/{user.AppUser.Id}".Replace(".", "_"))" Underline="Underline.Always">
+          관리
+        </MudLink>
       </MudTd>
     </RowTemplate>
   </MudTable>
@@ -64,13 +75,17 @@
 {
   <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Rejected || user.JoinStatus == UserJoinStatus.None)">
     <HeaderContent>
+      <MudTh>ID</MudTh>
       <MudTh>이름</MudTh>
+      <MudTh>닉네임</MudTh>
       <MudTh>상태</MudTh>
       <MudTh>신청시간</MudTh>
       <MudTh>Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
-      <MudTd>@context.AppUser.DisplayName</MudTd>
+      <MudTd>@context.AppUser.Id</MudTd>
+      <MudTd>@context.AppUser.UserName</MudTd>
+      <MudTd>@context.AppUser.NickName</MudTd>
       <MudTd>@context.JoinStatus.ToString()</MudTd>
       <MudTd>@context.LastJoinRequestTime()</MudTd>
       <MudTd>

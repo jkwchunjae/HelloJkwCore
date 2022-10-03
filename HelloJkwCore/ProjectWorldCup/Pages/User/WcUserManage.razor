@@ -1,0 +1,27 @@
+﻿@inherits JkwPageBase
+@page "/worldcup/user/{UserId}"
+
+@if (TargetUser != null)
+{
+  <WcUserComponent TargetUser="@TargetUser" ByManager="true"/>
+
+  <div class="d-flex">
+    <MudSelect T="HistoryType" @bind-Value="@(InputHistory.Type)" Label="Type">
+      @foreach (var historyType in Enum.GetValues<HistoryType>())
+      {
+        <MudSelectItem T="HistoryType" Value="historyType">
+          @(historyType.ToString())
+        </MudSelectItem>
+      }
+    </MudSelect>
+    <MudTextField T="string" @bind-Value="@(InputHistory.Comment)" Label="Comment"/>
+    <MudTextField T="long" @bind-Value="@(InputHistory.Value)" Label="Value"/>
+    <MudTextField T="string" @bind-Value="@(InputHistory.ResultUrl)" Label="Url"/>
+    <MudButton Variant="Variant.Outlined" Size="Size.Small"
+      OnClick="@(() => AddHistoryAsync())"
+    >
+      입력
+    </MudButton>
+  </div>
+}
+

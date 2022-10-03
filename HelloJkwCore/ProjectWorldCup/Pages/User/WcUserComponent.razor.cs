@@ -10,13 +10,16 @@ public partial class WcUserComponent
     [Inject] public ISnackbar Snackbar { get; set; }
     [Inject] public IBettingService BettingService { get; set; }
     [Parameter] public BettingUser TargetUser { get; set; }
+    [Parameter] public bool ByManager { get; set; } = false;
 
     private string InputNickname { get; set; }
     TimeZoneInfo LocalTimeZone { get; set; }
 
+    List<BettingHistory> ReadyToDelete { get; set; } = new();
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        InputNickname = TargetUser.AppUser.NickName ?? TargetUser.AppUser.UserName;
+        InputNickname = TargetUser.AppUser.NickName ?? string.Empty;
         var offset = await Js.InvokeAsync<int>("getTimezone");
         LocalTimeZone = TimeZoneInfo.CreateCustomTimeZone("UserLocalTimeZone", TimeSpan.FromMinutes(-offset), "UserLocalTimeZone", "UserLocalTimeZone");
         StateHasChanged();
@@ -73,4 +76,13 @@ public partial class WcUserComponent
         return true;
     }
 
+    private void ConfirmDeleteHistory(BettingHistory history)
+    {
+        ReadyToDelete.Add(history);
+    }
+    private async Task DeleteHistoryAsync(BettingHistory history)
+    {
+        TargetUser =  await BettingService.DeleteHistoryAsync(TargetUser, history);
+        StateHasChanged();
+    }
 }
