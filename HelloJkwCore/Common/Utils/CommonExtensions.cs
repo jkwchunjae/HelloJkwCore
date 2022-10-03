@@ -22,4 +22,10 @@ public static class CommonExtensions
 
         return result;
     }
+
+    private static readonly TimeZoneInfo KST = TimeZoneInfo.FindSystemTimeZoneById("Korea Standard Time");
+    public static DateTime UtcToKst(this DateTime utcTime)
+    {
+        return TimeZoneInfo.ConvertTimeFromUtc(utcTime, KST);
+    }
 }
