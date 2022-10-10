@@ -1,0 +1,39 @@
+﻿@inherits JkwPageBase
+
+<MudNavMenu Class="mud-nav-menu-custom">
+  <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+    Home
+  </MudNavLink>
+  <AuthorizeView>
+    <NotAuthorized>
+      <MudNavLink Href="login" Icon="@Icons.Material.Filled.Login">
+        Login
+      </MudNavLink>
+    </NotAuthorized>
+    <Authorized>
+      <MudNavLink Href="worldcup/userhome" Icon="@Icons.Material.Filled.Person">
+        @User?.DisplayName
+      </MudNavLink>
+    </Authorized>
+  </AuthorizeView>
+  <MudNavLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Icon="@Icons.Filled.EditNote" Target="_blank">
+    규칙 설명
+  </MudNavLink>
+  <MudNavLink Href="worldcup" Icon="@Icons.Material.Filled.SportsSoccer">
+    월드컵
+  </MudNavLink>
+  <AuthorizeView Roles="WcManager">
+    <Authorized>
+      <MudNavLink Href="worldcup/2022/users" Icon="@Icons.Material.Filled.SportsSoccer">
+        월드컵 유저 관리
+      </MudNavLink>
+    </Authorized>
+  </AuthorizeView>
+  <AuthorizeView Roles="Admin">
+    <Authorized>
+      <MudNavLink Href="users" Icon="@Icons.Material.Filled.People">
+        유저 관리
+      </MudNavLink>
+    </Authorized>
+  </AuthorizeView>
+</MudNavMenu>
