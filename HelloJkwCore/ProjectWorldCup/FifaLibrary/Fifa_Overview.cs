@@ -44,6 +44,8 @@ public partial class Fifa : IFifa
                 var result = dataRoot.Standings
                     ?.First()
                     ?.Standing
+                    ?.OrderBy(x => x.GroupName)
+                    ?.ThenBy(x => x.Position)
                     ?.ToList();
 
                 return (result?.Any() ?? false) ? result : throw new Exception();

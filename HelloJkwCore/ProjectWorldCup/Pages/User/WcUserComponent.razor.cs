@@ -3,10 +3,8 @@ using Microsoft.JSInterop;
 
 namespace ProjectWorldCup.Pages.User;
 
-public partial class WcUserComponent
+public partial class WcUserComponent : JkwPageBase
 {
-    [Inject] public IJSRuntime Js { get; set; }
-    [Inject] protected IUserStore<AppUser> UserStore { get; set; }
     [Inject] public ISnackbar Snackbar { get; set; }
     [Inject] public IBettingService BettingService { get; set; }
     [Parameter] public BettingUser TargetUser { get; set; }
@@ -17,7 +15,7 @@ public partial class WcUserComponent
 
     List<BettingHistory> ReadyToDelete { get; set; } = new();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnPageAfterRenderAsync(bool firstRender)
     {
         InputNickname = TargetUser.AppUser.NickName ?? string.Empty;
         var offset = await Js.InvokeAsync<int>("getTimezone");

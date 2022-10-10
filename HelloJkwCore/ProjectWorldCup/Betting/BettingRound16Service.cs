@@ -19,12 +19,10 @@ public class BettingRound16Service : IBettingRound16Service
         _fifa = fifa;
         _worldCupService = worldCupService;
 
-        //_timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
-        //_timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
-        //_timer.AutoReset = true;
-        //_timer.Start();
-
-        UpdateStandingsAsync();
+        _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
+        _timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
+        _timer.AutoReset = true;
+        _timer.Start();
     }
 
     private async Task UpdateStandingsAsync()
@@ -38,7 +36,7 @@ public class BettingRound16Service : IBettingRound16Service
         bettingItems.ForEach(bettingItem => bettingItem.Fixed = winners);
         var result = new BettingResultTable<WcBettingItem<Team>>(bettingItems);
 
-        await bettingItems
+        await result
             .Select(async item =>
             {
                 await SaveBettingItemAsync(item);

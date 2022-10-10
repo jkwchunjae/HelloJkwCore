@@ -18,10 +18,10 @@ public class BettingGroupStageService : IBettingGroupStageService
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
         _worldCupService = worldCupService;
 
-        //_timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
-        //_timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
-        //_timer.AutoReset = true;
-        //_timer.Start();
+        _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
+        _timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
+        _timer.AutoReset = true;
+        _timer.Start();
     }
 
     private async Task UpdateStandingsAsync()
@@ -37,7 +37,7 @@ public class BettingGroupStageService : IBettingGroupStageService
         // 객체를 생성하면서 Reward를 계산한다.
         var result = new BettingResultTable<WcBettingItem<GroupTeam>>(bettingItems);
 
-        await bettingItems
+        await result
             .Select(async item =>
             {
                 await SaveBettingItemAsync(item);

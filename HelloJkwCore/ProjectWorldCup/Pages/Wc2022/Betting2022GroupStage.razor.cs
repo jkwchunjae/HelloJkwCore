@@ -43,6 +43,17 @@ public partial class Betting2022GroupStage : JkwPageBase
         if (TimeOver)
             return;
 
+        var bettingUser = await BettingService.GetBettingUserAsync(User);
+        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
+        {
+            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.GroupStage);
+        }
+        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
+        {
+            // 참가할 수 없는 경우
+            return;
+        }
+
         var buttonType = GetButtonType(team);
 
         if (buttonType == TeamButtonType.Pickable)

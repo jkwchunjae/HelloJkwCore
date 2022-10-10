@@ -66,6 +66,17 @@ public partial class Betting2022Final : JkwPageBase
         if (TimeOver)
             return;
 
+        var bettingUser = await BettingService.GetBettingUserAsync(User);
+        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+        {
+            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Final);
+        }
+        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+        {
+            // 참가할 수 없는 경우
+            return;
+        }
+
         StageMatches = BettingFinalService.PickTeamAsync(stageId, matchId, team, StageMatches, Matches);
 
         if (stageId == Fifa.Round8StageId)

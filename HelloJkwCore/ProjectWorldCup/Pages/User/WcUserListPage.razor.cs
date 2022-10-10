@@ -26,7 +26,6 @@ public partial class WcUserListPage : JkwPageBase
         if (HasRole)
         {
             await Service.ApproveUserAsync(targetUser, initValue, User);
-            await Service.JoinBettingAsync(targetUser, BettingType.GroupStage);
             Users = await Service.GetBettingUsersAsync(updateAppUser: true);
             StateHasChanged();
         }
