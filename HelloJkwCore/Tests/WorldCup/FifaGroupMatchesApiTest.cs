@@ -30,6 +30,7 @@ public class FifaGroupMatchesApiTest
                 InMemory = new Dictionary<string, string>
                 {
                     ["Cache"] = "fs/cache",
+                    ["FifaData"] = "fs/fifadata",
                 }
             },
         };
@@ -45,7 +46,7 @@ public class FifaGroupMatchesApiTest
         Assert.Equal(32, groups.SelectMany(x => x.Teams).Count());
     }
 
-    [Fact(Skip = "FIFA API가 바뀜")]
+    [Fact]
     public async Task FifaGroupStageMatches_should_return_48_matches()
     {
         IFifa fifa = new Fifa(_fsService, _option);
@@ -55,7 +56,7 @@ public class FifaGroupMatchesApiTest
         Assert.Equal(48, matches.Count());
     }
 
-    [Fact(Skip = "FIFA API가 바뀜")]
+    [Fact]
     public async Task FifaKnockoutStageMatches_should_return_16_matches()
     {
         IFifa fifa = new Fifa(_fsService, _option);

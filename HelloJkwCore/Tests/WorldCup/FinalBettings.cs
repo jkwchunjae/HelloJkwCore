@@ -4,6 +4,39 @@ namespace Tests.WorldCup;
 
 public class FinalBettings
 {
+    IFileSystemService _fsService;
+    WorldCupOption _option;
+
+    public FinalBettings()
+    {
+        var fsOption = new FileSystemOption
+        {
+            MainFileSystem = new MainFileSystemOption
+            {
+                UseBackup = false,
+                MainFileSystem = FileSystemType.InMemory,
+            },
+        };
+
+        _fsService = new FileSystemService(fsOption, null, null);
+
+        _option = new WorldCupOption
+        {
+            FileSystemSelect = new FileSystemSelectOption
+            {
+                UseMainFileSystem = true,
+            },
+            Path = new PathMap
+            {
+                InMemory = new Dictionary<string, string>
+                {
+                    ["Cache"] = "fs/cache",
+                    ["FifaData"] = "fs/fifadata",
+                }
+            },
+        };
+    }
+
     List<KnMatch> _finalMatches = new List<KnMatch>
     {
         KnMatch.CreateFromFifaMatchData(new FifaMatchData { IdStage = Fifa.Round8StageId }),
@@ -18,7 +51,7 @@ public class FinalBettings
     [Fact]
     public void EvaluateUserBetting_유저가고른것이없을경우()
     {
-        var service = new BettingFinalService(null, null, null, null);
+        var service = new BettingFinalService(_fsService, null, null, _option);
 
         var quarters = new List<KnMatch>
         {
@@ -40,7 +73,7 @@ public class FinalBettings
     [Fact]
     public void EvaluateUserBetting_유저의선택이있는경우_4강()
     {
-        var service = new BettingFinalService(null, null, null, null);
+        var service = new BettingFinalService(_fsService, null, null, _option);
 
         var quarters = new List<KnMatch>
         {
@@ -75,7 +108,7 @@ public class FinalBettings
     [Fact]
     public void EvaluateUserBetting_유저의선택이있는경우_34위전()
     {
-        var service = new BettingFinalService(null, null, null, null);
+        var service = new BettingFinalService(_fsService, null, null, _option);
 
         var quarters = new List<KnMatch>
         {
@@ -108,7 +141,7 @@ public class FinalBettings
     [Fact]
     public void EvaluateUserBetting_유저의선택이있는경우_결승()
     {
-        var service = new BettingFinalService(null, null, null, null);
+        var service = new BettingFinalService(_fsService, null, null, _option);
 
         var quarters = new List<KnMatch>
         {

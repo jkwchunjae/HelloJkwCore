@@ -12,7 +12,7 @@ public class GroupTeam : Team
             GroupName = groupName,
             //Placeholder = placeholder,
             Id = matchTeam?.Abbreviation ?? placeholder,
-            Name = matchTeam?.TeamName ?? placeholder,
+            Name = matchTeam?.TeamName[0].Description ?? placeholder,
             Flag = matchTeam?.PictureUrl.Replace("{format}", "sq").Replace("{size}", "2"),
         };
     }
@@ -34,8 +34,8 @@ public class GroupMatch : Match<GroupTeam>
                 GroupName = homeTeam.GroupName,
                 HomeTeam = homeTeam,
                 AwayTeam = awayTeam,
-                HomeScore = matchData.Home?.Score ?? 0,
-                AwayScore = matchData.Away?.Score ?? 0,
+                HomeScore = matchData.HomeTeamScore ?? 0,
+                AwayScore = matchData.HomeTeamScore ?? 0,
                 Status = MatchStatus.Before,
                 Time = matchData.Date,
                 Info = new()
@@ -48,8 +48,8 @@ public class GroupMatch : Match<GroupTeam>
         }
         catch
         {
-            var homeTeam = teams.FirstOrDefault(x => x.Id == matchData.Home.CountryId || x.Name == matchData.Home.TeamName);
-            var awayTeam = teams.FirstOrDefault(x => x.Id == matchData.Away.CountryId || x.Name == matchData.Away.TeamName);
+            var homeTeam = teams.FirstOrDefault(x => x.Id == matchData.Home.IdCountry);
+            var awayTeam = teams.FirstOrDefault(x => x.Id == matchData.Away.IdCountry);
 
             var match = new GroupMatch()
             {
@@ -108,8 +108,8 @@ public class KnMatch : Match<Team>
             MatchId = fifaMatchData.IdMatch,
             Time = fifaMatchData.Date,
             Status = MatchStatus.Before,
-            HomeTeam = new Team { Id = fifaMatchData.Home?.CountryId, Name = fifaMatchData.Home?.TeamName, Flag = fifaMatchData.Home?.PictureUrl },
-            AwayTeam = new Team { Id = fifaMatchData.Away?.CountryId, Name = fifaMatchData.Away?.TeamName, Flag = fifaMatchData.Away?.PictureUrl },
+            HomeTeam = new Team { Id = fifaMatchData.Home?.IdCountry, Name = fifaMatchData.Home?.TeamName[0].Description, Flag = fifaMatchData.Home?.PictureUrl },
+            AwayTeam = new Team { Id = fifaMatchData.Away?.IdCountry, Name = fifaMatchData.Away?.TeamName[0].Description, Flag = fifaMatchData.Away?.PictureUrl },
             Info = new()
             {
                 [MatchInfoType.MatchNumber] = fifaMatchData.MatchNumber.ToString(),
