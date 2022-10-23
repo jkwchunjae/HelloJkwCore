@@ -31,7 +31,7 @@ else
     @foreach (var group in Groups)
     {
         <div class="row" style="padding-bottom: 5px;">
-            <div class="col-md-1 group-name" style="font-size: 30px;">@group.Name</div>
+            <div class="col-md-1 group-name" style="font-size: 30px;">@group.Name.Right(1)</div>
             <div class="col-md-11">
                 <div class="row">
                     @foreach (var team in group.Teams)

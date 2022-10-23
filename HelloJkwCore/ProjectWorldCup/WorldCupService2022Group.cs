@@ -20,7 +20,7 @@ public partial class WorldCupService
         var groups = simpleGroups
             .Select(sg =>
             {
-                var groupName = sg.Name.Right(1);
+                var groupName = sg.Name;
                 var league = new WcGroup
                 {
                     Name = groupName,

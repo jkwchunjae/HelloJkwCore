@@ -22,7 +22,15 @@ public partial class KnockoutStage : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        //Knockout = await Service.GetKnockoutStageDataAsync();
+        var knockoutMatches = await Service.GetKnockOutStageMatchesAsync();
+        Knockout = new KnockoutStageData
+        {
+            Final = knockoutMatches.FirstOrDefault(m => m.StageId == Fifa.FinalStageId),
+            ThirdPlacePlayOff = knockoutMatches.FirstOrDefault(m => m.StageId == Fifa.ThirdStageId),
+            SemiFinals = knockoutMatches.Where(m => m.StageId == Fifa.Round4StageId).ToList(),
+            QuarterFinals = knockoutMatches.Where(m => m.StageId == Fifa.Round8StageId).ToList(),
+            Round16 = knockoutMatches.Where(m => m.StageId == Fifa.Round16StageId).ToList(),
+        };
 
         KnockoutRounds = new List<Round>
         {
