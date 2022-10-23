@@ -34,21 +34,23 @@ public partial class Fifa : IFifa
             var cacheTime = DateTime.Now.ToString("yyyyMMdd.HHmm").Left(12); // 분의 앞자리만 쓴다. 10분에 한 번 캐시
             return await GetFromCacheOrAsync<List<FifaStandingData>>($"{nameof(GetStandingDataAsync)}_{cacheTime}0", async () =>
             {
-                var startDate = new DateTime(2022, 11, 19);
-                var searchDate = DateTime.Now > startDate ? DateTime.Now : startDate;
-                var url = $"https://cxm-api.fifa.com/fifaplusweb/api/sections/competitionpage/standings?competitionId=17&locale=en&date={searchDate:yyyy-MM-dd}";
+                var url = $"https://api.fifa.com/api/v3/calendar/17/255711/285063/standing?language=en";
                 var res = await _httpClient.GetAsync(url);
                 var text = await res.Content.ReadAsStringAsync();
-                var dataRoot = Json.Deserialize<FifaStandingDataRoot>(text);
+                text = text.Replace("{format}", "sq").Replace("{size}", "2");
+                var dataRoot = Json.Deserialize<FifaDataRoot<FifaStandingData>>(text);
 
-                var result = dataRoot.Standings
-                    ?.First()
-                    ?.Standing
-                    ?.OrderBy(x => x.GroupName)
-                    ?.ThenBy(x => x.Position)
-                    ?.ToList();
-
-                return (result?.Any() ?? false) ? result : throw new Exception();
+                if (dataRoot?.Results?.Any() ?? false)
+                {
+                    return dataRoot.Results
+                        .OrderBy(x => x.Group[0].Description)
+                        .ThenBy(x => x.Position)
+                        .ToList();
+                }
+                else
+                {
+                    throw new Exception();
+                }
             });
         }
         catch

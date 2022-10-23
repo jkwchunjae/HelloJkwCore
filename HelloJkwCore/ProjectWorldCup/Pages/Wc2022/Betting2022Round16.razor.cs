@@ -26,6 +26,9 @@ public partial class Betting2022Round16 : JkwPageBase
         if (TimeOver[matchIndex])
             return;
 
+        if (team?.Id == null)
+            return;
+
         var bettingUser = await BettingService.GetBettingUserAsync(User);
         if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
         {

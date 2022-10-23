@@ -65,4 +65,18 @@ public class FifaGroupMatchesApiTest
 
         Assert.Equal(16, matches.Count());
     }
+
+    [Fact]
+    public async Task 조별리그_순위_불러오기()
+    {
+        IFifa fifa = new Fifa(_fsService, _option);
+
+        var standings = await fifa.GetStandingDataAsync();
+
+        Assert.Equal(32, standings.Count());
+        Assert.Equal(8, standings.Count(x => x.Position == 1));
+        Assert.Equal(8, standings.Count(x => x.Position == 2));
+        Assert.Equal(8, standings.Count(x => x.Position == 3));
+        Assert.Equal(8, standings.Count(x => x.Position == 4));
+    }
 }

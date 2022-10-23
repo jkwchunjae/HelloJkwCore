@@ -4,18 +4,6 @@ public class GroupTeam : Team
 {
     public string GroupName { get; set; }
     public string Placement { get; set; }
-
-    public static GroupTeam CreateFromFifaMatchTeam(FifaMatchTeam matchTeam, string groupName, string placeholder)
-    {
-        return new GroupTeam
-        {
-            GroupName = groupName,
-            //Placeholder = placeholder,
-            Id = matchTeam?.Abbreviation ?? placeholder,
-            Name = matchTeam?.TeamName[0].Description ?? placeholder,
-            Flag = matchTeam?.PictureUrl.Replace("{format}", "sq").Replace("{size}", "2"),
-        };
-    }
 }
 
 public class GroupMatch : Match<GroupTeam>
@@ -26,8 +14,8 @@ public class GroupMatch : Match<GroupTeam>
     {
         try
         {
-            var homeTeam = teams.First(x => x.Id == matchData.Home.Abbreviation);
-            var awayTeam = teams.First(x => x.Id == matchData.Away.Abbreviation);
+            var homeTeam = teams.First(x => x.Id == matchData.Home.IdCountry);
+            var awayTeam = teams.First(x => x.Id == matchData.Away.IdCountry);
 
             var match = new GroupMatch()
             {
@@ -76,17 +64,16 @@ public class WcGroup : League<GroupMatch, GroupTeam>
     public void WriteStanding(List<FifaStandingData> fifaStandings)
     {
         var standings = Teams
-            .Where(team => fifaStandings.Any(fs => fs.TeamName == team.Name))
             .Select(team =>
             {
-                var fifaStanding = fifaStandings.FirstOrDefault(s => s.TeamName == team.Name);
+                var fifaStanding = fifaStandings.FirstOrDefault(s => s.Team.IdCountry == team.Id);
                 var standing = new TeamStanding<GroupTeam> { Team = team };
-                standing.Rank = fifaStanding.Position;
-                standing.Won = fifaStanding.Won;
-                standing.Drawn = fifaStanding.Drawn;
-                standing.Lost = fifaStanding.Lost;
-                standing.Gf = fifaStanding.For;
-                standing.Ga = fifaStanding.Against;
+                standing.Rank = fifaStanding?.Position ?? default;
+                standing.Won = fifaStanding?.Won ?? default;
+                standing.Drawn = fifaStanding?.Drawn ?? default;
+                standing.Lost = fifaStanding?.Lost ?? default;
+                standing.Gf = fifaStanding?.For ?? default;
+                standing.Ga = fifaStanding?.Against ?? default;
                 return standing;
             })
             .OrderBy(s => s.Rank)

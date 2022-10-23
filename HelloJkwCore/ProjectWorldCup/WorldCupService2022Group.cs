@@ -52,22 +52,4 @@ public partial class WorldCupService
 
         return groups;
     }
-
-    //public async Task<List<GroupMatch>> GetGroupStageMatchesAsync()
-    //{
-    //    var groups = await GetGroupsAsync();
-
-    //    var matches = groups.SelectMany(group => group.Matches).ToList();
-
-    //    return matches;
-    //}
-
-    //private IEnumerable<GroupTeam> GetTeamInfoFromFifaMatchData(FifaMatchData matchData)
-    //{
-    //    var homeTeam = matchData.Home;
-    //    var awayTeam = matchData.Away;
-
-    //    yield return GroupTeam.CreateFromFifaMatchTeam(homeTeam, matchData.GroupName, matchData.PlaceholderA);
-    //    yield return GroupTeam.CreateFromFifaMatchTeam(awayTeam, matchData.GroupName, matchData.PlaceholderB);
-    //}
 }

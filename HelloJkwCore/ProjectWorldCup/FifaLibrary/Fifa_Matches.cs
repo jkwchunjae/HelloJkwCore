@@ -44,7 +44,8 @@ public partial class Fifa : IFifa
             var url = $"https://api.fifa.com/api/v3/calendar/matches?from={begin:yyyy-MM-dd}&to={end:yyyy-MM-dd}&idcompetition=17&language=en";
             var res = await _httpClient.GetAsync(url);
             var text = await res.Content.ReadAsStringAsync();
-            var root = JsonConvert.DeserializeObject<FifaMatchRoot>(text);
+            text = text.Replace("{format}", "sq").Replace("{size}", "2");
+            var root = JsonConvert.DeserializeObject<FifaDataRoot<FifaMatchData>>(text);
             if (root?.Results?.Any() ?? false)
             {
                 return root.Results.ToList();

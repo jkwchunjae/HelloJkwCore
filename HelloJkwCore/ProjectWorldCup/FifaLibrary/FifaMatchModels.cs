@@ -1,11 +1,5 @@
 ﻿namespace ProjectWorldCup.FifaLibrary;
 
-public class FifaIdName
-{
-    [JsonProperty("Locale")] public string Locale { get; set; }
-    [JsonProperty("Description")] public string Description { get; set; }
-}
-
 public class FifaMatchTeam
 {
     [JsonProperty("Score")] public int? Score { get; set; }
@@ -76,9 +70,3 @@ public class FifaMatchData
     [JsonProperty("IsUpdateable")] public object IsUpdateable { get; set; }
 }
 
-public class FifaMatchRoot
-{
-    [JsonProperty("ContinuationToken")] public object ContinuationToken { get; set; }
-    [JsonProperty("ContinuationHash")] public object ContinuationHash { get; set; }
-    [JsonProperty("Results")] public IList<FifaMatchData> Results { get; set; }
-}

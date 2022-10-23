@@ -1,15 +1,18 @@
-﻿namespace ProjectWorldCup;
+﻿using Newtonsoft.Json;
+
+namespace ProjectWorldCup;
 
 public class WcFinalBettingItem<TTeam> : WcBettingItem<TTeam> where TTeam : Team
 {
-    public TTeam Pick0 => Picked.Skip(0).FirstOrDefault();
-    public TTeam Pick1 => Picked.Skip(1).FirstOrDefault();
-    public TTeam Pick2 => Picked.Skip(2).FirstOrDefault();
-    public TTeam Pick3 => Picked.Skip(3).FirstOrDefault();
-    public TTeam Fix0 => Fixed.Skip(0).FirstOrDefault();
-    public TTeam Fix1 => Fixed.Skip(1).FirstOrDefault();
-    public TTeam Fix2 => Fixed.Skip(2).FirstOrDefault();
-    public TTeam Fix3 => Fixed.Skip(3).FirstOrDefault();
+    [JsonIgnore] public TTeam Pick0 => Picked.Skip(0).FirstOrDefault();
+    [JsonIgnore] public TTeam Pick1 => Picked.Skip(1).FirstOrDefault();
+    [JsonIgnore] public TTeam Pick2 => Picked.Skip(2).FirstOrDefault();
+    [JsonIgnore] public TTeam Pick3 => Picked.Skip(3).FirstOrDefault();
+    [JsonIgnore] public TTeam Fix0 => Fixed.Skip(0).FirstOrDefault();
+    [JsonIgnore] public TTeam Fix1 => Fixed.Skip(1).FirstOrDefault();
+    [JsonIgnore] public TTeam Fix2 => Fixed.Skip(2).FirstOrDefault();
+    [JsonIgnore] public TTeam Fix3 => Fixed.Skip(3).FirstOrDefault();
+
     /// <summary> 각 순위에 대한 점수 </summary>
     public int RankScore
     {
@@ -66,9 +69,8 @@ public class WcFinalBettingItem<TTeam> : WcBettingItem<TTeam> where TTeam : Team
     public override int Score
     {
         get => RankScore + FinalMatchScore + SemiFinalMatchScore;
-        set { }
     }
 
-    public List<TTeam> SemiFinalTeams { get; set; }
-    public List<TTeam> FinalTeams { get; set; }
+    [JsonIgnore] public List<TTeam> SemiFinalTeams { get; set; }
+    [JsonIgnore] public List<TTeam> FinalTeams { get; set; }
 }

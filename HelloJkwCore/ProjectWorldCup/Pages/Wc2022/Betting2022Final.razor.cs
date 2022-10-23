@@ -66,6 +66,9 @@ public partial class Betting2022Final : JkwPageBase
         if (TimeOver)
             return;
 
+        if (team?.Id == null)
+            return;
+
         var bettingUser = await BettingService.GetBettingUserAsync(User);
         if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
         {

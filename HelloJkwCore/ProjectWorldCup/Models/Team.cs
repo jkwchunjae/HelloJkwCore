@@ -11,8 +11,6 @@ public class Team : ITeam, IEquatable<Team>, IComparable<Team>
     public string Id { get; set; }
     public string Name { get; set; }
     public string Flag { get; set; }
-    public int FifaRank { get; set; }
-    public string Region { get; set; }
 
     public int CompareTo(Team other)
     {
