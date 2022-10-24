@@ -45,17 +45,21 @@
       <MudTh>Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
-      <MudTd>@user.AppUser.Id</MudTd>
+      <MudTd>
+        <MudLink Href="@($"/worldcup/user/{user.AppUser.Id}".Replace(".", "_"))" Underline="Underline.Always">
+          @user.AppUser.Id
+        </MudLink>
+      </MudTd>
       <MudTd>@user.AppUser.UserName</MudTd>
       <MudTd>@user.AppUser.NickName</MudTd>
       <MudTd>
         @GetValue(user, HistoryType.Reward1)
       </MudTd>
       <MudTd>
-        @GetValue(user, HistoryType.Reward1)
+        @GetValue(user, HistoryType.Reward2)
       </MudTd>
       <MudTd>
-        @GetValue(user, HistoryType.Reward1)
+        @GetValue(user, HistoryType.Reward3)
       </MudTd>
       <MudTd>
         <MudButton OnClick="@(() => RequestAsync(user))" Variant="Variant.Outlined">
@@ -64,9 +68,6 @@
         <MudButton OnClick="@(() => RejectAsync(user))" Variant="Variant.Outlined">
           거절
         </MudButton>
-        <MudLink Href="@($"/worldcup/user/{user.AppUser.Id}".Replace(".", "_"))" Underline="Underline.Always">
-          관리
-        </MudLink>
       </MudTd>
     </RowTemplate>
   </MudTable>
