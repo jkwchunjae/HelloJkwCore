@@ -18,6 +18,7 @@ public interface IBettingService
     Task<BettingUser> AddHistoryAsync(BettingUser user, BettingHistory history);
     Task<BettingUser> DeleteHistoryAsync(BettingUser user, BettingHistory history);
     Task<IEnumerable<BettingUser>> GetBettingUsersAsync(bool updateAppUser = false);
+    Task<BettingUser> AddRewardAsync(BettingUser user, HistoryType rewardType, long reward);
     void ClearUserCache();
     #endregion
 }

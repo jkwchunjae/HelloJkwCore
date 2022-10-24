@@ -19,7 +19,10 @@ public partial class BettingResultComponent : JkwPageBase
 
     private Task BettingItemsUpdated()
     {
-        BettingResult = new BettingResultTable<IWcBettingItem<ITeam>>(BettingItems);
+        if (BettingItems != null)
+        {
+            BettingResult = new BettingResultTable<IWcBettingItem<ITeam>>(BettingItems);
+        }
         return Task.CompletedTask;
     }
 

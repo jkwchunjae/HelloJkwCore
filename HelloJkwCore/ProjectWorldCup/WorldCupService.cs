@@ -14,12 +14,12 @@ public partial class WorldCupService : IWorldCupService
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
     }
 
-    public async Task<List<KnMatch>> GetKnockOutStageMatchesAsync()
+    public async Task<List<KnMatch>> GetKnockoutStageMatchesAsync()
     {
         var matches = await _fifa.GetKnockoutStageMatchesAsync();
 
         return matches
-            .Select(x => KnMatch.CreateFromFifaMatchData(x))
+            .Select(match => KnMatch.CreateFromFifaMatchData(match))
             .ToList();
     }
 

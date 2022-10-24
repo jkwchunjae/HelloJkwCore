@@ -22,7 +22,7 @@ public partial class KnockoutStage : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        var knockoutMatches = await Service.GetKnockOutStageMatchesAsync();
+        var knockoutMatches = await Service.GetKnockoutStageMatchesAsync();
         Knockout = new KnockoutStageData
         {
             Final = knockoutMatches.FirstOrDefault(m => m.StageId == Fifa.FinalStageId),

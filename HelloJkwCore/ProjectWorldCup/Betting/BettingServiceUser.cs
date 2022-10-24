@@ -178,4 +178,37 @@ public partial class BettingService : IBettingService
                 .WhenAll();
         }
     }
+
+    public async Task<BettingUser> AddRewardAsync(BettingUser user, HistoryType rewardType, long reward)
+    {
+        var bettingName =
+              rewardType == HistoryType.Reward1 ? "16강 진출팀 맞추기"
+            : rewardType == HistoryType.Reward2 ? "8강 진출팀 맞추기"
+            : rewardType == HistoryType.Reward3 ? "우승팀 맞추기"
+            : string.Empty;
+        var resultUrl =
+              rewardType == HistoryType.Reward1 ? "group-stage"
+            : rewardType == HistoryType.Reward2 ? "round16"
+            : rewardType == HistoryType.Reward3 ? "final"
+            : string.Empty;
+        if (user.BettingHistories.Any(x => x.Type == rewardType))
+        {
+            var rewardHistory = user.BettingHistories.First(x => x.Type == rewardType);
+            rewardHistory.Value = reward;
+            rewardHistory.Comment = $"{bettingName} 내기 결과: {reward:#,#}";
+        }
+        else
+        {
+            user.BettingHistories.Add(new BettingHistory
+            {
+                Type = rewardType,
+                Value = reward,
+                ResultUrl = $"/worldcup/2022/result/{resultUrl}",
+                Comment = $"'{bettingName}' 내기 결과: {reward:#,#}",
+            });
+        }
+        await SaveUserAsync(user);
+
+        return user;
+    }
 }

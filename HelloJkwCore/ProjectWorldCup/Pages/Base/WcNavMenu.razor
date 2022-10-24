@@ -31,6 +31,13 @@
   <MudNavLink Href="worldcup/2022/betting/final" Icon="@Icons.Outlined.AutoAwesome">
     2022 Round.3
   </MudNavLink>
+  <AuthorizeView Roles="Admin">
+    <Authorized>
+      <MudNavLink Href="worldcup/2022/reward/result" Icon="@Icons.Material.Filled.Money">
+        정산
+      </MudNavLink>
+    </Authorized>
+  </AuthorizeView>
   <AuthorizeView Roles="WcManager">
     <Authorized>
       <MudNavLink Href="worldcup/2022/users" Icon="@Icons.Outlined.PeopleOutline">

@@ -9,4 +9,6 @@ internal static class WorldCupConst
     public static readonly DateTime Round16Match2StartTime = DateTime.Parse("2022-12-03T22:00:00+03:00");
     public static readonly DateTime Round16Match3StartTime = DateTime.Parse("2022-12-04T18:00:00+03:00");
     public static readonly DateTime Round8StartTime = DateTime.Parse("2022-12-09T18:00:00+03:00");
+    public static readonly DateTime Round4StartTime = DateTime.Parse("2022-12-13T22:00:00+03:00");
+    public static readonly DateTime FinalStartTime = DateTime.Parse("2022-12-18T18:00:00+03:00");
 }

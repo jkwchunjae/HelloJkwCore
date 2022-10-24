@@ -1,0 +1,51 @@
+﻿@if ((BettingResults?.Any() ?? false) && (FixedTeams?.Any() ?? false))
+{
+  <MudSimpleTable>
+    <thead>
+      <tr>
+        <th>Name</th>
+        @for (var i = 1; i <= FixedTeams.Count(); i++)
+        {
+          <td>@($"pick{i}")</td>
+        }
+        <th>Score</th>
+        <th>Reward</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>정답</td>
+        @foreach (var fixedTeam in FixedTeams)
+        {
+          <td>@fixedTeam.Id</td>
+        }
+        <td></td>
+        <td></td>
+      </tr>
+      @foreach (var item in BettingResults)
+      {
+        <tr>
+          <td>@item.User.DisplayName</td>
+          @foreach (var picked in item.Picked)
+          {
+            <td>@picked.Id</td>
+          }
+          @if (FixedTeams.Count() > item.Picked.Count())
+          {
+            @for (var i = 0; i < FixedTeams.Count() - item.Picked.Count(); i++)
+            {
+              <td>@string.Empty</td>
+            }
+          }
+          <td>@item.Score</td>
+          <td>@item.Reward</td>
+        </tr>
+      }
+    </tbody>
+  </MudSimpleTable>
+}
+
+@code {
+  [Parameter] public IEnumerable<IWcBettingItem<ITeam>> BettingResults { get; set; }
+  [Parameter] public IEnumerable<ITeam> FixedTeams { get; set; }
+}
