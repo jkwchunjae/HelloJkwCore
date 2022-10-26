@@ -68,6 +68,40 @@ else
     }
 </div>
 
+@if (!TimeOver)
+{
+  @if (BettingItem?.IsRandom ?? false)
+  {
+  }
+  else
+  {
+  @if (CheckRandom1 == false)
+  {
+    <MudButton OnClick="@(() => { CheckRandom1 = true; })" Variant="Variant.Outlined" Color="Color.Error">
+      랜덤 선택
+    </MudButton>
+  }
+  else if (CheckRandom2 == false)
+  {
+    <MudButton OnClick="@(() => { CheckRandom2 = true; })" Variant="Variant.Outlined" Color="Color.Error">
+      랜덤 선택을 하면 더 이상 수정할 수 없습니다. 각오하셨습니까?
+    </MudButton>
+  }
+  else if (CheckRandom3 == false)
+  {
+    <MudButton OnClick="@(() => { CheckRandom3 = true; })" Variant="Variant.Outlined" Color="Color.Error">
+      결과가 마음에 안들더라도 절대 복구해주지 않을 겁니다. 괜찮습니까?
+    </MudButton>
+  }
+  else
+  {
+    <MudButton OnClick="@(() => SelectFullRandom())" Variant="Variant.Filled" Color="Color.Error">
+      찐막 질문. 랜덤 선택하시겠습니까?
+    </MudButton>
+  }
+  }
+}
+
 @if (BettingItems?.Any() ?? false)
 {
     @if (User?.HasRole(UserRole.Admin) ?? false)

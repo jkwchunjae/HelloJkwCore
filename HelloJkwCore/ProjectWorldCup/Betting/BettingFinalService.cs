@@ -18,7 +18,7 @@ public class BettingFinalService : IBettingFinalService
         IWorldCupService worldCupService,
         WorldCupOption option)
     {
-        _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
+        _fs = fsService?.GetFileSystem(option?.FileSystemSelect, option?.Path);
         _fifa = fifa;
         _worldCupService = worldCupService;
 
@@ -181,7 +181,7 @@ public class BettingFinalService : IBettingFinalService
         }
     }
 
-    public List<(string StageId, List<KnMatch> Matches)> PickTeamAsync(string stageId, string matchId, Team team, List<(string StageId, List<KnMatch> Matches)> stageMatches, List<KnMatch> matches)
+    public List<(string StageId, List<KnMatch> Matches)> PickTeam(string stageId, string matchId, Team team, List<(string StageId, List<KnMatch> Matches)> stageMatches, List<KnMatch> matches)
     {
         matches = matches.Select(m => new KnMatch(m)).ToList();
         if (stageId == Fifa.Round8StageId)
@@ -295,6 +295,32 @@ public class BettingFinalService : IBettingFinalService
             #endregion
         }
         return stageMatches;
+    }
+
+    public (List<(string StageId, List<KnMatch> Matches)> StageMatches, List<Team> PickTeams) PickRandom(List<(string StageId, List<KnMatch> Matches)> stageMatches, List<KnMatch> matches)
+    {
+        var round8Matches = stageMatches.First(x => x.StageId == Fifa.Round8StageId).Matches;
+        foreach (var match in round8Matches)
+        {
+            var pickTeam = StaticRandom.Next() < 0.5 ? match.HomeTeam : match.AwayTeam;
+            stageMatches = PickTeam(match.StageId, match.MatchId, pickTeam, stageMatches, matches);
+        }
+
+        var round4Matches = stageMatches.First(x => x.StageId == Fifa.Round4StageId).Matches;
+        foreach (var match in round4Matches)
+        {
+            var pickTeam = StaticRandom.Next() < 0.5 ? match.HomeTeam : match.AwayTeam;
+            stageMatches = PickTeam(match.StageId, match.MatchId, pickTeam, stageMatches, matches);
+        }
+
+        var thirdMatch = stageMatches.First(x => x.StageId == Fifa.ThirdStageId).Matches[0];
+        var finalMatch = stageMatches.First(x => x.StageId == Fifa.FinalStageId).Matches[0];
+
+        var thirdResult = (new[] { thirdMatch.HomeTeam, thirdMatch.AwayTeam }).RandomShuffle();
+        var finalResult = (new[] { finalMatch.HomeTeam, finalMatch.AwayTeam }).RandomShuffle();
+
+        var pickTeams = finalResult.Concat(thirdResult).ToList();
+        return (stageMatches, pickTeams);
     }
     #endregion
 }

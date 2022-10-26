@@ -30,13 +30,10 @@ public interface IMatch<TTeam> where TTeam : Team
     int AwayPenaltyScore { get; set; }
     Dictionary<MatchInfoType, string> Info { get; set; }
 
-    bool IsDraw => HomeScore == AwayScore && HomePenaltyScore == AwayPenaltyScore;
-    (TTeam Team, int Score, int PenaltyScore) Winner => HomeScore != AwayScore
-        ? (HomeScore > AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))
-        : (HomePenaltyScore > AwayPenaltyScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore));
-    (TTeam Team, int Score, int PenaltyScore) Looser => HomeScore != AwayScore
-        ? (HomeScore < AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))
-        : (HomePenaltyScore < AwayPenaltyScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore));
+    IEnumerable<TTeam> Teams { get; }
+    bool IsDraw { get; }
+    (TTeam Team, int Score, int PenaltyScore) Winner { get; }
+    (TTeam Team, int Score, int PenaltyScore) Looser { get; }
 }
 
 public class Match<TTeam> : IMatch<TTeam> where TTeam : Team
@@ -53,6 +50,7 @@ public class Match<TTeam> : IMatch<TTeam> where TTeam : Team
     /// <summary> 원정팀 승부차기 득점 </summary>
     public int AwayPenaltyScore { get; set; }
     public Dictionary<MatchInfoType, string> Info { get; set; } = new();
+    public IEnumerable<TTeam> Teams => new[] { HomeTeam, AwayTeam };
     public bool IsDraw => HomeScore == AwayScore && HomePenaltyScore == AwayPenaltyScore;
     public (TTeam Team, int Score, int PenaltyScore) Winner => HomeScore != AwayScore
         ? (HomeScore > AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))

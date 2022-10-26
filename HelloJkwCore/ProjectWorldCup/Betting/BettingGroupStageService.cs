@@ -147,4 +147,34 @@ public class BettingGroupStageService : IBettingGroupStageService
             }
         }
     }
+
+    public async Task<WcBettingItem<GroupTeam>> PickRandomAsync(BettingUser user)
+    {
+        if (user.JoinStatus != UserJoinStatus.Joined)
+        {
+            throw new NotJoinedException();
+        }
+        if (!(user.JoinedBetting?.Contains(BettingType.GroupStage) ?? false))
+        {
+            throw new NotJoinedException();
+        }
+        var bettingItem = await GetBettingAsync(user)
+            ?? new WcBettingItem<GroupTeam>
+            {
+                User = user.AppUser,
+            };
+
+        var groups = await _worldCupService.GetGroupsAsync();
+        var pickTeam = groups
+            .SelectMany(group => group.Teams.RandomShuffle().Take(2))
+            .ToList();
+
+        bettingItem.IsRandom = true;
+        bettingItem.Picked = pickTeam
+          .OrderBy(x => x.GroupName)
+          .ThenBy(x => x.Placement)
+          .ToList();
+        await SaveBettingItemAsync(bettingItem);
+        return bettingItem;
+    }
 }

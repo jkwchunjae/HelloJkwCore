@@ -2,17 +2,19 @@
 
 public interface IWcBettingItem<out TTeam> : IBettingResultItem where TTeam : ITeam
 {
-    public AppUser User { get; set; }
-    public IEnumerable<TTeam> Picked { get; }
-    public IEnumerable<TTeam> Fixed { get; }
-    public IEnumerable<TTeam> Success { get; }
-    public IEnumerable<TTeam> Fail { get; }
+    AppUser User { get; set; }
+    IEnumerable<TTeam> Picked { get; }
+    IEnumerable<TTeam> Fixed { get; }
+    IEnumerable<TTeam> Success { get; }
+    IEnumerable<TTeam> Fail { get; }
+    bool IsRandom { get; }
 }
 
 public class WcBettingItem<TTeam> : IWcBettingItem<TTeam> where TTeam : ITeam
 {
     public AppUser User { get; set; }
     public int Reward { get; set; }
+    public bool IsRandom { get; set; }
 
     [JsonIgnore]
     public string Id

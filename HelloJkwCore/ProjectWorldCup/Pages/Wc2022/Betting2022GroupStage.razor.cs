@@ -18,6 +18,9 @@ public partial class Betting2022GroupStage : JkwPageBase
     private List<WcBettingItem<GroupTeam>> BettingItems { get; set; }
 
     bool TimeOver { get; set; } = false;
+    bool CheckRandom1 = false;
+    bool CheckRandom2 = false;
+    bool CheckRandom3 = false;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -41,6 +44,8 @@ public partial class Betting2022GroupStage : JkwPageBase
     private async Task PickTeam(GroupTeam team)
     {
         if (TimeOver)
+            return;
+        if (BettingItem?.IsRandom ?? false)
             return;
 
         var bettingUser = await BettingService.GetBettingUserAsync(User);
@@ -66,6 +71,8 @@ public partial class Betting2022GroupStage : JkwPageBase
     private async Task UnpickTeam(GroupTeam team)
     {
         if (TimeOver)
+            return;
+        if (BettingItem?.IsRandom ?? false)
             return;
 
         var buttonType = GetButtonType(team);
@@ -100,6 +107,28 @@ public partial class Betting2022GroupStage : JkwPageBase
     private void OnTimeOver()
     {
         TimeOver = true;
+        StateHasChanged();
+    }
+
+    private async Task SelectFullRandom()
+    {
+        if (TimeOver)
+            return;
+        if (BettingItem?.IsRandom ?? false)
+            return;
+
+        var bettingUser = await BettingService.GetBettingUserAsync(User);
+        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
+        {
+            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.GroupStage);
+        }
+        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
+        {
+            // 참가할 수 없는 경우
+            return;
+        }
+
+        BettingItem = await GroupStageService.PickRandomAsync(BettingUser);
         StateHasChanged();
     }
 }

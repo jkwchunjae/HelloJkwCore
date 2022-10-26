@@ -9,5 +9,6 @@ public interface IBettingFinalService
     Task SaveTeamsAsync(BettingUser user, WcFinalBettingItem<Team> bettingItem);
     List<(string StageId, List<KnMatch> Matches)> EvaluateUserBetting(List<KnMatch> quarters, WcFinalBettingItem<Team> userBetting, List<KnMatch> matches);
     TeamButtonType GetButtonType(string stageId, Team team, List<(string StageId, List<KnMatch> Matches)> stageMatches, WcFinalBettingItem<Team> userBetting);
-    List<(string StageId, List<KnMatch> Matches)> PickTeamAsync(string stageId, string matchId, Team team, List<(string StageId, List<KnMatch> Matches)> stageMatches, List<KnMatch> matches);
+    List<(string StageId, List<KnMatch> Matches)> PickTeam(string stageId, string matchId, Team team, List<(string StageId, List<KnMatch> Matches)> stageMatches, List<KnMatch> matches);
+    (List<(string StageId, List<KnMatch> Matches)> StageMatches, List<Team> PickTeams) PickRandom(List<(string StageId, List<KnMatch> Matches)> stageMatches, List<KnMatch> matches);
 }

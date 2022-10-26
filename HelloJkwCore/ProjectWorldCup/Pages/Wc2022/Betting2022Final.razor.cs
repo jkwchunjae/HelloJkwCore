@@ -24,6 +24,9 @@ public partial class Betting2022Final : JkwPageBase
     };
 
     bool TimeOver = false;
+    bool CheckRandom1 = false;
+    bool CheckRandom2 = false;
+    bool CheckRandom3 = false;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -65,7 +68,8 @@ public partial class Betting2022Final : JkwPageBase
     {
         if (TimeOver)
             return;
-
+        if (BettingItem?.IsRandom ?? false)
+            return;
         if (team?.Id == null)
             return;
 
@@ -80,7 +84,7 @@ public partial class Betting2022Final : JkwPageBase
             return;
         }
 
-        StageMatches = BettingFinalService.PickTeamAsync(stageId, matchId, team, StageMatches, Matches);
+        StageMatches = BettingFinalService.PickTeam(stageId, matchId, team, StageMatches, Matches);
 
         if (stageId == Fifa.Round8StageId)
         {
@@ -119,5 +123,31 @@ public partial class Betting2022Final : JkwPageBase
         {
             await BettingFinalService.SaveTeamsAsync(BettingUser, BettingItem);
         }
+    }
+
+    private async Task SelectFullRandom()
+    {
+        if (TimeOver)
+            return;
+        if (BettingItem?.IsRandom ?? false)
+            return;
+
+        var bettingUser = await BettingService.GetBettingUserAsync(User);
+        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+        {
+            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Final);
+        }
+        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+        {
+            // 참가할 수 없는 경우
+            return;
+        }
+
+        (StageMatches, var pickTeams) = BettingFinalService.PickRandom(StageMatches, Matches);
+        BettingItem.Picked = pickTeams;
+        BettingItem.IsRandom = true;
+
+        await BettingFinalService.SaveTeamsAsync(BettingUser, BettingItem);
+        StateHasChanged();
     }
 }
