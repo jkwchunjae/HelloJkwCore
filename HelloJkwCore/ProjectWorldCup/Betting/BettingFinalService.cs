@@ -22,10 +22,49 @@ public class BettingFinalService : IBettingFinalService
         _fifa = fifa;
         _worldCupService = worldCupService;
 
-        //_timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
-        //_timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
-        //_timer.AutoReset = true;
-        //_timer.Start();
+        _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
+        _timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
+        _timer.AutoReset = true;
+        _timer.Start();
+    }
+
+    private async Task UpdateStandingsAsync()
+    {
+        if (DateTime.Now < WorldCupConst.Round8StartTime)
+            return;
+
+        var matches = await _worldCupService.GetFinalMatchesAsync();
+        var semiFinalTeams = matches
+            .Where(match => match.StageId == Fifa.Round4StageId)
+            .SelectMany(match => match.Teams)
+            .Where(team => team != null)
+            .ToList();
+        var thirdTeams = matches
+            .Where(match => match.StageId == Fifa.ThirdStageId)
+            .SelectMany(match => match.Teams)
+            .ToList();
+        var finalTeams = matches
+            .Where(match => match.StageId == Fifa.FinalStageId)
+            .SelectMany(match => match.Teams)
+            .ToList();
+        var fixedTeams = finalTeams.Concat(thirdTeams).ToList();
+        var bettingItems = await GetAllBettingsAsync();
+        bettingItems.ForEach(bettingItem =>
+        {
+            bettingItem.SemiFinalTeams = semiFinalTeams;
+            bettingItem.FinalTeams = finalTeams;
+            bettingItem.Fixed = fixedTeams;
+        });
+
+        // 객체를 생성하면서 Reward를 계산한다.
+        var result = new BettingResultTable<WcFinalBettingItem<Team>>(bettingItems);
+
+        await result
+            .Select(async item =>
+            {
+                await SaveBettingItemAsync(item);
+            })
+            .WhenAll();
     }
 
     public async ValueTask<List<WcFinalBettingItem<Team>>> GetAllBettingsAsync()
@@ -57,7 +96,7 @@ public class BettingFinalService : IBettingFinalService
         var bettingItem = await _fs.ReadBettingItemAsync<WcFinalBettingItem<Team>, Team>(BettingType.Final, user.AppUser);
         return bettingItem;
     }
-    public async Task SaveTeamsAsync(BettingUser user, WcFinalBettingItem<Team> item)
+    public async Task SaveBettingItemAsync(WcFinalBettingItem<Team> item)
     {
         await _fs.WriteBettingItemAsync(BettingType.Final, item);
 

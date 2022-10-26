@@ -27,9 +27,13 @@ public class BettingRound16Service : IBettingRound16Service
 
     private async Task UpdateStandingsAsync()
     {
-        var matches = await _worldCupService.GetRound16MatchesAsync();
+        if (DateTime.Now < WorldCupConst.Round16Match1StartTime)
+            return;
+
+        var matches = await _worldCupService.GetKnockoutStageMatchesAsync();
         var winners = matches
-            .Select(match => match?.Winner.Team ?? default)
+            .Where(match => match.StageId == Fifa.Round8StageId)
+            .SelectMany(match => match.Teams)
             .Where(team => team != null)
             .ToList();
         var bettingItems = await GetAllBettingsAsync();

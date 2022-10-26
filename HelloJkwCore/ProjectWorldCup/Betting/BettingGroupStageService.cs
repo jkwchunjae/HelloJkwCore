@@ -26,6 +26,9 @@ public class BettingGroupStageService : IBettingGroupStageService
 
     private async Task UpdateStandingsAsync()
     {
+        if (DateTime.Now < WorldCupConst.WorldCupStartTime)
+            return;
+
         var groups = await _worldCupService.GetGroupsAsync();
         var team16 = groups
             .SelectMany(group => group.Stands.Take(2))

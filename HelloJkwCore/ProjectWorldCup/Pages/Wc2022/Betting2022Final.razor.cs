@@ -124,7 +124,7 @@ public partial class Betting2022Final : JkwPageBase
 
         if (BettingItem.Picked?.Count(x => x != null) == 4)
         {
-            await BettingFinalService.SaveTeamsAsync(BettingUser, BettingItem);
+            await BettingFinalService.SaveBettingItemAsync(BettingItem);
         }
     }
 
@@ -152,7 +152,7 @@ public partial class Betting2022Final : JkwPageBase
         BettingItem.Picked = pickTeams;
         BettingItem.IsRandom = true;
 
-        await BettingFinalService.SaveTeamsAsync(BettingUser, BettingItem);
+        await BettingFinalService.SaveBettingItemAsync(BettingItem);
         StateHasChanged();
     }
 }
