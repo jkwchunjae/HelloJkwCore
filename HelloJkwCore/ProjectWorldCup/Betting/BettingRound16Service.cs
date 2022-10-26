@@ -133,4 +133,27 @@ public class BettingRound16Service : IBettingRound16Service
             }
         }
     }
+
+    public async Task<WcBettingItem<Team>> PickRandomAsync(BettingUser user)
+    {
+        if (user.JoinStatus != UserJoinStatus.Joined)
+        {
+            throw new NotJoinedException();
+        }
+        if (!(user.JoinedBetting?.Contains(BettingType.Round16) ?? false))
+        {
+            throw new NotJoinedException();
+        }
+
+        var bettingItem = await GetBettingAsync(user);
+        var matches = await _worldCupService.GetRound16MatchesAsync();
+        var pickTeam = matches
+            .Select(match => match.Teams.GetRandom())
+            .ToList();
+
+        bettingItem.IsRandom = true;
+        bettingItem.Picked = pickTeam;
+        await SaveBettingItemAsync(bettingItem);
+        return bettingItem;
+    }
 }

@@ -22,6 +22,11 @@
     RemainSeconds="@((int)(WorldCupConst.Round16Match3StartTime - DateTime.Now).TotalSeconds)"
     TimeOver="@(() => OnTimeOver(2))"
 />
+<WcRemainTime
+    ClassName="remain-random-time"
+    RemainSeconds="@((int)(WorldCupConst.GroupStageLastTime + TimeSpan.FromHours(2) - DateTime.Now).TotalSeconds)"
+    TimeOver="@(() => {})"
+/>
 
 
 <WcTitle>2라운드: 8강 진출팀 맞추기</WcTitle>
@@ -78,6 +83,48 @@
     </div>
   }
 </div>
+
+@if (TimeOver.All(t => t == false))
+{
+  // 모두 선택가능 할 때만 선택할 수 있다.
+  @if (BettingItem?.IsRandom ?? false)
+  {
+  }
+  else if (!AllMatchesAreSetted)
+  {
+    <MudButton Variant="Variant.Filled" Color="Color.Error">
+      <span>랜덤 선택: 16강 진출팀이 모두 확정 된 후에 선택가능 합니다.&nbsp;</span>
+      <span class="remain-random-time"></span><span>남았습니다.</span>
+    </MudButton>
+  }
+  else
+  {
+    @if (CheckRandom1 == false)
+    {
+      <MudButton OnClick="@(() => { CheckRandom1 = true; })" Variant="Variant.Outlined" Color="Color.Error">
+        랜덤 선택
+      </MudButton>
+    }
+    else if (CheckRandom2 == false)
+    {
+      <MudButton OnClick="@(() => { CheckRandom2 = true; })" Variant="Variant.Outlined" Color="Color.Error">
+        랜덤 선택을 하면 더 이상 수정할 수 없습니다. 각오하셨습니까?
+      </MudButton>
+    }
+    else if (CheckRandom3 == false)
+    {
+      <MudButton OnClick="@(() => { CheckRandom3 = true; })" Variant="Variant.Outlined" Color="Color.Error">
+        결과가 마음에 안들더라도 절대 복구해주지 않을 겁니다. 괜찮습니까?
+      </MudButton>
+    }
+    else
+    {
+      <MudButton OnClick="@(() => SelectFullRandom())" Variant="Variant.Filled" Color="Color.Error">
+        찐막 질문. 랜덤 선택하시겠습니까?
+      </MudButton>
+    }
+  }
+}
 
 @if (BettingItems?.Any() ?? false)
 {

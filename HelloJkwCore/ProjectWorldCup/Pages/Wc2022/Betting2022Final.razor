@@ -72,6 +72,12 @@
   @if (BettingItem?.IsRandom ?? false)
   {
   }
+  else if (!AllMatchesAreSetted)
+  {
+    <MudButton Variant="Variant.Filled" Color="Color.Error">
+      랜덤 선택: 8강 진출팀이 모두 확정 된 후에 선택가능 합니다.
+    </MudButton>
+  }
   else
   {
     @if (CheckRandom1 == false)

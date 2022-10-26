@@ -11,7 +11,13 @@ public partial class Betting2022Round16 : JkwPageBase
     WcBettingItem<Team> BettingItem = new();
     List<WcBettingItem<Team>> BettingItems = null;
 
+    bool AllMatchesAreSetted => Round16Matches.SelectMany(m => m.Teams)
+        .All(team => team?.Id != null && team.Id.Length == 3);
+
     bool[] TimeOver = new[] { false, false, false, false, false, false, false, false };
+    bool CheckRandom1 = false;
+    bool CheckRandom2 = false;
+    bool CheckRandom3 = false;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -72,5 +78,29 @@ public partial class Betting2022Round16 : JkwPageBase
                 TimeOver[i] = true;
             }
         }
+    }
+
+    private async Task SelectFullRandom()
+    {
+        if (TimeOver.Any(x => x))
+            return;
+        if (!AllMatchesAreSetted)
+            return;
+        if (BettingItem?.IsRandom ?? false)
+            return;
+
+        var bettingUser = await BettingService.GetBettingUserAsync(User);
+        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
+        {
+            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Round16);
+        }
+        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
+        {
+            // 참가할 수 없는 경우
+            return;
+        }
+
+        BettingItem = await BettingRound16Service.PickRandomAsync(bettingUser);
+        StateHasChanged();
     }
 }

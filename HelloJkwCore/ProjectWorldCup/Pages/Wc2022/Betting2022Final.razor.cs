@@ -22,7 +22,8 @@ public partial class Betting2022Final : JkwPageBase
         [Fifa.ThirdStageId] = "3,4위전",
         [Fifa.FinalStageId] = "결승전",
     };
-
+    bool AllMatchesAreSetted => StageMatches.Any() && StageMatches[0].Matches
+        .All(match => match.Teams.All(team => team?.Id?.Length == 3));
     bool TimeOver = false;
     bool CheckRandom1 = false;
     bool CheckRandom2 = false;
@@ -35,6 +36,8 @@ public partial class Betting2022Final : JkwPageBase
 
         var quarterFinalMatches = await WorldCupService.GetQuarterFinalMatchesAsync();
         StageMatches.Add((Fifa.Round8StageId, quarterFinalMatches));
+
+        //await Js.InvokeVoidAsync("console.log", quarterFinalMatches, AllMatchesAreSetted);
 
         var bettingUser = await BettingService.GetBettingUserAsync(User);
         BettingItem = await BettingFinalService.GetBettingAsync(bettingUser);
@@ -130,6 +133,8 @@ public partial class Betting2022Final : JkwPageBase
         if (TimeOver)
             return;
         if (BettingItem?.IsRandom ?? false)
+            return;
+        if (!AllMatchesAreSetted)
             return;
 
         var bettingUser = await BettingService.GetBettingUserAsync(User);
