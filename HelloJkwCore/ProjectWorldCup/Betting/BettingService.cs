@@ -10,11 +10,17 @@ public partial class BettingService : IBettingService
     public BettingService(
         IFileSystemService fsService,
         WorldCupOption option,
+        ICacheClearInvoker cacheClearInvoker,
         IUserStore<AppUser> userStore)
     {
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
         _fs2018 = fsService.GetFileSystem(option.FileSystemSelect2018, option.Path);
         _userStore = userStore;
+
+        cacheClearInvoker.ClearCacheInvoked += (_, _) =>
+        {
+            ClearUserCache();
+        };
     }
 
     public async Task<BettingUser> JoinBettingAsync(BettingUser buser, BettingType bettingType)

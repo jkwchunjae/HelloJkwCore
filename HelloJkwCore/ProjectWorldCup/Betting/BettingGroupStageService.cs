@@ -13,6 +13,7 @@ public class BettingGroupStageService : IBettingGroupStageService
     public BettingGroupStageService(
         IFileSystemService fsService,
         IWorldCupService worldCupService,
+        ICacheClearInvoker cacheClearInvoker,
         WorldCupOption option)
     {
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
@@ -22,6 +23,14 @@ public class BettingGroupStageService : IBettingGroupStageService
         _timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
         _timer.AutoReset = true;
         _timer.Start();
+
+        cacheClearInvoker.ClearCacheInvoked += (_, _) =>
+        {
+            lock (_lock)
+            {
+                _cache = null;
+            }
+        };
     }
 
     private async Task UpdateStandingsAsync()

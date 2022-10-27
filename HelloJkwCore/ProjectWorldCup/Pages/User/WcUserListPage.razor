@@ -107,6 +107,8 @@
 @if (User?.HasRole(UserRole.Admin) ?? false)
 {
     <MudButton OnClick="ClearUserCache" Variant="Variant.Outlined">유저 캐시 초기화</MudButton>
+
+    <MudButton OnClick="ClearCache" Variant="Variant.Outlined">캐시 초기화</MudButton>
 }
 
 <style>

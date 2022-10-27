@@ -3,6 +3,7 @@
 public partial class WcUserListPage : JkwPageBase
 {
     [Inject] IBettingService Service { get; set; }
+    [Inject] ICacheClearInvoker CacheClearInvoker { get; set; }
 
     IEnumerable<BettingUser> Users { get; set; } = new List<BettingUser>();
     bool HasRole => IsAuthenticated && User.HasRole(UserRole.WcManager);
@@ -68,5 +69,13 @@ public partial class WcUserListPage : JkwPageBase
             ?.Value;
 
         return value?.ToString("#,0") ?? "-";
+    }
+
+    private void ClearCache()
+    {
+        if (User?.HasRole(UserRole.Admin) ?? false)
+        {
+            CacheClearInvoker.ClearCache();
+        }
     }
 }
