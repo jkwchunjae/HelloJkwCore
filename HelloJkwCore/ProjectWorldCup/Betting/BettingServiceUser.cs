@@ -109,6 +109,10 @@ public partial class BettingService : IBettingService
     }
     public async Task<BettingUser> GetBettingUserAsync(AppUser appUser)
     {
+        if (appUser == null)
+        {
+            return null;
+        }
         lock (_usersCacheLock)
         {
             if (_bettingUsersCache != null)

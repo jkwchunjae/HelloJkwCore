@@ -24,6 +24,11 @@ public partial class Betting2022RewardResult : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
+        if (!IsAuthenticated)
+        {
+            Navi.NavigateTo("/worldcup");
+            return;
+        }
         GroupStageResult = await BettingGroupStageService.GetAllBettingsAsync();
         Round16Result = await BettingRound16Service.GetAllBettingsAsync();
         FinalResult = await BettingFinalService.GetAllBettingsAsync();

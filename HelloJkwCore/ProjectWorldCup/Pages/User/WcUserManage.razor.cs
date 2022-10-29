@@ -11,8 +11,14 @@ public partial class WcUserManage : JkwPageBase
 
     protected override Task OnPageInitializedAsync()
     {
+        if (!IsAuthenticated)
+        {
+            Navi.NavigateTo("/worldcup");
+            return Task.CompletedTask;
+        }
         if (User?.HasRole(UserRole.WcManager) ?? false)
         {
+            // GOOD !
         }
         else
         {

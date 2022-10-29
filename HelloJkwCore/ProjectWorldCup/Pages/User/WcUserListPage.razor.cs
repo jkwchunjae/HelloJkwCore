@@ -10,6 +10,11 @@ public partial class WcUserListPage : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
+        if (!IsAuthenticated)
+        {
+            Navi.NavigateTo("/worldcup");
+            return;
+        }
         if (HasRole)
         {
             Users = await Service.GetBettingUsersAsync(updateAppUser: true);

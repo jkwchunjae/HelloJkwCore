@@ -17,6 +17,11 @@ public partial class WcUserComponent : JkwPageBase
 
     protected override async Task OnPageAfterRenderAsync(bool firstRender)
     {
+        if (!IsAuthenticated)
+        {
+            Navi.NavigateTo("/worldcup");
+            return;
+        }
         InputNickname = TargetUser.AppUser.NickName ?? string.Empty;
         var offset = await Js.InvokeAsync<int>("getTimezone");
         LocalTimeZone = TimeZoneInfo.CreateCustomTimeZone("UserLocalTimeZone", TimeSpan.FromMinutes(-offset), "UserLocalTimeZone", "UserLocalTimeZone");
