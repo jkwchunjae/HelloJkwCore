@@ -21,7 +21,7 @@
         <span>3. 1, 2, 3, 4등 맞추기</span>
         <span>모든 단계별로 1만원을 걸고 정해진 규칙에 의해서 상금을 타가는 방식입니다.</span>
         <span>자세한 규칙은 블로그를 통해 확인하실 수 있습니다.</span>
-        <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Target="_blank"
+        <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Target="_blank" Underline="Underline.Always"
              onclick="@(() => OnClickBlogLink())">
             &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt;
         </MudLink>
@@ -41,7 +41,7 @@
     </div>
 
     <div>
-        <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Target="_blank"
+        <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Target="_blank" Underline="Underline.Always"
              onclick="@(() => OnClickBlogLink())">
           &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt;
         </MudLink>
@@ -49,7 +49,7 @@
             Label="블로그의 규칙을 읽고 이해했습니다"
             />
         <OneClickButton OnClick="@(() => JoinAsync())" Variant="Variant.Filled" Color="Color.Success" Disabled="@(CheckBoxReadBlog == false)">
-            승인 요청
+            승인 요청 (위에 QR코드로 입금을 해주세요.)
         </OneClickButton>
     </div>
   }
@@ -57,7 +57,9 @@
   {
     <div>
         <span>승인 대기 중 입니다.</span>
-        <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule"> &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt; </MudLink>
+        <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Underline="Underline.Always">
+            &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt;
+        </MudLink>
         <span>
             <a href="https://qr.kakaopay.com/281006011000079205841160271002797">
                 <img src="/images/wc/kakao_jkw_20000.png" alt="카카오송금 QR코드" width="100"/>
