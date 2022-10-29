@@ -2,6 +2,7 @@
 
 public partial class Betting2022Round16 : JkwPageBase
 {
+    [Inject] public ISnackbar Snackbar { get; set; }
     [Inject] IWorldCupService WorldCupService { get; set; }
     [Inject] IBettingService BettingService { get; set; }
     [Inject] IBettingRound16Service BettingRound16Service { get; set; }
@@ -40,18 +41,27 @@ public partial class Betting2022Round16 : JkwPageBase
         if (team?.Id == null)
             return;
 
-        var bettingUser = await BettingService.GetBettingUserAsync(User);
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
+        try
         {
-            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Round16);
+            var bettingUser = await BettingService.GetBettingUserAsync(User);
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
+            {
+                bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Round16);
+            }
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
+            {
+                // 참가할 수 없는 경우
+                return;
+            }
+            BettingItem = await BettingRound16Service.PickTeamAsync(bettingUser, team);
+            StateHasChanged();
         }
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
+        catch (Exception ex)
         {
-            // 참가할 수 없는 경우
-            return;
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add(ex.Message, Severity.Normal);
         }
-        BettingItem = await BettingRound16Service.PickTeamAsync(bettingUser, team);
-        StateHasChanged();
     }
 
     private TeamButtonType GetButtonType(Team team)
@@ -94,18 +104,27 @@ public partial class Betting2022Round16 : JkwPageBase
         if (BettingItem?.IsRandom ?? false)
             return;
 
-        var bettingUser = await BettingService.GetBettingUserAsync(User);
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
+        try
         {
-            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Round16);
-        }
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
-        {
-            // 참가할 수 없는 경우
-            return;
-        }
+            var bettingUser = await BettingService.GetBettingUserAsync(User);
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
+            {
+                bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Round16);
+            }
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Round16))
+            {
+                // 참가할 수 없는 경우
+                return;
+            }
 
-        BettingItem = await BettingRound16Service.PickRandomAsync(bettingUser);
-        StateHasChanged();
+            BettingItem = await BettingRound16Service.PickRandomAsync(bettingUser);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add(ex.Message, Severity.Normal);
+        }
     }
 }

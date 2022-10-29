@@ -4,12 +4,10 @@ namespace ProjectWorldCup.Pages.Wc2022;
 
 public partial class Betting2022GroupStage : JkwPageBase
 {
-    [Inject]
-    private IWorldCupService WcService { get; set; }
-    [Inject]
-    private IBettingService BettingService { get; set; }
-    [Inject]
-    private IBettingGroupStageService GroupStageService { get; set; }
+    [Inject] public ISnackbar Snackbar { get; set; }
+    [Inject] private IWorldCupService WcService { get; set; }
+    [Inject] private IBettingService BettingService { get; set; }
+    [Inject] private IBettingGroupStageService GroupStageService { get; set; }
 
     private List<WcGroup> Groups { get; set; } = new();
 
@@ -53,23 +51,32 @@ public partial class Betting2022GroupStage : JkwPageBase
         if (BettingItem?.IsRandom ?? false)
             return;
 
-        var bettingUser = await BettingService.GetBettingUserAsync(User);
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
+        try
         {
-            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.GroupStage);
-        }
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
-        {
-            // 참가할 수 없는 경우
-            return;
-        }
+            var bettingUser = await BettingService.GetBettingUserAsync(User);
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
+            {
+                bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.GroupStage);
+            }
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
+            {
+                // 참가할 수 없는 경우
+                return;
+            }
 
-        var buttonType = GetButtonType(team);
+            var buttonType = GetButtonType(team);
 
-        if (buttonType == TeamButtonType.Pickable)
+            if (buttonType == TeamButtonType.Pickable)
+            {
+                BettingItem = await GroupStageService.PickTeamAsync(BettingUser, team);
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
         {
-            BettingItem = await GroupStageService.PickTeamAsync(BettingUser, team);
-            StateHasChanged();
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add(ex.Message, Severity.Normal);
         }
     }
 
@@ -122,18 +129,27 @@ public partial class Betting2022GroupStage : JkwPageBase
         if (BettingItem?.IsRandom ?? false)
             return;
 
-        var bettingUser = await BettingService.GetBettingUserAsync(User);
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
+        try
         {
-            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.GroupStage);
-        }
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
-        {
-            // 참가할 수 없는 경우
-            return;
-        }
+            var bettingUser = await BettingService.GetBettingUserAsync(User);
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
+            {
+                bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.GroupStage);
+            }
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.GroupStage))
+            {
+                // 참가할 수 없는 경우
+                return;
+            }
 
-        BettingItem = await GroupStageService.PickRandomAsync(BettingUser);
-        StateHasChanged();
+            BettingItem = await GroupStageService.PickRandomAsync(BettingUser);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add(ex.Message, Severity.Normal);
+        }
     }
 }

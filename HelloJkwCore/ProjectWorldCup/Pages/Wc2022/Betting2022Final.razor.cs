@@ -4,6 +4,7 @@ namespace ProjectWorldCup.Pages.Wc2022;
 
 public partial class Betting2022Final : JkwPageBase
 {
+    [Inject] public ISnackbar Snackbar { get; set; }
     [Inject] IWorldCupService WorldCupService { get; set; }
     [Inject] IBettingService BettingService { get; set; }
     [Inject] IBettingFinalService BettingFinalService { get; set; }
@@ -81,55 +82,64 @@ public partial class Betting2022Final : JkwPageBase
         if (team?.Id == null)
             return;
 
-        var bettingUser = await BettingService.GetBettingUserAsync(User);
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+        try
         {
-            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Final);
-        }
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
-        {
-            // 참가할 수 없는 경우
-            return;
-        }
+            var bettingUser = await BettingService.GetBettingUserAsync(User);
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+            {
+                bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Final);
+            }
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+            {
+                // 참가할 수 없는 경우
+                return;
+            }
 
-        StageMatches = BettingFinalService.PickTeam(stageId, matchId, team, StageMatches, Matches);
+            StageMatches = BettingFinalService.PickTeam(stageId, matchId, team, StageMatches, Matches);
 
-        if (stageId == Fifa.Round8StageId)
-        {
-            BettingItem.Picked = new List<Team> { null, null, null, null };
-        }
-        if (stageId == Fifa.Round4StageId)
-        {
-            BettingItem.Picked = new List<Team> { null, null, null, null };
-        }
-        else if (stageId == Fifa.ThirdStageId)
-        {
-            var third = StageMatches.First(s => s.StageId == Fifa.ThirdStageId).Matches[0];
-            var loser = third.HomeTeam == team ? third.AwayTeam : third.HomeTeam;
-            BettingItem.Picked = new List<Team>
+            if (stageId == Fifa.Round8StageId)
+            {
+                BettingItem.Picked = new List<Team> { null, null, null, null };
+            }
+            if (stageId == Fifa.Round4StageId)
+            {
+                BettingItem.Picked = new List<Team> { null, null, null, null };
+            }
+            else if (stageId == Fifa.ThirdStageId)
+            {
+                var third = StageMatches.First(s => s.StageId == Fifa.ThirdStageId).Matches[0];
+                var loser = third.HomeTeam == team ? third.AwayTeam : third.HomeTeam;
+                BettingItem.Picked = new List<Team>
             {
                 BettingItem.Pick0,
                 BettingItem.Pick1,
                 team,
                 loser,
             };
-        }
-        else if (stageId == Fifa.FinalStageId)
-        {
-            var final = StageMatches.First(s => s.StageId == Fifa.FinalStageId).Matches[0];
-            var loser = final.HomeTeam == team ? final.AwayTeam : final.HomeTeam;
-            BettingItem.Picked = new List<Team>
+            }
+            else if (stageId == Fifa.FinalStageId)
+            {
+                var final = StageMatches.First(s => s.StageId == Fifa.FinalStageId).Matches[0];
+                var loser = final.HomeTeam == team ? final.AwayTeam : final.HomeTeam;
+                BettingItem.Picked = new List<Team>
             {
                 team,
                 loser,
                 BettingItem.Pick2,
                 BettingItem.Pick3,
             };
-        }
+            }
 
-        if (BettingItem.Picked?.Count(x => x != null) == 4)
+            if (BettingItem.Picked?.Count(x => x != null) == 4)
+            {
+                await BettingFinalService.SaveBettingItemAsync(BettingItem);
+            }
+        }
+        catch (Exception ex)
         {
-            await BettingFinalService.SaveBettingItemAsync(BettingItem);
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add(ex.Message, Severity.Normal);
         }
     }
 
@@ -142,22 +152,31 @@ public partial class Betting2022Final : JkwPageBase
         if (!AllMatchesAreSetted)
             return;
 
-        var bettingUser = await BettingService.GetBettingUserAsync(User);
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+        try
         {
-            bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Final);
+            var bettingUser = await BettingService.GetBettingUserAsync(User);
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+            {
+                bettingUser = await BettingService.JoinBettingAsync(bettingUser, BettingType.Final);
+            }
+            if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+            {
+                // 참가할 수 없는 경우
+                return;
+            }
+
+            (StageMatches, var pickTeams) = BettingFinalService.PickRandom(StageMatches, Matches);
+            BettingItem.Picked = pickTeams;
+            BettingItem.IsRandom = true;
+
+            await BettingFinalService.SaveBettingItemAsync(BettingItem);
+            StateHasChanged();
         }
-        if (bettingUser.JoinedBetting.Empty(x => x == BettingType.Final))
+        catch (Exception ex)
         {
-            // 참가할 수 없는 경우
-            return;
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add(ex.Message, Severity.Normal);
         }
-
-        (StageMatches, var pickTeams) = BettingFinalService.PickRandom(StageMatches, Matches);
-        BettingItem.Picked = pickTeams;
-        BettingItem.IsRandom = true;
-
-        await BettingFinalService.SaveBettingItemAsync(BettingItem);
-        StateHasChanged();
     }
 }

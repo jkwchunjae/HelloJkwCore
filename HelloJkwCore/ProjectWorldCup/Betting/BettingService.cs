@@ -32,6 +32,12 @@ public partial class BettingService : IBettingService
             throw new Exception("참가신청을 먼저 해야 합니다.");
         }
 
+        var remainMoney = user.BettingHistories.Sum(x => x.Value);
+        if (remainMoney < 10000)
+        {
+            throw new Exception("돈이 모자라서 참가할 수 없습니다. 관리자에게 연락해보세요.");
+        }
+
         user.JoinedBetting ??= new();
         user.JoinedBetting.Add(bettingType);
 
