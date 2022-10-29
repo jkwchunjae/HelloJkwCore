@@ -22,7 +22,10 @@ public partial class WcUserComponent : JkwPageBase
             Navi.NavigateTo("/worldcup");
             return;
         }
-        InputNickname = TargetUser.AppUser.NickName ?? string.Empty;
+        if (firstRender)
+        {
+            InputNickname = TargetUser?.AppUser?.NickName ?? string.Empty;
+        }
         var offset = await Js.InvokeAsync<int>("getTimezone");
         LocalTimeZone = TimeZoneInfo.CreateCustomTimeZone("UserLocalTimeZone", TimeSpan.FromMinutes(-offset), "UserLocalTimeZone", "UserLocalTimeZone");
         StateHasChanged();
@@ -57,6 +60,13 @@ public partial class WcUserComponent : JkwPageBase
             Snackbar.Add("적절하지 않은 이름입니다", Severity.Warning);
             return;
         }
+        if (TargetUser?.BettingHistories?.Sum(x => x.Value) < 500)
+        {
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add("돈이 모자랍니다. 관리자에게 연락해보세요.", Severity.Normal);
+            return;
+        }
         await BettingService.AddHistoryAsync(TargetUser, new BettingHistory
         {
             Type = HistoryType.ChangeNickname,
@@ -73,6 +83,8 @@ public partial class WcUserComponent : JkwPageBase
     {
         nickname = nickname.Trim();
         if (string.IsNullOrWhiteSpace(nickname))
+            return false;
+        if (nickname.Length < 3)
             return false;
         if (nickname.Length > 15)
             return false;
