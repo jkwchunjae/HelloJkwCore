@@ -42,6 +42,7 @@
       <MudTh>1차결과</MudTh>
       <MudTh>2차결과</MudTh>
       <MudTh>3차결과</MudTh>
+      <MudTh>기타</MudTh>
       <MudTh>Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
@@ -60,6 +61,9 @@
       </MudTd>
       <MudTd>
         @GetValue(user, HistoryType.Reward3)
+      </MudTd>
+      <MudTd>
+        @user.BettingHistories.Where(x => x.Type == HistoryType.None || x.Type == HistoryType.ChangeNickname).Sum(x => x.Value)
       </MudTd>
       <MudTd>
         <MudButton OnClick="@(() => RequestAsync(user))" Variant="Variant.Outlined">
