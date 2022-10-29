@@ -3,7 +3,6 @@
 public class BettingUser
 {
     public AppUser AppUser { get; set; }
-    public string Nickname { get; set; }
     public UserJoinStatus JoinStatus { get; set; }
     public List<BettingType> JoinedBetting { get; set; } = new();
     public List<BettingHistory> BettingHistories { get; set; } = new();

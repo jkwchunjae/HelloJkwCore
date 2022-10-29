@@ -1,0 +1,24 @@
+﻿@inherits JkwPageBase
+@layout WcLayout
+@page "/worldcup/2022/result"
+
+<WcTitle>내기 최종 순위</WcTitle>
+
+<MudTable T="UserResult" Items="Results" Context="User">
+    <HeaderContent>
+        <MudTh>순위</MudTh>
+        <MudTh>닉네임</MudTh>
+        <MudTh>1라운드</MudTh>
+        <MudTh>2라운드</MudTh>
+        <MudTh>3라운드</MudTh>
+        <MudTh>합계</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@User.Rank</MudTd>
+        <MudTd>@User.Name</MudTd>
+        <MudTd>@User.Reward1</MudTd>
+        <MudTd>@User.Reward2</MudTd>
+        <MudTd>@User.Reward3</MudTd>
+        <MudTd>@User.Total</MudTd>
+    </RowTemplate>
+</MudTable>
