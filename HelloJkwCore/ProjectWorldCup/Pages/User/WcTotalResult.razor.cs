@@ -8,6 +8,7 @@ public partial class WcTotalResult : JkwPageBase
     {
         public int Rank;
         public string Name;
+        public UserId UserId;
         public long Reward1;
         public long Reward2;
         public long Reward3;
@@ -32,6 +33,7 @@ public partial class WcTotalResult : JkwPageBase
             .Select(user => new UserResult
             {
                 Name = user.AppUser.DisplayName,
+                UserId = user.AppUser.Id,
                 Reward1 = GetValue(user, HistoryType.Reward1),
                 Reward2 = GetValue(user, HistoryType.Reward2),
                 Reward3 = GetValue(user, HistoryType.Reward3),

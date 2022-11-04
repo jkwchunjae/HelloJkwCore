@@ -4,7 +4,7 @@
 
 <WcTitle>내기 최종 순위</WcTitle>
 
-<MudTable T="UserResult" Items="Results" Context="User">
+<MudTable T="UserResult" Items="Results" Context="userResult">
     <HeaderContent>
         <MudTh>순위</MudTh>
         <MudTh>닉네임</MudTh>
@@ -30,11 +30,23 @@
         </MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@User.Rank</MudTd>
-        <MudTd>@User.Name</MudTd>
-        <MudTd>@User.Reward1</MudTd>
-        <MudTd>@User.Reward2</MudTd>
-        <MudTd>@User.Reward3</MudTd>
-        <MudTd>@User.Total</MudTd>
+        <MudTd>@userResult.Rank</MudTd>
+        <MudTd>
+            @if (userResult.UserId == User.Id)
+            {
+                var me = "me";
+                <MudBadge Content="me" Overlap="false" Color="Color.Success">
+                    <MudText>@userResult.Name</MudText>
+                </MudBadge>
+            }
+            else
+            {
+                <MudText>@userResult.Name</MudText>
+            }
+        </MudTd>
+        <MudTd>@userResult.Reward1</MudTd>
+        <MudTd>@userResult.Reward2</MudTd>
+        <MudTd>@userResult.Reward3</MudTd>
+        <MudTd>@userResult.Total</MudTd>
     </RowTemplate>
 </MudTable>
