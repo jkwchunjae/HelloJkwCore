@@ -8,10 +8,26 @@
     <HeaderContent>
         <MudTh>순위</MudTh>
         <MudTh>닉네임</MudTh>
-        <MudTh>1라운드</MudTh>
-        <MudTh>2라운드</MudTh>
-        <MudTh>3라운드</MudTh>
-        <MudTh>합계</MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward1)">
+                1라운드
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward2)">
+                2라운드
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward3)">
+                3라운드
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Total)">
+                합계
+            </MudTableSortLabel>
+        </MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd>@User.Rank</MudTd>
