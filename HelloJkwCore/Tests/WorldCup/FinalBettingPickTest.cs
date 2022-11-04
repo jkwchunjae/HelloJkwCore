@@ -67,7 +67,7 @@ public class FinalBettingPickTest
     [Fact]
     public void FinalBettingPickTeam_8강1경기()
     {
-        IBettingFinalService service = new BettingFinalService(null, null, null, null);
+        IBettingFinalService service = new BettingFinalService(null, null, null, null, null);
 
         var stageMatches = MakeStageMatches();
         var matches = MakeMatches();
@@ -80,7 +80,7 @@ public class FinalBettingPickTest
     [Fact]
     public void FinalBettingPickTeam_8강2경기()
     {
-        IBettingFinalService service = new BettingFinalService(null, null, null, null);
+        IBettingFinalService service = new BettingFinalService(null, null, null, null, null);
 
         var stageMatches = MakeStageMatches();
         var matches = MakeMatches();
@@ -93,7 +93,7 @@ public class FinalBettingPickTest
     [Fact]
     public void FinalBettingPickTeam_8강3경기()
     {
-        IBettingFinalService service = new BettingFinalService(null, null, null, null);
+        IBettingFinalService service = new BettingFinalService(null, null, null, null, null);
 
         var stageMatches = MakeStageMatches();
         var matches = MakeMatches();
@@ -106,7 +106,7 @@ public class FinalBettingPickTest
     [Fact]
     public void FinalBettingPickTeam_8강4경기()
     {
-        IBettingFinalService service = new BettingFinalService(null, null, null, null);
+        IBettingFinalService service = new BettingFinalService(null, null, null, null, null);
 
         var stageMatches = MakeStageMatches();
         var matches = MakeMatches();
@@ -119,7 +119,7 @@ public class FinalBettingPickTest
     [Fact]
     public void FinalBettingPickTeam_4강1경기()
     {
-        IBettingFinalService service = new BettingFinalService(null, null, null, null);
+        IBettingFinalService service = new BettingFinalService(null, null, null, null, null);
 
         var stageMatches = MakeStageMatches();
         var matches = MakeMatches();
@@ -141,7 +141,7 @@ public class FinalBettingPickTest
     [Fact]
     public void FinalBettingPickTeam_4강2경기()
     {
-        IBettingFinalService service = new BettingFinalService(null, null, null, null);
+        IBettingFinalService service = new BettingFinalService(null, null, null, null, null);
 
         var stageMatches = MakeStageMatches();
         var matches = MakeMatches();
@@ -163,7 +163,7 @@ public class FinalBettingPickTest
     [Fact]
     public void FinalBettingPickTeam_RandomPick()
     {
-        IBettingFinalService service = new BettingFinalService(null, null, null, null);
+        IBettingFinalService service = new BettingFinalService(null, null, null, null, null);
 
         var stageMatches = MakeStageMatches();
         var matches = MakeMatches();
@@ -237,7 +237,7 @@ public class FinalBettingPickTest
     [Fact]
     public void FinalBettingPickTeam_RandomPick1000()
     {
-        IBettingFinalService service = new BettingFinalService(null, null, null, null);
+        IBettingFinalService service = new BettingFinalService(null, null, null, null, null);
 
         Dictionary<string, int> winCount = new();
         for (var i = 0; i < 1000; i++)

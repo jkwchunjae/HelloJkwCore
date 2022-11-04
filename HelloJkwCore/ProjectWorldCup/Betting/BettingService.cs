@@ -17,10 +17,13 @@ public partial class BettingService : IBettingService
         _fs2018 = fsService.GetFileSystem(option.FileSystemSelect2018, option.Path);
         _userStore = userStore;
 
-        cacheClearInvoker.ClearCacheInvoked += (_, _) =>
+        if (cacheClearInvoker != null)
         {
-            ClearUserCache();
-        };
+            cacheClearInvoker.ClearCacheInvoked += (_, _) =>
+            {
+                ClearUserCache();
+            };
+        }
     }
 
     public async Task<BettingUser> JoinBettingAsync(BettingUser buser, BettingType bettingType)

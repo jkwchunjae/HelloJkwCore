@@ -28,13 +28,16 @@ public class BettingFinalService : IBettingFinalService
         _timer.AutoReset = true;
         _timer.Start();
 
-        cacheClearInvoker.ClearCacheInvoked += (_, _) =>
+        if (cacheClearInvoker != null)
         {
-            lock (_lock)
+            cacheClearInvoker.ClearCacheInvoked += (_, _) =>
             {
-                _cache = null;
-            }
-        };
+                lock (_lock)
+                {
+                    _cache = null;
+                }
+            };
+        }
     }
 
     private async Task UpdateStandingsAsync()

@@ -42,7 +42,7 @@ public class Result2018Test
 
         var fsService = new FileSystemService(fsOption, null, null);
 
-        _bettingService = new BettingService(fsService, worldcupOption, userStore: null);
+        _bettingService = new BettingService(fsService, worldcupOption, null, userStore: null);
     }
 
     //[Fact]
