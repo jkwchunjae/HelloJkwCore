@@ -23,7 +23,31 @@
   </HeaderContent>
   <RowTemplate>
     <MudTd DataLabel="닉네임">
-      @context.User.DisplayName
+      @{
+        List<string> badges = new();
+        Color badgeColor = Color.Default;
+        if (context.User == User)
+        {
+          badges.Add("me");
+          badgeColor = Color.Success;
+        }
+        if (context.IsRandom)
+        {
+          badges.Add("random");
+          badgeColor = Color.Info;
+        }
+      }
+      @if (badges.Any())
+      {
+        var badgeText = badges.StringJoin(" ");
+        <MudBadge Content="badgeText" Overlap="false" Color="badgeColor">
+          <MudText>@context.User.DisplayName</MudText>
+        </MudBadge>
+      }
+      else
+      {
+        <MudText>@context.User.DisplayName</MudText>
+      }
     </MudTd>
     <MudTd DataLabel="선택">
       <div>
