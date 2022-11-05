@@ -1,7 +1,38 @@
 ﻿@inherits JkwPageBase
 @layout WcLayout
-@page "/worldcup"
 @using ProjectWorldCup.Pages.User
+@using ProjectWorldCup.Pages.Wc2022
+@page "/worldcup"
 
-<WelcomeWc2022/>
+@inject IBettingService Service
 
+@if (LoadCompleted)
+{
+  @if (BettingUser?.JoinStatus == UserJoinStatus.Joined)
+  {
+    <Betting2022GroupStage></Betting2022GroupStage>
+  }
+  else
+  {
+    <WelcomeWc2022></WelcomeWc2022>
+  }
+}
+
+
+@code
+{
+  bool LoadCompleted = false;
+  BettingUser BettingUser = default;
+  protected override async Task OnPageInitializedAsync()
+  {
+    if (IsAuthenticated)
+    {
+      BettingUser = await Service.GetBettingUserAsync(User);
+    }
+    else
+    {
+    }
+
+    LoadCompleted = true;
+  }
+}
