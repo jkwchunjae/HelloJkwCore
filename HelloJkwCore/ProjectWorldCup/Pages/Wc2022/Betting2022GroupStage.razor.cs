@@ -22,32 +22,36 @@ public partial class Betting2022GroupStage : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        if (!IsAuthenticated)
+        if (IsAuthenticated)
         {
-            Navi.NavigateTo("/worldcup");
-            return;
+            BettingUser = await BettingService.GetBettingUserAsync(User);
+
+            if (BettingUser?.JoinedBetting?.Contains(BettingType.GroupStage) ?? false)
+            {
+                BettingItem = await GroupStageService.GetBettingAsync(BettingUser);
+            }
         }
+
         Groups = await WcService.GetGroupsAsync();
-        BettingUser = await BettingService.GetBettingUserAsync(User);
-
-        if (BettingUser?.JoinStatus != UserJoinStatus.Joined)
-        {
-            Navi.NavigateTo("/worldcup");
-            return;
-        }
-
-        if (IsAuthenticated && (BettingUser?.JoinedBetting?.Contains(BettingType.GroupStage) ?? false))
-        {
-            BettingItem = await GroupStageService.GetBettingAsync(BettingUser);
-        }
-
         BettingItems = await GroupStageService.GetAllBettingsAsync();
+    }
+
+    private void ShowLoginRequireMessage()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add("로그인을 해주세요", Severity.Warning);
     }
 
     private async Task PickTeam(GroupTeam team)
     {
         if (TimeOver)
             return;
+        if (!IsAuthenticated)
+        {
+            ShowLoginRequireMessage();
+            return;
+        }
         if (BettingItem?.IsRandom ?? false)
             return;
 
@@ -84,20 +88,39 @@ public partial class Betting2022GroupStage : JkwPageBase
     {
         if (TimeOver)
             return;
+        if (!IsAuthenticated)
+        {
+            ShowLoginRequireMessage();
+            return;
+        }
         if (BettingItem?.IsRandom ?? false)
             return;
 
-        var buttonType = GetButtonType(team);
-
-        if (buttonType == TeamButtonType.Picked)
+        try
         {
-            BettingItem = await GroupStageService.UnpickTeamAsync(BettingUser, team);
-            StateHasChanged();
+            var buttonType = GetButtonType(team);
+
+            if (buttonType == TeamButtonType.Picked)
+            {
+                BettingItem = await GroupStageService.UnpickTeamAsync(BettingUser, team);
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add(ex.Message, Severity.Normal);
         }
     }
 
     private TeamButtonType GetButtonType(GroupTeam team)
     {
+        if (BettingItem == null)
+        {
+            return TeamButtonType.Pickable;
+        }
+
         if (BettingItem.Picked.Any(x => x == team))
         {
             return TeamButtonType.Picked;
@@ -126,6 +149,11 @@ public partial class Betting2022GroupStage : JkwPageBase
     {
         if (TimeOver)
             return;
+        if (!IsAuthenticated)
+        {
+            ShowLoginRequireMessage();
+            return;
+        }
         if (BettingItem?.IsRandom ?? false)
             return;
 
