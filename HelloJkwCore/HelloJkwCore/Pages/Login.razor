@@ -2,17 +2,24 @@
 
 <PageTitle>로그인</PageTitle>
 
-<h1>로그인</h1>
+<MudText Typo="Typo.h3">로그인</MudText>
 
-<a 
-   href="/LoginExternal?provider=Google"
-   target="_top">
-    <img src="/images/login/btn_google_signin_dark_normal_web.png" alt="Login with Google" />
-</a>
+@if (IsChromeBrowser)
+{
+  <MudLink Href="/LoginExternal?provider=Google" Target="_top">
+    <MudImage Src="/images/login/btn_google_signin_dark_normal_web.png" />
+  </MudLink>
+}
+else
+{
+  <MudButton OnClick="LoginGoogleInOtherBrowser">
+    <MudImage Src="/images/login/btn_google_signin_dark_normal_web.png" />
+  </MudButton>
+}
 
-<a 
-   href="/LoginExternal?provider=KakaoTalk"
-   target="_top">
-    <img src="/images/login/kakao_login_medium_narrow.png" alt="Login with Kakao talk" />
-</a>
+<MudLink Href="/LoginExternal?provider=KakaoTalk" Target="_top">
+  <MudImage Src="/images/login/kakao_login_medium_narrow.png" />
+</MudLink>
 
+
+<MudText Color="Color.Transparent">@UserAgent</MudText>

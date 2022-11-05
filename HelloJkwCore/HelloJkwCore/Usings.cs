@@ -8,6 +8,7 @@ global using ProjectWorldCup;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.AspNetCore.Components;
+global using Microsoft.JSInterop;
 global using Newtonsoft.Json.Converters;
 global using System;
 global using System.Collections.Generic;

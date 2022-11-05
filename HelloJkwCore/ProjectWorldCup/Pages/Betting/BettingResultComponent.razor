@@ -23,14 +23,14 @@
           }
           if (context.IsRandom)
           {
-            badges.Add("random");
+            badges.Add("랜덤");
             badgeColor = Color.Info;
           }
         }
         @if (badges.Any())
         {
           var badgeText = badges.StringJoin(" ");
-          <MudBadge Content="badgeText" Overlap="false" Color="badgeColor">
+          <MudBadge Content="badgeText" Overlap="true" Color="badgeColor">
             <MudText>@context.User.DisplayName</MudText>
           </MudBadge>
         }

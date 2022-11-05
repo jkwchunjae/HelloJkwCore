@@ -10,6 +10,11 @@
     string commonButtonStyle = "padding: 6px; border-radius: 6px; box-shadow: var(--mud-elevation-1); display: block; text-align: start; width: 100%; text-transform: initial;";
 }
 
+@if ((BettingUser?.JoinStatus ?? UserJoinStatus.None)== UserJoinStatus.None)
+{
+  <MudLink Href="/worldcup" Underline="Underline.Always">&lt;&lt; 참가신청 하러 가기 &gt;&gt;</MudLink>
+}
+
 @if (TimeOver)
 {
     <div>선택 시간이 끝났습니다.</div>
