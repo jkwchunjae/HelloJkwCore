@@ -52,9 +52,8 @@
         anchorElement.remove();
         URL.revokeObjectURL(url);
       }
-      window.getTimezone = () => {
-        return (new Date()).getTimezoneOffset();
-      }
+      window.getTimezone = () => (new Date()).getTimezoneOffset();
+      window.getUserAgent = () => navigator.userAgent;
     </script>
 </body>
 </html>
