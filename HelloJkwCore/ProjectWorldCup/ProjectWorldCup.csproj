@@ -18,8 +18,11 @@
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$(ConfigurationName) == Debug">
-    <Exec Command="copy /Y ProjectWorldCup\*.ts wwwroot" />
+  <ItemGroup>
+    <TypeScriptFiles Include="ProjectWorldCup/*.ts" />
+  </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Copy SourceFiles="@(TypeScriptFiles)" DestinationFolder="wwwroot" />
   </Target>
 
 </Project>
