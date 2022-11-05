@@ -1,21 +1,33 @@
 ﻿namespace ProjectWorldCup;
 
-public class Team : IEquatable<Team>, IComparable<Team>
+public interface ITeam
+{
+    string Id { get; set; }
+    string Name { get; set; }
+    string Flag { get; set; }
+}
+public class Team : ITeam, IEquatable<Team>, IComparable<Team>
 {
     public string Id { get; set; }
     public string Name { get; set; }
     public string Flag { get; set; }
-    public int FifaRank { get; set; }
-    public string Region { get; set; }
 
     public int CompareTo(Team other)
     {
-        return Id.CompareTo(other.Id);
+        if (Id != null)
+        {
+            return Id.CompareTo(other.Id);
+        }
+        return Name.CompareTo(other.Name);
     }
 
     public bool Equals(Team other)
     {
-        return Id == other?.Id;
+        if (Id != null)
+        {
+            return Id == other?.Id;
+        }
+        return Name == other?.Name;
     }
 
     public static bool operator ==(Team obj1, Team obj2)

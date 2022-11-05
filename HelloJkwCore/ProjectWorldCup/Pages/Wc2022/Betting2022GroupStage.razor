@@ -1,0 +1,129 @@
+﻿@inherits JkwPageBase
+@layout WcLayout
+@using ProjectWorldCup.Pages.Betting;
+@page "/worldcup/2022/betting/group-stage"
+
+
+<WcTitle>1라운드: 16강 진출팀 맞추기</WcTitle>
+
+@code {
+    string commonButtonStyle = "padding: 6px; border-radius: 6px; box-shadow: var(--mud-elevation-1); display: block; text-align: start; width: 100%; text-transform: initial;";
+}
+
+@if (TimeOver)
+{
+    <div>선택 시간이 끝났습니다.</div>
+}
+else
+{
+<WcRemainTime
+    ClassName="group-stage-remain-time"
+    RemainSeconds="@(GroupStageService.GetRemainSeconds())"
+    TimeOver="@(() => OnTimeOver())"/>
+
+<div class="remain-text">
+    <span class="group-stage-remain-time"></span>
+    <span>남았습니다.</span>
+</div>
+}
+
+<div>
+    @foreach (var group in Groups)
+    {
+        <div class="row" style="padding-bottom: 5px;">
+            <div class="col-md-1 group-name" style="font-size: 30px;">@group.Name.Right(1)</div>
+            <div class="col-md-11">
+                <div class="row">
+                    @foreach (var team in group.Teams)
+                    {
+<div class="team col-md-3" style="padding-bottom: 2px;">
+@if (GetButtonType(team) == TeamButtonType.Pickable)
+{
+    var buttonStyle = $"{commonButtonStyle}";
+    <MudButton Class="team-inner" Style="@buttonStyle" OnClick="(async () => await PickTeam(team))">
+        <img class="team-img" src="@team?.Flag"/>
+        <span class="team-name">@team?.Name</span>
+    </MudButton>
+}
+else if (GetButtonType(team) == TeamButtonType.Picked)
+{
+    var buttonStyle = $"{commonButtonStyle} color: white; background: #56042C";
+    <MudButton Class="team-inner" Style="@buttonStyle" OnClick="(async () => await UnpickTeam(team))">
+        <img class="team-img" src="@team?.Flag"/>
+        <span class="team-name">@team?.Name</span>
+    </MudButton>
+}
+else
+{
+    <MudButton Class="team-inner" Style="@commonButtonStyle" Disabled="true">
+        <img class="team-img" src="@team?.Flag" style="filter: grayscale(0.7)"/>
+        <span class="team-name">@team?.Name</span>
+    </MudButton>
+}
+</div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!TimeOver)
+{
+  @if (BettingItem?.IsRandom ?? false)
+  {
+  }
+  else
+  {
+  @if (CheckRandom1 == false)
+  {
+    <MudButton OnClick="@(() => { CheckRandom1 = true; })" Variant="Variant.Outlined" Color="Color.Error">
+      랜덤 선택
+    </MudButton>
+  }
+  else if (CheckRandom2 == false)
+  {
+    <MudButton OnClick="@(() => { CheckRandom2 = true; })" Variant="Variant.Outlined" Color="Color.Error">
+      랜덤 선택을 하면 더 이상 수정할 수 없습니다. 각오하셨습니까?
+    </MudButton>
+  }
+  else if (CheckRandom3 == false)
+  {
+    <MudButton OnClick="@(() => { CheckRandom3 = true; })" Variant="Variant.Outlined" Color="Color.Error">
+      결과가 마음에 안들더라도 절대 복구해주지 않을 겁니다. 괜찮습니까?
+    </MudButton>
+  }
+  else
+  {
+    <MudButton OnClick="@(() => SelectFullRandom())" Variant="Variant.Filled" Color="Color.Error">
+      찐막 질문. 랜덤 선택하시겠습니까?
+    </MudButton>
+  }
+  }
+}
+
+@if (BettingItems?.Any() ?? false)
+{
+    @if (User?.HasRole(UserRole.Admin) ?? false)
+    {
+        <BettingTableComponent BettingItems="BettingItems" Visible="true"></BettingTableComponent>
+        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
+    }
+    else
+    {
+        <BettingTableComponent BettingItems="BettingItems" Visible="@TimeOver"></BettingTableComponent>
+    }
+}
+@*
+@if (BettingItems != null)
+{
+    if (DateTime.UtcNow < DateTime.Parse("2022-11-01"))
+    {
+        <BettingTableComponent BettingItems="BettingItems"></BettingTableComponent>
+    }
+    else
+    {
+        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
+    }
+}
+*@

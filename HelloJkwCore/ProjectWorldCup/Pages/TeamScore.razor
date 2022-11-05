@@ -1,8 +1,17 @@
 ﻿@inherits JkwPageBase
+@layout WcLayout
 
 <div class="team @Class" style="@Style">
-    <MudPaper Class="team-inner" Style="padding: 6px; border-radius: 6px;">
-        <img class="team-img" src="@Team?.Flag"/>
-        <span class="team-name">@Team?.Name</span>
-    </MudPaper>
+  <MudPaper Class="team-inner" Style="padding: 6px; border-radius: 6px;">
+    @if (Team != null)
+    {
+      <img class="team-img" src="@Team.Flag"/>
+      <span class="team-name">@Team.Name</span>
+    }
+    @if (SimpleTeam != null)
+    {
+      <img class="team-img" src="@SimpleTeam.Flag"/>
+      <span class="team-name">@SimpleTeam.Name</span>
+    }
+  </MudPaper>
 </div>

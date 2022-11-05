@@ -9,22 +9,21 @@ public partial class BettingResultComponent : JkwPageBase
     public IWorldCupService WorldCupService { get; set; }
 
     [Parameter]
-    public List<WcBettingItem<GroupTeam>> BettingItems { get; set; }
+    public IEnumerable<IWcBettingItem<ITeam>> BettingItems { get; set; }
 
-    BettingResultTable<WcBettingItem<GroupTeam>> BettingResult { get; set; }
+    IBettingResultTable<IWcBettingItem<ITeam>> BettingResult { get; set; }
 
     public BettingResultComponent()
     {
     }
 
-    private async Task BettingItemsUpdated()
+    private Task BettingItemsUpdated()
     {
-        var groups = await WorldCupService.GetGroupsAsync();
-        var team16 = groups.SelectMany(group => group.Stands.Take(2))
-            .Select(s => s.Team)
-            .ToList();
-        BettingItems.ForEach(bettingItem => bettingItem.Fixed = team16);
-        BettingResult = new BettingResultTable<WcBettingItem<GroupTeam>>(BettingItems);
+        if (BettingItems != null)
+        {
+            BettingResult = new BettingResultTable<IWcBettingItem<ITeam>>(BettingItems);
+        }
+        return Task.CompletedTask;
     }
 
     protected override async Task OnPageInitializedAsync()

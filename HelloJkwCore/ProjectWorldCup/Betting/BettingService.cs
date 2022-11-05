@@ -1,57 +1,60 @@
-﻿namespace ProjectWorldCup;
+﻿using Common;
+using Microsoft.AspNetCore.Identity;
+
+namespace ProjectWorldCup;
 
 public partial class BettingService : IBettingService
 {
     private readonly IFileSystem _fs;
-    Dictionary<BettingType, List<WcBettingItem<GroupTeam>>> _cache = new();
 
     public BettingService(
         IFileSystemService fsService,
-        WorldCupOption option)
+        WorldCupOption option,
+        ICacheClearInvoker cacheClearInvoker,
+        IUserStore<AppUser> userStore)
     {
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
         _fs2018 = fsService.GetFileSystem(option.FileSystemSelect2018, option.Path);
+        _userStore = userStore;
+
+        if (cacheClearInvoker != null)
+        {
+            cacheClearInvoker.ClearCacheInvoked += (_, _) =>
+            {
+                ClearUserCache();
+            };
+        }
     }
 
-    public async ValueTask<List<WcBettingItem<GroupTeam>>> GetAllBettingItemsAsync(BettingType bettingType)
+    public async Task<BettingUser> JoinBettingAsync(BettingUser buser, BettingType bettingType)
     {
-        lock (_cache)
+        var user = await GetBettingUserAsync(buser.AppUser);
+
+        if (user.JoinStatus != UserJoinStatus.Joined)
         {
-            if (_cache.TryGetValue(bettingType, out var bettingItemss))
-            {
-                return bettingItemss;
-            }
+            throw new Exception("참가신청을 먼저 해야 합니다.");
         }
 
-        var bettingItems = await _fs.ReadAllBettingItemsAsync(bettingType);
-        lock (_cache)
+        var remainMoney = user.BettingHistories.Sum(x => x.Value);
+        if (remainMoney < 10000)
         {
-            _cache[bettingType] = bettingItems;
-        }
-        return bettingItems;
-    }
-
-    public async Task<WcBettingItem<GroupTeam>> GetBettingItemAsync(BettingType bettingType, AppUser user)
-    {
-        var bettingItem = await _fs.ReadBettingItemAsync(bettingType, user);
-        return bettingItem;
-    }
-
-    public async Task SaveBettingItemAsync(BettingType bettingType, WcBettingItem<GroupTeam> item)
-    {
-        lock (_cache)
-        {
-            if (_cache.TryGetValue(bettingType, out var list))
-            {
-                list.RemoveAll(x => x.User.Id == item.User.Id);
-                list.Add(item);
-            }
-            else
-            {
-                _cache[bettingType] = new() { item };
-            }
+            throw new Exception("돈이 모자라서 참가할 수 없습니다. 관리자에게 연락해보세요.");
         }
 
-        await _fs.WriteBettingItemAsync(bettingType, item);
+        user.JoinedBetting ??= new();
+        user.JoinedBetting.Add(bettingType);
+
+        var bettingName = bettingType == BettingType.GroupStage ? "16강 진출팀 맞추기"
+            : bettingType == BettingType.Round16 ? "8강 진출팀 맞추기"
+            : "1,2,3,4 등 맞추기";
+        user.BettingHistories.Add(new BettingHistory
+        {
+            Type = HistoryType.Betting,
+            Value = -10000,
+            Comment = $"'{bettingName}'내기에 참가했습니다.",
+        });
+        await SaveUserAsync(user);
+
+        return user;
     }
 }

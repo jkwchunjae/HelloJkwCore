@@ -2,60 +2,54 @@
 
 public partial class WorldCupService
 {
+    public async Task<List<SimpleGroup>> GetSimpleGroupsAsync()
+    {
+        var groups = await _fifa.GetGroupOverview();
+        return groups
+            .Select(group => new SimpleGroup(group))
+            .ToList();
+    }
+
+    /// <summary>
+    /// 순위정보를 반영함
+    /// </summary>
     public async Task<List<WcGroup>> GetGroupsAsync()
     {
-        var fifamatches = await _fifa.GetGroupStageMatchesAsync();
+        var simpleGroups = await GetSimpleGroupsAsync();
 
-        var teams = fifamatches
-            .SelectMany(x => GetTeamInfoFromFifaMatchData(x))
-            .GroupBy(x => x.Id)
-            .Select(x => x.First())
-            .OrderBy(x => x.Placeholder)
-            .ToList();
-
-        var matches = fifamatches
-            .Select(matchData => GroupMatch.CreateFromFifaMatchData(matchData, teams))
-            .ToList();
-
-        var groups = matches
-            .GroupBy(x => x.GroupName)
-            .Select(matches =>
+        var groups = simpleGroups
+            .Select(sg =>
             {
+                var groupName = sg.Name;
                 var league = new WcGroup
                 {
-                    Name = matches.Key,
+                    Name = groupName,
                 };
-
-                var teams = matches.SelectMany(match => new[] { match.HomeTeam, match.AwayTeam })
-                    .Distinct()
-                    .OrderBy(team => team.Placeholder)
+                var teams = sg.Teams
+                    .OrderBy(t => t.Placement)
+                    .Select(team =>
+                    {
+                        var newTeam = new GroupTeam
+                        {
+                            Id = team.Flag.Substring(team.Flag.LastIndexOf('/') + 1),
+                            Placement = team.Placement,
+                            GroupName = groupName,
+                            Name = team.Name,
+                            Flag = team.Flag,
+                        };
+                        return newTeam;
+                    })
                     .ToList();
 
                 teams.ForEach(team => league.AddTeam(team));
-                matches.ForEach(match => league.AddMatch(match));
 
                 return league;
             })
             .ToList();
 
+        var fifaStandings = await _fifa.GetStandingDataAsync();
+        groups.ForEach(group => group.WriteStanding(fifaStandings));
+
         return groups;
-    }
-
-    public async Task<List<GroupMatch>> GetGroupStageMatchesAsync()
-    {
-        var groups = await GetGroupsAsync();
-
-        var matches = groups.SelectMany(group => group.Matches).ToList();
-
-        return matches;
-    }
-
-    private IEnumerable<GroupTeam> GetTeamInfoFromFifaMatchData(FifaMatchData matchData)
-    {
-        var homeTeam = matchData.HomeTeam;
-        var awayTeam = matchData.AwayTeam;
-
-        yield return GroupTeam.CreateFromFifaMatchTeam(homeTeam, matchData.PlaceholderA);
-        yield return GroupTeam.CreateFromFifaMatchTeam(awayTeam, matchData.PlaceholderB);
     }
 }

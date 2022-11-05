@@ -15,7 +15,28 @@ public enum MatchInfoType
     MatchNumber,
 }
 
-public class Match<TTeam> where TTeam : Team
+public interface IMatch<TTeam> where TTeam : Team
+{
+    /// <summary> 매치 시작 시간 </summary>
+    DateTime Time { get; set; }
+    MatchStatus Status { get; set; }
+    TTeam HomeTeam { get; set; }
+    TTeam AwayTeam { get; set; }
+    int HomeScore { get; set; }
+    int AwayScore { get; set; }
+    /// <summary> 홈팀 승부차기 득점 </summary>
+    int HomePenaltyScore { get; set; }
+    /// <summary> 원정팀 승부차기 득점 </summary>
+    int AwayPenaltyScore { get; set; }
+    Dictionary<MatchInfoType, string> Info { get; set; }
+
+    IEnumerable<TTeam> Teams { get; }
+    bool IsDraw { get; }
+    (TTeam Team, int Score, int PenaltyScore) Winner { get; }
+    (TTeam Team, int Score, int PenaltyScore) Looser { get; }
+}
+
+public class Match<TTeam> : IMatch<TTeam> where TTeam : Team
 {
     /// <summary> 매치 시작 시간 </summary>
     public DateTime Time { get; set; }
@@ -29,7 +50,7 @@ public class Match<TTeam> where TTeam : Team
     /// <summary> 원정팀 승부차기 득점 </summary>
     public int AwayPenaltyScore { get; set; }
     public Dictionary<MatchInfoType, string> Info { get; set; } = new();
-
+    public IEnumerable<TTeam> Teams => new[] { HomeTeam, AwayTeam };
     public bool IsDraw => HomeScore == AwayScore && HomePenaltyScore == AwayPenaltyScore;
     public (TTeam Team, int Score, int PenaltyScore) Winner => HomeScore != AwayScore
         ? (HomeScore > AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))
@@ -38,6 +59,18 @@ public class Match<TTeam> where TTeam : Team
         ? (HomeScore < AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))
         : (HomePenaltyScore < AwayPenaltyScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore));
 
+    public Match()
+    {
+    }
 
-
+    public Match(Match<TTeam> match)
+    {
+        Time = match.Time;
+        Status = match.Status;
+        HomeTeam = match.HomeTeam;
+        AwayTeam = match.AwayTeam;
+        HomeScore = match.HomeScore;
+        AwayTeam = match.AwayTeam;
+        Info = match.Info;
+    }
 }

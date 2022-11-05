@@ -1,21 +1,38 @@
 ﻿@inherits JkwPageBase
+@layout WcLayout
 
 @if (BettingItems != null)
 {
-<MudTable Items="@BettingItems">
+  <MudTable Items="@BettingItems">
     <HeaderContent>
         <MudTh>닉네임</MudTh>
         <MudTh>선택</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="닉네임">@context.User.DisplayName.Left(3)***</MudTd>
+        <MudTd DataLabel="닉네임">
+        @if (Visible)
+        {
+            <span> @context.User.DisplayName </span>
+        }
+        else
+        {
+            <span> ******* </span>
+        }
+        </MudTd>
         <MudTd>
+        @if (Visible)
+        {
             <div>
             @foreach (var s in context.Picked)
             {
                 <img class="team-img success" src="@s.Flag"/>
             }
             </div>
+        }
+        else
+        {
+            <span>월드컵이 시작하면 공개됩니다.</span>
+        }
         </MudTd>
     </RowTemplate>
 </MudTable>

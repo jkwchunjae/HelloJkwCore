@@ -6,8 +6,6 @@ public class Result2018Test
 
     public Result2018Test()
     {
-        IFifa fifa = new Fifa();
-
         var pathOption = new PathMap
         {
             Local = new()
@@ -44,7 +42,7 @@ public class Result2018Test
 
         var fsService = new FileSystemService(fsOption, null, null);
 
-        _bettingService = new BettingService(fsService, worldcupOption);
+        _bettingService = new BettingService(fsService, worldcupOption, null, userStore: null);
     }
 
     //[Fact]

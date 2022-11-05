@@ -1,0 +1,55 @@
+﻿@inherits JkwPageBase
+
+<MudNavMenu Class="mud-nav-menu-custom">
+  <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+    Home
+  </MudNavLink>
+  <AuthorizeView>
+    <NotAuthorized>
+      <MudNavLink Href="login" Icon="@Icons.Material.Filled.Login">
+        Login
+      </MudNavLink>
+    </NotAuthorized>
+    <Authorized>
+      <MudNavLink Href="worldcup/userhome" Icon="@Icons.Material.Filled.Person">
+        @User?.DisplayName
+      </MudNavLink>
+    </Authorized>
+  </AuthorizeView>
+  <MudNavLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Icon="@Icons.Filled.EditNote" Target="_blank">
+    규칙 설명
+  </MudNavLink>
+  <MudNavLink Href="worldcup/2018/result" Icon="@Icons.Outlined.AccessTime">
+    2018 내기 결과
+  </MudNavLink>
+  <MudNavLink Href="worldcup/2022/betting/group-stage" Icon="@Icons.Outlined.AlignHorizontalLeft">
+    2022 Round.1
+  </MudNavLink>
+  <MudNavLink Href="worldcup/2022/betting/round16" Icon="@Icons.Outlined.AltRoute">
+    2022 Round.2
+  </MudNavLink>
+  <MudNavLink Href="worldcup/2022/betting/final" Icon="@Icons.Outlined.AutoAwesome">
+    2022 Round.3
+  </MudNavLink>
+  <AuthorizeView Roles="Admin">
+    <Authorized>
+      <MudNavLink Href="worldcup/2022/reward/result" Icon="@Icons.Material.Filled.Money">
+        정산
+      </MudNavLink>
+    </Authorized>
+  </AuthorizeView>
+  <AuthorizeView Roles="WcManager">
+    <Authorized>
+      <MudNavLink Href="worldcup/2022/users" Icon="@Icons.Outlined.PeopleOutline">
+        월드컵 관리
+      </MudNavLink>
+    </Authorized>
+  </AuthorizeView>
+  <AuthorizeView Roles="Admin">
+    <Authorized>
+      <MudNavLink Href="users" Icon="@Icons.Material.Filled.People">
+        유저 관리
+      </MudNavLink>
+    </Authorized>
+  </AuthorizeView>
+</MudNavMenu>

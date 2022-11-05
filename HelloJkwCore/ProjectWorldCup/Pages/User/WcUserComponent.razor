@@ -1,0 +1,82 @@
+﻿@inherits JkwPageBase
+@layout WcLayout
+
+@if (string.IsNullOrEmpty(TargetUser?.AppUser?.NickName) && TargetUser?.AppUser == User)
+{
+<div>
+  <MudTextField T="string" @bind-Value="@InputNickname" Label="닉네임"></MudTextField>
+  <OneClickButton OnClick="@(() => ChangeNickname())" Variant="Variant.Outlined">
+    닉네임 설정 (한번만 가능)
+  </OneClickButton>
+</div>
+}
+else
+{
+  <MudTextField T="string" @bind-Value="@InputNickname" Label="닉네임"></MudTextField>
+  @if (TargetUser.AppUser.NickName != InputNickname)
+  {
+    <OneClickButton OnClick="@(() => ChangeNickname500())" Variant="Variant.Outlined" Reusable="true">
+      500원 내고 닉네임 변경
+    </OneClickButton>
+  }
+}
+
+@if (TargetUser?.BettingHistories?.Any() ?? false)
+{
+  @if (LocalTimeZone != null)
+  {
+    <MudText Typo="Typo.h3">Timeline</MudText>
+    <MudTable Items="TargetUser.BettingHistories" Dense="true">
+      <HeaderContent>
+        <MudTh>시간</MudTh>
+        <MudTh>내용</MudTh>
+        <MudTh>금액</MudTh>
+        <MudTh></MudTh>
+        @if (ByManager)
+        {
+          <MudTh></MudTh>
+        }
+      </HeaderContent>
+      <RowTemplate>
+        <MudTd DataLabel="시간">@(TimeZoneInfo.ConvertTimeFromUtc(context.Time, LocalTimeZone))</MudTd>
+        <MudTd DataLabel="내용">@context.Comment</MudTd>
+        <MudTd DataLabel="금액">
+          @if (context.Value == 0)
+          {
+            <span>-</span>
+          }
+          else
+          {
+            <span>@context.Value.ToString("#,#")</span>
+          }
+        </MudTd>
+        <MudTd>
+        @if (!string.IsNullOrEmpty(context.ResultUrl))
+        {
+          <MudLink Href="@context.ResultUrl">LINK</MudLink>
+        }
+        </MudTd>
+        @if (ByManager)
+        {
+          <MudTd>
+          @if (ReadyToDelete.Contains(context))
+          {
+            <MudIconButton
+              OnClick="@(() => DeleteHistoryAsync(context))"
+              Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error"
+            />
+          }
+          else
+          {
+            <MudIconButton
+              OnClick="@(() => ConfirmDeleteHistory(context))"
+              Icon="@Icons.Material.Filled.Delete" Size="Size.Small" 
+            />
+          }
+          </MudTd>
+        }
+      </RowTemplate>
+    </MudTable>
+  }
+}
+

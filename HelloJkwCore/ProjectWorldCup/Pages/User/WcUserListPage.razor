@@ -1,0 +1,122 @@
+﻿@page "/worldcup/2022/users"
+@layout WcLayout
+@inherits JkwPageBase
+
+<WcTitle>내기 유저 관리</WcTitle>
+
+<div class="wc-users">
+@if (Users.Any(user => user.JoinStatus == UserJoinStatus.Requested))
+{
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Requested)">
+    <HeaderContent>
+      <MudTh>ID</MudTh>
+      <MudTh>이름</MudTh>
+      <MudTh>닉네임</MudTh>
+      <MudTh>신청시간</MudTh>
+      <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd>@context.AppUser.Id</MudTd>
+      <MudTd>@context.AppUser.UserName</MudTd>
+      <MudTd>@context.AppUser.NickName</MudTd>
+      <MudTd>@context.LastJoinRequestTime().UtcToKst()</MudTd>
+      <MudTd>
+        <MudButton OnClick="@(() => ApproveAsync(context, 20000))" Variant="Variant.Outlined">
+          승인
+        </MudButton>
+        <MudButton OnClick="@(() => RejectAsync(context))" Variant="Variant.Outlined">
+          거절
+        </MudButton>
+      </MudTd>
+    </RowTemplate>
+  </MudTable>
+}
+
+@if (Users.Any())
+{
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Joined)" Context="user">
+    <HeaderContent>
+      <MudTh>ID</MudTh>
+      <MudTh>이름</MudTh>
+      <MudTh>닉네임</MudTh>
+      <MudTh>1차결과</MudTh>
+      <MudTh>2차결과</MudTh>
+      <MudTh>3차결과</MudTh>
+      <MudTh>기타</MudTh>
+      <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd>
+        <MudLink Href="@($"/worldcup/user/{user.AppUser.Id}".Replace(".", "_"))" Underline="Underline.Always">
+          @user.AppUser.Id
+        </MudLink>
+      </MudTd>
+      <MudTd>@user.AppUser.UserName</MudTd>
+      <MudTd>@user.AppUser.NickName</MudTd>
+      <MudTd>
+        @GetValue(user, HistoryType.Reward1)
+      </MudTd>
+      <MudTd>
+        @GetValue(user, HistoryType.Reward2)
+      </MudTd>
+      <MudTd>
+        @GetValue(user, HistoryType.Reward3)
+      </MudTd>
+      <MudTd>
+        @user.BettingHistories.Where(x => x.Type == HistoryType.None || x.Type == HistoryType.ChangeNickname).Sum(x => x.Value)
+      </MudTd>
+      <MudTd>
+        <MudButton OnClick="@(() => RequestAsync(user))" Variant="Variant.Outlined">
+          신청
+        </MudButton>
+        <MudButton OnClick="@(() => RejectAsync(user))" Variant="Variant.Outlined">
+          거절
+        </MudButton>
+      </MudTd>
+    </RowTemplate>
+  </MudTable>
+}
+
+@if (Users.Any(user => user.JoinStatus == UserJoinStatus.Rejected || user.JoinStatus == UserJoinStatus.None))
+{
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Rejected || user.JoinStatus == UserJoinStatus.None)">
+    <HeaderContent>
+      <MudTh>ID</MudTh>
+      <MudTh>이름</MudTh>
+      <MudTh>닉네임</MudTh>
+      <MudTh>상태</MudTh>
+      <MudTh>신청시간</MudTh>
+      <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd>@context.AppUser.Id</MudTd>
+      <MudTd>@context.AppUser.UserName</MudTd>
+      <MudTd>@context.AppUser.NickName</MudTd>
+      <MudTd>@context.JoinStatus.ToString()</MudTd>
+      <MudTd>@context.LastJoinRequestTime()</MudTd>
+      <MudTd>
+        <MudButton OnClick="@(() => RequestAsync(context))" Variant="Variant.Outlined">
+          신청
+        </MudButton>
+        <MudButton OnClick="@(() => ApproveAsync(context, 20000))" Variant="Variant.Outlined">
+          승인
+        </MudButton>
+      </MudTd>
+    </RowTemplate>
+
+  </MudTable>
+}
+</div>
+
+@if (User?.HasRole(UserRole.Admin) ?? false)
+{
+    <MudButton OnClick="ClearUserCache" Variant="Variant.Outlined">유저 캐시 초기화</MudButton>
+
+    <MudButton OnClick="ClearCache" Variant="Variant.Outlined">캐시 초기화</MudButton>
+}
+
+<style>
+  div.wc-users div.mud-table {
+      margin-bottom: 20px;
+  }
+</style>

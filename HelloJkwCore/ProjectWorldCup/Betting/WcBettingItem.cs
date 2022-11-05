@@ -1,12 +1,22 @@
 ﻿namespace ProjectWorldCup;
 
-public class WcBettingItem<TTeam> : IBettingResultItem where TTeam : Team
+public interface IWcBettingItem<out TTeam> : IBettingResultItem where TTeam : ITeam
+{
+    AppUser User { get; set; }
+    IEnumerable<TTeam> Picked { get; }
+    IEnumerable<TTeam> Fixed { get; }
+    IEnumerable<TTeam> Success { get; }
+    IEnumerable<TTeam> Fail { get; }
+    bool IsRandom { get; }
+}
+
+public class WcBettingItem<TTeam> : IWcBettingItem<TTeam> where TTeam : ITeam
 {
     public AppUser User { get; set; }
-    public List<TTeam> Picked { get; set; } = new();
-    public List<TTeam> Fixed { get; set; } = new();
     public int Reward { get; set; }
+    public bool IsRandom { get; set; }
 
+    [JsonIgnore]
     public string Id
     {
         get => User.Id.ToString();
@@ -14,9 +24,13 @@ public class WcBettingItem<TTeam> : IBettingResultItem where TTeam : Team
     }
     public virtual int Score
     {
-        get => Success.Count;
+        get => Success.Count();
         set { }
     }
-    public List<TTeam> Success => Picked.Where(s => Fixed.Contains(s)).ToList();
-    public List<TTeam> Fail => Picked.Where(s => !Fixed.Contains(s)).ToList();
+    public IEnumerable<TTeam> Picked { get; set; } = new List<TTeam>();
+    public IEnumerable<TTeam> Fixed { get; set; } = new List<TTeam>();
+    [JsonIgnore]
+    public IEnumerable<TTeam> Success => Picked.Where(s => Fixed.Contains(s)).ToList();
+    [JsonIgnore]
+    public IEnumerable<TTeam> Fail => Picked.Where(s => !Fixed.Contains(s)).ToList();
 }

@@ -1,0 +1,43 @@
+﻿@inherits JkwPageBase
+@layout WcLayout
+
+@page "/worldcup/fifa-failover"
+
+@if (User?.HasRole(UserRole.Admin) ?? false)
+{
+  <MudSelect T="string" Label="Title" ValueChanged="@FailoverValueChanged">
+  @foreach (var title in fifaFailoverTiles)
+  {
+    <MudSelectItem Value="@title"/>
+  }
+  </MudSelect>
+
+@if (!string.IsNullOrEmpty(@SelectedTitle))
+{
+  @if (!string.IsNullOrEmpty(@Value))
+  {
+    <MudButton OnClick="@(() => DownloadFile())" Variant="Variant.Outlined">다운로드</MudButton>
+  }
+
+  <InputFile id="fileInput" OnChange="SelectFile" hidden accept=".json"/>
+  <MudButton HtmlTag="label" Variant="Variant.Outlined" for="fileInput">파일 업로드</MudButton>
+
+  @if (!string.IsNullOrEmpty(UploadValue))
+  {
+    <OneClickButton OnClick="@SaveFailoverData" Reusable="true" Variant="Variant.Outlined">
+      저장
+    </OneClickButton>
+  }
+  <MudGrid>
+    <MudItem md="6">
+        <textarea style="width: 100%; height: 50vh; padding: 15px;" readonly>@Value</textarea>
+    </MudItem>
+    <MudItem md="6">
+      @if (!string.IsNullOrEmpty(UploadValue))
+      {
+        <textarea style="width: 100%; height: 50vh; padding: 15px;" readonly>@UploadValue</textarea>
+      }
+    </MudItem>
+  </MudGrid>
+}
+}

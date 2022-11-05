@@ -1,6 +1,6 @@
 ﻿namespace Common;
 
-public class AppUser
+public class AppUser : IEquatable<AppUser>
 {
     public static UserId UserId(string loginProvider, string providerKey)
     {
@@ -27,5 +27,52 @@ public class AppUser
     public bool HasRole(UserRole role)
     {
         return Roles?.Contains(role) ?? false;
+    }
+
+    public static bool operator ==(AppUser obj1, AppUser obj2)
+    {
+        if (ReferenceEquals(obj1, obj2))
+        {
+            return true;
+        }
+        if (ReferenceEquals(obj1, null))
+        {
+            return false;
+        }
+        if (ReferenceEquals(obj2, null))
+        {
+            return false;
+        }
+
+        return obj1.Equals(obj2);
+    }
+
+    public static bool operator !=(AppUser obj1, AppUser obj2)
+    {
+        return !(obj1 == obj2);
+    }
+
+    public bool Equals(AppUser other)
+    {
+        if (ReferenceEquals(other, null))
+        {
+            return false;
+        }
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return Id == other.Id;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as AppUser);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
     }
 }
