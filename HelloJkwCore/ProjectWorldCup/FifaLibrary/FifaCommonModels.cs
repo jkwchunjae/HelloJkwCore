@@ -22,12 +22,14 @@ public enum Gender
 
 public class OverviewTeam
 {
-    [JsonProperty("groupPlacement")]
+    [JsonProperty("placement")]
     public string Placement { get; set; }
-    [JsonProperty("name")]
+    [JsonProperty("sourceId")]
+    public string Id { get; set; }
+    [JsonProperty("sourceCategory")]
     public string Name { get; set; }
-    [JsonProperty("flag")]
-    public TeamFlag Flag { get; set; }
+    [JsonProperty("flagOrLogoUrl")]
+    public string Flag { get; set; }
 }
 
 public class OverviewGroup
