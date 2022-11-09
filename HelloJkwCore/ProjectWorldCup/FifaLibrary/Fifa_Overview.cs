@@ -14,6 +14,11 @@ public partial class Fifa : IFifa
                 var dataRoot = Json.Deserialize<OverviewGroupDataRoot>(text);
                 foreach (var group in dataRoot.Groups)
                 {
+                    var placement = 0;
+                    foreach (var team in group.Teams)
+                    {
+                        team.Placement = $"{++placement}";
+                    }
                     group.Teams = group.Teams
                         .OrderBy(t => t.Placement)
                         .ToList();

@@ -11,7 +11,7 @@ public class SimpleTeam
     {
         Placement = team.Placement;
         Name = team.Name;
-        Flag = team.Flag.Src;
+        Flag = team.Flag;
     }
 }
 
