@@ -16,7 +16,7 @@
     &lt;&lt; 로그인 하러 가기 &gt;&gt;
   </MudLink>
 }
-else if ((BettingUser?.JoinStatus ?? UserJoinStatus.None)== UserJoinStatus.None)
+@if ((BettingUser?.JoinStatus ?? UserJoinStatus.None)== UserJoinStatus.None)
 {
   <MudLink Href="/worldcup/2022/welcome-betting" Underline="Underline.Always">
     &lt;&lt; 참가신청 하러 가기 &gt;&gt;
