@@ -10,9 +10,17 @@
     string commonButtonStyle = "padding: 6px; border-radius: 6px; box-shadow: var(--mud-elevation-1); display: block; text-align: start; width: 100%; text-transform: initial;";
 }
 
-@if ((BettingUser?.JoinStatus ?? UserJoinStatus.None)== UserJoinStatus.None)
+@if (!IsAuthenticated)
 {
-  <MudLink Href="/worldcup" Underline="Underline.Always">&lt;&lt; 참가신청 하러 가기 &gt;&gt;</MudLink>
+  <MudLink Href="/login?ReturnUrl=/worldcup/2022/betting/group-stage" Underline="Underline.Always">
+    &lt;&lt; 로그인 하러 가기 &gt;&gt;
+  </MudLink>
+}
+else if ((BettingUser?.JoinStatus ?? UserJoinStatus.None)== UserJoinStatus.None)
+{
+  <MudLink Href="/worldcup/2022/welcome-betting" Underline="Underline.Always">
+    &lt;&lt; 참가신청 하러 가기 &gt;&gt;
+  </MudLink>
 }
 
 @if (TimeOver)

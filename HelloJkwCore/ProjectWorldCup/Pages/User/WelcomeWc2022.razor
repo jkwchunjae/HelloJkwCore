@@ -30,6 +30,7 @@
     <div>
         <span>카카오 친구 등록하고 참가비 2만원을 송금해주세요.</span>
         <span>친구 추가하는 이유는 다시 돌려드리기 위함입니다.</span>
+        <span>핸드폰에선 QR코드를 눌러주세요.</span>
         <span>
             <a href="http://qr.kakao.com/talk/ZBOQFohhymZT3I.2H2zVl.xSI0M-">
                 <img src="/images/wc/kakao_jkw.png" alt="카카오친구 추가" width="100"/>
@@ -38,14 +39,7 @@
     </div>
 
     <div>
-        <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Target="_blank" Underline="Underline.Always"
-             onclick="@(() => OnClickBlogLink())">
-          &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt;
-        </MudLink>
-        <MudCheckBox T="bool" CheckedChanged="@((bool check) => ChangeCheckboxBlogRead(check))" Checked="CheckBoxReadBlog"
-            Label="블로그의 규칙을 읽고 이해했습니다"
-            />
-        <OneClickButton OnClick="@(() => JoinAsync())" Variant="Variant.Filled" Color="Color.Success" Disabled="@(CheckBoxReadBlog == false)">
+        <OneClickButton OnClick="@(() => JoinAsync())" Variant="Variant.Filled" Color="Color.Success" >
             승인 요청 (위에 QR코드로 입금을 해주세요.)
         </OneClickButton>
     </div>
@@ -55,6 +49,7 @@
     <div>
         <span>승인 대기 중 입니다.</span>
         <span>아래 QR코드를 이용해서 친구 추가 후 송금해주세요.</span>
+        <span>핸드폰에선 QR코드를 눌러주세요.</span>
         <MudLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Underline="Underline.Always">
             &lt;&lt; 블로그에서 규칙 읽기 &gt;&gt;
         </MudLink>
