@@ -53,10 +53,10 @@
       <div>
         @if (Visible)
         {
-          <img class="team-img success" src="@context.Pick0?.Flag" />
-          <img class="team-img success" src="@context.Pick1?.Flag" />
-          <img class="team-img success" src="@context.Pick2?.Flag" />
-          <img class="team-img success" src="@context.Pick3?.Flag" />
+          <img class="team-img success" src="@context.Pick0?.Flag?.Replace("sq-2", "sq-1")" />
+          <img class="team-img success" src="@context.Pick1?.Flag?.Replace("sq-2", "sq-1")" />
+          <img class="team-img success" src="@context.Pick2?.Flag?.Replace("sq-2", "sq-1")" />
+          <img class="team-img success" src="@context.Pick3?.Flag?.Replace("sq-2", "sq-1")" />
         }
       </div>
     </MudTd>

@@ -6,10 +6,18 @@ public partial class Login : ComponentBase
 {
     [Inject] public IJSRuntime Js { get; set; }
     [Inject] public ISnackbar Snackbar { get; set; }
+    [Parameter, SupplyParameterFromQuery] public string ReturnUrl { get; set; }
 
     private bool IsChromeBrowser => ExceptApps.Any(app => UserAgent.Contains(app)) ? false : true;
     private string[] ExceptApps = new[] { "kakao", "naver" };
     private string UserAgent = string.Empty;
+
+    private string GoogleLoginUri => string.IsNullOrEmpty(ReturnUrl)
+        ? $"/LoginExternal?provider=Google"
+        : $"/LoginExternal?provider=Google&returnUrl={ReturnUrl}";
+    private string KakaoLoginUri => string.IsNullOrEmpty(ReturnUrl)
+        ? $"/LoginExternal?provider=KakaoTalk"
+        : $"/LoginExternal?provider=KakaoTalk&returnUrl={ReturnUrl}";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

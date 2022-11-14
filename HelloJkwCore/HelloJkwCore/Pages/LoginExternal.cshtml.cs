@@ -75,7 +75,7 @@ public class LoginExternalModel : PageModel
         //        authProperties);
         //}
 
-        return LocalRedirect("/");
+        return LocalRedirect(returnUrl ?? "/");
     }
 
 }

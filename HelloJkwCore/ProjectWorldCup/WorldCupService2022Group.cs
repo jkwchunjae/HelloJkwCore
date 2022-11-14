@@ -4,10 +4,21 @@ public partial class WorldCupService
 {
     public async Task<List<SimpleGroup>> GetSimpleGroupsAsync()
     {
+        var standings = await _fifa.GetStandingDataAsync();
         var groups = await _fifa.GetGroupOverview();
-        return groups
+        var simpleGroups = groups
             .Select(group => new SimpleGroup(group))
             .ToList();
+        foreach (var group in simpleGroups)
+        {
+            foreach (var team in group.Teams)
+            {
+                var standingTeam = standings.First(x => x.Team.IdCountry == team.Id);
+                team.Name = standingTeam.Team.Name[0].Description;
+            }
+        }
+
+        return simpleGroups;
     }
 
     /// <summary>

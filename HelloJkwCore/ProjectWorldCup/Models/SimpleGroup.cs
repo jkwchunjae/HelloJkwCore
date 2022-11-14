@@ -3,6 +3,7 @@
 public class SimpleTeam
 {
     public string Placement { get; set; }
+    public string Id { get; set; }
     public string Name { get; set; }
     public string Flag { get; set; }
 
@@ -10,6 +11,7 @@ public class SimpleTeam
     public SimpleTeam(OverviewTeam team)
     {
         Placement = team.Placement;
+        Id = team.Id;
         Name = team.Name;
         Flag = team.Flag;
     }
