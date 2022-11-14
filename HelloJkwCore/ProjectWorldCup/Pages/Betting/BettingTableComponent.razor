@@ -25,7 +25,7 @@
             <div>
             @foreach (var s in context.Picked)
             {
-                <img class="team-img success" src="@s.Flag"/>
+                <img class="team-img success" src="@s.Flag?.Replace("sq-2", "sq-1")"/>
             }
             </div>
         }

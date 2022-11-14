@@ -43,7 +43,7 @@
             <div>
             @foreach (var s in context.Success)
             {
-                <img class="team-img success" src="@s.Flag"/>
+                <img class="team-img success" src="@s.Flag?.Replace("sq-2", "sq-1")"/>
             }
             </div>
         </MudTd>
@@ -51,7 +51,7 @@
             <div>
             @foreach (var s in context.Fail)
             {
-                <img class="team-img fail" src="@s.Flag"/>
+                <img class="team-img fail" src="@s.Flag?.Replace("sq-2", "sq-1")"/>
             }
             </div>
         </MudTd>
