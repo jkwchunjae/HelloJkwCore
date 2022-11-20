@@ -5,6 +5,7 @@
 {
 <MudTable Items="@BettingResult">
     <HeaderContent>
+        <MudTh>순위</MudTh>
         <MudTh>닉네임</MudTh>
         <MudTh>성공</MudTh>
         <MudTh>실패</MudTh>
@@ -12,6 +13,7 @@
         <MudTh>상금</MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd DataLabel="순위">@context.Rank</MudTd>
         <MudTd DataLabel="닉네임">
         @{
           List<string> badges = new();

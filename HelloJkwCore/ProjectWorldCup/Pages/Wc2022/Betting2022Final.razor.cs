@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.JSInterop;
 
 namespace ProjectWorldCup.Pages.Wc2022;
 
@@ -8,6 +9,7 @@ public partial class Betting2022Final : JkwPageBase
     [Inject] IWorldCupService WorldCupService { get; set; }
     [Inject] IBettingService BettingService { get; set; }
     [Inject] IBettingFinalService BettingFinalService { get; set; }
+    [Inject] private UserManager<AppUser> UserManager { get; set; }
 
     private BettingUser BettingUser { get; set; }
     List<(string StageId, List<KnMatch> Matches)> StageMatches { get; set; } = new();
@@ -47,7 +49,14 @@ public partial class Betting2022Final : JkwPageBase
 
         var bettingUser = await BettingService.GetBettingUserAsync(User);
         BettingItem = await BettingFinalService.GetBettingAsync(bettingUser);
-        BettingItems = await BettingFinalService.GetAllBettingsAsync();
+        var bettingItems = await BettingFinalService.GetAllBettingsAsync();
+        var users = (await UserManager.GetUsersInRoleAsync("all"))
+          .ToDictionary(user => user.Id);
+        foreach (var item in bettingItems.Where(item => users.ContainsKey(item.User.Id)))
+        {
+            item.User = users[item.User.Id];
+        }
+        BettingItems = bettingItems;
         EvaluateUserBetting();
     }
 

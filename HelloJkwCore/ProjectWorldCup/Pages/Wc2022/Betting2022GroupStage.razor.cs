@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.JSInterop;
 
 namespace ProjectWorldCup.Pages.Wc2022;
 
@@ -8,6 +9,7 @@ public partial class Betting2022GroupStage : JkwPageBase
     [Inject] private IWorldCupService WcService { get; set; }
     [Inject] private IBettingService BettingService { get; set; }
     [Inject] private IBettingGroupStageService GroupStageService { get; set; }
+    [Inject] private UserManager<AppUser> UserManager { get; set; }
 
     private List<WcGroup> Groups { get; set; } = new();
 
@@ -33,7 +35,14 @@ public partial class Betting2022GroupStage : JkwPageBase
         }
 
         Groups = await WcService.GetGroupsAsync();
-        BettingItems = await GroupStageService.GetAllBettingsAsync();
+        var bettingItems = await GroupStageService.GetAllBettingsAsync();
+        var users = (await UserManager.GetUsersInRoleAsync("all"))
+            .ToDictionary(user => user.Id);
+        foreach (var item in bettingItems.Where(item => users.ContainsKey(item.User.Id)))
+        {
+            item.User = users[item.User.Id];
+        }
+        BettingItems = bettingItems;
     }
 
     private void ShowLoginRequireMessage()

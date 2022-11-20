@@ -29,6 +29,10 @@ public class BettingResultTable<T> : IBettingResultTable<T>
                 item.Reward = bettingTableOption?.RewardForUser?.Invoke(reward) ?? RewardForUser(reward);
             }
         }
+        foreach (var item in list)
+        {
+            item.Rank = list.Count(x => x.Reward > item.Reward) + 1;
+        }
 
         _items = list.OrderByDescending(x => x.Reward).ToList();
     }

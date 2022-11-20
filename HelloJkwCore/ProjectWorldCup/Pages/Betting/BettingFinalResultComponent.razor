@@ -3,6 +3,7 @@
 
 <MudTable Items="BettingResult" Dense="true">
   <HeaderContent>
+    <MudTh>순위</MudTh>
     <MudTh>닉네임</MudTh>
     <MudTh>
       @if (FirstItem != null)
@@ -22,6 +23,7 @@
     <MudTh>상금</MudTh>
   </HeaderContent>
   <RowTemplate>
+    <MudTd DataLabel="순위">@context.Rank</MudTd>
     <MudTd DataLabel="닉네임">
       @{
         List<string> badges = new();
