@@ -1,4 +1,6 @@
-﻿namespace ProjectWorldCup.Pages.Wc2022;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ProjectWorldCup.Pages.Wc2022;
 
 public partial class Betting2022Round16 : JkwPageBase
 {
@@ -6,7 +8,7 @@ public partial class Betting2022Round16 : JkwPageBase
     [Inject] IWorldCupService WorldCupService { get; set; }
     [Inject] IBettingService BettingService { get; set; }
     [Inject] IBettingRound16Service BettingRound16Service { get; set; }
-    //[Inject] IFifa Fifa { get; set; }
+    [Inject] private UserManager<AppUser> UserManager { get; set; }
 
     List<KnMatch> Round16Matches = new();
     WcBettingItem<Team> BettingItem = new();
@@ -30,7 +32,14 @@ public partial class Betting2022Round16 : JkwPageBase
         Round16Matches = await WorldCupService.GetRound16MatchesAsync();
         var bettingUser = await BettingService.GetBettingUserAsync(User);
         BettingItem = await BettingRound16Service.GetBettingAsync(bettingUser);
-        BettingItems = await BettingRound16Service.GetAllBettingsAsync();
+        var bettingItems = await BettingRound16Service.GetAllBettingsAsync();
+        var users = (await UserManager.GetUsersInRoleAsync("all"))
+            .ToDictionary(user => user.Id);
+        foreach (var item in bettingItems.Where(item => users.ContainsKey(item.User.Id)))
+        {
+            item.User = users[item.User.Id];
+        }
+        BettingItems = bettingItems;
     }
 
     private async Task PickTeamAsync(int matchIndex, Team team)
