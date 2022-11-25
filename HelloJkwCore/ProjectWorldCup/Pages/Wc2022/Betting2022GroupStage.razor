@@ -10,6 +10,18 @@
     string commonButtonStyle = "padding: 6px; border-radius: 6px; box-shadow: var(--mud-elevation-1); display: block; text-align: start; width: 100%; text-transform: initial;";
 }
 
+@if (BettingItems?.Any() ?? false)
+{
+    @if (User?.HasRole(UserRole.Admin) ?? false)
+    {
+        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
+    }
+    else
+    {
+        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
+    }
+}
+
 @if (!IsAuthenticated)
 {
   <MudLink Href="/login?ReturnUrl=/worldcup/2022/betting/group-stage" Underline="Underline.Always">
@@ -114,29 +126,3 @@ else
   }
   }
 }
-
-@if (BettingItems?.Any() ?? false)
-{
-    @if (User?.HasRole(UserRole.Admin) ?? false)
-    {
-        <BettingTableComponent BettingItems="BettingItems" Visible="true"></BettingTableComponent>
-        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
-    }
-    else
-    {
-        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
-    }
-}
-@*
-@if (BettingItems != null)
-{
-    if (DateTime.UtcNow < DateTime.Parse("2022-11-01"))
-    {
-        <BettingTableComponent BettingItems="BettingItems"></BettingTableComponent>
-    }
-    else
-    {
-        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
-    }
-}
-*@
