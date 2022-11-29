@@ -19,6 +19,7 @@ public class FifaMatchDataTest
             {
                 Group = new List<FifaIdName> { new FifaIdName { Locale = "en-GB", Description = "Group C" } },
                 Position = 2,
+                Played = 3,
                 Team = new FifaStandingTeam
                 {
                     IdTeam = "id-team",

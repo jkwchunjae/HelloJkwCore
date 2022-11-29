@@ -129,6 +129,7 @@ public class KnMatch : Match<Team>
             var group = placeholder?.Right(1);
 
             var sTeam = standings
+                .Where(x => x.Played == 3)
                 .FirstOrDefault(x => x.Position == position && x.Group.First().Description.Right(1) == group)
                 ?.Team;
 
@@ -172,16 +173,18 @@ public class KnMatch : Match<Team>
             if (match == null)
                 return default;
 
-            var homeScore = match.HomeTeamScore * 1000 + match.HomeTeamPenaltyScore;
-            var awayScore = match.AwayTeamScore * 1000 + match.AwayTeamPenaltyScore;
+            var winnerId = match.Winner;
+
+            if (winnerId == null)
+                return default;
 
             if (type == "W")
             {
-                return homeScore > awayScore ? match.Home : match.Away;
+                return match.Home.IdTeam == winnerId ? match.Home : match.Away;
             }
             else
             {
-                return homeScore > awayScore ? match.Away : match.Home;
+                return match.Home.IdTeam == winnerId ? match.Away : match.Home;
             }
         }
     }

@@ -54,7 +54,7 @@ public class FifaMatchData
     [JsonProperty("FirstHalfTime")] public object FirstHalfTime { get; set; }
     [JsonProperty("FirstHalfExtraTime")] public object FirstHalfExtraTime { get; set; }
     [JsonProperty("SecondHalfExtraTime")] public object SecondHalfExtraTime { get; set; }
-    [JsonProperty("Winner")] public object Winner { get; set; }
+    [JsonProperty("Winner")] public string Winner { get; set; }
     [JsonProperty("MatchReportUrl")] public object MatchReportUrl { get; set; }
     [JsonProperty("PlaceHolderA")] public string PlaceHolderA { get; set; }
     [JsonProperty("PlaceHolderB")] public string PlaceHolderB { get; set; }
