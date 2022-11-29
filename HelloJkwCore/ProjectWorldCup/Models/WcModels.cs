@@ -166,8 +166,8 @@ public class KnMatch : Match<Team>
 
         FifaMatchTeam GetTeam(string placeholder)
         {
-            var matchNumber = placeholder.Right(2).ToInt();
-            var type = placeholder.Left(1); // W, L
+            var matchNumber = placeholder?.Right(2).ToInt();
+            var type = placeholder?.Left(1); // W, L
             var match = prevMatches.FirstOrDefault(m => m.MatchNumber == matchNumber);
             if (match == null)
                 return default;
