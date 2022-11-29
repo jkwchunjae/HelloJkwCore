@@ -125,8 +125,8 @@ public class KnMatch : Match<Team>
 
         FifaMatchTeam GetTeam(string placeholder)
         {
-            var position = placeholder.Left(1).ToInt();
-            var group = placeholder.Right(1);
+            var position = placeholder?.Left(1).ToInt();
+            var group = placeholder?.Right(1);
 
             var sTeam = standings
                 .FirstOrDefault(x => x.Position == position && x.Group.First().Description.Right(1) == group)
