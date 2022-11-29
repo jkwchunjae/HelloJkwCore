@@ -53,7 +53,7 @@
     </MudTd>
     <MudTd DataLabel="선택">
       <div>
-        @if (Visible)
+        @if (Visible || context.User == User)
         {
           <img class="team-img success" src="@context.Pick0?.Flag?.Replace("sq-2", "sq-1")" />
           <img class="team-img success" src="@context.Pick1?.Flag?.Replace("sq-2", "sq-1")" />

@@ -10,7 +10,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="닉네임">
-        @if (Visible)
+        @if (Visible || context.User == User)
         {
             <span> @context.User.DisplayName </span>
         }
@@ -20,7 +20,7 @@
         }
         </MudTd>
         <MudTd>
-        @if (Visible)
+        @if (Visible || context.User == User)
         {
             <div>
             @foreach (var s in context.Picked)
