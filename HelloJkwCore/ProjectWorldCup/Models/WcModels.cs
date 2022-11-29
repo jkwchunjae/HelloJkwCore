@@ -104,6 +104,88 @@ public class KnMatch : Match<Team>
         };
     }
 
+    public static KnMatch CreateFromFifaMatchData(FifaMatchData fifaMatchData, List<FifaStandingData> standings)
+    {
+        fifaMatchData.Home ??= GetTeam(fifaMatchData.PlaceHolderA);
+        fifaMatchData.Away ??= GetTeam(fifaMatchData.PlaceHolderB);
+
+        return new KnMatch
+        {
+            StageId = fifaMatchData.IdStage,
+            MatchId = fifaMatchData.IdMatch,
+            Time = fifaMatchData.Date,
+            Status = MatchStatus.Before,
+            HomeTeam = new Team { Id = fifaMatchData.Home?.IdCountry, Name = fifaMatchData.Home?.TeamName[0].Description, Flag = fifaMatchData.Home?.PictureUrl },
+            AwayTeam = new Team { Id = fifaMatchData.Away?.IdCountry, Name = fifaMatchData.Away?.TeamName[0].Description, Flag = fifaMatchData.Away?.PictureUrl },
+            Info = new()
+            {
+                [MatchInfoType.MatchNumber] = fifaMatchData.MatchNumber.ToString(),
+            },
+        };
+
+        FifaMatchTeam GetTeam(string placeholder)
+        {
+            var position = placeholder?.Left(1).ToInt();
+            var group = placeholder?.Right(1);
+
+            var sTeam = standings
+                .FirstOrDefault(x => x.Position == position && x.Group.First().Description.Right(1) == group)
+                ?.Team;
+
+            if (sTeam == null)
+                return default;
+
+            var matchTeam = new FifaMatchTeam
+            {
+                IdTeam = sTeam.IdTeam,
+                IdCountry = sTeam.IdCountry,
+                TeamName = sTeam.Name,
+                PictureUrl = sTeam.PictureUrl,
+            };
+            return matchTeam;
+        }
+    }
+    public static KnMatch CreateFromFifaMatchData(FifaMatchData fifaMatchData, List<FifaMatchData> prevMatches)
+    {
+        fifaMatchData.Home ??= GetTeam(fifaMatchData.PlaceHolderA);
+        fifaMatchData.Away ??= GetTeam(fifaMatchData.PlaceHolderB);
+
+        return new KnMatch
+        {
+            StageId = fifaMatchData.IdStage,
+            MatchId = fifaMatchData.IdMatch,
+            Time = fifaMatchData.Date,
+            Status = MatchStatus.Before,
+            HomeTeam = new Team { Id = fifaMatchData.Home?.IdCountry, Name = fifaMatchData.Home?.TeamName[0].Description, Flag = fifaMatchData.Home?.PictureUrl },
+            AwayTeam = new Team { Id = fifaMatchData.Away?.IdCountry, Name = fifaMatchData.Away?.TeamName[0].Description, Flag = fifaMatchData.Away?.PictureUrl },
+            Info = new()
+            {
+                [MatchInfoType.MatchNumber] = fifaMatchData.MatchNumber.ToString(),
+            },
+        };
+
+        FifaMatchTeam GetTeam(string placeholder)
+        {
+            var matchNumber = placeholder?.Right(2).ToInt();
+            var type = placeholder?.Left(1); // W, L
+            var match = prevMatches.FirstOrDefault(m => m.MatchNumber == matchNumber);
+            if (match == null)
+                return default;
+
+            var homeScore = match.HomeTeamScore * 1000 + match.HomeTeamPenaltyScore;
+            var awayScore = match.AwayTeamScore * 1000 + match.AwayTeamPenaltyScore;
+
+            if (type == "W")
+            {
+                return homeScore > awayScore ? match.Home : match.Away;
+            }
+            else
+            {
+                return homeScore > awayScore ? match.Away : match.Home;
+            }
+        }
+    }
+
     public KnMatch()
     {
     }

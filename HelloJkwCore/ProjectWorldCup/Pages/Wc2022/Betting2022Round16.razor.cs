@@ -63,6 +63,12 @@ public partial class Betting2022Round16 : JkwPageBase
                 return;
             }
             BettingItem = await BettingRound16Service.PickTeamAsync(bettingUser, team);
+            if (BettingItem.Picked.Contains(team))
+            {
+                Snackbar.Clear();
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+                Snackbar.Add("저장되었습니다", Severity.Success);
+            }
             StateHasChanged();
         }
         catch (Exception ex)
