@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Jkw.Extensions" Version="1.0.13" />
-    <PackageReference Include="KakaoMapBlazor" Version="2.0.4" />
+    <PackageReference Include="KakaoMapBlazor" Version="2.0.5" />
   </ItemGroup>
 
   <ItemGroup>
