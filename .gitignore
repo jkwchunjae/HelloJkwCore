@@ -354,3 +354,4 @@ HelloJkwCore/HelloJkwCore/appsettings.User.json
 
 # local file system
 HelloJkwCore/HelloJkwCore/fs/
+.DS_Store
