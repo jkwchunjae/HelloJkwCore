@@ -1,4 +1,4 @@
-﻿@inherits JkwLayoutBase
+﻿@inherits LayoutComponentBase
 
 <MudThemeProvider Theme="currentTheme" />
 <MudDialogProvider />
@@ -8,19 +8,17 @@
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudButton Href="/">
-            <MudText Typo="Typo.h5" Class="ml-3" Style="font-family: 'Kaushan Script'; color: #fed136;">Hello JKW!</MudText>
+            <MudText Typo="Typo.h5" Class="ml-3" Style="font-family: 'Kaushan Script'; color: #fed136;">Trips !!</MudText>
         </MudButton>
         <MudSpacer />
         <MudIconButton Icon="@Icons.Filled.Brightness4" Color="Color.Inherit" Edge="Edge.End" OnClick="() => ToggleTheme()" />
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavMenu />
+        <TripNavMenu />
     </MudDrawer>
-    <MudMainContent>
-        <MudPaper Elevation="0" Style="background-color: inherit;">
-            <MudContainer Style="padding-top: 15px;">
-                @Body
-            </MudContainer>
+    <MudMainContent Style="height: 100%;">
+        <MudPaper Elevation="0" Style="background-color: inherit; height: 100%; position: relative;">
+            @Body
         </MudPaper>
     </MudMainContent>
 </MudLayout>
