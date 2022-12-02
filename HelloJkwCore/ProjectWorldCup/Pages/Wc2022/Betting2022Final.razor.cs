@@ -34,21 +34,16 @@ public partial class Betting2022Final : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        if (!IsAuthenticated)
+        if (IsAuthenticated)
         {
-            Navi.NavigateTo("/worldcup");
-            return;
+            BettingUser = await BettingService.GetBettingUserAsync(User);
+            BettingItem = await BettingFinalService.GetBettingAsync(BettingUser);
         }
-        BettingUser = await BettingService.GetBettingUserAsync(User);
         Matches = await WorldCupService.GetFinalMatchesAsync();
 
         var quarterFinalMatches = await WorldCupService.GetQuarterFinalMatchesAsync();
         StageMatches.Add((Fifa.Round8StageId, quarterFinalMatches));
 
-        //await Js.InvokeVoidAsync("console.log", quarterFinalMatches, AllMatchesAreSetted);
-
-        var bettingUser = await BettingService.GetBettingUserAsync(User);
-        BettingItem = await BettingFinalService.GetBettingAsync(bettingUser);
         var bettingItems = await BettingFinalService.GetAllBettingsAsync();
         var users = (await UserManager.GetUsersInRoleAsync("all"))
           .ToDictionary(user => user.Id);

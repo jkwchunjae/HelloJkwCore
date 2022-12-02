@@ -24,14 +24,12 @@ public partial class Betting2022Round16 : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        if (!IsAuthenticated)
-        {
-            Navi.NavigateTo("/worldcup");
-            return;
-        }
         Round16Matches = await WorldCupService.GetRound16MatchesAsync();
-        var bettingUser = await BettingService.GetBettingUserAsync(User);
-        BettingItem = await BettingRound16Service.GetBettingAsync(bettingUser);
+        if (IsAuthenticated)
+        {
+            var bettingUser = await BettingService.GetBettingUserAsync(User);
+            BettingItem = await BettingRound16Service.GetBettingAsync(bettingUser);
+        }
         var bettingItems = await BettingRound16Service.GetAllBettingsAsync();
         var users = (await UserManager.GetUsersInRoleAsync("all"))
             .ToDictionary(user => user.Id);
