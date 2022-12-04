@@ -137,6 +137,7 @@ public partial class Betting2022Final : JkwPageBase
             if (BettingItem.Picked?.Count(x => x != null) == 4)
             {
                 await BettingFinalService.SaveBettingItemAsync(BettingItem);
+                BettingItems = await BettingFinalService.GetAllBettingsAsync();
                 Snackbar.Clear();
                 Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
                 Snackbar.Add("저장되었습니다", Severity.Success);
