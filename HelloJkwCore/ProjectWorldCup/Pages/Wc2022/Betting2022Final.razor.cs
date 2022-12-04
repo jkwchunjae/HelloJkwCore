@@ -114,24 +114,24 @@ public partial class Betting2022Final : JkwPageBase
                 var third = StageMatches.First(s => s.StageId == Fifa.ThirdStageId).Matches[0];
                 var loser = third.HomeTeam == team ? third.AwayTeam : third.HomeTeam;
                 BettingItem.Picked = new List<Team>
-            {
-                BettingItem.Pick0,
-                BettingItem.Pick1,
-                team,
-                loser,
-            };
+                {
+                    BettingItem.Pick0,
+                    BettingItem.Pick1,
+                    team,
+                    loser,
+                };
             }
             else if (stageId == Fifa.FinalStageId)
             {
                 var final = StageMatches.First(s => s.StageId == Fifa.FinalStageId).Matches[0];
                 var loser = final.HomeTeam == team ? final.AwayTeam : final.HomeTeam;
                 BettingItem.Picked = new List<Team>
-            {
-                team,
-                loser,
-                BettingItem.Pick2,
-                BettingItem.Pick3,
-            };
+                {
+                    team,
+                    loser,
+                    BettingItem.Pick2,
+                    BettingItem.Pick3,
+                };
             }
 
             if (BettingItem.Picked?.Count(x => x != null) == 4)

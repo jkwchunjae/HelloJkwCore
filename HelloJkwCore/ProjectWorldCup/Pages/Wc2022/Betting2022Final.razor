@@ -42,7 +42,9 @@
     var matches = stageData.Matches;
 
     <div class="matches">
-        <div class="stage-name">@StageName[stageId]</div>
+        <div class="stage-name">
+            <MudText Typo="Typo.h5">@StageName[stageId]</MudText>
+        </div>
         @foreach (var matchData in matches)
         {
             var matchId = matchData?.MatchId;
