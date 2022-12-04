@@ -31,7 +31,10 @@
 
 <WcTitle>2라운드: 8강 진출팀 맞추기</WcTitle>
 
-<span class="test"></span>
+@if (TimeOver.All(x => x))
+{ 
+    <BettingTableComponent BettingItems="BettingItems" Visible="@TimeOver.All(x => x)"></BettingTableComponent>
+}
 
 <div class="matches">
   @foreach (var match in Round16Matches.Select((x, i) => new { Index = i, MatchData = x }))
@@ -126,11 +129,10 @@
   }
 }
 
-@if (BettingItems?.Any() ?? false)
+@if (!TimeOver.All(x => x) && (BettingItems?.Any() ?? false))
 {
     @if (User?.HasRole(UserRole.Admin) ?? false)
     {
-        <BettingTableComponent BettingItems="BettingItems" Visible="true"></BettingTableComponent>
         <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
     }
     else
