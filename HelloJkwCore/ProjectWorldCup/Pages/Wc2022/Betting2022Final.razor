@@ -55,7 +55,7 @@
             var awayButtonStyle = awayType == TeamButtonType.Picked ? $"{commonButtonStyle} color: white; background: #56042C"
             : commonButtonStyle;
 
-            <div class="match row" style="margin-bottom: 20px;">
+            <div class="match row">
                 <div class="team col-md-3">
                     <MudButton Class="team-inner" Style="@homeButtonStyle" OnClick="(async () => await PickTeamAsync(stageId, matchId, matchData?.HomeTeam))" Disabled="@(homeType == TeamButtonType.Disabled)">
                         <img class="team-img" src="@matchData?.HomeTeam?.Flag" />
