@@ -18,11 +18,6 @@ public partial class WcTotalResult : JkwPageBase
 
     protected override async Task OnPageInitializedAsync()
     {
-        if (!IsAuthenticated)
-        {
-            Navi.NavigateTo("/worldcup");
-            return;
-        }
         var users = await BettingService.GetBettingUsersAsync();
         Results = MakeUserResult(users);
     }
