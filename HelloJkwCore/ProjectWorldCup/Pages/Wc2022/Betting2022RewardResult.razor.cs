@@ -118,7 +118,7 @@ public partial class Betting2022RewardResult : JkwPageBase
     private async Task ApplyRewardFinal()
     {
         await ApplyReward(
-            bettingResults: GroupStageResult,
+            bettingResults: FinalResult,
             rewardType: HistoryType.Reward3,
             buttonTextAction: (text) => FinalButtonText = text
         );

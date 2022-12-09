@@ -9,10 +9,12 @@ public partial class WcTotalResult : JkwPageBase
         public int Rank;
         public string Name;
         public UserId UserId;
+        public int JoinCount;
         public long Reward1;
         public long Reward2;
         public long Reward3;
         public long Total => Reward1 + Reward2 + Reward3;
+        public long Profit => 20000 - JoinCount * 10000 + Total;
     }
     IEnumerable<UserResult> Results { get; set; } = new List<UserResult>();
 
@@ -34,6 +36,7 @@ public partial class WcTotalResult : JkwPageBase
             {
                 Name = user.AppUser.DisplayName,
                 UserId = user.AppUser.Id,
+                JoinCount = user.BettingHistories.Count(h => h.Type == HistoryType.Betting),
                 Reward1 = GetValue(user, HistoryType.Reward1),
                 Reward2 = GetValue(user, HistoryType.Reward2),
                 Reward3 = GetValue(user, HistoryType.Reward3),
