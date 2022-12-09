@@ -25,7 +25,7 @@
     <BettingTableForExcel BettingResults="@Round16Result" FixedTeams="@Round16Fixed" />
   </MudTabPanel>
   <MudTabPanel Text="Round.3">
-    <BettingFinalResultComponent BettingItems="@FinalResult"/>
+    <BettingFinalResultComponent BettingItems="@FinalResult" Visible="true"/>
     <MudButton OnClick="@(async () => await ApplyRewardFinal())"
       Variant="Variant.Outlined"
       Reusable="true">
