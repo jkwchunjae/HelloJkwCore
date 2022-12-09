@@ -14,7 +14,7 @@ public partial class WcTotalResult : JkwPageBase
         public long Reward2;
         public long Reward3;
         public long Total => Reward1 + Reward2 + Reward3;
-        public long Profit => 20000 - JoinCount * 10000 + Total;
+        public long Profit => 0 - JoinCount * 10000 + Total;
     }
     IEnumerable<UserResult> Results { get; set; } = new List<UserResult>();
 
@@ -26,7 +26,10 @@ public partial class WcTotalResult : JkwPageBase
             return;
         }
         var users = await BettingService.GetBettingUsersAsync();
-        Results = MakeUserResult(users);
+        var joinedUsers = users
+            .Where(user => user.JoinStatus == UserJoinStatus.Joined)
+            .ToList();
+        Results = MakeUserResult(joinedUsers);
     }
 
     IEnumerable<UserResult> MakeUserResult(IEnumerable<BettingUser> bettingUser)
