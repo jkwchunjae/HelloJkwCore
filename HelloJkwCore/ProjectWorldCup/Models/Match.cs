@@ -52,12 +52,12 @@ public class Match<TTeam> : IMatch<TTeam> where TTeam : Team
     public Dictionary<MatchInfoType, string> Info { get; set; } = new();
     public IEnumerable<TTeam> Teams => new[] { HomeTeam, AwayTeam };
     public bool IsDraw => HomeScore == AwayScore && HomePenaltyScore == AwayPenaltyScore;
-    public (TTeam Team, int Score, int PenaltyScore) Winner => HomeScore != AwayScore
-        ? (HomeScore > AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))
-        : (HomePenaltyScore > AwayPenaltyScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore));
-    public (TTeam Team, int Score, int PenaltyScore) Looser => HomeScore != AwayScore
-        ? (HomeScore < AwayScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore))
-        : (HomePenaltyScore < AwayPenaltyScore ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore));
+
+    public string WinnerId { get; set; }
+    public (TTeam Team, int Score, int PenaltyScore) Winner => string.IsNullOrEmpty(WinnerId) ? default
+        : WinnerId == HomeTeam.FifaTeamId ? (HomeTeam, HomeScore, HomePenaltyScore) : (AwayTeam, AwayScore, AwayPenaltyScore);
+    public (TTeam Team, int Score, int PenaltyScore) Looser => string.IsNullOrEmpty(WinnerId) ? default
+        : WinnerId == HomeTeam.FifaTeamId ? (AwayTeam, AwayScore, AwayPenaltyScore) : (HomeTeam, HomeScore, HomePenaltyScore);
 
     public Match()
     {
@@ -71,6 +71,7 @@ public class Match<TTeam> : IMatch<TTeam> where TTeam : Team
         AwayTeam = match.AwayTeam;
         HomeScore = match.HomeScore;
         AwayTeam = match.AwayTeam;
+        WinnerId = match.WinnerId;
         Info = match.Info;
     }
 }

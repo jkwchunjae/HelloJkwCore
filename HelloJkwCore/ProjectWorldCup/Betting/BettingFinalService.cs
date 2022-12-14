@@ -51,15 +51,10 @@ public class BettingFinalService : IBettingFinalService
             .SelectMany(match => match.Teams)
             .Where(team => team != null)
             .ToList();
-        var thirdTeams = matches
-            .Where(match => match.StageId == Fifa.ThirdStageId)
-            .SelectMany(match => match.Teams)
-            .ToList();
-        var finalTeams = matches
-            .Where(match => match.StageId == Fifa.FinalStageId)
-            .SelectMany(match => match.Teams)
-            .ToList();
-        var fixedTeams = finalTeams.Concat(thirdTeams).ToList();
+        var thirdMatch = matches.FirstOrDefault(match => match.StageId == Fifa.ThirdStageId);
+        var finalMatch = matches.FirstOrDefault(match => match.StageId == Fifa.FinalStageId);
+        var finalTeams = finalMatch.Teams.ToList();
+        var fixedTeams = new[] { finalMatch.Winner.Team, finalMatch.Looser.Team, thirdMatch.Winner.Team, thirdMatch.Looser.Team };
         var bettingItems = await GetAllBettingsAsync();
         bettingItems.ForEach(bettingItem =>
         {

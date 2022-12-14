@@ -1,4 +1,6 @@
-﻿namespace ProjectWorldCup;
+﻿using ProjectWorldCup.FifaLibrary;
+
+namespace ProjectWorldCup;
 
 public interface ITeam
 {
@@ -11,6 +13,19 @@ public class Team : ITeam, IEquatable<Team>, IComparable<Team>
     public string Id { get; set; }
     public string Name { get; set; }
     public string Flag { get; set; }
+    public string FifaTeamId { get; set; }
+
+    public Team()
+    {
+    }
+
+    public Team(FifaMatchTeam fifaMatchTeam)
+    {
+        Id = fifaMatchTeam?.IdCountry;
+        Name = fifaMatchTeam?.TeamName[0].Description;
+        Flag = fifaMatchTeam?.PictureUrl;
+        FifaTeamId = fifaMatchTeam?.IdTeam;
+    }
 
     public int CompareTo(Team other)
     {

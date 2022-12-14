@@ -26,6 +26,7 @@ public class GroupMatch : Match<GroupTeam>
                 AwayScore = matchData.HomeTeamScore ?? 0,
                 Status = MatchStatus.Before,
                 Time = matchData.Date,
+                WinnerId = matchData.Winner,
                 Info = new()
                 {
                     [MatchInfoType.MatchNumber] = matchData.MatchNumber.ToString(),
@@ -48,6 +49,7 @@ public class GroupMatch : Match<GroupTeam>
                 AwayScore = matchData.Away?.Score ?? 0,
                 Status = MatchStatus.Before,
                 Time = matchData.Date,
+                WinnerId = matchData.Winner,
                 Info = new()
                 {
                     [MatchInfoType.MatchNumber] = matchData.MatchNumber.ToString(),
@@ -95,8 +97,9 @@ public class KnMatch : Match<Team>
             MatchId = fifaMatchData.IdMatch,
             Time = fifaMatchData.Date,
             Status = MatchStatus.Before,
-            HomeTeam = new Team { Id = fifaMatchData.Home?.IdCountry, Name = fifaMatchData.Home?.TeamName[0].Description, Flag = fifaMatchData.Home?.PictureUrl },
-            AwayTeam = new Team { Id = fifaMatchData.Away?.IdCountry, Name = fifaMatchData.Away?.TeamName[0].Description, Flag = fifaMatchData.Away?.PictureUrl },
+            HomeTeam = new Team(fifaMatchData.Home),
+            AwayTeam = new Team(fifaMatchData.Away),
+            WinnerId = fifaMatchData.Winner,
             Info = new()
             {
                 [MatchInfoType.MatchNumber] = fifaMatchData.MatchNumber.ToString(),
@@ -115,8 +118,9 @@ public class KnMatch : Match<Team>
             MatchId = fifaMatchData.IdMatch,
             Time = fifaMatchData.Date,
             Status = MatchStatus.Before,
-            HomeTeam = new Team { Id = fifaMatchData.Home?.IdCountry, Name = fifaMatchData.Home?.TeamName[0].Description, Flag = fifaMatchData.Home?.PictureUrl },
-            AwayTeam = new Team { Id = fifaMatchData.Away?.IdCountry, Name = fifaMatchData.Away?.TeamName[0].Description, Flag = fifaMatchData.Away?.PictureUrl },
+            HomeTeam = new Team(fifaMatchData.Home),
+            AwayTeam = new Team(fifaMatchData.Away),
+            WinnerId = fifaMatchData.Winner,
             Info = new()
             {
                 [MatchInfoType.MatchNumber] = fifaMatchData.MatchNumber.ToString(),
@@ -157,8 +161,9 @@ public class KnMatch : Match<Team>
             MatchId = fifaMatchData.IdMatch,
             Time = fifaMatchData.Date,
             Status = MatchStatus.Before,
-            HomeTeam = new Team { Id = fifaMatchData.Home?.IdCountry, Name = fifaMatchData.Home?.TeamName[0].Description, Flag = fifaMatchData.Home?.PictureUrl },
-            AwayTeam = new Team { Id = fifaMatchData.Away?.IdCountry, Name = fifaMatchData.Away?.TeamName[0].Description, Flag = fifaMatchData.Away?.PictureUrl },
+            HomeTeam = new Team(fifaMatchData.Home),
+            AwayTeam = new Team(fifaMatchData.Away),
+            WinnerId = fifaMatchData.Winner,
             Info = new()
             {
                 [MatchInfoType.MatchNumber] = fifaMatchData.MatchNumber.ToString(),
