@@ -7,8 +7,8 @@ public class MatchTest
 
     public MatchTest()
     {
-        Team1 = new Team { Id = "A", Name = "A", };
-        Team2 = new Team { Id = "B", Name = "B", };
+        Team1 = new Team { Id = "A", Name = "A", FifaTeamId = "A" };
+        Team2 = new Team { Id = "B", Name = "B", FifaTeamId = "B" };
     }
 
     [Fact]
@@ -38,6 +38,7 @@ public class MatchTest
             AwayScore = 0,
             HomePenaltyScore = 0,
             AwayPenaltyScore = 0,
+            WinnerId = Team1.FifaTeamId,
         };
 
         Assert.Equal(Team1.Id, match.Winner.Team.Id);
@@ -55,6 +56,7 @@ public class MatchTest
             AwayScore = 1,
             HomePenaltyScore = 0,
             AwayPenaltyScore = 0,
+            WinnerId = Team2.FifaTeamId,
         };
 
         Assert.Equal(Team2.Id, match.Winner.Team.Id);
@@ -72,6 +74,7 @@ public class MatchTest
             AwayScore = 0,
             HomePenaltyScore = 1,
             AwayPenaltyScore = 0,
+            WinnerId = Team1.FifaTeamId,
         };
 
         Assert.Equal(Team1.Id, match.Winner.Team.Id);
@@ -89,6 +92,7 @@ public class MatchTest
             AwayScore = 0,
             HomePenaltyScore = 0,
             AwayPenaltyScore = 1,
+            WinnerId = Team2.FifaTeamId,
         };
 
         Assert.Equal(Team2.Id, match.Winner.Team.Id);

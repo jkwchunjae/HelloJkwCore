@@ -11,26 +11,26 @@ public class LeagueTest
         };
 
         #region Teams
-        league.AddTeam(new Team { Id = "MCI", Name = "Manchester City" });
-        league.AddTeam(new Team { Id = "MUN", Name = "Manchester United" });
-        league.AddTeam(new Team { Id = "LIV", Name = "Liverpool" });
-        league.AddTeam(new Team { Id = "CHE", Name = "Chelsea" });
-        league.AddTeam(new Team { Id = "LEI", Name = "Leicester City" });
-        league.AddTeam(new Team { Id = "WHU", Name = "West Ham United" });
-        league.AddTeam(new Team { Id = "TOT", Name = "Tottenham Hotspur" });
-        league.AddTeam(new Team { Id = "ARS", Name = "Arsenal" });
-        league.AddTeam(new Team { Id = "LEE", Name = "Leeds United" });
-        league.AddTeam(new Team { Id = "EVE", Name = "Everton" });
-        league.AddTeam(new Team { Id = "AVL", Name = "Aston Villa" });
-        league.AddTeam(new Team { Id = "NEW", Name = "Newcastle United" });
-        league.AddTeam(new Team { Id = "WOL", Name = "Wolverhampton Wanderers" });
-        league.AddTeam(new Team { Id = "CRY", Name = "Crystal Palace" });
-        league.AddTeam(new Team { Id = "SOU", Name = "Southampton" });
-        league.AddTeam(new Team { Id = "BHA", Name = "Brighton and Hove Albion" });
-        league.AddTeam(new Team { Id = "BUR", Name = "Burnley" });
-        league.AddTeam(new Team { Id = "FUL", Name = "Fulham" });
-        league.AddTeam(new Team { Id = "WBA", Name = "West Bromwich Albion" });
-        league.AddTeam(new Team { Id = "SHU", Name = "Sheffield United" });
+        league.AddTeam(new Team { Id = "MCI", FifaTeamId = "MCI", Name = "Manchester City" });
+        league.AddTeam(new Team { Id = "MUN", FifaTeamId = "MUN", Name = "Manchester United" });
+        league.AddTeam(new Team { Id = "LIV", FifaTeamId = "LIV", Name = "Liverpool" });
+        league.AddTeam(new Team { Id = "CHE", FifaTeamId = "CHE", Name = "Chelsea" });
+        league.AddTeam(new Team { Id = "LEI", FifaTeamId = "LEI", Name = "Leicester City" });
+        league.AddTeam(new Team { Id = "WHU", FifaTeamId = "WHU", Name = "West Ham United" });
+        league.AddTeam(new Team { Id = "TOT", FifaTeamId = "TOT", Name = "Tottenham Hotspur" });
+        league.AddTeam(new Team { Id = "ARS", FifaTeamId = "ARS", Name = "Arsenal" });
+        league.AddTeam(new Team { Id = "LEE", FifaTeamId = "LEE", Name = "Leeds United" });
+        league.AddTeam(new Team { Id = "EVE", FifaTeamId = "EVE", Name = "Everton" });
+        league.AddTeam(new Team { Id = "AVL", FifaTeamId = "AVL", Name = "Aston Villa" });
+        league.AddTeam(new Team { Id = "NEW", FifaTeamId = "NEW", Name = "Newcastle United" });
+        league.AddTeam(new Team { Id = "WOL", FifaTeamId = "WOL", Name = "Wolverhampton Wanderers" });
+        league.AddTeam(new Team { Id = "CRY", FifaTeamId = "CRY", Name = "Crystal Palace" });
+        league.AddTeam(new Team { Id = "SOU", FifaTeamId = "SOU", Name = "Southampton" });
+        league.AddTeam(new Team { Id = "BHA", FifaTeamId = "BHA", Name = "Brighton and Hove Albion" });
+        league.AddTeam(new Team { Id = "BUR", FifaTeamId = "BUR", Name = "Burnley" });
+        league.AddTeam(new Team { Id = "FUL", FifaTeamId = "FUL", Name = "Fulham" });
+        league.AddTeam(new Team { Id = "WBA", FifaTeamId = "WBA", Name = "West Bromwich Albion" });
+        league.AddTeam(new Team { Id = "SHU", FifaTeamId = "SHU", Name = "Sheffield United" });
         #endregion
 
         #region Matches
@@ -508,6 +508,7 @@ public static class LeagueExtensions
             AwayTeam = league.FindTeam(awayId),
             HomeScore = homeScore,
             AwayScore = awayScore,
+            WinnerId = homeScore > awayScore ? homeId : awayId,
         });
     }
 }
