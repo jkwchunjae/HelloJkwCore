@@ -25,12 +25,7 @@
         </MudTh>
         <MudTh>
             <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Profit)">
-                이익
-            </MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Total)">
-                합계
+                손익
             </MudTableSortLabel>
         </MudTh>
     </HeaderContent>
@@ -53,6 +48,5 @@
         <MudTd>@userResult.Reward2</MudTd>
         <MudTd>@userResult.Reward3</MudTd>
         <MudTd>@userResult.Profit</MudTd>
-        <MudTd>@userResult.Total</MudTd>
     </RowTemplate>
 </MudTable>

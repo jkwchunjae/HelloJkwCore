@@ -46,7 +46,7 @@ public partial class WcTotalResult : JkwPageBase
             })
             .Reduce(new List<UserResult>(), (list, userResult, index, source) =>
             {
-                var rank = source.Count(x => x.Total > userResult.Total) + 1;
+                var rank = source.Count(x => x.Profit > userResult.Profit) + 1;
                 userResult.Rank = rank;
                 list.Add(userResult);
                 return list;
