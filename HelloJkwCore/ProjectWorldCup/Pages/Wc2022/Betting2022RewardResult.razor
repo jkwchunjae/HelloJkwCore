@@ -13,7 +13,6 @@
       Reusable="true">
       @GroupStageButtonText
     </MudButton>
-    <BettingTableForExcel BettingResults="@GroupStageResult" FixedTeams="@GroupStageFixed" />
   </MudTabPanel>
   <MudTabPanel Text="Round.2">
     <BettingResultComponent BettingItems="@Round16Result"/>
@@ -22,7 +21,6 @@
       Reusable="true">
       @Round16ButtonText
     </MudButton>
-    <BettingTableForExcel BettingResults="@Round16Result" FixedTeams="@Round16Fixed" />
   </MudTabPanel>
   <MudTabPanel Text="Round.3">
     <BettingFinalResultComponent BettingItems="@FinalResult" Visible="true"/>
@@ -31,6 +29,5 @@
       Reusable="true">
       @FinalButtonText
     </MudButton>
-    <BettingTableForExcel BettingResults="@FinalResult" FixedTeams="@FinalFixed" />
   </MudTabPanel>
 </MudTabs>
