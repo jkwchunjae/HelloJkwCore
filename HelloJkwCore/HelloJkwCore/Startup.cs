@@ -128,10 +128,6 @@ public class Startup
 
         #region FileSystem
 
-        var pathOption = new PathMap();
-        Configuration.GetSection("Path").Bind(pathOption);
-        services.AddSingleton(pathOption);
-
         var fsOption = new FileSystemOption();
         Configuration.GetSection("FileSystem").Bind(fsOption);
         services.AddSingleton(fsOption);

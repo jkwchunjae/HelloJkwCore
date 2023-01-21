@@ -29,7 +29,9 @@ public partial class UserList : JkwPageBase
             Navi.NavigateTo("/login");
             return;
         }
-        Users = (await UserManager.GetUsersInRoleAsync("all")).ToList();
+        Users = (await UserManager.GetUsersInRoleAsync("all"))
+            .OrderByDescending(x => x.LastLoginTime)
+            .ToList();
     }
 
     private async Task UserRoleChangedAsync(AppUser user, UserRole role, bool check)

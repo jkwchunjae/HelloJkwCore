@@ -17,7 +17,6 @@
     },
     "HelloJkwCore": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
       "launchBrowser": true,
       "applicationUrl": "https://localhost:44333;http://localhost:44332",
       "environmentVariables": {
