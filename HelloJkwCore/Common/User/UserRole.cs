@@ -7,5 +7,4 @@ public enum UserRole
     DiaryWriter,
     SuFcAdmin,
     BadukCreator,
-    WcManager,
 }
