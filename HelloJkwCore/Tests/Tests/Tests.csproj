@@ -21,11 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\HelloJkwCore\HelloJkwCore.csproj" />
-    <ProjectReference Include="..\ProjectBaduk\ProjectBaduk.csproj" />
-    <ProjectReference Include="..\ProjectDiary\ProjectDiary.csproj" />
-    <ProjectReference Include="..\ProjectWorldCup\ProjectWorldCup.csproj" />
+    <ProjectReference Include="..\..\Common\Common.csproj" />
+    <ProjectReference Include="..\..\HelloJkwCore\HelloJkwCore.csproj" />
+    <ProjectReference Include="..\..\ProjectBaduk\ProjectBaduk.csproj" />
+    <ProjectReference Include="..\..\ProjectDiary\ProjectDiary.csproj" />
   </ItemGroup>
-
 </Project>

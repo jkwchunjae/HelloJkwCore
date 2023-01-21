@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectDiary", "ProjectDiary\ProjectDiary.csproj", "{F7106A84-599F-4E28-9343-0B212634DF86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{60837715-5E5F-46FD-AC83-CF9E1FCD6B48}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests\Tests.csproj", "{60837715-5E5F-46FD-AC83-CF9E1FCD6B48}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectSuFc", "ProjectSuFc\ProjectSuFc.csproj", "{013200D3-1BCB-4E7C-AD42-EAEB011B4D7C}"
 EndProject
@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectBaduk", "ProjectBadu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectWorldCup", "ProjectWorldCup\ProjectWorldCup.csproj", "{E4D37B86-17FF-4127-9287-686E95A8B138}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.WorldCup", "Tests.WorldCup\Tests.WorldCup.csproj", "{C4F93CA6-0325-47A7-91A5-4E5845449332}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.WorldCup", "Tests\Tests.WorldCup\Tests.WorldCup.csproj", "{C4F93CA6-0325-47A7-91A5-4E5845449332}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F0A3A004-E9A9-44EA-A457-8B1E629A7067}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,5 +65,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {906D85C5-6814-4DD7-A27B-BA20BFAC835B}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{60837715-5E5F-46FD-AC83-CF9E1FCD6B48} = {F0A3A004-E9A9-44EA-A457-8B1E629A7067}
+		{C4F93CA6-0325-47A7-91A5-4E5845449332} = {F0A3A004-E9A9-44EA-A457-8B1E629A7067}
 	EndGlobalSection
 EndGlobal

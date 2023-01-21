@@ -17,6 +17,5 @@ global using Xunit;
 global using ProjectBaduk;
 global using ProjectDiary;
 global using ProjectSuFc;
-global using ProjectWorldCup;
 
 namespace Tests;

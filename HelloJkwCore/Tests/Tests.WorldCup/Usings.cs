@@ -1,9 +1,7 @@
-﻿global using JkwExtensions;
+﻿global using Xunit;
+global using JkwExtensions;
 global using Newtonsoft.Json;
 global using Common;
-global using ProjectDiary;
-global using ProjectBaduk;
-global using ProjectSuFc;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.AspNetCore.Components;
@@ -14,5 +12,6 @@ global using System.Collections.Generic;
 global using System.Linq;
 global using System.Threading;
 global using System.Threading.Tasks;
+global using ProjectWorldCup;
 
-namespace HelloJkwCore;
+namespace Tests;
