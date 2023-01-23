@@ -1,6 +1,6 @@
 <Query Kind="Program">
-  <Reference Relative="..\bin\Debug\net6.0\Common.dll">D:\jkw\major\GitHub\HelloJkwCore\HelloJkwCore\ProjectWorldCup\bin\Debug\net6.0\Common.dll</Reference>
-  <Reference Relative="..\bin\Debug\net6.0\ProjectWorldCup.dll">D:\jkw\major\GitHub\HelloJkwCore\HelloJkwCore\ProjectWorldCup\bin\Debug\net6.0\ProjectWorldCup.dll</Reference>
+  <Reference Relative="..\bin\Debug\net7.0\Common.dll">D:\jkw\major\GitHub\HelloJkwCore\HelloJkwCore\ProjectWorldCup\bin\Debug\net7.0\Common.dll</Reference>
+  <Reference Relative="..\bin\Debug\net7.0\ProjectWorldCup.dll">D:\jkw\major\GitHub\HelloJkwCore\HelloJkwCore\ProjectWorldCup\bin\Debug\net7.0\ProjectWorldCup.dll</Reference>
   <NuGetReference>Jkw.Extensions</NuGetReference>
   <NuGetReference>Newtonsoft.Json</NuGetReference>
   <Namespace>Common</Namespace>
