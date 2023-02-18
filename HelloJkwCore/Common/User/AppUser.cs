@@ -12,7 +12,7 @@ public class AppUser : IEquatable<AppUser>
     public DateTime LastLoginTime { get; set; }
     public string UserName { get; set; }
     public string NickName { get; set; }
-    [JsonIgnore] public string DisplayName => !string.IsNullOrEmpty(NickName) ? NickName : UserName;
+    [JsonNetIgnore][TextJsonIgnore] public string DisplayName => !string.IsNullOrEmpty(NickName) ? NickName : UserName;
     public string Email { get; set; }
     public ThemeType Theme { get; set; }
     public List<UserRole> Roles { get; set; }

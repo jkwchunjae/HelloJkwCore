@@ -1,8 +1,12 @@
-﻿namespace ProjectDiary;
+﻿using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+
+namespace ProjectDiary;
 
 internal class DiaryTrie
 {
     [JsonProperty("r")]
+    [JsonPropertyName("r")]
     public DiaryTrieNode _root { get; set; }
 
     public DiaryTrie()

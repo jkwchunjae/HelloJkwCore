@@ -1,6 +1,7 @@
 ﻿namespace ProjectSuFc;
 
-[JsonConverter(typeof(StringIdJsonConverter<SeasonId>))]
+[JsonNetConverter(typeof(StringIdJsonNetConverter<SeasonId>))]
+[TextJsonConverter(typeof(StringIdTextJsonConverter<SeasonId>))]
 public class SeasonId : StringId
 {
 }

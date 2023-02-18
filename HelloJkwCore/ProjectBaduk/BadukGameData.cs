@@ -25,7 +25,8 @@ public class StoneLogData
     public StoneColor Color { get; set; }
 }
 
-[JsonConverter(typeof(StringIdJsonConverter<BadukDiaryName>))]
+[JsonNetConverter(typeof(StringIdJsonNetConverter<BadukDiaryName>))]
+[TextJsonConverter(typeof(StringIdTextJsonConverter<BadukDiaryName>))]
 public class BadukDiaryName : StringName
 {
     public BadukDiaryName() { }
@@ -41,19 +42,22 @@ public class BadukDiary
     public List<string> GameDataList { get; set; }
 }
 
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum StoneColor
 {
     None, Black, White
 }
 
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum StoneAction
 {
     Set, Remove
 }
 
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum StoneChangeMode
 {
     Auto, Menual

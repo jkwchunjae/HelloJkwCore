@@ -1,6 +1,7 @@
 ﻿namespace ProjectSuFc;
 
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum MemberSpecType
 {
     [SpecConfig(specName: "출석 확률", defaultValue: 1, min: 0, max: 1, step: 0.1)]
