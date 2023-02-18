@@ -1,6 +1,7 @@
 ﻿namespace ProjectSuFc;
 
-[JsonConverter(typeof(StringIdJsonConverter<TeamName>))]
+[JsonNetConverter(typeof(StringIdJsonNetConverter<TeamName>))]
+[TextJsonConverter(typeof(StringIdTextJsonConverter<TeamName>))]
 public class TeamName : StringId
 {
 }
@@ -12,16 +13,16 @@ public class TeamResult
     public List<(MemberName MemberName, TeamName TeamName)> Players { get; set; } = new();
     public Dictionary<MemberName, double> Score { get; set; } = new();
 
-    [JsonIgnore]
+    [JsonNetIgnore] [TextJsonIgnore]
     public Dictionary<TeamName, List<MemberName>> GroupByTeam => Players
         .GroupBy(x => x.TeamName)
         .Select(x => new { TeamName = x.Key, List = x.Select(e => e.MemberName).OrderBy(x => x).ToList() })
         .ToDictionary(x => x.TeamName, x => x.List);
 
-    [JsonIgnore]
+    [JsonNetIgnore] [TextJsonIgnore]
     public int MaximumTeamSize => GroupByTeam.MaxOrNull(x => x.Value.Count) ?? 0;
 
-    [JsonIgnore]
+    [JsonNetIgnore] [TextJsonIgnore]
     public MemberName[][] NamesForTable
     {
         get

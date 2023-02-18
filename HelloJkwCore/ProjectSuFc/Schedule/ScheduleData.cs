@@ -1,6 +1,7 @@
 ﻿namespace ProjectSuFc;
 
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum ScheduleMemberStatus
 {
     None,
@@ -9,7 +10,8 @@ public enum ScheduleMemberStatus
     NotYet,
 }
 
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum ScheduleStatus
 {
     Feature,

@@ -1,9 +1,11 @@
 ﻿namespace ProjectSuFc;
 
-[JsonConverter(typeof(StringIdJsonConverter<MemberName>))]
+[JsonNetConverter(typeof(StringIdJsonNetConverter<MemberName>))]
+[TextJsonConverter(typeof(StringIdTextJsonConverter<MemberName>))]
 public class MemberName : StringId
 {
-    [JsonIgnore]
+    [JsonNetIgnore]
+    [TextJsonIgnore]
     public string Name => Id;
 
     public MemberName() { }
