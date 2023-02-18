@@ -1,6 +1,7 @@
 ﻿namespace HelloJkwCore;
 
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum AuthProvider
 {
     Google,
