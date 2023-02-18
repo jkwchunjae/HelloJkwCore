@@ -1,6 +1,7 @@
 ﻿namespace ProjectDiary;
 
-[JsonConverter(typeof(StringIdJsonConverter<DiaryName>))]
+[JsonNetConverter(typeof(StringIdJsonNetConverter<DiaryName>))]
+[TextJsonConverter(typeof(StringIdTextJsonConverter<DiaryName>))]
 public class DiaryName : StringName
 {
     public DiaryName() { }
