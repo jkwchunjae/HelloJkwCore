@@ -18,24 +18,24 @@ public static class Json
         {
             AllowTrailingCommas = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            WriteIndented = true,
+            WriteIndented = false,
         };
     }
     public static T Deserialize<T>(string jsonText)
     {
-        return JsonConvert.DeserializeObject<T>(jsonText);
-        //return JsonSerializer.Deserialize<T>(jsonText, _options);
+        //return JsonConvert.DeserializeObject<T>(jsonText);
+        return JsonSerializer.Deserialize<T>(jsonText, _options);
     }
 
     public static string Serialize<T>(T value)
     {
-        return JsonConvert.SerializeObject(value, Formatting.Indented);
-        //return JsonSerializer.Serialize<T>(value, _options);
+        //return JsonConvert.SerializeObject(value, Formatting.Indented);
+        return JsonSerializer.Serialize<T>(value, _options);
     }
 
     public static string SerializeNoIndent<T>(T value)
     {
-        return JsonConvert.SerializeObject(value);
-        //return JsonSerializer.Serialize<T>(value, _optionsNoIndent);
+        //return JsonConvert.SerializeObject(value);
+        return JsonSerializer.Serialize<T>(value, _optionsNoIndent);
     }
 }

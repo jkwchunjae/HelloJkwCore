@@ -1,6 +1,7 @@
 ﻿namespace Common;
 
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum ThemeType
 {
     Default,

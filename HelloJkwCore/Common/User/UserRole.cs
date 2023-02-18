@@ -1,6 +1,7 @@
 ﻿namespace Common;
 
-[Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
+[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum UserRole
 {
     Admin,

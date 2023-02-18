@@ -76,7 +76,8 @@ public class StringId : IComparable<StringId>, IEquatable<StringId>
 
 public class StringName : StringId
 {
-    [JsonIgnore]
+    [JsonNetIgnore]
+    [TextJsonIgnore]
     public string Name
     {
         get => Id;
@@ -91,9 +92,9 @@ public class StringName : StringId
     }
 }
 
-public class StringIdJsonConverter<T> : JsonConverter<T> where T : StringId, new()
+public class StringIdJsonNetConverter<T> : Newtonsoft.Json.JsonConverter<T> where T : StringId, new()
 {
-    public override T ReadJson(JsonReader reader, Type objectType, T existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override T ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, T existingValue, bool hasExistingValue, Newtonsoft.Json.JsonSerializer serializer)
     {
         if (reader.Value is null)
             return default;
@@ -108,8 +109,23 @@ public class StringIdJsonConverter<T> : JsonConverter<T> where T : StringId, new
         return default;
     }
 
-    public override void WriteJson(JsonWriter writer, T value, JsonSerializer serializer)
+    public override void WriteJson(Newtonsoft.Json.JsonWriter writer, T value, Newtonsoft.Json.JsonSerializer serializer)
     {
         writer.WriteValue(value.ToString());
+    }
+}
+
+public class StringIdTextJsonConverter<T> : System.Text.Json.Serialization.JsonConverter<T> where T : StringId, new()
+{
+    public override T Read(ref System.Text.Json.Utf8JsonReader reader, Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+    {
+        var stringId = new T();
+        stringId.Id = reader.GetString();
+        return stringId;
+    }
+
+    public override void Write(System.Text.Json.Utf8JsonWriter writer, T value, System.Text.Json.JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.ToString());
     }
 }

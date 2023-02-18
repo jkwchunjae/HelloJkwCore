@@ -1,6 +1,7 @@
 ﻿namespace Common;
 
-[JsonConverter(typeof(StringIdJsonConverter<UserId>))]
+[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public class UserId : StringId
 {
     public UserId() { }
