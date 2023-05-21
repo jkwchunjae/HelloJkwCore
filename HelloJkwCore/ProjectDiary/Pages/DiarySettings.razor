@@ -12,7 +12,7 @@
     <MudListSubheader>
       <h5> 관리자 </h5>
     </MudListSubheader>
-    <MudListItem Icon="@Icons.Filled.Face">
+    <MudListItem Icon="@Icons.Material.Filled.Face">
       <DiaryUser UserId="DiaryInfo.Owner"></DiaryUser>
     </MudListItem>
   </MudList>
@@ -25,7 +25,7 @@
     </MudListSubheader>
     @foreach (var writer in DiaryInfo.Writers)
     {
-    <MudListItem Icon="@Icons.Filled.Person">
+    <MudListItem Icon="@Icons.Material.Filled.Person">
       <DiaryUser UserId="writer"
           OnDelete="(async (user) => await OnDeleteWriter(user))"/>
     </MudListItem>
@@ -48,7 +48,7 @@
     </MudListSubheader>
     @foreach (var viewer in DiaryInfo.Viewers)
     {
-    <MudListItem Icon="@Icons.Filled.Person">
+    <MudListItem Icon="@Icons.Material.Filled.Person">
       <DiaryUser UserId="viewer"
           OnDelete="(async (user) => await OnDeleteViewer(user))"/>
     </MudListItem>

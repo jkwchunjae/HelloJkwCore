@@ -8,7 +8,7 @@ public static class ThemeFamily
     {
         [ThemeType.Default] = new MudTheme()
         {
-            Palette = new Palette()
+            Palette = new PaletteLight()
             {
                 AppbarBackground = "#222",
                 Black = "#272c34",
@@ -16,7 +16,7 @@ public static class ThemeFamily
         },
         [ThemeType.Dark] = new MudTheme
         {
-            Palette = new Palette
+            Palette = new PaletteDark
             {
                 AppbarBackground = "#222",
                 Black = "#27272f",
@@ -43,7 +43,7 @@ public static class ThemeFamily
         }
     }, new MudTheme()
     {
-        Palette = new Palette()
+        Palette = new PaletteLight()
         {
             AppbarBackground = "#222",
             Black = "#272c34",
