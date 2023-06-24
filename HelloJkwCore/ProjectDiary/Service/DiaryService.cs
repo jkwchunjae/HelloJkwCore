@@ -99,7 +99,7 @@ public partial class DiaryService : IDiaryService
             _backgroundQueue?.QueueBackgroundWorkItem(async token =>
             {
                 await _diarySearchService?.AppendDiaryTextAsync(diary.DiaryName, diaryFileName, text);
-                await _diarySearchService?.SaveDiaryTrie(diary.DiaryName);
+                await _diarySearchService?.SaveDiaryTrie(diary.DiaryName, date.Year);
             });
         }
 
