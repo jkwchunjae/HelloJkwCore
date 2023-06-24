@@ -50,9 +50,9 @@ public static class DiaryPath
         return $"{paths.Diary(diaryName)}/{fileName}";
     }
 
-    public static string DiaryTrie(this Paths paths, DiaryName diaryName)
+    public static string DiaryTrie(this Paths paths, DiaryName diaryName, int year)
     {
         var dirPath = paths[DiaryPathType.DiaryTriePath];
-        return $"{dirPath}/trie.{diaryName}.json";
+        return $"{dirPath}/trie.{diaryName}.{year}.json";
     }
 }

@@ -74,7 +74,15 @@ public partial class DiaryAdminTool : JkwPageBase
         diaryData.Progress = (true, diaryData.DiaryFileList.Count, diaryData.DiaryFileList.Count);
         StateHasChanged();
 
-        await DiarySearchService.SaveDiaryTrie(diaryData.DiaryName);
+        var years = diaryData.DiaryFileList
+            .Select(diaryFile => diaryFile.Date.Year)
+            .Distinct()
+            .OrderBy(year => year)
+            .ToArray();
+
+        await years
+            .Select(year => DiarySearchService.SaveDiaryTrie(diaryData.DiaryName, year))
+            .WhenAll();
     }
 }
 
