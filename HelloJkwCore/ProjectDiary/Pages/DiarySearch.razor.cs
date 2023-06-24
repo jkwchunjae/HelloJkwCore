@@ -34,6 +34,20 @@ public partial class DiarySearch : JkwPageBase
         searchData.EndDate = list.Last().Date;
     }
 
+    private void UpdateSearchDate(TimeSpan last)
+    {
+        UpdateSearchDate(DateTime.Now - last, DateTime.Now);
+    }
+
+    private void UpdateSearchDate(DateTime beginTime, DateTime endTime)
+    {
+        if (searchData != null)
+        {
+            searchData.BeginDate = beginTime;
+            searchData.EndDate = endTime;
+        }
+    }
+
     private async Task Search(DiarySearchData searchData)
     {
         var files = await DiarySearchService.SearchAsync(DiaryInfo.DiaryName, searchData) ?? new List<DiaryFileName>();

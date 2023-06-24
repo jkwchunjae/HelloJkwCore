@@ -19,9 +19,23 @@
     <EditForm Model="searchData" OnSubmit="@(async () => await OnSubmitAsync())">
         <MudGrid>
             <MudItem xs="12" sm="6" md="6">
+                <MudButton OnClick="(() => UpdateSearchDate(TimeSpan.FromDays(100 * 365)))" ButtonType="ButtonType.Button" Variant="Variant.Outlined" Color="Color.Info">
+                    전체
+                </MudButton>
+                <MudButton OnClick="(() => UpdateSearchDate(TimeSpan.FromDays(1 * 365)))" ButtonType="ButtonType.Button" Variant="Variant.Outlined" Color="Color.Info">
+                    1년
+                </MudButton>
+                <MudButton OnClick="(() => UpdateSearchDate(TimeSpan.FromDays(5 * 365)))" ButtonType="ButtonType.Button" Variant="Variant.Outlined" Color="Color.Info">
+                    5년
+                </MudButton>
+                <MudButton OnClick="(() => UpdateSearchDate(TimeSpan.FromDays(10 * 365)))" ButtonType="ButtonType.Button" Variant="Variant.Outlined" Color="Color.Info">
+                    10년
+                </MudButton>
+            </MudItem>
+            <MudItem xs="12" sm="3" md="3">
                 <MudDatePicker @bind-Date="searchData.BeginDate" Label="시작일"/>
             </MudItem>
-            <MudItem xs="12" sm="6" md="6">
+            <MudItem xs="12" sm="3" md="3">
                 <MudDatePicker @bind-Date="searchData.EndDate" Label="종료일"/>
             </MudItem>
             <MudItem xs="12" sm="12" md="12">
