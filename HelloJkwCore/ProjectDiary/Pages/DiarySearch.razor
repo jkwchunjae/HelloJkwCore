@@ -52,8 +52,11 @@
 @if (DiaryContentList != null)
 {
 <div class="search-result">
+    <span>
+        
+    </span>
     <span class="search-count">
-        총 @DiaryContentList.Count 개가 검색되었습니다.
+        " @searchedKeyword " 총 @DiaryContentList.Count 개가 검색되었습니다.
     </span>
 
     <div class="search-list">
