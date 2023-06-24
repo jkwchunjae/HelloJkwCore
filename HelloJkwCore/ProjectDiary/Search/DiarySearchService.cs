@@ -86,13 +86,65 @@ public class DiarySearchService : IDiarySearchService
 
     public async Task<IEnumerable<DiaryFileName>> SearchAsync(DiaryName diaryName, DiarySearchData searchData)
     {
+        var splited = searchData.Keyword.Trim().Split(' ')
+            .Select(word => new DiarySearchData
+            {
+                BeginDate = searchData.BeginDate,
+                EndDate = searchData.EndDate,
+                DayOfWeek = searchData.DayOfWeek,
+                Keyword = word,
+            })
+            .ToArray();
+
+        var firstResult = await SearchSingleWordAsync(diaryName, splited.First());
+        var isSingleWord = splited.Count() == 1;
+        if (firstResult.Empty() || isSingleWord)
+        {
+            // - 첫 검색에서 검색된 일기가 없으면 바로 리턴
+            // - 한 단어만 검색했어도 바로 리턴
+            return firstResult;
+        }
+
+        var minYear = firstResult.Min(filename => filename.Date.Year);
+        var maxYear = firstResult.Max(filename => filename.Date.Year);
+        var newBeginDate = MaxDate(searchData.BeginDate.Value, new DateTime(minYear, 1, 1));
+        var newEndDate = MinDate(searchData.EndDate.Value, new DateTime(maxYear, 12, 31));
+
+        var secondResult = await splited.Skip(1)
+            .Select(x => new DiarySearchData
+            {
+                BeginDate = newBeginDate,
+                EndDate = newEndDate,
+                DayOfWeek = x.DayOfWeek,
+                Keyword = x.Keyword,
+            })
+            .Select(searchData => SearchSingleWordAsync(diaryName, searchData))
+            .WhenAll();
+
+        return secondResult
+            .Aggregate(firstResult, (result, subResult) =>
+            {
+                return result.Intersect(subResult);
+            })
+            .ToArray();
+
+        DateTime MinDate(DateTime a, DateTime b) => a > b ? b : a;
+        DateTime MaxDate(DateTime a, DateTime b) => a > b ? a : b;
+    }
+
+    public async Task<IEnumerable<DiaryFileName>> SearchSingleWordAsync(DiaryName diaryName, DiarySearchData searchData)
+    {
+        if (searchData.Keyword.Trim().Length < 2)
+        {
+            throw new Exception("두글자 이상 검색해주세요");
+        }
         var minYear = searchData.BeginDate.Value.Year;
         var maxYear = searchData.EndDate.Value.Year;
         var lists = await Enumerable.Range(minYear, maxYear - minYear + 1)
             .Select(async year =>
             {
                 var engine = await GetSearchEngineAsync(diaryName, year);
-                var result = engine.Search(searchData.Keyword);
+                var result = engine.Search(searchData.Keyword.Trim());
                 var list = result?.Select(x => new DiaryFileName(x))
                     .Where(x => x.Date >= searchData.BeginDate)
                     .Where(x => x.Date <= searchData.EndDate)
@@ -103,7 +155,8 @@ public class DiarySearchService : IDiarySearchService
 
         var list = lists
             .Where(x => x != null)
-            .SelectMany(x => x).ToList();
+            .SelectMany(x => x)
+            .ToList();
 
         return list;
     }
