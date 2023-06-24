@@ -19,14 +19,20 @@ public class DiarySearchService : IDiarySearchService
     {
         var engineKey = $"{diaryName}.{year}";
         var hasEngine = false;
+        var engineCount = 0;
         lock (_engineDic)
         {
             hasEngine = _engineDic.ContainsKey(engineKey);
+            engineCount = _engineDic.Count(x => x.Key.StartsWith($"{diaryName}."));
         }
 
         DiarySearchEngine engine = null;
         if (!hasEngine)
         {
+            if (engineCount > 100)
+            {
+                throw new TooManyDiaryEngineException();
+            }
             engine = new DiarySearchEngine();
 
             Func<Paths, string> triePath = path => path.DiaryTrie(diaryName, year);
