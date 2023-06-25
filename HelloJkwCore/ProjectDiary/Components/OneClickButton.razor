@@ -1,31 +1,27 @@
-﻿@namespace Common
+﻿@namespace ProjectDiary.Components
 @inherits MudButton
 @using Microsoft.AspNetCore.Components.Web
 @using MudBlazor
 
 <MudButton OnClick="Click"
            Disabled="_clicked || Disabled"
-
-            ButtonType="ButtonType"
-            Href="@Href"
-            Target="@Target"
-            DisableElevation="DisableElevation"
-            DisableRipple="DisableRipple"
-
-            StartIcon="@StartIcon"
-            EndIcon="@EndIcon"
-            IconColor="IconColor"
-            IconClass="@IconClass"
-            Color="Color"
-            Size="Size"
-            Variant="Variant"
-            FullWidth="FullWidth"
-
-            Class="@Class"
-            Style="@Style"
-            Tag="Tag"
-            UserAttributes="UserAttributes"
->
+           ButtonType="ButtonType"
+           Href="@Href"
+           Target="@Target"
+           DisableElevation="DisableElevation"
+           DisableRipple="DisableRipple"
+           StartIcon="@StartIcon"
+           EndIcon="@EndIcon"
+           IconColor="IconColor"
+           IconClass="@IconClass"
+           Color="Color"
+           Size="Size"
+           Variant="Variant"
+           FullWidth="FullWidth"
+           Class="@Class"
+           Style="@Style"
+           Tag="Tag"
+           UserAttributes="UserAttributes">
     @if (_clicked)
     {
         <MudProgressCircular Color="ProgressColor" Indeterminate="true" Size="ProgressSize" />
