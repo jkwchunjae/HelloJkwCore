@@ -84,6 +84,41 @@ public partial class DiaryAdminTool : JkwPageBase
             .Select(year => DiarySearchService.SaveDiaryTrie(diaryData.DiaryName, year))
             .WhenAll();
     }
+
+    private async Task CreateTrieYear(DiaryData diaryData, int year)
+    {
+        if (diaryData.IsSecret)
+        {
+            return;
+        }
+
+        await DiarySearchService.ClearTrieYear(diaryData.DiaryName, year);
+
+        var diaryFileList = diaryData.DiaryFileList
+            .Where(filename => filename.Date.Year == year)
+            .ToArray();
+        var progressTotal = diaryFileList.Length + 1;
+
+        diaryData.Progress = (true, progressTotal, 0);
+        StateHasChanged();
+
+        var progressValue = 0;
+        foreach (var filename in diaryFileList)
+        {
+            var content = await DiaryService.GetDiaryContentAsync(User, diaryData, filename);
+            await DiarySearchService.AppendDiaryTextAsync(diaryData.DiaryName, filename, content.Text);
+            progressValue++;
+
+            diaryData.Progress = (true, progressTotal, progressValue);
+            StateHasChanged();
+        }
+
+        await DiarySearchService.SaveDiaryTrie(diaryData.DiaryName, year);
+
+        progressValue++;
+        diaryData.Progress = (true, progressTotal, progressValue);
+        StateHasChanged();
+    }
 }
 
 class DiaryData : DiaryInfo
@@ -91,6 +126,7 @@ class DiaryData : DiaryInfo
     public List<DiaryFileName> DiaryFileList { get; set; }
     public (bool On, int Total, int Value) Progress { get; set; }
     public AppUser OwnerUser { get; set; }
+    public int SelectedYear { get; set; }
     public string OwnerName
     {
         get
@@ -110,6 +146,8 @@ class DiaryData : DiaryInfo
             return OwnerUser.DisplayName;
         }
     }
+
+    public bool Disabled_CreateTrie => Progress.On && (Progress.Total != Progress.Value);
 
     public DiaryData(DiaryInfo info)
         :base(info)

@@ -87,6 +87,7 @@ public class DiarySearchService : IDiarySearchService
     public async Task<IEnumerable<DiaryFileName>> SearchAsync(DiaryName diaryName, DiarySearchData searchData)
     {
         var splited = searchData.Keyword.Trim().Split(' ')
+            .Where(x => x.Length > 0)
             .Select(word => new DiarySearchData
             {
                 BeginDate = searchData.BeginDate,
@@ -167,6 +168,24 @@ public class DiarySearchService : IDiarySearchService
         {
             var clearKey = _engineDic.Keys
                 .Where(key => key.StartsWith($"{diaryName}."))
+                .ToArray();
+
+            foreach (var key in clearKey)
+            {
+                var engine = _engineDic[key];
+                engine.SetTrie(new DiaryTrie());
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task ClearTrieYear(DiaryName diaryName, int year)
+    {
+        lock (_engineDic)
+        {
+            var clearKey = _engineDic.Keys
+                .Where(key => key.StartsWith($"{diaryName}.{year}"))
                 .ToArray();
 
             foreach (var key in clearKey)

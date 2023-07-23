@@ -1,22 +1,26 @@
 ﻿using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace ProjectDiary;
 
 internal class DiaryTrie
 {
-    [JsonProperty("r")]
     [JsonPropertyName("r")]
-    public DiaryTrieNode _root { get; set; }
+    public DiaryTrieNode Root { get; init; }
+
+    [JsonConstructor]
+    public DiaryTrie(DiaryTrieNode root)
+    {
+        Root = root;
+    }
 
     public DiaryTrie()
     {
-        _root = new DiaryTrieNode('.', 0);
+        Root = new DiaryTrieNode('.', 0);
     }
 
     public void AddWord(string text, string source)
     {
-        var node = _root;
+        var node = Root;
         foreach (var chr in text)
         {
             node = node.SetChildCharacter(chr, source);
@@ -25,7 +29,7 @@ internal class DiaryTrie
 
     public void AddWord(string text, int startIndex, string source)
     {
-        var node = _root;
+        var node = Root;
         for (var i = startIndex; i < text.Length; i++)
         {
             var chr = text[i];
@@ -35,7 +39,7 @@ internal class DiaryTrie
 
     public bool HasWord(string text, out List<string> sources)
     {
-        var node = _root;
+        var node = Root;
         foreach (var chr in text)
         {
             node = node.GetChild(chr);

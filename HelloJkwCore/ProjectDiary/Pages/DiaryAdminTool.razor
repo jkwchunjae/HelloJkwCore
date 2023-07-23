@@ -4,33 +4,57 @@
 <PageTitle>일기장 관리</PageTitle>
 
 <AuthorizeView Roles="Admin">
-    <Authorized>
-        <MudTable Items="DiaryDataList" Hover="true">
-            <HeaderContent>
-                <MudTh>일기장</MudTh>
-                <MudTh>글쓴이</MudTh>
-                <MudTh>글 수</MudTh>
-                <MudTh>...</MudTh>
-            </HeaderContent>
-            <RowTemplate Context="diaryData">
-                <MudTd DataLabel="일기장">@diaryData.DiaryName</MudTd>
-                <MudTd DataLabel="글쓴이">@diaryData.OwnerName</MudTd>
-                <MudTd DataLabel="글 수">@diaryData.DiaryFileList.Count</MudTd>
-                <MudTd>
-                    <MudButton OnClick="(async () => await CreateTrie(diaryData))" Disabled="@diaryData.Progress.On">
-                        Trie만들기
-                    </MudButton>
-                    @if (diaryData.Progress.On)
-                    {
-                    var progress = diaryData.Progress;
-                    var val = (int)(100.0 * progress.Value / progress.Total);
-                    var valText = $"{val}%";
-                    var greenBar = progress.Total == progress.Value ? "progress-bar-success" : "";
-                        <MudText Style="display: inline-flex;">@valText</MudText>
-                    }
-                </MudTd>
-            </RowTemplate>
-        </MudTable>
-    </Authorized>
+  <Authorized>
+    <MudTable Items="DiaryDataList" Hover="true">
+      <HeaderContent>
+        <MudTh>일기장</MudTh>
+        <MudTh>글쓴이</MudTh>
+        <MudTh>글 수</MudTh>
+        <MudTh>...</MudTh>
+      </HeaderContent>
+      <RowTemplate Context="diaryData">
+        <MudTd DataLabel="일기장">@diaryData.DiaryName</MudTd>
+        <MudTd DataLabel="글쓴이">@diaryData.OwnerName</MudTd>
+        <MudTd DataLabel="글 수">@diaryData.DiaryFileList.Count</MudTd>
+        <MudTd>
+          @if (diaryData.IsSecret == false)
+          {
+            var years = diaryData.DiaryFileList
+              .Select(filename => filename.Date.Year)
+              .Distinct()
+              .OrderByDescending(year => year)
+              .ToArray();
+            <MudSelect T="int" @bind-Value="diaryData.SelectedYear" Dense="true" Margin="Margin.Dense" Variant="Variant.Text">
+              <MudSelectItem Value="0">전체</MudSelectItem>
+              @foreach (var year in years)
+              {
+                <MudSelectItem Value="year">@year</MudSelectItem>
+              }
+            </MudSelect>
+            @if (diaryData.SelectedYear == 0)
+            {
+              <MudButton OnClick="(async () => await CreateTrie(diaryData))" Variant="Variant.Outlined" Disabled="@diaryData.Disabled_CreateTrie">
+                전체 Trie만들기
+              </MudButton>
+            }
+            else
+            {
+              <MudButton OnClick="(async () => await CreateTrieYear(diaryData, diaryData.SelectedYear))" Variant="Variant.Outlined" Disabled="@diaryData.Disabled_CreateTrie">
+                @diaryData.SelectedYear   Trie만들기
+              </MudButton>
+            }
+            @if (diaryData.Progress.On)
+            {
+              var progress = diaryData.Progress;
+              var val = (int)(100.0 * progress.Value / progress.Total);
+              var valText = $"{val}%";
+              var greenBar = progress.Total == progress.Value ? "progress-bar-success" : "";
+              <MudText Style="display: inline-flex;">@valText</MudText>
+            }
+          }
+        </MudTd>
+      </RowTemplate>
+    </MudTable>
+  </Authorized>
 </AuthorizeView>
 
