@@ -180,6 +180,24 @@ public class DiarySearchService : IDiarySearchService
         return Task.CompletedTask;
     }
 
+    public Task ClearTrieYear(DiaryName diaryName, int year)
+    {
+        lock (_engineDic)
+        {
+            var clearKey = _engineDic.Keys
+                .Where(key => key.StartsWith($"{diaryName}.{year}"))
+                .ToArray();
+
+            foreach (var key in clearKey)
+            {
+                var engine = _engineDic[key];
+                engine.SetTrie(new DiaryTrie());
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
     public async Task<bool> SaveDiaryTrie(DiaryName diaryName, int year)
     {
         var engine = await GetSearchEngineAsync(diaryName, year);
