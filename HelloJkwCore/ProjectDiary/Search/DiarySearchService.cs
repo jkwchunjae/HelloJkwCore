@@ -87,6 +87,7 @@ public class DiarySearchService : IDiarySearchService
     public async Task<IEnumerable<DiaryFileName>> SearchAsync(DiaryName diaryName, DiarySearchData searchData)
     {
         var splited = searchData.Keyword.Trim().Split(' ')
+            .Where(x => x.Length > 0)
             .Select(word => new DiarySearchData
             {
                 BeginDate = searchData.BeginDate,
