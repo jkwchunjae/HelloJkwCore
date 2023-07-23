@@ -60,6 +60,7 @@
                 <MudCheckBox T="bool" Checked="isChecked" Label="@role.ToString()"
                             CheckedChanged="(async check => await UserRoleChangedAsync(user, role, check))"/>
             }
+            <MudButton OnClick="@(async () => await DeleteUserAsync(user))" Variant="Variant.Outlined" Size="Size.Small">삭제</MudButton>
         </MudTd>
     </RowTemplate>
 </MudTable>

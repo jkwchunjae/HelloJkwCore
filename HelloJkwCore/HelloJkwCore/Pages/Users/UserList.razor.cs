@@ -61,4 +61,12 @@ public partial class UserList : JkwPageBase
 
         return Task.CompletedTask;
     }
+
+    private async Task DeleteUserAsync(AppUser user)
+    {
+        await UserManager.DeleteAsync(user);
+
+        Users.Remove(user);
+        StateHasChanged();
+    }
 }
