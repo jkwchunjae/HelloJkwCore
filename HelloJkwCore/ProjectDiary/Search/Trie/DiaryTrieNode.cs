@@ -1,22 +1,26 @@
 ﻿using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace ProjectDiary;
 
 internal class DiaryTrieNode
 {
-    [JsonProperty("c")]
     [JsonPropertyName("c")]
-    public char Character { get; private set; }
-    [JsonProperty("d")]
+    public char Character { get; init; }
     [JsonPropertyName("d")]
-    public int Depth { get; private set; }
-    [JsonProperty("n")]
+    public int Depth { get; init; }
     [JsonPropertyName("n")]
-    public List<DiaryTrieNode> Children { get; }
-    [JsonProperty("s")]
+    public List<DiaryTrieNode> Children { get; init; }
     [JsonPropertyName("s")]
-    public List<string> SourceList { get; }
+    public List<string> SourceList { get; init; }
+
+    [JsonConstructor]
+    public DiaryTrieNode(char character, int depth, List<DiaryTrieNode> children, List<string> sourceList)
+    {
+        Character = character;
+        Depth = depth;
+        Children = children;
+        SourceList = sourceList;
+    }
 
     public DiaryTrieNode(char character, int depth)
     {
