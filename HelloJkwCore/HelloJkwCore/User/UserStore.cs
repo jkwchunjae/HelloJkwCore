@@ -56,14 +56,18 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
         await _fs.CreateDirectoryAsync(_usersPath, ct);
     }
 
-    private async Task<AppUser> GetUserAsync(string userId, CancellationToken ct = default)
+    private async Task<AppUser> GetUserAsync(UserId userId, CancellationToken ct = default)
     {
         await CreateUsersDirectoryAsync(ct);
 
-        Func<Paths, string> userPath = path => path.UserFilePathByUserId(new UserId(userId));
+        Func<Paths, string> userPath = path => path.UserFilePathByUserId(userId);
         if (await _fs.FileExistsAsync(userPath))
         {
             return await _fs.ReadJsonAsync<AppUser>(userPath);
+        }
+        else if (await _fs.FileExistsAsync(path => path.DeletedUserFilePathByUserId(userId), ct))
+        {
+            return await _fs.ReadJsonAsync<AppUser>(path => path.DeletedUserFilePathByUserId(userId), ct);
         }
         else
         {
@@ -76,11 +80,22 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
         await CreateUsersDirectoryAsync(ct);
 
         await _fs.WriteJsonAsync(path => path.UserFilePathByUserId(user.Id), user, ct);
+        if (await _fs.FileExistsAsync(path => path.DeletedUserFilePathByUserId(user.Id), ct))
+        {
+            await _fs.DeleteFileAsync(path => path.DeletedUserFilePathByUserId(user.Id), ct);
+        }
     }
 
-    private async Task<bool> ExistsUserAsync(string userId, CancellationToken ct = default)
+    private async Task<bool> ExistsUserAsync(UserId userId, CancellationToken ct = default)
     {
-        return await _fs.FileExistsAsync(path => path.UserFilePathByUserId(new UserId(userId)), ct);
+        var aliveExists = await _fs.FileExistsAsync(path => path.UserFilePathByUserId(userId), ct);
+        if (aliveExists)
+        {
+            return true;
+        }
+
+        var deletedExists = await _fs.FileExistsAsync(path => path.DeletedUserFilePathByUserId(userId), ct);
+        return deletedExists ? true : false;
     }
 
     public Task AddLoginAsync(AppUser user, UserLoginInfo login, CancellationToken ct)
@@ -92,7 +107,7 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
     {
         try
         {
-            var exists = await ExistsUserAsync(user.Id.Id);
+            var exists = await ExistsUserAsync(user.Id);
 
             if (exists)
             {
@@ -114,8 +129,10 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
     {
         try
         {
-            if (await ExistsUserAsync(user.Id.Id))
+            if (await ExistsUserAsync(user.Id))
             {
+                var text = await _fs.ReadTextAsync(path => path.UserFilePathByUserId(user.Id));
+                await _fs.WriteTextAsync(path => path.DeletedUserFilePathByUserId(user.Id), text);
                 await _fs.DeleteFileAsync(path => path.UserFilePathByUserId(user.Id));
                 return IdentityResult.Success;
             }
@@ -145,7 +162,7 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
 
     public async Task<AppUser> FindByIdAsync(string userId, CancellationToken ct)
     {
-        return await GetUserAsync(userId, ct);
+        return await GetUserAsync(new UserId(userId), ct);
     }
 
     public async Task<AppUser> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken ct)
@@ -231,7 +248,7 @@ public partial class UserStore : IUserLoginStore<AppUser>, IUserEmailStore<AppUs
     {
         try
         {
-            if (await ExistsUserAsync(user.Id.Id, ct))
+            if (await ExistsUserAsync(user.Id, ct))
             {
                 await SaveUserAsync(user, ct);
                 return IdentityResult.Success;
