@@ -50,12 +50,16 @@ public partial class UserStore : IUserRoleStore<AppUser>
         return userList.Where(x => x.Roles?.Contains(role) ?? false).ToList();
     }
 
+    Dictionary<string, UserRole> _cachedRoles = null;
     private UserRole ParseRole(string roleName)
     {
-        var roles = typeof(UserRole).GetValues<UserRole>()
-            .Select(role => new { RoleName = role.ToString().ToLower(), Role = role })
-            .ToDictionary(x => x.RoleName, x => x.Role);
+        if (_cachedRoles == null)
+        {
+            _cachedRoles = typeof(UserRole).GetValues<UserRole>()
+                .Select(role => new { RoleName = role.ToString().ToLower(), Role = role })
+                .ToDictionary(x => x.RoleName, x => x.Role);
+        }
 
-        return roles[roleName.ToLower()];
+        return _cachedRoles[roleName.ToLower()];
     }
 }
