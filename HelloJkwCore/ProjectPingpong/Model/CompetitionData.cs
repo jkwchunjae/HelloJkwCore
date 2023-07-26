@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-[JsonConverter(typeof(StringIdJsonConverter<CompetitionName>))]
+[TextJsonConverter(typeof(StringIdTextJsonConverter<CompetitionName>))]
 public class CompetitionName : StringName
 {
     public static readonly CompetitionName Default = new CompetitionName(string.Empty);
@@ -20,8 +20,8 @@ public class CompetitionData
     public List<Player>? PlayerList { get; set; }
     public List<LeagueId>? LeagueIdList { get; set; }
     public List<KnockoutId>? KnockoutIdList { get; set; }
-    [JsonIgnore] public List<LeagueData>? LeagueList { get; set; }
-    [JsonIgnore] public List<KnockoutData>? KnockoutList { get; set; }
+    [TextJsonIgnore] public List<LeagueData>? LeagueList { get; set; }
+    [TextJsonIgnore] public List<KnockoutData>? KnockoutList { get; set; }
 
     public bool CanManage(AppUser? user)
     {

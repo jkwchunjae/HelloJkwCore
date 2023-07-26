@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-[JsonConverter(typeof(StringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum KnockoutDepth
 {
     None,

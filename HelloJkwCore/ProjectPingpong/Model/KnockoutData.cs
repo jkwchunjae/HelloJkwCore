@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong;
 
-[JsonConverter(typeof(StringIdJsonConverter<KnockoutId>))]
+[TextJsonConverter(typeof(StringIdTextJsonConverter<KnockoutId>))]
 public class KnockoutId : StringId
 {
     public static readonly KnockoutId Default = new KnockoutId(string.Empty);
@@ -52,7 +52,7 @@ public class KnockoutData
     public CompetitionName CompetitionName { get; set; } = CompetitionName.Default;
     public List<PlayerName>? PlayerList { get; set; }
     public List<MatchId>? MatchIdList { get; set; }
-    [JsonIgnore] public List<KnockoutMatchData>? MatchList { get; set; }
+    [TextJsonIgnore] public List<KnockoutMatchData>? MatchList { get; set; }
 
     public KnockoutData()
     {

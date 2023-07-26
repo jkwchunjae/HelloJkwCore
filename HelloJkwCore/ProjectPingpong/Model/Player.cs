@@ -2,7 +2,7 @@
 
 namespace ProjectPingpong;
 
-[JsonConverter(typeof(StringIdJsonConverter<PlayerName>))]
+[TextJsonConverter(typeof(StringIdTextJsonConverter<PlayerName>))]
 public class PlayerName : StringName
 {
     public static readonly PlayerName Default = new PlayerName(string.Empty);

@@ -2,7 +2,7 @@
 
 namespace ProjectPingpong;
 
-[JsonConverter(typeof(GamePointJsonConverter))]
+[TextJsonConverter(typeof(GamePointJsonConverter))]
 public class GamePoint
 {
     public int LeftPoint { get; set; }
@@ -24,39 +24,24 @@ public class GamePoint
         RightPoint = gamePoint.RightPoint;
     }
 }
-public class GamePointJsonConverter : JsonConverter<GamePoint>
-{
-    public override GamePoint ReadJson(JsonReader reader, Type objectType, GamePoint? existingValue, bool hasExistingValue, JsonSerializer serializer)
-    {
-        if (reader.Value is string pointText)
-        {
-            var arr = pointText.Split(':').Select(x => x.ToInt()).ToArray();
-            var gamePoint = new GamePoint(arr[0], arr[1]);
-            return gamePoint;
-        }
-        else
-        {
-            JObject? obj = (JObject?)serializer.Deserialize(reader);
-            if (obj != null)
-            {
-                var leftPoint = obj.Property("LeftPoint")?.Value.ToObject<int>() ?? 0;
-                var rightPoint = obj.Property("RightPoint")?.Value.ToObject<int>() ?? 0;
-                return new GamePoint(leftPoint, rightPoint);
-            }
-        }
 
-        return new GamePoint();
+public class GamePointJsonConverter : System.Text.Json.Serialization.JsonConverter<GamePoint>
+{
+    public override GamePoint Read(ref System.Text.Json.Utf8JsonReader reader, Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+    {
+        var pointText = reader.GetString();
+        var arr = pointText.Split(':').Select(x => x.ToInt()).ToArray();
+        var gamePoint = new GamePoint(arr[0], arr[1]);
+        return gamePoint;
     }
 
-    public override void WriteJson(JsonWriter writer, GamePoint? value, JsonSerializer serializer)
+    public override void Write(System.Text.Json.Utf8JsonWriter writer, GamePoint? value, System.Text.Json.JsonSerializerOptions options)
     {
-        writer.WriteValue($"{value?.LeftPoint}:{value?.RightPoint}");
+        writer.WriteStringValue($"{value?.LeftPoint}:{value?.RightPoint}");
     }
 }
 
-
-
-[JsonConverter(typeof(StringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum SetStatus
 {
     Prepare,
@@ -68,9 +53,9 @@ public class SetData
     public SetStatus Status { get; set; } = SetStatus.Prepare;
     public GamePoint CurrentPoint { get; set; } = new();
     public List<GamePoint> History { get; set; } = new();
-    [JsonIgnore] private int? _currentHistory = null;
+    [TextJsonIgnore] private int? _currentHistory = null;
 
-    [JsonIgnore] public bool IsPlaying => Status == SetStatus.Playing;
+    [TextJsonIgnore] public bool IsPlaying => Status == SetStatus.Playing;
 
     private void UpdatePoint()
     {

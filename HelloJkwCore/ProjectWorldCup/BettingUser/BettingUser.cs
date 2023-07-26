@@ -19,7 +19,7 @@ public class BettingUser
     }
 }
 
-[JsonConverter(typeof(StringEnumConverter))]
+[TextJsonConverter(typeof(StringEnumConverter))]
 public enum UserJoinStatus
 {
     None,
@@ -28,7 +28,7 @@ public enum UserJoinStatus
     Rejected,
 }
 
-[JsonConverter(typeof(StringEnumConverter))]
+[TextJsonConverter(typeof(StringEnumConverter))]
 public enum HistoryType
 {
     None,

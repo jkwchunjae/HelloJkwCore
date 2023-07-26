@@ -3,7 +3,7 @@ using static Dropbox.Api.Files.ListRevisionsMode;
 
 namespace ProjectPingpong;
 
-[JsonConverter(typeof(StringIdJsonConverter<LeagueId>))]
+[TextJsonConverter(typeof(StringIdTextJsonConverter<LeagueId>))]
 public class LeagueId : StringId
 {
     public static readonly LeagueId Default = new LeagueId(string.Empty);
@@ -79,7 +79,7 @@ public class LeagueData
     public CompetitionName CompetitionName { get; set; } = CompetitionName.Default;
     public List<Player>? PlayerList { get; set; }
     public List<MatchId>? MatchIdList { get; set; }
-    [JsonIgnore] public List<MatchData>? MatchList { get; set; }
+    [TextJsonIgnore] public List<MatchData>? MatchList { get; set; }
 
     public LeagueData()
     {

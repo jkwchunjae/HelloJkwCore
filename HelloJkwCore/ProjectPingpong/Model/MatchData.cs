@@ -1,6 +1,9 @@
-﻿namespace ProjectPingpong;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
-[JsonConverter(typeof(StringIdJsonConverter<MatchId>))]
+namespace ProjectPingpong;
+
+[TextJsonConverter(typeof(StringIdTextJsonConverter<MatchId>))]
 public class MatchId : StringId
 {
     public static readonly MatchId Default = new MatchId(string.Empty);
