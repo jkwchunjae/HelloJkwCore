@@ -10,6 +10,10 @@ public class LeagueMatchGenerator : ILeagueMatchGenerator
 
     public IReadOnlyList<(Player Player1, Player Player2)> CreateLeagueMatch(List<Player> players)
     {
+        if (players.Empty())
+        {
+            return new List<(Player Player1, Player Player2)>();
+        }
         var realPlayerCount = players.Count;
         var fixedPlayerCount = players.Count + players.Count % 2;
         var result = Enumerable.Range(0, fixedPlayerCount - 1)
