@@ -31,6 +31,9 @@ public class CompetitionData
         if (user.HasRole(UserRole.Admin))
             return true;
 
+        if (user.HasRole(UserRole.JangTak9))
+            return true;
+
         if (Owner == user.Id)
             return true;
 
