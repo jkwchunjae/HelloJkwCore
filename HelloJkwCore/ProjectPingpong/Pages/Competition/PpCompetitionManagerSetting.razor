@@ -1,0 +1,124 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+@using Microsoft.AspNetCore.Identity
+
+<MudText Typo="Typo.h4">관리자</MudText>
+<MudChipSet>
+  @foreach (var manager in Managers)
+  {
+    <MudChip OnClick="@(async () => await RemoveManager(manager))">
+      @manager.DisplayName
+    </MudChip>
+  }
+</MudChipSet>
+<MudForm Style="max-width: 300px;">
+  <MudAutocomplete T="AppUser" Label="대회 관리자를 추가합니다."
+                   @bind-Value="SearchedManager"
+                   SearchFunc="@SearchUser"
+                   ToStringFunc="@(user => user?.DisplayName)"
+                   SelectOnClick="true"
+                    />
+  <MudButton Variant="Variant.Outlined" OnClick="@(async () => await AddManager(SearchedManager))">등록</MudButton>
+</MudForm>
+
+
+@code {
+  [Parameter] public CompetitionData CompetitionData { get; set; }
+  [Parameter] public EventCallback<CompetitionData> CompetitionDataChanged { get; set; }
+
+  [Inject] IPpService? Service { get; set; }
+  [Inject] IDialogService? DialogService { get; set; }
+  [Inject] UserManager<AppUser>? UserManager { get; set; }
+
+  List<AppUser> Managers = new();
+  AppUser? SearchedManager;
+  private IList<AppUser>? _allUsers;
+
+  protected override void OnPageInitialized()
+  {
+    base.OnPageInitialized();
+  }
+
+  protected override async Task OnPageParametersSetAsync()
+  {
+    var managers = CompetitionData.Manager ?? new();
+    var list = await managers
+        .Select(async id => await GetUser(id))
+        .WhenAll();
+
+    Managers = list.ToList();
+  }
+
+  private async Task<AppUser> GetUser(UserId userId)
+  {
+    var user = await UserManager!.FindByIdAsync(userId.Id);
+    return user;
+  }
+
+
+  private async Task AddManager(AppUser? manager)
+  {
+    if (manager == null)
+      return;
+
+    if (CompetitionData.Manager?.Contains(manager.Id) ?? false)
+      return;
+
+    var competitionData = await Service!.UpdateCompetitionAsync(CompetitionData.Name, data =>
+    {
+      data.Manager ??= new();
+      data.Manager.Add(manager.Id);
+
+      return data;
+    });
+
+    SearchedManager = null;
+    CompetitionData = competitionData!;
+    await CompetitionDataChanged.InvokeAsync(CompetitionData);
+  }
+
+  private async Task RemoveManager(AppUser manager)
+  {
+    var param = new DialogParameters
+      {
+        ["Content"] = $"{manager.DisplayName}님을 삭제하시겠습니까?",
+        ["SubmitText"] = "삭제",
+        ["SubmitColor"] = Color.Error,
+      };
+    var dialog = DialogService!.Show<PpConfirmDialog>("관리자", param);
+    var result = await dialog.Result;
+
+    if (result.Data is bool deleteMember && deleteMember)
+    {
+      var competitionData = await Service!.UpdateCompetitionAsync(CompetitionData.Name, data =>
+      {
+        data.Manager?.RemoveAll(id => id == manager.Id);
+        return data;
+      });
+      CompetitionData = competitionData!;
+      await CompetitionDataChanged.InvokeAsync(CompetitionData);
+    }
+  }
+
+
+  private async Task<IEnumerable<AppUser>> SearchUser(string keyword)
+  {
+    if (!IsAuthenticated)
+      return new List<AppUser>();
+
+    if (_allUsers == null)
+    {
+      _allUsers = await UserManager!.GetUsersInRoleAsync("all");
+    }
+
+    var filtered = _allUsers
+        .Where(user => user != User)
+        .Where(user => user.DisplayName.Contains(keyword, StringComparison.InvariantCultureIgnoreCase)
+                    || (user.Email?.Contains(keyword, StringComparison.InvariantCultureIgnoreCase) ?? true))
+        .Take(3)
+        .ToList();
+
+    return filtered;
+  }
+
+}

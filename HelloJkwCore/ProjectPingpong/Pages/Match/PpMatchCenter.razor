@@ -1,0 +1,157 @@
+﻿@inherits JkwPageBase
+@layout PpLayout
+@page "/jangtak9/match/{MatchIdText}"
+@using MudBlazor
+
+@if (Match == null)
+{
+  return;
+}
+
+
+<MudGrid>
+  <MudItem xs="4">
+    <MudPaper Elevation="0" Style="text-align: center;">
+      <MudText Typo="Typo.h4">
+        @Match.LeftPlayer?.Name
+      </MudText>
+    </MudPaper>
+  </MudItem>
+  <MudItem xs="4" Style="text-align: center;">
+    <MudText Typo="Typo.h4">
+      <span> @Match.LeftSetScore </span>
+      <span> : </span>
+      <span> @Match.RightSetScore </span>
+    </MudText>
+
+  </MudItem>
+  <MudItem xs="4">
+    <MudPaper Elevation="0" Style="text-align: center;">
+      <MudText Typo="Typo.h4">
+        @Match.RightPlayer?.Name
+      </MudText>
+    </MudPaper>
+  </MudItem>
+  <MudItem xs="6">
+    <MudPaper Elevation="0" Style="text-align: center;">
+      @if (Match.HasPlayingSet)
+      {
+        var myPoint = Match.MyGamePoint(Match.LeftPlayer);
+        var scoreClass = myPoint >= 10 ? "score-small" : "score";
+        <button class="@scoreClass" onclick="@(async () => await IncreaseScore(Match.LeftPlayer))">
+          @myPoint
+        </button>
+      }
+    </MudPaper>
+  </MudItem>
+
+@*  <MudItem xs="2" Style="text-align: center;">
+  </MudItem>
+*@
+  <MudItem xs="6">
+    <MudPaper Elevation="0" Style="text-align: center;">
+      @if (Match.HasPlayingSet)
+      {
+        var myPoint = Match.MyGamePoint(Match.RightPlayer);
+        var scoreClass = myPoint >= 10 ? "score-small" : "score";
+        <button class="@scoreClass" onclick="@(async () => await IncreaseScore(Match.RightPlayer))">
+          @myPoint
+        </button>
+      }
+    </MudPaper>
+  </MudItem>
+  <MudItem xs="12" Class="d-flex" Style="justify-content: left;">
+    <div>
+    @if (Match.HasPlayingSet)
+    {
+        <MudButton OnClick="@(async () => await CancelSet())"
+               Class="common-action"
+               Variant="Variant.Outlined"
+               Color="Color.Default"
+            >게임 취소하기</MudButton>
+    }
+    @if (!string.IsNullOrEmpty(LeagueId))
+    {
+      string leagueUrl = $"/jangtak9/league/{LeagueId}";
+      <MudButton OnClick="@(() => Navi.NavigateTo(leagueUrl))"
+               Class="common-action"
+               Variant="Variant.Outlined"
+               Color="Color.Default"
+            >리그화면으로 돌아가기</MudButton>
+    }
+
+    </div>
+
+  </MudItem>
+
+  @if (Match.Finished)
+  {
+    <MudItem xs="12">
+      <MudText Typo="Typo.h4">경기가 종료되었습니다.</MudText>
+      <MudPaper Elevation="0" Style="margin-top: 30px;">
+        <MudButton
+            Class="big"
+            Variant="Variant.Outlined"
+            OnClick="@(async () => await RestartMatch())"
+            >다시 진행</MudButton>
+      </MudPaper>
+    </MudItem>
+  }
+  else if (Match.NotStarted)
+  {
+    <MudItem xs="12">
+      <MudPaper Elevation="0">
+        <MudButton
+            Class="big"
+            Variant="Variant.Outlined"
+            OnClick="@(async () => await StartMatch())"
+            >경기 시작</MudButton>
+      </MudPaper>
+    </MudItem>
+  }
+  else if (Match.WaitingNextSet)
+  {
+    <MudItem xs="12">
+      <MudPaper Elevation="0">
+        <MudButton
+            Class="big"
+            Variant="Variant.Outlined"
+            OnClick="@(async () => await StartNewSet())"
+            >다음 세트 시작</MudButton>
+      </MudPaper>
+      <MudPaper Elevation="0" Style="margin-top: 30px;">
+        <MudButton
+            Class="big"
+            Variant="Variant.Outlined"
+            Color="Color.Error"
+            OnClick="@(async () => await FinishMatch())"
+            >경기 종료</MudButton>
+      </MudPaper>
+    </MudItem>
+  }
+</MudGrid>
+
+<style>
+  .score {
+      width: 100%;
+      text-align: center;
+      font-size: 20vh;
+      line-height: 100%;
+      letter-spacing: -3vh;
+  }
+  .score-small {
+      width: 100%;
+      text-align: center;
+      font-size: 20vh;
+      line-height: 100%;
+      letter-spacing: -3vh;
+  }
+  .big {
+      width: 100%;
+      font-size: xx-large;
+  }
+  .common-action {
+      display: block;
+      margin-bottom: 10px;
+  }
+</style>

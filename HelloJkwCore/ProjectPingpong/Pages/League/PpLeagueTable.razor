@@ -1,0 +1,78 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+
+@if (League?.PlayerList == null)
+{
+  return;
+}
+
+@{
+  var players = League.PlayerList
+    .OrderBy(x => x.Class)
+    .ThenBy(x => x.Name)
+    .Select((p, i) => (p, i + 1));
+}
+
+<table class="league-table table">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="2">성명</td>
+      <td rowspan="2">부수</td>
+      @foreach (var (player, index) in players)
+      {
+        <td>@index</td>
+      }
+      <td rowspan="2">승/패</td>
+      <td rowspan="2">승점</td>
+      <td rowspan="2">순위</td>
+    </tr>
+    <tr>
+      @foreach (var (player, index) in players)
+      {
+        <td>@player.Name</td>
+      }
+    </tr>
+    @foreach (var (player, index) in players)
+    {
+      <tr>
+        <td>@index</td>
+        <td>@player.Name</td>
+        <td>@player.Class</td>
+        @foreach (var (p, i) in players)
+        {
+          @if (player == p)
+          {
+            <td>x</td>
+          }
+          else if (MatchMap.TryGetValue(player.Name, out var matches) && matches.TryGetValue(p.Name, out var match))
+          {
+            @if (match.NotStarted)
+            {
+              <td></td>
+            }
+            else
+            {
+              <td>@match.MySetScore(player)</td>
+            }
+          }
+          else
+          {
+            <td></td>
+          }
+        }
+        @if (ResultSet.ContainsKey(player.Name))
+        {
+          <td>@ResultSet[player.Name].WinCount / @ResultSet[player.Name].LoseCount</td>
+          <td>@ResultSet[player.Name].WinPoint</td>
+          <td></td>
+        }
+        else
+        {
+          <td></td>
+          <td></td>
+          <td></td>
+        }
+      </tr>
+    }
+  </tbody>
+</table>

@@ -139,6 +139,7 @@ public class Startup
         services.AddDiaryService(Configuration);
         services.AddSuFcService(Configuration);
         services.AddBadukService(Configuration);
+        services.AddPingpongService(Configuration);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

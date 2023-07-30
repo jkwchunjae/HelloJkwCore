@@ -50,7 +50,7 @@
         </MudTd>
         <MudTd>
             <div>
-            @foreach (var role in user.Roles)
+            @foreach (var role in user.Roles ?? new List<UserRole>())
             {
                 bool isChecked = user.Roles?.Contains(role) ?? false;
                 <MudText>@role.ToString()</MudText>

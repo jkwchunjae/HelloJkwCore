@@ -1,0 +1,188 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+
+@if (Setting)
+{
+<MudText Typo="Typo.h4">리그</MudText>
+}
+@if ((CompetitionData?.PlayerList?.Any() ?? false))
+{
+  <MudDropContainer T="Player"
+      CanDrop="@((_, __) => Setting ? true : false)"
+      Items="CompetitionData.PlayerList" 
+      ItemsSelector="PlayerSelector" ItemDropped="ItemUpdated">
+    <ChildContent>
+      @if (Setting)
+      {
+      <div class="no-print">
+        <MudDropZone T="Player" Identifier="NotMatched"
+                   CanDropClass="mud-border-warning"
+                   Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
+          <MudText Typo="Typo.h6" Class="mb-4">미지정 인원</MudText>
+        </MudDropZone>
+      </div>
+      }
+      @foreach (var league in CompetitionData.LeagueList)
+      {
+        var leagueUrl = @$"/jangtak9/league/{league.Id.ToUrl()}";
+        <MudDropZone T="Player" Identifier="@league.Id.Id"
+                 CanDrop="@((_) => Setting ? true : false)"
+                 CanDropClass="mud-border-info"
+                 Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
+          <MudText Typo="Typo.h6" Class="mb-4">@league.Id.LeagueName</MudText>
+          @if (!Setting)
+          {
+            <MudLink Href="@leagueUrl" Class="no-print">입장</MudLink>
+          }
+        </MudDropZone>
+      }
+      @if (Setting)
+      {
+      <MudDropZone T="Player" Identifier="asdf"
+                CanDrop="@((_) => false)"
+                CanDropClass="mud-border-info"
+                 Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
+        <MudText Typo="Typo.h6" Class="mb-4">조별 리그 추가/삭제</MudText>
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Default" Size="Size.Large"
+                      OnClick="@(() => CreateLeagues((CompetitionData.LeagueList?.Count() ?? 0) + 1))"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Remove" Variant="Variant.Filled" Color="Color.Default" Size="Size.Large" 
+                      OnClick="@(() => CreateLeagues((CompetitionData.LeagueList?.Count() ?? 0) - 1))"/>
+      </MudDropZone>
+      }
+    </ChildContent>
+    <ItemRenderer>
+      <MudChip Variant="Variant.Outlined" OnClick="@(async () => await OnPlayerClicked(context))">
+        @context.Name ( @context.Class )
+      </MudChip>
+    </ItemRenderer>
+  </MudDropContainer>
+}
+
+@code {
+  [Inject] IPpService? Service { get; set; }
+  [Inject] IPpMatchService? MatchService { get; set; }
+  [Inject] IDialogService? DialogService { get; set; }
+
+  [Parameter] public bool Setting { get; set; } = false;
+  [Parameter] public CompetitionData CompetitionData { get; set; }
+  [Parameter] public EventCallback<CompetitionData> CompetitionDataChanged { get; set; }
+
+  private CompetitionUpdator? CompetitionUpdator;
+  private int _inputLeagueCount;
+
+  protected override void OnPageInitialized()
+  {
+    CompetitionUpdator = new CompetitionUpdator(CompetitionData, Service!);
+  }
+
+  private async Task CreateLeagues(int leagueCount)
+  {
+    if (leagueCount < 0)
+      return;
+
+    CompetitionData!.LeagueList ??= new();
+    var leagues = CompetitionData!.LeagueList;
+
+    // 더 많다. 줄여야 한다.
+    while (leagues.Count > leagueCount)
+    {
+      var removeLeagueId = leagues.Last().Id;
+      CompetitionData = await CompetitionUpdator!.RemoveLeague(removeLeagueId);
+      leagues = CompetitionData.LeagueList!;
+    }
+
+    // 늘려야 한다.
+    while (leagues.Count < leagueCount)
+    {
+      var newLeagueId = new LeagueId(CompetitionData.Name, $"{leagues.Count + 1}조");
+      var newLeague = await Service!.CreateLeagueAsync(newLeagueId);
+      CompetitionData = await CompetitionUpdator!.AddLeague(newLeague!);
+      leagues = CompetitionData.LeagueList!;
+    }
+
+    await CompetitionDataChanged.InvokeAsync(CompetitionData);
+  }
+
+  private async Task ItemUpdated(MudItemDropInfo<Player> dropItem)
+  {
+    var dropzoneId = dropItem.DropzoneIdentifier;
+    var player = dropItem.Item;
+
+    await MovePlayer(player, dropzoneId);
+  }
+
+  private async Task MovePlayer(Player player, string leagueId)
+  {
+    var leagues = CompetitionData?.LeagueList;
+    if (leagues == null)
+      return;
+
+    foreach (var joinedLeague in leagues)
+    {
+      var leagueUpdator = new LeagueUpdator(joinedLeague, Service!, MatchService!);
+      await leagueUpdator.RemovePlayer(player.Name);
+    }
+
+    if (leagueId == "NotMatched")
+    {
+    }
+    else
+    {
+      var league = leagues.FirstOrDefault(league => league.Id == leagueId);
+      if (league == null)
+        return;
+
+      var leagueUpdator2 = new LeagueUpdator(league, Service!, MatchService!);
+      await leagueUpdator2.AddPlayer(player);
+    }
+
+    await CompetitionDataChanged.InvokeAsync(CompetitionData);
+  }
+
+  private bool PlayerSelector(Player player, string dropzoneId)
+  {
+    if (dropzoneId == "NotMatched")
+    {
+      var leagues = CompetitionData?.LeagueList;
+      if (leagues == null)
+        return true;
+
+      var notMatched = leagues.All(league => league.PlayerList?.Empty(p => p.Name == player.Name) ?? true);
+
+      return notMatched;
+    }
+    else
+    {
+      var leagues = CompetitionData?.LeagueList;
+      if (leagues == null)
+        return false;
+
+      var league = leagues.FirstOrDefault(league => league.Id == dropzoneId);
+      if (league == null)
+        return false;
+
+      return league.PlayerList?.Any(p => p.Name == player.Name) ?? false;
+    }
+  }
+
+  private async Task OnPlayerClicked(Player player)
+  {
+    if (!Setting)
+      return;
+
+    var param = new DialogParameters
+      {
+        ["Content"] = $"{player.Name}님을 어디로 보내시겠습니까?",
+        ["SelectItems"] = new List<(string, string)> { ("NotMatched", "미지정") }
+            .Concat(CompetitionData!.LeagueList!
+                .Select(league => (league.Id.Id, league.Id.LeagueName))),
+      };
+    var dialog = DialogService!.Show<PpSelectDialog>("대회 관리", param);
+    var result = await dialog.Result;
+
+    if (result.Data is string selectedId && !string.IsNullOrEmpty(selectedId))
+    {
+      await MovePlayer(player, selectedId);
+    }
+  }
+}

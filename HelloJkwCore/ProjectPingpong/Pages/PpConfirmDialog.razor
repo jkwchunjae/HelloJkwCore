@@ -1,0 +1,30 @@
+﻿@using MudBlazor
+
+<MudDialog>
+  <DialogContent>
+    @Content
+  </DialogContent>
+  <DialogActions>
+    <MudButton OnClick="Cancel" Variant="Variant.Outlined">@CancelText</MudButton>
+    <MudButton OnClick="Submit" Variant="@SubmitVariant" Color="SubmitColor">@SubmitText</MudButton>
+  </DialogActions>
+</MudDialog>
+
+@code {
+  [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+  [Parameter] public string Content { get; set; } = string.Empty;
+  [Parameter] public string SubmitText { get; set; } = "OK";
+  [Parameter] public Color SubmitColor { get; set; } = Color.Default;
+  [Parameter] public Variant SubmitVariant { get; set; } = Variant.Outlined;
+  [Parameter] public string CancelText { get; set; } = "취소";
+
+  void Cancel()
+  {
+    MudDialog.Cancel();
+  }
+
+  void Submit()
+  {
+    MudDialog.Close(DialogResult.Ok(true));
+  }
+}

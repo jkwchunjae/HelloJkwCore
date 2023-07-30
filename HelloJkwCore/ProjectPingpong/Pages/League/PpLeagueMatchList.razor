@@ -1,0 +1,17 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+@using ProjectPingpong.Pages.Match
+
+@if (League?.MatchList?.Empty() ?? true)
+{
+  return;
+}
+
+<MudList>
+  @foreach (var match in League.MatchList)
+  {
+    <MudListItem>
+      <PpMatchView1 Match="@match" League="@League"/>
+    </MudListItem>
+  }
+</MudList>

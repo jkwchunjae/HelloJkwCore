@@ -1,0 +1,16 @@
+﻿@inherits JkwPageBase
+@layout PpLayout
+@using MudBlazor
+@using ProjectPingpong.Utils
+
+<MudList>
+    @foreach (var competitionName in CompetitionNameList)
+  {
+    var link = PpNaviHelper.CompetitionPage(competitionName);
+    <MudItem>
+        <MudLink Href="@link">
+            @competitionName
+        </MudLink>
+    </MudItem>
+  }
+</MudList>

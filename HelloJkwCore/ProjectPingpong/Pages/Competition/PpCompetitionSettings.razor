@@ -1,0 +1,38 @@
+﻿@inherits JkwPageBase
+@layout PpLayout
+@using MudBlazor
+@page "/jangtak9/competition/{CompetitionNameText}/settings"
+
+@if (CompetitionData == null)
+{
+  return;
+}
+
+@{
+  var competitionUrl = $"/jangtak9/competition/{CompetitionData.Name}";
+}
+
+<MudText Typo="Typo.h3">
+  @CompetitionData!.Name
+</MudText>
+<MudButton OnClick="@(() => Navi.NavigateTo(competitionUrl))"
+          Class="common-action"
+          Variant="Variant.Outlined"
+          Color="Color.Default"
+      >대회 화면으로 돌아가기</MudButton>
+
+<div style="margin-top: 30px; margin-bottom: 30px; border: 2px solid gray; padding: 20px; border-radius: 10px;" class="no-print">
+  <PpCompetitionPlayerSetting @bind-CompetitionData="CompetitionData"/>
+</div>
+
+<div style="margin-top: 30px; margin-bottom: 30px; border: 2px solid gray; padding: 20px; border-radius: 10px;">
+  <PpCompetitionLeagueSetting @bind-CompetitionData="CompetitionData" Setting="@true"/>
+</div>
+
+@* @if (CompetitionData.CanManage(User))
+{
+  <div style="margin-top: 30px; margin-bottom: 30px;" class="no-print">
+    <PpCompetitionManagerSetting @bind-CompetitionData="CompetitionData" />
+  </div>
+} *@
+

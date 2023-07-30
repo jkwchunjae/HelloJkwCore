@@ -1,0 +1,13 @@
+﻿@inherits JkwPageBase
+@layout PpLayout
+@page "/jangtak9"
+@using MudBlazor
+@using ProjectPingpong.Pages.Competition
+
+<PpCompetitionList/>
+
+@if (IsAuthenticated && (User?.HasRole(UserRole.JangTak9) ?? false))
+{
+  <PpCompetitionCreation/>
+}
+
