@@ -17,6 +17,11 @@
   @League!.Id.CompetitionName
 </MudText>
 </MudLink>
+<MudButton OnClick="@(() => Navi.NavigateTo(competitionUrl))"
+          Class="common-action"
+          Variant="Variant.Outlined"
+          Color="Color.Default"
+      >대회 화면으로 돌아가기</MudButton>
 
 <MudText Typo="Typo.h4">
   @League!.Id.LeagueName

@@ -4,13 +4,8 @@
 @if (Setting)
 {
 <MudText Typo="Typo.h4">리그</MudText>
-
-<MudForm Style="max-width: 300px;" Class="no-print">
-  <MudTextField T="int" @bind-Value="_inputLeagueCount" Label="리그 수" Required="true" RequiredError="리그를 몇 개 만드실건가요?" />
-  <MudButton Variant="Variant.Outlined" OnClick="@(async () => await CreateLeagues(_inputLeagueCount))">만들기</MudButton>
-</MudForm>
 }
-@if ((CompetitionData?.PlayerList?.Any() ?? false) && (CompetitionData?.LeagueList?.Any() ?? false))
+@if ((CompetitionData?.PlayerList?.Any() ?? false))
 {
   <MudDropContainer T="Player"
       CanDrop="@((_, __) => Setting ? true : false)"
@@ -41,6 +36,19 @@
           }
         </MudDropZone>
       }
+      @if (Setting)
+      {
+      <MudDropZone T="Player" Identifier="asdf"
+                CanDrop="@((_) => false)"
+                CanDropClass="mud-border-info"
+                 Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
+        <MudText Typo="Typo.h6" Class="mb-4">조별 리그 추가/삭제</MudText>
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Default" Size="Size.Large"
+                      OnClick="@(() => CreateLeagues((CompetitionData.LeagueList?.Count() ?? 0) + 1))"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Remove" Variant="Variant.Filled" Color="Color.Default" Size="Size.Large" 
+                      OnClick="@(() => CreateLeagues((CompetitionData.LeagueList?.Count() ?? 0) - 1))"/>
+      </MudDropZone>
+      }
     </ChildContent>
     <ItemRenderer>
       <MudChip Variant="Variant.Outlined" OnClick="@(async () => await OnPlayerClicked(context))">
@@ -69,6 +77,9 @@
 
   private async Task CreateLeagues(int leagueCount)
   {
+    if (leagueCount < 0)
+      return;
+
     CompetitionData!.LeagueList ??= new();
     var leagues = CompetitionData!.LeagueList;
 
