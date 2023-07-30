@@ -1,0 +1,66 @@
+@namespace HelloJkwCore.Components
+@inherits MudButton
+@using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
+@using Microsoft.JSInterop
+@inject IJSRuntime Js
+
+
+<MudButton OnClick="Click"
+           Disabled="Disabled"
+           ButtonType="ButtonType"
+           Href="@Href"
+           Target="@Target"
+           DisableElevation="DisableElevation"
+           DisableRipple="DisableRipple"
+           StartIcon="@StartIcon"
+           EndIcon="@EndIcon"
+           IconColor="IconColor"
+           IconClass="@IconClass"
+           Color="@(_clicked ? ActionColor : DefaultColor)"
+           Size="Size"
+           Variant="@( _clicked ? ActionVariant : DefaultVariant)"
+           FullWidth="FullWidth"
+           Class="@Class"
+           Style="@Style"
+           Tag="Tag"
+           UserAttributes="UserAttributes">
+        @ChildContent
+</MudButton>
+
+@code {
+    [Parameter] public TimeSpan ResetDelay { get; set; } = TimeSpan.FromSeconds(5);
+    [Parameter] public Color DefaultColor { get; set; } = Color.Default;
+    [Parameter] public Variant DefaultVariant { get; set; } = Variant.Outlined;
+    [Parameter] public Color ActionColor { get; set; } = Color.Primary;
+    [Parameter] public Variant ActionVariant { get; set; } = Variant.Filled;
+
+    private bool _clicked = false;
+    private CancellationTokenSource _cts;
+
+    protected async Task Click(MouseEventArgs ev)
+    {
+        if (_clicked)
+        {
+            await OnClick.InvokeAsync(ev);
+            _clicked = false;
+            _cts?.Cancel();
+            await InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            try
+            {
+                _clicked = true;
+                _cts = new CancellationTokenSource();
+                await InvokeAsync(StateHasChanged);
+                await Task.Delay(ResetDelay, _cts.Token);
+                _clicked = false;
+                await InvokeAsync(StateHasChanged);
+            }
+            catch
+            {
+            }
+        }
+    }
+}

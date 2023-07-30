@@ -1,4 +1,5 @@
 ﻿@inherits JkwPageBase
+@using HelloJkwCore.Components
 @page "/users"
 
 <PageTitle>유저 관리</PageTitle>
@@ -28,15 +29,10 @@
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <span>권한</span>
-            <div>
-                @foreach (var role in CheckedRolesData)
-                {
-                    var isChecked = CheckedRoles?.Contains(role) ?? false;
-                    <MudCheckBox T="bool" Checked="isChecked" Label="@role.ToString()"
-                                CheckedChanged="(async check => await FilterRoleChangedAsync(role, check))"/>
-                }
-            </div>
+            권한
+        </MudTh>
+        <MudTh>
+            관리
         </MudTh>
     </HeaderContent>
     <RowTemplate Context="user">
@@ -53,14 +49,32 @@
             <span class="date-time">@user.LastLoginTime.ToString("HH:mm:ss")</span>
         </MudTd>
         <MudTd>
-            @foreach (var role in typeof(UserRole).GetValues<UserRole>())
+            <div>
+            @foreach (var role in user.Roles)
             {
                 bool isChecked = user.Roles?.Contains(role) ?? false;
-
-                <MudCheckBox T="bool" Checked="isChecked" Label="@role.ToString()"
-                            CheckedChanged="(async check => await UserRoleChangedAsync(user, role, check))"/>
+                <MudText>@role.ToString()</MudText>
+                @* <MudCheckBox T="bool" Checked="isChecked" Label="@role.ToString()"  ReadOnly="true" /> *@
+                            @* CheckedChanged="(async check => await UserRoleChangedAsync(user, role, check))"/> *@
             }
-            <MudButton OnClick="@(async () => await DeleteUserAsync(user))" Variant="Variant.Outlined" Size="Size.Small">삭제</MudButton>
+            </div>
+
+            <div>
+                <MudButton Size="Size.Small" Variant="Variant.Outlined"
+                    OnClick="@(async () => await ManageUserRole(user))"
+                    >
+                    권한 설정
+                </MudButton>
+            </div>
+        </MudTd>
+        <MudTd>
+            <DoubleClickButton OnClick="@(async () => await DeleteUserAsync(user))" Size="Size.Small"
+                DefaultVariant="Variant.Outlined" DefaultColor="Color.Default"
+                ActionVariant="Variant.Filled" ActionColor="Color.Secondary"
+                ResetDelay="TimeSpan.FromSeconds(3)"
+                >
+                삭제
+            </DoubleClickButton>
         </MudTd>
     </RowTemplate>
 </MudTable>

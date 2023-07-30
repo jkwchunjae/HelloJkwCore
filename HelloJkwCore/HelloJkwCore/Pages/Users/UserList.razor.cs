@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MudBlazor;
 
 namespace HelloJkwCore.Pages.Users;
 
 public partial class UserList : JkwPageBase
 {
-    [Inject]
-    private UserManager<AppUser> UserManager { get; set; }
+    [Inject] UserManager<AppUser> UserManager { get; set; }
+    [Inject] IDialogService DialogService { get; set; }
 
     private List<AppUser> Users { get; set; }
 
@@ -13,14 +14,7 @@ public partial class UserList : JkwPageBase
         ?.Where(user => CheckedRoles.Empty() ? true :
             CheckedRoles.All(role => user.Roles?.Contains(role) ?? false));
 
-    private List<UserRole> CheckedRolesData { get; set; }
-
     private HashSet<UserRole> CheckedRoles = new();
-
-    public UserList()
-    {
-        CheckedRolesData = typeof(UserRole).GetValues<UserRole>().ToList();
-    }
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -46,22 +40,6 @@ public partial class UserList : JkwPageBase
         }
     }
 
-    private Task FilterRoleChangedAsync(UserRole role, bool check)
-    {
-        if (check)
-        {
-            CheckedRoles.Add(role);
-        }
-        else
-        {
-            CheckedRoles.Remove(role);
-        }
-
-        StateHasChanged();
-
-        return Task.CompletedTask;
-    }
-
     private async Task DeleteUserAsync(AppUser user)
     {
         await UserManager.DeleteAsync(user);
@@ -69,4 +47,47 @@ public partial class UserList : JkwPageBase
         Users.Remove(user);
         StateHasChanged();
     }
+
+    private async Task ManageUserRole(AppUser user)
+    {
+        var param = new DialogParameters
+        {
+            ["User"] = user,
+        };
+        var dialog = DialogService.Show<UserRoleDialog>($"{user.DisplayName} 권한 관리", param);
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        if (result.Data is UserRoleResult userRoleResult)
+        {
+            var userRoles = userRoleResult.Role;
+            var appliedUser = userRoleResult.User;
+            if (user == appliedUser && !IsSameRole(user.Roles, userRoles))
+            {
+                // user.Roles와 userRoles를 비교해서 변경된 것만 변경하도록 해야함
+                var removeRoles = user.Roles.Except(userRoles).ToArray();
+                var addRoles = userRoles.Except(user.Roles).ToArray();
+                foreach (var role in removeRoles)
+                {
+                    await UserManager.RemoveFromRoleAsync(user, role.ToString());
+                }
+                foreach (var role in addRoles)
+                {
+                    await UserManager.AddToRoleAsync(user, role.ToString());
+                }
+            }
+        }
+
+        bool IsSameRole(IEnumerable<UserRole> roles1, IEnumerable<UserRole> roles2)
+        {
+            return roles1.OrderBy(x => x).SequenceEqual(roles2.OrderBy(x => x));
+        }
+    }
 }
+
+record UserRoleResult(AppUser User, List<UserRole> Role);
+
