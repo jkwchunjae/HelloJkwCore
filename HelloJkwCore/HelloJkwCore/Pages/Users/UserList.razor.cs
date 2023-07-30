@@ -54,7 +54,8 @@ public partial class UserList : JkwPageBase
         {
             ["User"] = user,
         };
-        var dialog = DialogService.Show<UserRoleDialog>($"{user.DisplayName} 권한 관리", param);
+        DialogOptions options = new DialogOptions() { CloseOnEscapeKey = true };
+        var dialog = DialogService.Show<UserRoleDialog>($"{user.DisplayName} 권한 관리", param, options);
         var result = await dialog.Result;
 
         if (result.Canceled)
