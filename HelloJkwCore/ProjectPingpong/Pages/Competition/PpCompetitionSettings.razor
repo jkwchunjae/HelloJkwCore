@@ -12,18 +12,18 @@
   @CompetitionData!.Name
 </MudText>
 
-<div style="margin-top: 30px; margin-bottom: 30px;" class="no-print">
+<div style="margin-top: 30px; margin-bottom: 30px; border: 2px solid gray; padding: 20px; border-radius: 10px;" class="no-print">
   <PpCompetitionPlayerSetting @bind-CompetitionData="CompetitionData"/>
 </div>
 
-<div style="margin-top: 30px; margin-bottom: 30px;">
+<div style="margin-top: 30px; margin-bottom: 30px; border: 2px solid gray; padding: 20px; border-radius: 10px;">
   <PpCompetitionLeagueSetting @bind-CompetitionData="CompetitionData" Setting="@true"/>
 </div>
 
-@if (CompetitionData.CanManage(User))
+@* @if (CompetitionData.CanManage(User))
 {
   <div style="margin-top: 30px; margin-bottom: 30px;" class="no-print">
     <PpCompetitionManagerSetting @bind-CompetitionData="CompetitionData" />
   </div>
-}
+} *@
 

@@ -35,7 +35,10 @@
                  CanDropClass="mud-border-info"
                  Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
           <MudText Typo="Typo.h6" Class="mb-4">@league.Id.LeagueName</MudText>
-          <MudLink Href="@leagueUrl" Class="no-print">입장</MudLink>
+          @if (!Setting)
+          {
+            <MudLink Href="@leagueUrl" Class="no-print">입장</MudLink>
+          }
         </MudDropZone>
       }
     </ChildContent>
