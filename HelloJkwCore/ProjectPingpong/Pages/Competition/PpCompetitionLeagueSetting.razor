@@ -22,19 +22,22 @@
         </MudDropZone>
       </div>
       }
-      @foreach (var league in CompetitionData.LeagueList)
+      @if (CompetitionData.LeagueList?.Any() ?? false)
       {
-        var leagueUrl = @$"/jangtak9/league/{league.Id.ToUrl()}";
-        <MudDropZone T="Player" Identifier="@league.Id.Id"
-                 CanDrop="@((_) => Setting ? true : false)"
-                 CanDropClass="mud-border-info"
-                 Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
-          <MudText Typo="Typo.h6" Class="mb-4">@league.Id.LeagueName</MudText>
-          @if (!Setting)
-          {
-            <MudLink Href="@leagueUrl" Class="no-print">입장</MudLink>
-          }
-        </MudDropZone>
+        @foreach (var league in CompetitionData.LeagueList)
+        {
+          var leagueUrl = @$"/jangtak9/league/{league.Id.ToUrl()}";
+          <MudDropZone T="Player" Identifier="@league.Id.Id"
+                  CanDrop="@((_) => Setting ? true : false)"
+                  CanDropClass="mud-border-info"
+                  Class="rounded-lg border-2 border-solid mud-border-lines-default pa-2 ma-3 flex-grow-1 flex-wrap d-flex">
+            <MudText Typo="Typo.h6" Class="mb-4">@league.Id.LeagueName</MudText>
+            @if (!Setting)
+            {
+              <MudLink Href="@leagueUrl" Class="no-print">입장</MudLink>
+            }
+          </MudDropZone>
+        }
       }
       @if (Setting)
       {
