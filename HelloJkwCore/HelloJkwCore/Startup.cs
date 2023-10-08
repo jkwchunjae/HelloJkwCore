@@ -137,7 +137,6 @@ public class Startup
         #endregion
 
         services.AddDiaryService(Configuration);
-        services.AddSuFcService(Configuration);
         services.AddBadukService(Configuration);
         services.AddPingpongService(Configuration);
     }

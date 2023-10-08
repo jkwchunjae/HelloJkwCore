@@ -6,7 +6,6 @@ public enum UserRole
 {
     Admin,
     DiaryWriter,
-    SuFcAdmin,
     BadukCreator,
     JangTak9,
 }
