@@ -16,6 +16,5 @@ global using Microsoft.AspNetCore.Components.Routing;
 global using Xunit;
 global using ProjectBaduk;
 global using ProjectDiary;
-global using ProjectSuFc;
 
 namespace Tests;
