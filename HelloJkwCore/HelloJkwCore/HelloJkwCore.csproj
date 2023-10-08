@@ -17,5 +17,6 @@
     <ProjectReference Include="..\ProjectBaduk\ProjectBaduk.csproj" />
     <ProjectReference Include="..\ProjectDiary\ProjectDiary.csproj" />
     <ProjectReference Include="..\ProjectPingpong\ProjectPingpong.csproj" />
+    <ProjectReference Include="..\GameLibra\GameLibra.csproj" />
   </ItemGroup>
 </Project>
