@@ -31,12 +31,12 @@ public class LibraGameRule
     /// </summary>
     public int OpenCubeIndex { get; set; }
     /// <summary>
-    /// 큐브를 저울에 올릴 때 최소한 올려야 하는 큐브 수
+    /// 한 턴에 큐브를 최소한 올려야 하는 큐브 수
     /// 각각 다른 저울에 올려도 된다
     /// </summary>
     public int MinimumApplyCubeCount { get; set; }
     /// <summary>
-    /// 양팔저울의 수
+    /// 양팔저울의 수 (1이상)
     /// </summary>
     public int ScaleCount { get; set; }
 }
