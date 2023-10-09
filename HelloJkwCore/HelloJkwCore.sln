@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectPingpong", "ProjectP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameLibra", "GameLibra\GameLibra.csproj", "{FB58DFC1-3B98-4D67-9B18-A3797EC752C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.GameLibra", "Tests\Test.GameLibra\Test.GameLibra.csproj", "{FA822191-B4E1-4F94-8B61-2D245250098E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.GameLibra", "Tests\Test.GameLibra\Test.GameLibra.csproj", "{FA822191-B4E1-4F94-8B61-2D245250098E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,11 +63,11 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {906D85C5-6814-4DD7-A27B-BA20BFAC835B}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C010E7FD-89ED-47DA-AD12-4DA12CE214D2} = {F0A3A004-E9A9-44EA-A457-8B1E629A7067}
 		{FA822191-B4E1-4F94-8B61-2D245250098E} = {F0A3A004-E9A9-44EA-A457-8B1E629A7067}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {906D85C5-6814-4DD7-A27B-BA20BFAC835B}
 	EndGlobalSection
 EndGlobal

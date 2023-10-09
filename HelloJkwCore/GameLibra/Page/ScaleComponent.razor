@@ -1,0 +1,47 @@
+﻿@page "/ScaleComponent"
+@inherits JkwPageBase
+
+<h3>ScaleComponent</h3>
+
+<table>
+    <tr>
+        <th>Left   @scale.Left.Value</th>
+        <th>
+            @if (scale.Left.Value == scale.Right.Value)
+            {
+                <span> &equiv; </span>
+            }
+            else if (scale.Left.Value > scale.Right.Value)
+            {
+                <span> &gt; </span>
+            }
+            else
+            {
+                <span> &lt; </span>
+            }
+        </th>
+        <th>Right   @scale.Right.Value</th>
+    </tr>
+    @foreach (var id in ids)
+    {
+        <tr>
+            <td>
+                @foreach (var cube in scale.Left.Filter(id))
+                {
+                    <span>@cube.Id</span>
+                }
+            </td>
+            <td></td>
+            <td>
+                @foreach (var cube in scale.Right.Filter(id))
+                {
+                    <span>@cube.Id</span>
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+@code {
+
+}

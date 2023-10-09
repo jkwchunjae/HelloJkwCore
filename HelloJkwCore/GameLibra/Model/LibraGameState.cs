@@ -23,6 +23,8 @@ public class SingleArm
     public List<Cube> Cubes { get; set; } = new();
 
     public int Value => Cubes?.Sum(c => c.Value) ?? 0;
+    public List<Cube> Filter(int id)
+        => Cubes.Where(x => x.Id == id).ToList();
 
     public void Add(Cube cube)
     {
