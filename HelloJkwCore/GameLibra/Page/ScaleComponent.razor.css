@@ -1,0 +1,14 @@
+﻿.cube-container {
+    width: 80px;
+    height: 200px;
+    display: flex;
+    align-content: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.cube-slot {
+    height: 50px;
+    border: 2px dashed #ae6b6b;
+    border-radius: 5px;
+}

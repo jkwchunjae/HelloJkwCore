@@ -1,17 +1,18 @@
 ﻿@page "/ScaleComponent"
 @inherits JkwPageBase
+@using MudBlazor
 
 <h3>ScaleComponent</h3>
 
 <table>
     <tr>
-        <th>Left   @scale.Left.Value</th>
-        <th>
-            @if (scale.Left.Value == scale.Right.Value)
+        <th style="text-align: center;">Left</th>
+        <th style="text-align: center;">
+            @if (Scale.Left.Value == Scale.Right.Value)
             {
                 <span> &equiv; </span>
             }
-            else if (scale.Left.Value > scale.Right.Value)
+            else if (Scale.Left.Value > Scale.Right.Value)
             {
                 <span> &gt; </span>
             }
@@ -20,28 +21,33 @@
                 <span> &lt; </span>
             }
         </th>
-        <th>Right   @scale.Right.Value</th>
+        <th style="text-align: center;">Right</th>
     </tr>
-    @foreach (var id in ids)
-    {
-        <tr>
-            <td>
-                @foreach (var cube in scale.Left.Filter(id))
-                {
-                    <span>@cube.Id</span>
-                }
-            </td>
-            <td></td>
-            <td>
-                @foreach (var cube in scale.Right.Filter(id))
-                {
-                    <span>@cube.Id</span>
-                }
-            </td>
-        </tr>
-    }
+    <tr>
+        <td class="cube-container">
+            <SingleArmComponent Arm="@Scale.Left" />
+        </td>
+        <td style="width: 20px;"></td>
+        <td class="cube-container">
+            <SingleArmComponent Arm="@Scale.Right" />
+        </td>
+    </tr>
+    <tr>
+        <td class="">
+            <div class="d-flex cube-slot">
+                <MudDropZone T="DropCubeItem" Identifier="@LeftArmCubeIdentifier" Class="d-flex cube-slot" Style="height:100%;width:100%;">
+
+                </MudDropZone>
+            </div>
+        </td>
+        <td></td>
+        <td class="">
+            <div class="d-flex cube-slot">
+                <MudDropZone T="DropCubeItem" Identifier="@RightArmCubeIdentifier" Class="d-flex cube-slot" Style="height:100%;width:100%;">
+
+                </MudDropZone>
+            </div>
+        </td>
+    </tr>
 </table>
 
-@code {
-
-}

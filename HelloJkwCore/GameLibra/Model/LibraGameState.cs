@@ -14,6 +14,7 @@ public class LibraGameState
 
 public class DoubleScale
 {
+    public int Id { get; set; }
     public SingleArm Left { get; set; } = new();
     public SingleArm Right { get; set; } = new();
 }
@@ -63,4 +64,11 @@ public class Cube
 {
     public int Id { get; set; }
     public int Value { get; set; }
+}
+
+public class DropCubeItem
+{
+    public Cube Cube { get; set; }
+    public string Origin { get; set; }
+    public string Identifier { get; set; }
 }

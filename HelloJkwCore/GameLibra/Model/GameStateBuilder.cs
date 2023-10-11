@@ -46,7 +46,10 @@ public class GameStateBuilder
             })
             .ToList();
         _state.Scales = Enumerable.Range(0, _state.Rule.ScaleCount)
-            .Select(x => new DoubleScale())
+            .Select((x, i) => new DoubleScale
+            {
+                Id = i + 1,
+            })
             .ToList();
         _state.TurnPlayerIndex = 0;
         return _state;

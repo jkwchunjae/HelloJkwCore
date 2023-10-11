@@ -1,0 +1,36 @@
+﻿@inherits JkwPageBase
+@page "/LibraBoard"
+@using MudBlazor
+
+<h3>LibraBoard</h3>
+
+<MudDropContainer T="DropCubeItem" Items="_cubes"
+    ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
+    CanDrop="CanDrop"
+    ItemDropped="ItemDropped"
+>
+    <ChildContent>
+        <div class="board">
+            <div class="scales">
+                @foreach (var scale in state.Scales)
+                {
+                    <ScaleComponent Scale="@scale" />
+                }
+            </div>
+            <div class="players">
+                @foreach (var player in state.Players)
+                {
+                    <PlayerComponent Player="@player" />
+                }
+            </div>
+        </div>
+    </ChildContent>
+    <ItemRenderer>
+        @{
+            var color = $"cube-color-{context.Cube.Id}";
+        }
+        <span class="cube-item @color">@context.Cube.Id</span>
+    </ItemRenderer>
+</MudDropContainer>
+
+
