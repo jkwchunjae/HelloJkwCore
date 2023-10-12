@@ -2,16 +2,19 @@
 @page "/LibraBoard"
 @using MudBlazor
 
-<h3>LibraBoard</h3>
 
 <MudDropContainer T="DropCubeItem" Items="_cubes"
+    Class="mud-border-lines-default"
     ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
+    ApplyDropClassesOnDragStarted="false"
+    CanDropClass="mud-border-info"
+    NoDropClass="mud-border-error"
     CanDrop="CanDrop"
     ItemDropped="ItemDropped"
 >
     <ChildContent>
         <div class="board">
-            <div class="scales">
+            <div class="scales d-flex">
                 @foreach (var scale in state.Scales)
                 {
                     <ScaleComponent Scale="@scale" />

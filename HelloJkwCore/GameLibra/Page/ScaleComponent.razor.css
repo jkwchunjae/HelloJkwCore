@@ -1,5 +1,5 @@
 ﻿.cube-container {
-    width: 80px;
+    width: 180px;
     height: 200px;
     display: flex;
     align-content: flex-start;
@@ -8,7 +8,7 @@
 }
 
 .cube-slot {
+    width: 180px;
     height: 50px;
-    border: 2px dashed #ae6b6b;
-    border-radius: 5px;
 }
+

@@ -2,8 +2,8 @@
 @inherits JkwPageBase
 @using MudBlazor
 
-<h3>ScaleComponent</h3>
-
+<div class="m-1">
+<h3>@ScaleTitle</h3>
 <table>
     <tr>
         <th style="text-align: center;">Left</th>
@@ -35,19 +35,22 @@
     <tr>
         <td class="">
             <div class="d-flex cube-slot">
-                <MudDropZone T="DropCubeItem" Identifier="@LeftArmCubeIdentifier" Class="d-flex cube-slot" Style="height:100%;width:100%;">
-
-                </MudDropZone>
+                <MudDropZone T="DropCubeItem" Identifier="@LeftArmCubeIdentifier"
+                    Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default rounded-lg"
+                    Style="height:100%;width:100%;"
+                />
             </div>
         </td>
         <td></td>
         <td class="">
             <div class="d-flex cube-slot">
-                <MudDropZone T="DropCubeItem" Identifier="@RightArmCubeIdentifier" Class="d-flex cube-slot" Style="height:100%;width:100%;">
-
-                </MudDropZone>
+                <MudDropZone T="DropCubeItem" Identifier="@RightArmCubeIdentifier"
+                    Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default rounded-lg"
+                    Style="height:100%;width:100%;"
+                />
             </div>
         </td>
     </tr>
 </table>
+</div>
 

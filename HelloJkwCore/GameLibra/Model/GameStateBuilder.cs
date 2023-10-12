@@ -65,16 +65,13 @@ public class GameStateBuilder
                 .ToArray();
             var value1 = randomNums.Where(x => x < 10).First();
             var value2 = randomNums.Where(x => x < 10).Skip(1).First();
+            var value3 = 10;
             var value4 = randomNums.Where(x => x >= 10).First();
             var value5 = randomNums.Where(x => x >= 10).Skip(1).First();
-            return new List<Cube>
-            {
-                new Cube { Id = 1, Value = Math.Min(value1, value2) },
-                new Cube { Id = 2, Value = Math.Max(value1, value2) },
-                new Cube { Id = 3, Value = 10 },
-                new Cube { Id = 4, Value = Math.Min(value4, value5) },
-                new Cube { Id = 5, Value = Math.Max(value4, value5) },
-            };
+            return new[] { value1, value2, value3, value4, value5 }
+                .RandomShuffle()
+                .Select((value, i) => new Cube { Id = i + 1, Value = value })
+                .ToList();
         }
         else
         {

@@ -2,7 +2,7 @@
 @using MudBlazor
 
 <div>
-<h3>PlayerComponent</h3>
+<h3>Player @Player.Id</h3>
 
 @if (Player.LinkedUser != null)
 {
@@ -10,9 +10,10 @@
     <span>@user.UserName</span>
 }
     <div>
-        <MudDropZone T="DropCubeItem" Identifier="@CubeIdentifier" Class="d-flex">
-
-        </MudDropZone>
+        <MudDropZone T="DropCubeItem"
+            Identifier="@CubeIdentifier"
+            Class="d-flex border-2 border-solid docs-gray-bg mud-border-lines-default rounded"
+        />
 
 @*
         @foreach (var cube in Player.Cubes)
