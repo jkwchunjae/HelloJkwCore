@@ -42,6 +42,11 @@ public class GameEngine
         scale.Left.Add(left);
         scale.Right.Add(right);
     }
+
+    public void EndTurn()
+    {
+        State.TurnPlayerIndex = (State.TurnPlayerIndex + 1) % State.Players.Count;
+    }
 }
 
 public class HistoryItem

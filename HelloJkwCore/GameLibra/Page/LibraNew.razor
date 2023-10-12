@@ -21,8 +21,8 @@
     {
         if (!string.IsNullOrWhiteSpace(_name))
         {
-            var game = LibraService.CreateGame(User, _name);
-            NavigationManager.NavigateTo($"game/libra/room/{game.Id}");
+            var engine = LibraService.CreateGame(User, _name);
+            NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
         }
     }
 }

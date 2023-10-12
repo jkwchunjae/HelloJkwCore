@@ -3,15 +3,15 @@ namespace GameLibra;
 
 public interface ILibraService
 {
-    LibraGameState CreateGame(AppUser owner, string name);
-    IEnumerable<LibraGameState> GetAllGames();
-    LibraGameState GetGame(string id);
+    GameEngine CreateGame(AppUser owner, string name);
+    IEnumerable<GameEngine> GetAllGames();
+    GameEngine GetGame(string id);
     void DeleteGame(string id);
 }
 public class LibraService : ILibraService
 {
-    Dictionary<string, LibraGameState> _games = new();
-    public LibraGameState CreateGame(AppUser owner, string name)
+    Dictionary<string, GameEngine> _games = new();
+    public GameEngine CreateGame(AppUser owner, string name)
     {
         var newId = GetNewId();
         var state = new GameStateBuilder()
@@ -20,9 +20,13 @@ public class LibraService : ILibraService
             .SetOwner(owner)
             .UseDevilsPlanRule()
             .Build();
-        _games.Add(state.Id, state);
+        var engine = new GameEngine
+        {
+            State = state,
+        };
+        _games.Add(state.Id, engine);
 
-        return state;
+        return engine;
 
         string GetNewId()
         {
@@ -40,17 +44,17 @@ public class LibraService : ILibraService
         _games.Remove(id);
     }
 
-    public IEnumerable<LibraGameState> GetAllGames()
+    public IEnumerable<GameEngine> GetAllGames()
     {
-        var states = _games.Values.ToArray();
-        return states;
+        var engines = _games.Values.ToArray();
+        return engines;
     }
 
-    public LibraGameState GetGame(string id)
+    public GameEngine GetGame(string id)
     {
-        if (_games.TryGetValue(id, out var state))
+        if (_games.TryGetValue(id, out var engine))
         {
-            return state;
+            return engine;
         }
         else
         {

@@ -2,7 +2,8 @@
 @page "/game/libra/room/{GameId}"
 @using MudBlazor
 
-
+@if (_state != null)
+{
 <MudDropContainer T="DropCubeItem" Items="_cubes"
     Class="mud-border-lines-default"
     ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
@@ -20,6 +21,13 @@
                     <ScaleComponent Scale="@scale" />
                 }
             </div>
+            <div>
+                <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Error"
+                    OnClick="Confirm"
+                >
+                    !! 확정 !!
+                </MudButton>
+            </div>
             <div class="players">
                 @foreach (var player in _state.Players)
                 {
@@ -35,5 +43,5 @@
         <span class="cube-item @color">@context.Cube.Id</span>
     </ItemRenderer>
 </MudDropContainer>
-
+}
 

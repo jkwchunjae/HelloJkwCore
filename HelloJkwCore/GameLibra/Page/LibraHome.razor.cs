@@ -14,12 +14,17 @@ public partial class LibraHome : JkwPageBase
 
     protected override void OnPageInitialized()
     {
-        GameStates = LibraService.GetAllGames();
+        GameStates = LibraService.GetAllGames()
+            .Select(x => x.State)
+            .ToArray();
     }
 
     private void DeleteGame(string gameId)
     {
         LibraService.DeleteGame(gameId);
+        GameStates = GameStates
+            .Where(x => x.Id != gameId)
+            .ToArray();
         StateHasChanged();
     }
 
