@@ -5,6 +5,7 @@
     align-content: flex-start;
     flex-direction: row;
     flex-wrap: wrap;
+    background-color: #e2e2e2;
 }
 
 .cube-slot {
