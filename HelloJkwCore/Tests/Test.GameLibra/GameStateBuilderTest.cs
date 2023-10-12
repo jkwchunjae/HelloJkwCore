@@ -5,7 +5,7 @@ namespace Test.GameLibra;
 public class GameStateBuilderTest
 {
     [Fact]
-    public void DevilsPlan룰이_잘_적용되야함()
+    public void DevilsPlanRule_should_be_work()
     {
         var gameState = new GameStateBuilder()
             .UseDevilsPlanRule()
