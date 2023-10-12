@@ -1,0 +1,28 @@
+﻿@inherits JkwPageBase
+@page "/game/libra/new"
+@inject ILibraService LibraService
+@using MudBlazor
+
+<h3>게임 생성</h3>
+
+<MudInput @bind-Value="_name" Label="게임 이름" />
+
+<MudButton Variant="Variant.Filled" Color="Color.Info"
+    OnClick="CreateGame"
+>
+    생성
+</MudButton>
+
+@code
+{
+    private string _name;
+
+    private void CreateGame()
+    {
+        if (!string.IsNullOrWhiteSpace(_name))
+        {
+            var game = LibraService.CreateGame(User, _name);
+            NavigationManager.NavigateTo($"game/libra/room/{game.Id}");
+        }
+    }
+}

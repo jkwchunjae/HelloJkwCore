@@ -1,5 +1,5 @@
 ﻿@inherits JkwPageBase
-@page "/LibraBoard"
+@page "/game/libra/room/{GameId}"
 @using MudBlazor
 
 
@@ -15,13 +15,13 @@
     <ChildContent>
         <div class="board">
             <div class="scales d-flex">
-                @foreach (var scale in state.Scales)
+                @foreach (var scale in _state.Scales)
                 {
                     <ScaleComponent Scale="@scale" />
                 }
             </div>
             <div class="players">
-                @foreach (var player in state.Players)
+                @foreach (var player in _state.Players)
                 {
                     <PlayerComponent Player="@player" />
                 }

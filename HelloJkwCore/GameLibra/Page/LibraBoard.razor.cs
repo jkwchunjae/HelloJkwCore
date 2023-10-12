@@ -3,27 +3,19 @@ namespace GameLibra.Page;
 
 public partial class LibraBoard : JkwPageBase
 {
-    LibraGameState state;
+    [Parameter] public string GameId { get; set; }
+    [Inject] public ILibraService LibraService { get; set; }
+
+    LibraGameState _state;
     List<DropCubeItem> _cubes;
     protected override void OnPageInitialized()
     {
-        state = new GameStateBuilder()
-            .UseDevilsPlanRule()
-            .Build();
+        _state = LibraService.GetGame(GameId);
 
-        var scale = state.Scales[0];
-        scale.Left.Add(state.CubeInfo[0]);
-        scale.Left.Add(state.CubeInfo[1]);
-        scale.Left.Add(state.CubeInfo[0]);
-        scale.Left.Add(state.CubeInfo[0]);
-        scale.Left.Add(state.CubeInfo[0]);
-        scale.Right.Add(state.CubeInfo[2]);
-        scale.Right.Add(state.CubeInfo[1]);
-
-        _cubes = GetCubes();
+        _cubes = GetCubes(_state);
     }
 
-    private List<DropCubeItem> GetCubes()
+    private List<DropCubeItem> GetCubes(LibraGameState state)
     {
         return state.Players
             .SelectMany(p => GetCubes(p))

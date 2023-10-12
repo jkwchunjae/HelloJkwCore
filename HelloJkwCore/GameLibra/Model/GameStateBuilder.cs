@@ -4,9 +4,19 @@ public class GameStateBuilder
 {
     private bool _useDevilsPlanRule = false;
     private LibraGameState _state = new();
+    public GameStateBuilder SetId(string id)
+    {
+        _state.Id = id;
+        return this;
+    }
     public GameStateBuilder SetName(string name)
     {
         _state.Name = name;
+        return this;
+    }
+    public GameStateBuilder SetOwner(AppUser owner)
+    {
+        _state.Owner = owner;
         return this;
     }
     public GameStateBuilder SetRule(LibraGameRule rule)
