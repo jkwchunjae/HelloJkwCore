@@ -71,6 +71,7 @@ public class GameStateBuilder
         {
             var rule = _state.Rule;
             var randomNums = Enumerable.Range(rule.CubeMinValue, rule.CubeMaxValue - rule.CubeMinValue + 1)
+                .Where(x => x != 10)
                 .RandomShuffle()
                 .ToArray();
             var value1 = randomNums.Where(x => x < 10).First();
