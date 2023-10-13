@@ -4,24 +4,40 @@
 <div>
 <h3>Player @Player.Id</h3>
 
+@if (Player.Id == CurrentPlayerId)
+{
+    <span>지금 차례!</span>
+}
+
 @if (Player.LinkedUser != null)
 {
     var user = Player.LinkedUser;
-    <span>@user.UserName</span>
+    <span>@user.DisplayName</span>
+}
+else
+{
+    <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default"
+        OnClick="LinkPlayer"
+    >
+        연결
+    </MudButton>
 }
     <div>
-        <MudDropZone T="DropCubeItem"
-            Identifier="@CubeIdentifier"
-            Class="d-flex border-2 border-solid docs-gray-bg mud-border-lines-default rounded"
-        />
-
-@*
-        @foreach (var cube in Player.Cubes)
+        @if (Player.Id == CurrentPlayerId && Player.LinkedUser == User)
         {
-            var cubeClass = $"cube-color-{cube.Id}";
-            <span class="cube-item @cubeClass"></span>
+            <MudDropZone T="DropCubeItem"
+                Identifier="@CubeIdentifier"
+                Class="d-flex border-2 border-solid docs-gray-bg mud-border-lines-default rounded"
+            />
         }
-*@
+        else
+        {
+            @foreach (var cube in Player.Cubes)
+            {
+                var cubeClass = $"cube-color-{cube.Id}";
+                <span class="cube-item @cubeClass"></span>
+            }
+        }
     </div>
 </div>
 

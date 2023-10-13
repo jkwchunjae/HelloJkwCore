@@ -5,11 +5,21 @@ public class LibraGameState
     public string Id { get; set; }
     public string Name { get; set; }
     public AppUser Owner { get; set; }
+    public LibraGameStatus Status { get; set; }
     public LibraGameRule Rule { get; set; }
     public List<Cube> CubeInfo { get; set; }
     public List<Player> Players { get; set; }
     public List<DoubleScale> Scales { get; set; }
-    public int TurnPlayerIndex { get; set; }
+    public int CurrentPlayerId { get; set; }
+}
+
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
+public enum LibraGameStatus
+{
+    Ready,
+    Playing,
+    Success,
+    Failed,
 }
 
 public class DoubleScale
@@ -44,7 +54,7 @@ public class Player
 {
     public int Id { get; set; }
     public AppUser LinkedUser { get; set; }
-    public Cube[] Cubes { get; set; }
+    public List<Cube> Cubes { get; set; }
 
     public bool HasCube(IEnumerable<Cube> cubes)
     {

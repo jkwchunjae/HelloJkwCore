@@ -6,7 +6,7 @@
 <h3>@ScaleTitle</h3>
 <table>
     <tr>
-        <th style="text-align: center;">Left</th>
+        <th style="text-align: center;"></th>
         <th style="text-align: center;">
             @if (Scale.Left.Value == Scale.Right.Value)
             {
@@ -21,7 +21,7 @@
                 <span> &lt; </span>
             }
         </th>
-        <th style="text-align: center;">Right</th>
+        <th style="text-align: center;"></th>
     </tr>
     <tr>
         <td class="cube-container">
@@ -35,19 +35,25 @@
     <tr>
         <td class="">
             <div class="d-flex cube-slot">
+                @if (CurrentPlayer?.LinkedUser == User)
+                {
                 <MudDropZone T="DropCubeItem" Identifier="@LeftArmCubeIdentifier"
                     Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default rounded-lg"
                     Style="height:100%;width:100%;"
                 />
+                }
             </div>
         </td>
         <td></td>
         <td class="">
             <div class="d-flex cube-slot">
+                @if (CurrentPlayer?.LinkedUser == User)
+                {
                 <MudDropZone T="DropCubeItem" Identifier="@RightArmCubeIdentifier"
                     Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default rounded-lg"
                     Style="height:100%;width:100%;"
                 />
+                }
             </div>
         </td>
     </tr>

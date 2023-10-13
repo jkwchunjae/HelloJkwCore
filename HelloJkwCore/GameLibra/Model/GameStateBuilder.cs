@@ -45,6 +45,8 @@ public class GameStateBuilder
         if (_state.Rule == null)
             throw new InvalidOperationException("Rule is not set");
 
+        _state.CurrentPlayerId = -1;
+        _state.Status = LibraGameStatus.Ready;
         _state.CubeInfo = MakeCubeInfo();
         _state.Players = Enumerable.Range(0, _state.Rule.PlayerCount)
             .Select(x => new Player
@@ -52,7 +54,7 @@ public class GameStateBuilder
                 Id = x + 1,
                 Cubes = _state.CubeInfo
                     .SelectMany(cube => Enumerable.Range(0, _state.Rule.CubePerPlayer).Select(_ => cube))
-                    .ToArray(),
+                    .ToList(),
             })
             .ToList();
         _state.Scales = Enumerable.Range(0, _state.Rule.ScaleCount)
@@ -61,7 +63,6 @@ public class GameStateBuilder
                 Id = i + 1,
             })
             .ToList();
-        _state.TurnPlayerIndex = 0;
         return _state;
     }
 
