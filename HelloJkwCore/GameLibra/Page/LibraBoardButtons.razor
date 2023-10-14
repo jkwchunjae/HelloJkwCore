@@ -1,0 +1,51 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+
+@if (State.Status == LibraGameStatus.Ready)
+{
+    <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Success"
+        OnClick="Start"
+    >
+        !! 시작 !!
+    </MudButton>
+}
+@if (State.Status == LibraGameStatus.Playing)
+{
+    @if (CurrentPlayer?.LinkedUser == User)
+    {
+        <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Error"
+            OnClick="Confirm"
+        >
+            !! 확정 !!
+        </MudButton>
+        @if (CanGuess)
+        {
+        }
+    }
+    else
+    {
+        <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Default"
+            Disabled="true"
+        >
+            상대방을 기다리고 있습니다.
+        </MudButton>
+    }
+}
+@if (State.Status == LibraGameStatus.Failed)
+{
+    <MudButton Size="Size.Large" Variant="Variant.Filled"
+        Disabled="true"
+    >
+        !! 실패 ㅋ !!
+    </MudButton>
+}
+@if (State.Status == LibraGameStatus.Success)
+{
+
+}
+<MudIconButton
+    Icon="@Icons.Material.Filled.SettingsSuggest"
+    Size="Size.Large"
+    OnClick="OpenSetting"
+></MudIconButton>
+

@@ -14,77 +14,37 @@
     ItemDropped="ItemDropped"
 >
     <ChildContent>
-        <div class="board">
-            <div class="scales d-flex">
-                @foreach (var scale in _state.Scales)
-                {
-                    <ScaleComponent
-                        Scale="@scale"
-                        CurrentPlayer="_currentPlayer"
-                        Setting="Setting"
-                        />
-                }
-            </div>
-            @if (_state.Status == LibraGameStatus.Ready)
+        <div class="scales d-flex">
+            @foreach (var scale in _state.Scales)
             {
-            <div>
-                <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Success"
-                    OnClick="Start"
-                >
-                    !! 시작 !!
-                </MudButton>
-            </div>
-            }
-            @if (_state.Status == LibraGameStatus.Playing)
-            {
-                <div>
-                @if (_currentPlayer?.LinkedUser == User)
-                {
-                    <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Error"
-                        OnClick="Confirm"
-                    >
-                        !! 확정 !!
-                    </MudButton>
-                }
-                else
-                {
-                    <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Default"
-                        Disabled="true"
-                    >
-                        상대방을 기다리고 있습니다.
-                    </MudButton>
-                }
-                </div>
-            }
-            @if (_state.Status == LibraGameStatus.Failed)
-            {
-                <MudButton Size="Size.Large" Variant="Variant.Filled"
-                    Disabled="true"
-                >
-                    !! 실패 ㅋ !!
-                </MudButton>
-            }
-            @if (_state.Status == LibraGameStatus.Success)
-            {
-
-            }
-            <MudIconButton
-                Icon="@Icons.Material.Filled.SettingsSuggest"
-                Size="Size.Large"
-                OnClick="OpenSetting"
-            ></MudIconButton>
-            <div class="players">
-                @foreach (var player in _state.Players)
-                {
-                    var p = player;
-                    <PlayerComponent
-                        @bind-Player="p"
-                        GameEngine="_gameEngine"
-                        CurrentPlayerId="_state.CurrentPlayerId"
-                        Setting="Setting"
+                <ScaleComponent
+                    Scale="@scale"
+                    CurrentPlayer="_currentPlayer"
+                    Setting="Setting"
                     />
-                }
-            </div>
+            }
+        </div>
+        <div class="d-flex">
+            <LibraBoardButtons
+                GameEngine="_gameEngine"
+                State="_state"
+                CurrentPlayer="_currentPlayer"
+                Cubes="_cubes"
+                Setting="Setting"
+                SettingChanged="@SettingChanged"
+                />
+        </div>
+        <div class="players">
+            @foreach (var player in _state.Players)
+            {
+                var p = player;
+                <PlayerComponent
+                    @bind-Player="p"
+                    GameEngine="_gameEngine"
+                    CurrentPlayerId="_state.CurrentPlayerId"
+                    Setting="Setting"
+                />
+            }
         </div>
     </ChildContent>
     <ItemRenderer>

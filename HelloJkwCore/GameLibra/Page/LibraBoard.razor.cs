@@ -27,6 +27,7 @@ public partial class LibraBoard : JkwPageBase
             _gameEngine.StateChanged += GameEngine_StateChanged;
             _state = _gameEngine?.State;
             _cubes = GetCubes(_state);
+            _currentPlayer = _state.Players.FirstOrDefault(x => x.Id == _state.CurrentPlayerId);
         }
         else
         {
@@ -99,88 +100,13 @@ public partial class LibraBoard : JkwPageBase
     {
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
     }
-    private void Start()
+    private async Task SettingChanged(LibraBoardSetting setting)
     {
-        try
-        {
-            _gameEngine.Start();
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add(ex.Message, Severity.Error, options =>
-            {
-                options.VisibleStateDuration = 3000;
-            });
-        }
-    }
-    private void Confirm()
-    {
-        try
-        {
-            var cubeInScale = _cubes
-                .Where(x => x.Identifier.Contains("scale"))
-                .Select(x => new
-                {
-                    PlayerId = int.Parse(x.Origin.Split('-')[1]),
-                    ScaleId = int.Parse(x.Identifier.Split('-')[1]),
-                    Side = x.Identifier.Split('-')[2],
-                    Cube = x.Cube,
-                    DropItem = x,
-                })
-                .Where(x => x.PlayerId == _state.CurrentPlayerId)
-                .ToList();
-
-            var player = _state.Players.First(p => p.Id == _state.CurrentPlayerId);
-            if (player.HasCube(cubeInScale.Select(x => x.Cube)))
-            {
-                var scaleIds = cubeInScale.Select(x => x.ScaleId).Distinct().ToArray();
-                var scaleAndCubes = scaleIds
-                    .Select(scaleId =>
-                    {
-                        var scale = _state.Scales.First(x => x.Id == scaleId);
-                        var left = cubeInScale.Where(x => x.ScaleId == scaleId && x.Side == "left").Select(x => x.Cube).ToList();
-                        var right = cubeInScale.Where(x => x.ScaleId == scaleId && x.Side == "right").Select(x => x.Cube).ToList();
-                        return (scale, left, right);
-                    })
-                    .ToList();
-                _gameEngine.DoAction(player, scaleAndCubes);
-            }
-
-            foreach (var dropItem in cubeInScale)
-            {
-                _cubes.Remove(dropItem.DropItem);
-            }
-
-            _gameEngine.EndTurn();
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add(ex.Message, Severity.Error, options =>
-            {
-                options.VisibleStateDuration = 3000;
-            });
-        }
-    }
-
-    private async Task OpenSetting()
-    {
-        var param = new DialogParameters
-        {
-            ["Setting"] = Setting,
-        };
-        var options = new DialogOptions { CloseOnEscapeKey = true };
-        var dialog = DialogService.Show<LibraBoardSettingDialogComponent>("화면 구성", param, options);
-        var result = await dialog.Result;
-
-        if (result.Canceled)
-        {
-            return;
-        }
-
-        if (result.Data is LibraBoardSetting setting)
+        await InvokeAsync(() =>
         {
             Setting = setting;
-        }
+            StateHasChanged();
+        });
     }
 }
 
