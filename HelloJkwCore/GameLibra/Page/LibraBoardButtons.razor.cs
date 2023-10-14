@@ -17,7 +17,9 @@ public partial class LibraBoardButtons : JkwPageBase
     [Parameter] public LibraBoardSetting Setting { get; set; }
     [Parameter] public EventCallback<LibraBoardSetting> SettingChanged { get; set; }
 
-    private bool CanGuess => State.Scales[0].Left.Value == State.Scales[0].Right.Value;
+    private bool CanGuess => 
+        State.Scales[0].Left.Value == State.Scales[0].Right.Value
+        && State.Scales[0].Left.Value != 0;
     private void Start()
     {
         try

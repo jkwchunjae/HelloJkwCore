@@ -1,18 +1,12 @@
 ﻿@inherits JkwPageBase
 @using MudBlazor
 
-<div>
-<h3>Player @Player.Id</h3>
-
-@if (Player.Id == CurrentPlayerId)
-{
-    <span>지금 차례!</span>
-}
+<span>Player @Player.Id</span>
 
 @if (Player.LinkedUser != null)
 {
     var user = Player.LinkedUser;
-    <span>@user.DisplayName</span>
+    <span>: @user.DisplayName</span>
 }
 else
 {
@@ -22,18 +16,22 @@ else
         연결
     </MudButton>
 }
-    <div>
-        @if (Player.Id == CurrentPlayerId && Player.LinkedUser == User)
-        {
-            <MudDropZone T="DropCubeItem"
-                Identifier="@CubeIdentifier"
-                Class="d-flex border-2 border-solid docs-gray-bg mud-border-lines-default rounded"
-            />
-        }
-        else
-        {
-            <CubeContainerComponent Cubes="@Player.Cubes" Setting="Setting"/>
-        }
-    </div>
+@if (Player.Id == CurrentPlayerId)
+{
+    <span>지금 차례!</span>
+}
+
+<div style="width: fit-content">
+    @if (Player.Id == CurrentPlayerId && Player.LinkedUser == User)
+    {
+        <MudDropZone T="DropCubeItem"
+            Identifier="@CubeIdentifier"
+            Class="d-flex border-2 border-solid docs-gray-bg mud-border-lines-default rounded"
+        />
+    }
+    else
+    {
+        <CubeContainerComponent Cubes="@Player.Cubes" Setting="Setting"/>
+    }
 </div>
 
