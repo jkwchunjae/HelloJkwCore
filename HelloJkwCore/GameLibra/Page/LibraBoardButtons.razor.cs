@@ -17,6 +17,7 @@ public partial class LibraBoardButtons : JkwPageBase
     [Parameter] public LibraBoardSetting Setting { get; set; }
     [Parameter] public EventCallback<LibraBoardSetting> SettingChanged { get; set; }
 
+    private bool CanGuess => State.Scales[0].Left.Value == State.Scales[0].Right.Value;
     private void Start()
     {
         try
@@ -79,6 +80,38 @@ public partial class LibraBoardButtons : JkwPageBase
             });
         }
     }
+    private async Task Guess()
+    {
+        try
+        {
+            var param = new DialogParameters
+            {
+                ["State"] = State,
+            };
+
+            var options = new DialogOptions { CloseOnEscapeKey = true };
+            var dialog = DialogService.Show<LibraBoardGuessingDialog>("정답 제출", param, options);
+            var result = await dialog.Result;
+
+            if (result.Canceled)
+            {
+                return;
+            }
+
+            if (result.Data is List<Cube> guessingData)
+            {
+                GameEngine.Guess(CurrentPlayer, guessingData);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error, options =>
+            {
+                options.VisibleStateDuration = 3000;
+            });
+        }
+    }
+
     private async Task OpenSetting()
     {
         var param = new DialogParameters

@@ -11,6 +11,7 @@ public class LibraGameState
     public List<Player> Players { get; set; }
     public List<DoubleScale> Scales { get; set; }
     public int CurrentPlayerId { get; set; }
+    public string ResultMessage { get; set; }
 }
 
 [TextJsonConverter(typeof(TextJsonStringEnumConverter))]

@@ -20,6 +20,11 @@
         </MudButton>
         @if (CanGuess)
         {
+            <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Info"
+                OnClick="Guess"
+            >
+                !! 정답 !!
+            </MudButton>
         }
     }
     else
@@ -33,15 +38,13 @@
 }
 @if (State.Status == LibraGameStatus.Failed)
 {
-    <MudButton Size="Size.Large" Variant="Variant.Filled"
-        Disabled="true"
-    >
-        !! 실패 ㅋ !!
-    </MudButton>
+    <span>실패하였습니다.</span>
+    <span>@State.ResultMessage</span>
 }
 @if (State.Status == LibraGameStatus.Success)
 {
-
+    <span>성공 !!</span>
+    <span>@State.ResultMessage</span>
 }
 <MudIconButton
     Icon="@Icons.Material.Filled.SettingsSuggest"

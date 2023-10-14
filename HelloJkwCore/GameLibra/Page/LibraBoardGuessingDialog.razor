@@ -1,0 +1,44 @@
+﻿@using MudBlazor
+
+<MudDialog>
+    <DialogContent>
+        @foreach (var cube in GuessingValues)
+        {
+            var c = cube;
+            <MudTextField @bind-Value="@c.Value" Label="@cube.Name" />
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Outlined">취소</MudButton>
+        <MudButton OnClick="Submit" Variant="Variant.Outlined" Color="Color.Error">제출</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public LibraGameState State { get; set; }
+
+    List<Cube> GuessingValues = new();
+
+    protected override void OnInitialized()
+    {
+        GuessingValues = State.CubeInfo
+            .Select(x => new Cube
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Value = 0,
+            })
+            .ToList();
+    }
+
+    void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(GuessingValues));
+    }
+}

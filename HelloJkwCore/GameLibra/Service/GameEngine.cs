@@ -96,6 +96,7 @@ public class GameEngine
         {
             State.CurrentPlayerId = -1;
             State.Status = LibraGameStatus.Failed;
+            State.ResultMessage = "모든 플레이어가 큐브를 다 사용했습니다.";
         }
 
         StateChanged?.Invoke(this, State);
@@ -104,6 +105,25 @@ public class GameEngine
     public void LinkPlayer(Player player, AppUser user)
     {
         player.LinkedUser = user;
+
+        StateChanged?.Invoke(this, State);
+    }
+
+    public void Guess(Player player, List<Cube> guessing)
+    {
+        var result = State.CubeInfo
+            .All(goalCube => guessing.Any(guessCube => guessCube.Id == goalCube.Id && guessCube.Value == goalCube.Value));
+
+        if (result)
+        {
+            State.Status = LibraGameStatus.Success;
+            State.ResultMessage = $"{player.LinkedUser.DisplayName}님의 추측 성공!";
+        }
+        else
+        {
+            State.Status = LibraGameStatus.Failed;
+            State.ResultMessage = $"{player.LinkedUser.DisplayName}님이 추측에 실패했습니다.";
+        }
 
         StateChanged?.Invoke(this, State);
     }
