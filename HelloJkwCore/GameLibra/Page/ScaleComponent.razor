@@ -3,7 +3,10 @@
 @using MudBlazor
 
 <div class="m-1">
-<h3>@ScaleTitle</h3>
+<h3>
+        <MudIcon Icon="@Icons.Material.Filled.Scale" Size="Size.Large"/>
+    @ScaleTitle
+</h3>
 <table>
     <tr>
         <th style="text-align: center;"></th>
@@ -24,20 +27,24 @@
         <th style="text-align: center;"></th>
     </tr>
     <tr>
-        <td class="cube-container @LargeContainerClass @OrderedContainerClass">
+        <td>
+            <div class="cube-container @LargeContainerClass @OrderedContainerClass">
             <CubeContainerComponent
                 Cubes="@Scale.Left.Cubes"
                 Setting="Setting"
                 Ordered="Setting.OrderedConatiner"
                 />
+            </div>
         </td>
         <td style="width: 20px;"></td>
-        <td class="cube-container @LargeContainerClass @OrderedContainerClass">
+        <td>
+            <div class="cube-container @LargeContainerClass @OrderedContainerClass">
             <CubeContainerComponent
                 Cubes="@Scale.Right.Cubes"
                 Setting="Setting"
                 Ordered="Setting.OrderedConatiner"
                 />
+            </div>
         </td>
     </tr>
     <tr>
