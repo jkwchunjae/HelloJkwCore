@@ -24,17 +24,17 @@
         <th style="text-align: center;"></th>
     </tr>
     <tr>
-        <td class="cube-container">
-            <CubeContainerComponent Cubes="@Scale.Left.Cubes" Setting="Setting"/>
+        <td class="cube-container @LargeContainerClass">
+            <CubeContainerComponent Cubes="@Scale.Left.Cubes" Setting="Setting" Ordered="false"/>
         </td>
         <td style="width: 20px;"></td>
-        <td class="cube-container">
-            <CubeContainerComponent Cubes="@Scale.Right.Cubes" Setting="Setting"/>
+        <td class="cube-container @LargeContainerClass">
+            <CubeContainerComponent Cubes="@Scale.Right.Cubes" Setting="Setting" Ordered="false"/>
         </td>
     </tr>
     <tr>
         <td class="">
-            <div class="d-flex cube-slot">
+            <div class="d-flex cube-slot @LargeSlotClass">
                 @if (CurrentPlayer?.LinkedUser == User)
                 {
                 <MudDropZone T="DropCubeItem" Identifier="@LeftArmCubeIdentifier"
@@ -46,7 +46,7 @@
         </td>
         <td></td>
         <td class="">
-            <div class="d-flex cube-slot">
+            <div class="d-flex cube-slot @LargeSlotClass">
                 @if (CurrentPlayer?.LinkedUser == User)
                 {
                 <MudDropZone T="DropCubeItem" Identifier="@RightArmCubeIdentifier"

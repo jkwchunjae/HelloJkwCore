@@ -1,5 +1,5 @@
 ﻿.cube-container {
-    width: 180px;
+    width: 210px;
     height: 200px;
     display: flex;
     align-content: flex-start;
@@ -7,9 +7,15 @@
     flex-wrap: wrap;
     background-color: #e2e2e2;
 }
-
-.cube-slot {
-    width: 180px;
-    height: 50px;
+.large-container {
+    width: 263px;
+    height: 320px;
 }
 
+.cube-slot {
+    width: 210px;
+    height: 50px;
+}
+.large-slot {
+    width: 263px;
+}
