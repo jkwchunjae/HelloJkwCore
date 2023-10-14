@@ -6,11 +6,14 @@ public partial class LibraBoard : JkwPageBase
     [Parameter] public string GameId { get; set; }
     [Inject] public ILibraService LibraService { get; set; }
     [Inject] public ISnackbar Snackbar { get; set; }
+    [Inject] public IDialogService DialogService { get; set; }
 
     GameEngine _gameEngine;
     LibraGameState _state;
     List<DropCubeItem> _cubes;
     Player _currentPlayer;
+    LibraBoardSetting Setting = new();
+
     protected override Task OnPageInitializedAsync()
     {
         if (IsAuthenticated)
@@ -156,6 +159,27 @@ public partial class LibraBoard : JkwPageBase
             {
                 options.VisibleStateDuration = 3000;
             });
+        }
+    }
+
+    private async Task OpenSetting()
+    {
+        var param = new DialogParameters
+        {
+            ["Setting"] = Setting,
+        };
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialog = DialogService.Show<LibraBoardSettingDialogComponent>("화면 구성", param, options);
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        if (result.Data is LibraBoardSetting setting)
+        {
+            Setting = setting;
         }
     }
 }

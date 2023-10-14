@@ -32,11 +32,7 @@ else
         }
         else
         {
-            @foreach (var cube in Player.Cubes)
-            {
-                var cubeClass = $"cube-color-{cube.Id}";
-                <span class="cube-item @cubeClass"></span>
-            }
+            <CubeContainerComponent Cubes="@Player.Cubes" Setting="Setting"/>
         }
     </div>
 </div>

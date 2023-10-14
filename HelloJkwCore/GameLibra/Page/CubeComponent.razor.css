@@ -1,0 +1,28 @@
+﻿.cube-item {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin: 3px;
+    color: white;
+    text-align: center;
+}
+
+.cube-color-1 {
+    background-color: #F22E3E;
+}
+
+.cube-color-2 {
+    background-color: #0583F2;
+}
+
+.cube-color-3 {
+    background-color: #04BF45;
+}
+
+.cube-color-4 {
+    background-color: #BCD991;
+}
+
+.cube-color-5 {
+    background-color: #F2CB05;
+}

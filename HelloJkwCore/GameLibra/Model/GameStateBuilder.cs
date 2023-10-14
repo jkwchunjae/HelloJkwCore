@@ -68,6 +68,19 @@ public class GameStateBuilder
 
     private List<Cube> MakeCubeInfo()
     {
+        Dictionary<int, string> _cubeName = new Dictionary<int, string>
+        {
+            [1] = "a",
+            [2] = "b",
+            [3] = "c",
+            [4] = "d",
+            [5] = "e",
+            [6] = "f",
+            [7] = "g",
+            [8] = "h",
+            [9] = "i",
+        };
+
         if (_useDevilsPlanRule)
         {
             var rule = _state.Rule;
@@ -82,7 +95,12 @@ public class GameStateBuilder
             var value5 = randomNums.Where(x => x >= 10).Skip(1).First();
             return new[] { value1, value2, value3, value4, value5 }
                 .RandomShuffle()
-                .Select((value, i) => new Cube { Id = i + 1, Value = value })
+                .Select((value, i) => new Cube
+                {
+                    Id = i + 1,
+                    Name = _cubeName[i + 1],
+                    Value = value,
+                })
                 .ToList();
         }
         else
@@ -93,7 +111,12 @@ public class GameStateBuilder
                 .Take(rule.CubeCount)
                 .ToArray();
             return cubeNumbers
-                .Select((x, i) => new Cube { Id = i + 1, Value = x })
+                .Select((value, i) => new Cube
+                {
+                    Id = i + 1,
+                    Name = _cubeName[i + 1],
+                    Value = value,
+                })
                 .ToList();
         }
     }

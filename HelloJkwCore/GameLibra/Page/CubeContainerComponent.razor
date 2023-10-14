@@ -1,0 +1,14 @@
+﻿
+@foreach (var cube in Cubes)
+{
+    var c = cube;
+    <CubeComponent Cube="c" Setting="Setting" />
+}
+
+@code{
+    [Parameter]
+    public List<Cube> Cubes { get; set; }
+
+    [Parameter]
+    public LibraBoardSetting Setting { get; set; }
+}

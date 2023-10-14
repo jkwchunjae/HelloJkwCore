@@ -21,6 +21,7 @@
                     <ScaleComponent
                         Scale="@scale"
                         CurrentPlayer="_currentPlayer"
+                        Setting="Setting"
                         />
                 }
             </div>
@@ -67,6 +68,11 @@
             {
 
             }
+            <MudIconButton
+                Icon="@Icons.Material.Filled.SettingsSuggest"
+                Size="Size.Large"
+                OnClick="OpenSetting"
+            ></MudIconButton>
             <div class="players">
                 @foreach (var player in _state.Players)
                 {
@@ -75,16 +81,14 @@
                         @bind-Player="p"
                         GameEngine="_gameEngine"
                         CurrentPlayerId="_state.CurrentPlayerId"
+                        Setting="Setting"
                     />
                 }
             </div>
         </div>
     </ChildContent>
     <ItemRenderer>
-        @{
-            var color = $"cube-color-{context.Cube.Id}";
-        }
-        <span class="cube-item @color">@context.Cube.Id</span>
+        <CubeComponent Cube="context.Cube" Setting="Setting" />
     </ItemRenderer>
 </MudDropContainer>
 }

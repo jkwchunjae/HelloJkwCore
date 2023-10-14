@@ -11,7 +11,7 @@ public class GameEngine
     {
         if (State.Players.Any(x => x.LinkedUser == null))
         {
-            throw new Exception("모든 플레이어가 링크되지 않았습니다.");
+            throw new Exception("모든 플레이어가 연결되지 않았습니다.");
         }
 
         State.Status = LibraGameStatus.Playing;

@@ -1,0 +1,12 @@
+﻿@using MudBlazor
+
+<MudDialog>
+    <DialogContent>
+        <MudCheckBox @bind-Checked="@Setting.VisibleCubeName" Label="큐브 이름을 보고싶어요">
+        </MudCheckBox>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter] public LibraBoardSetting Setting { get; set; }
+}
