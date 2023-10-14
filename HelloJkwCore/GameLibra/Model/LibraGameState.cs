@@ -76,6 +76,19 @@ public class Cube
     public int Id { get; set; }
     public string Name { get; set; }
     public int Value { get; set; }
+    public bool New { get; set; }
+
+    public Cube()
+    {
+    }
+
+    public Cube(Cube cube)
+    {
+        Id = cube.Id;
+        Name = cube.Name;
+        Value = cube.Value;
+        New = cube.New;
+    }
 }
 
 public class DropCubeItem

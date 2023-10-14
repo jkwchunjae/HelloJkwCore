@@ -53,7 +53,8 @@ public class GameStateBuilder
             {
                 Id = x + 1,
                 Cubes = _state.CubeInfo
-                    .SelectMany(cube => Enumerable.Range(0, _state.Rule.CubePerPlayer).Select(_ => cube))
+                    .SelectMany(cube => Enumerable.Range(0, _state.Rule.CubePerPlayer)
+                        .Select(_ => new Cube(cube)))
                     .ToList(),
             })
             .ToList();

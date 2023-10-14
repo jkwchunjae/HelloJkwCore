@@ -1,5 +1,5 @@
 ﻿
-<span class="cube-item @CubeIdentifier">
+<span class="cube-item @CubeIdentifier @New">
     @if (Setting.VisibleCubeName)
     {
         @Cube.Name
@@ -14,6 +14,7 @@
     public LibraBoardSetting Setting { get; set; }
 
     string CubeIdentifier => $"cube-color-{Cube?.Id}";
+    string New => Cube.New ? "cube-new" : string.Empty;
 }
 
 

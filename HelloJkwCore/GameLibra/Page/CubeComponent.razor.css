@@ -7,6 +7,14 @@
     text-align: center;
 }
 
+.cube-new::after {
+    content: "●";
+    color: black;
+    position: relative;
+    top: -6px;
+    right: -5px;
+}
+
 .cube-color-1 {
     background-color: #F22E3E;
 }

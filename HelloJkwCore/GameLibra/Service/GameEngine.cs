@@ -58,14 +58,28 @@ public class GameEngine
             throw new Exception($"적어도 {State.Rule.MinimumApplyCubeCount}개 이상의 큐브를 올려야 합니다.");
         }
 
+        foreach (var scale in State.Scales)
+        {
+            foreach (var cube in scale.Left.Cubes)
+            {
+                cube.New = false;
+            }
+            foreach (var cube in scale.Right.Cubes)
+            {
+                cube.New = false;
+            }
+        }
+
         foreach (var (scale, left, right) in scaleAndCube)
         {
             foreach (var cube in left.Concat(right))
             {
                 player.Cubes.Remove(cube);
+                cube.New = true;
             }
-            scale.Left.Add(left);
-            scale.Right.Add(right);
+            var stateScale = State.Scales.First(x => x.Id == scale.Id);
+            stateScale.Left.Add(left);
+            stateScale.Right.Add(right);
         }
 
         StateChanged?.Invoke(this, State);
