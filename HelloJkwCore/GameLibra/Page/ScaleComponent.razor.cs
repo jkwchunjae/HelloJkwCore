@@ -12,4 +12,5 @@ public partial class ScaleComponent : JkwPageBase
     private string RightArmCubeIdentifier => $"scale-{Scale.Id}-right";
     private string LargeContainerClass => Setting.LargeContainer ? "large-container" : "";
     private string LargeSlotClass => Setting.LargeContainer ? "large-slot" : "";
+    private string OrderedContainerClass => Setting.OrderedConatiner ? "ordered-container" : "";
 }

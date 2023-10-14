@@ -10,4 +10,5 @@ public class LibraBoardSetting
 {
     public bool VisibleCubeName { get; set; }
     public bool LargeContainer { get; set; }
+    public bool OrderedConatiner { get; set; }
 }

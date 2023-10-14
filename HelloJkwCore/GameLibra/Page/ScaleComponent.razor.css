@@ -11,6 +11,9 @@
     width: 263px;
     height: 320px;
 }
+.ordered-container {
+    flex-direction: column;
+}
 
 .cube-slot {
     width: 210px;

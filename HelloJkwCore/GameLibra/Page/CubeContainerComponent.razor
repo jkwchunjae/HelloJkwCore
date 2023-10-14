@@ -29,7 +29,7 @@ else
     public bool Ordered { get; set; } = false;
 
     private List<(int CubeId, List<Cube> Cubes)> _cubeGroups
-        => Cubes.GroupBy(x => x.Id)
+        => Cubes?.GroupBy(x => x.Id)
             .Select(x => (CubeId: x.Key, Cubes: x.ToList()))
             .OrderBy(x => x.CubeId)
             .ToList();

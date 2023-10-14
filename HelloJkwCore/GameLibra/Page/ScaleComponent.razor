@@ -24,12 +24,20 @@
         <th style="text-align: center;"></th>
     </tr>
     <tr>
-        <td class="cube-container @LargeContainerClass">
-            <CubeContainerComponent Cubes="@Scale.Left.Cubes" Setting="Setting" Ordered="false"/>
+        <td class="cube-container @LargeContainerClass @OrderedContainerClass">
+            <CubeContainerComponent
+                Cubes="@Scale.Left.Cubes"
+                Setting="Setting"
+                Ordered="Setting.OrderedConatiner"
+                />
         </td>
         <td style="width: 20px;"></td>
-        <td class="cube-container @LargeContainerClass">
-            <CubeContainerComponent Cubes="@Scale.Right.Cubes" Setting="Setting" Ordered="false"/>
+        <td class="cube-container @LargeContainerClass @OrderedContainerClass">
+            <CubeContainerComponent
+                Cubes="@Scale.Right.Cubes"
+                Setting="Setting"
+                Ordered="Setting.OrderedConatiner"
+                />
         </td>
     </tr>
     <tr>
