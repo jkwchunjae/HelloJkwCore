@@ -1,0 +1,34 @@
+﻿
+@if (Ordered)
+{
+    @foreach (var group in _cubeGroups)
+    {
+        <div>
+        <CubeContainerComponent Cubes="group.Cubes" Setting="Setting" Ordered="false"/>
+        </div>
+    }
+}
+else
+{
+    @foreach (var cube in Cubes)
+    {
+        <CubeComponent Cube="cube" Setting="Setting" />
+    }
+}
+
+@code{
+    [Parameter]
+    public List<Cube> Cubes { get; set; }
+
+    [Parameter]
+    public LibraBoardSetting Setting { get; set; }
+
+    [Parameter]
+    public bool Ordered { get; set; } = false;
+
+    private List<(int CubeId, List<Cube> Cubes)> _cubeGroups
+        => Cubes?.GroupBy(x => x.Id)
+            .Select(x => (CubeId: x.Key, Cubes: x.ToList()))
+            .OrderBy(x => x.CubeId)
+            .ToList();
+}

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloJkwCore", "HelloJkwCore\HelloJkwCore.csproj", "{438752BD-95D3-43EF-A383-10C9BD845F47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloJkwCore", "HelloJkwCore\HelloJkwCore.csproj", "{438752BD-95D3-43EF-A383-10C9BD845F47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{ACDE37B4-0944-427D-AE0F-71873731658C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{ACDE37B4-0944-427D-AE0F-71873731658C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectDiary", "ProjectDiary\ProjectDiary.csproj", "{F7106A84-599F-4E28-9343-0B212634DF86}"
 EndProject
@@ -13,9 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectBaduk", "ProjectBadu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F0A3A004-E9A9-44EA-A457-8B1E629A7067}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests\Tests.csproj", "{C010E7FD-89ED-47DA-AD12-4DA12CE214D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests\Tests.csproj", "{C010E7FD-89ED-47DA-AD12-4DA12CE214D2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectPingpong", "ProjectPingpong\ProjectPingpong.csproj", "{911C27E1-4061-443F-834F-37C46B454935}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameLibra", "GameLibra\GameLibra.csproj", "{FB58DFC1-3B98-4D67-9B18-A3797EC752C2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.GameLibra", "Tests\Test.GameLibra\Test.GameLibra.csproj", "{FA822191-B4E1-4F94-8B61-2D245250098E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,14 +51,23 @@ Global
 		{911C27E1-4061-443F-834F-37C46B454935}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{911C27E1-4061-443F-834F-37C46B454935}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{911C27E1-4061-443F-834F-37C46B454935}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB58DFC1-3B98-4D67-9B18-A3797EC752C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB58DFC1-3B98-4D67-9B18-A3797EC752C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB58DFC1-3B98-4D67-9B18-A3797EC752C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB58DFC1-3B98-4D67-9B18-A3797EC752C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA822191-B4E1-4F94-8B61-2D245250098E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA822191-B4E1-4F94-8B61-2D245250098E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA822191-B4E1-4F94-8B61-2D245250098E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA822191-B4E1-4F94-8B61-2D245250098E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {906D85C5-6814-4DD7-A27B-BA20BFAC835B}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C010E7FD-89ED-47DA-AD12-4DA12CE214D2} = {F0A3A004-E9A9-44EA-A457-8B1E629A7067}
+		{FA822191-B4E1-4F94-8B61-2D245250098E} = {F0A3A004-E9A9-44EA-A457-8B1E629A7067}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {906D85C5-6814-4DD7-A27B-BA20BFAC835B}
 	EndGlobalSection
 EndGlobal

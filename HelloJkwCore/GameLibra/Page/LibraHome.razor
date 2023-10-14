@@ -1,0 +1,39 @@
+﻿@inherits JkwPageBase
+@page "/game/libra/home"
+@using MudBlazor
+
+<h2>양팔저울 게임</h2>
+
+<MudButton Href="game/libra/new"
+    StartIcon="@Icons.Material.Filled.Add"
+    Variant="Variant.Filled"
+    Color="Color.Info"
+>
+    게임 생성
+</MudButton>
+
+@foreach (var state in GameStates)
+{
+    var roomUrl = $"game/libra/room/{state.Id}";
+    <MudCard>
+        <MudCardContent>
+            <MudText>@state.Name</MudText>
+            @if (state.Owner != null)
+            {
+                <MudText>@state.Owner.DisplayName</MudText>
+            }
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Href="@roomUrl" Variant="Variant.Filled" Color="Color.Success">
+                입장
+            </MudButton>
+            @if (state.Owner != null && state.Owner == User)
+            {
+                <MudButton OnClick="@(() => DeleteGame(state.Id))" Variant="Variant.Filled">
+                    삭제
+                </MudButton>
+            }
+        </MudCardActions>
+    </MudCard>
+}
+

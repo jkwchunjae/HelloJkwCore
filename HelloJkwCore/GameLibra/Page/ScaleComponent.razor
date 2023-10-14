@@ -1,0 +1,77 @@
+﻿@page "/ScaleComponent"
+@inherits JkwPageBase
+@using MudBlazor
+
+<div class="m-1">
+<h3>
+        <MudIcon Icon="@Icons.Material.Filled.Scale" Size="Size.Large"/>
+    @ScaleTitle
+</h3>
+<table>
+    <tr>
+        <th style="text-align: center;"></th>
+        <th style="text-align: center;">
+            @if (Scale.Left.Value == Scale.Right.Value)
+            {
+                <span> &equiv; </span>
+            }
+            else if (Scale.Left.Value > Scale.Right.Value)
+            {
+                <span> &gt; </span>
+            }
+            else
+            {
+                <span> &lt; </span>
+            }
+        </th>
+        <th style="text-align: center;"></th>
+    </tr>
+    <tr>
+        <td>
+            <div class="cube-container @LargeContainerClass @OrderedContainerClass">
+            <CubeContainerComponent
+                Cubes="@Scale.Left.Cubes"
+                Setting="Setting"
+                Ordered="Setting.OrderedConatiner"
+                />
+            </div>
+        </td>
+        <td style="width: 20px;"></td>
+        <td>
+            <div class="cube-container @LargeContainerClass @OrderedContainerClass">
+            <CubeContainerComponent
+                Cubes="@Scale.Right.Cubes"
+                Setting="Setting"
+                Ordered="Setting.OrderedConatiner"
+                />
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="">
+            <div class="d-flex cube-slot @LargeSlotClass">
+                @if (CurrentPlayer?.LinkedUser == User)
+                {
+                <MudDropZone T="DropCubeItem" Identifier="@LeftArmCubeIdentifier"
+                    Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default rounded-lg"
+                    Style="height:100%;width:100%;"
+                />
+                }
+            </div>
+        </td>
+        <td></td>
+        <td class="">
+            <div class="d-flex cube-slot @LargeSlotClass">
+                @if (CurrentPlayer?.LinkedUser == User)
+                {
+                <MudDropZone T="DropCubeItem" Identifier="@RightArmCubeIdentifier"
+                    Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default rounded-lg"
+                    Style="height:100%;width:100%;"
+                />
+                }
+            </div>
+        </td>
+    </tr>
+</table>
+</div>
+

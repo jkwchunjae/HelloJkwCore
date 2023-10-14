@@ -1,0 +1,55 @@
+﻿@inherits JkwPageBase
+@page "/game/libra/room/{GameId}"
+@using MudBlazor
+
+@if (_state != null)
+{
+<MudDropContainer T="DropCubeItem" Items="_cubes"
+    Class="mud-border-lines-default"
+    ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
+    ApplyDropClassesOnDragStarted="false"
+    CanDropClass="mud-border-info"
+    NoDropClass="mud-border-error"
+    CanDrop="CanDrop"
+    ItemDropped="ItemDropped"
+>
+    <ChildContent>
+        <div class="scales d-flex">
+            @foreach (var scale in _state.Scales)
+            {
+                <ScaleComponent
+                    Scale="@scale"
+                    CurrentPlayer="_currentPlayer"
+                    Setting="Setting"
+                    />
+            }
+        </div>
+        <div class="d-flex">
+            <LibraBoardButtons
+                GameEngine="_gameEngine"
+                State="_state"
+                CurrentPlayer="_currentPlayer"
+                Cubes="_cubes"
+                Setting="Setting"
+                SettingChanged="@SettingChanged"
+                />
+        </div>
+        <div class="players">
+            @foreach (var player in _state.Players)
+            {
+                var p = player;
+                <PlayerComponent
+                    @bind-Player="p"
+                    GameEngine="_gameEngine"
+                    CurrentPlayerId="_state.CurrentPlayerId"
+                    Setting="Setting"
+                />
+            }
+        </div>
+    </ChildContent>
+    <ItemRenderer>
+        <CubeComponent Cube="context.Cube" Setting="Setting" />
+    </ItemRenderer>
+</MudDropContainer>
+}
+

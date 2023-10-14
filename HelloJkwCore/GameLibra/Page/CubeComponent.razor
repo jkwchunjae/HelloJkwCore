@@ -1,0 +1,20 @@
+﻿
+<span class="cube-item @CubeIdentifier @New">
+    @if (Setting.VisibleCubeName)
+    {
+        @Cube.Name
+    }
+</span>
+
+@code {
+    [Parameter]
+    public Cube Cube { get; set; }
+
+    [Parameter]
+    public LibraBoardSetting Setting { get; set; }
+
+    string CubeIdentifier => $"cube-color-{Cube?.Id}";
+    string New => Cube.New ? "cube-new" : string.Empty;
+}
+
+

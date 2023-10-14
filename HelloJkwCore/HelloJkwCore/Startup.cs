@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 using MudBlazor.Services;
 using System.Globalization;
+using GameLibra;
 
 namespace HelloJkwCore;
 
@@ -139,6 +140,7 @@ public class Startup
         services.AddDiaryService(Configuration);
         services.AddBadukService(Configuration);
         services.AddPingpongService(Configuration);
+        services.AddGameLibra(Configuration);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

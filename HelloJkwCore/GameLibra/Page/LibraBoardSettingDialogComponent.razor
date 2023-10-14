@@ -1,0 +1,31 @@
+﻿@using MudBlazor
+
+<MudDialog>
+    <DialogContent>
+        <MudCheckBox @bind-Checked="@Setting.VisibleCubeName" Label="큐브 이름을 보고 싶어요">
+        </MudCheckBox>
+        <MudCheckBox @bind-Checked="@Setting.LargeContainer" Label="양팔 저울의 크기를 키우고 싶어요">
+        </MudCheckBox>
+        <MudCheckBox @bind-Checked="@Setting.OrderedConatiner" Label="큐브를 색깔별로 보고 싶어요">
+        </MudCheckBox>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Outlined">취소</MudButton>
+        <MudButton OnClick="Submit" Variant="Variant.Outlined">저장</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public LibraBoardSetting Setting { get; set; }
+
+    void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(Setting));
+    }
+}

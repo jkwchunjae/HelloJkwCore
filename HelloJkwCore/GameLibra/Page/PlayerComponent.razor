@@ -1,0 +1,37 @@
+﻿@inherits JkwPageBase
+@using MudBlazor
+
+<span>Player @Player.Id</span>
+
+@if (Player.LinkedUser != null)
+{
+    var user = Player.LinkedUser;
+    <span>: @user.DisplayName</span>
+}
+else
+{
+    <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default"
+        OnClick="LinkPlayer"
+    >
+        연결
+    </MudButton>
+}
+@if (Player.Id == CurrentPlayerId)
+{
+    <span>지금 차례!</span>
+}
+
+<div style="width: fit-content">
+    @if (Player.Id == CurrentPlayerId && Player.LinkedUser == User)
+    {
+        <MudDropZone T="DropCubeItem"
+            Identifier="@CubeIdentifier"
+            Class="d-flex border-2 border-solid docs-gray-bg mud-border-lines-default rounded"
+        />
+    }
+    else
+    {
+        <CubeContainerComponent Cubes="@Player.Cubes" Setting="Setting"/>
+    }
+</div>
+
