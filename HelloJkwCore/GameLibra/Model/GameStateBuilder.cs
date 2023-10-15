@@ -80,7 +80,8 @@ public class GameStateBuilder
             [6] = "f",
             [7] = "g",
             [8] = "h",
-            [9] = "i",
+            [9] = "x",
+            [10] = "z",
         };
 
         if (_useDevilsPlanRule)

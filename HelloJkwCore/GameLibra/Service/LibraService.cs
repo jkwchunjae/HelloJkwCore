@@ -4,6 +4,7 @@ namespace GameLibra;
 public interface ILibraService
 {
     GameEngine CreateGame(AppUser owner, string name);
+    GameEngine CreateGame(AppUser owner, string name, LibraGameRule rule);
     IEnumerable<GameEngine> GetAllGames();
     GameEngine GetGame(string id);
     void DeleteGame(string id);
@@ -19,6 +20,33 @@ public class LibraService : ILibraService
             .SetName(name)
             .SetOwner(owner)
             .UseDevilsPlanRule()
+            .Build();
+        var engine = new GameEngine
+        {
+            State = state,
+        };
+        _games.Add(state.Id, engine);
+
+        return engine;
+
+        string GetNewId()
+        {
+            int id;
+            do
+            {
+                id = StaticRandom.Next(11111, 99999);
+            } while (_games.ContainsKey(id.ToString()));
+            return id.ToString();
+        }
+    }
+    public GameEngine CreateGame(AppUser owner, string name, LibraGameRule rule)
+    {
+        var newId = GetNewId();
+        var state = new GameStateBuilder()
+            .SetId(newId)
+            .SetName(name)
+            .SetOwner(owner)
+            .SetRule(rule)
             .Build();
         var engine = new GameEngine
         {
