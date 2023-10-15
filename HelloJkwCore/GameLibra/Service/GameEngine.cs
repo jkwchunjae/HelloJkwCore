@@ -131,16 +131,24 @@ public class GameEngine
     {
         var result = State.CubeInfo
             .All(goalCube => guessing.Any(guessCube => guessCube.Id == goalCube.Id && guessCube.Value == goalCube.Value));
+        var goalValues = State.CubeInfo
+            .OrderBy(x => x.Value)
+            .Select(x => x.Value.ToString())
+            .StringJoin(", ");
+        var gussingValues = guessing
+            .OrderBy(x => x.Value)
+            .Select(x => x.Value.ToString())
+            .StringJoin(", ");
 
         if (result)
         {
             State.Status = LibraGameStatus.Success;
-            State.ResultMessage = $"{player.LinkedUser.DisplayName}님의 추측 성공!";
+            State.ResultMessage = $"{player.LinkedUser.DisplayName}님의 추측 성공! ({gussingValues})";
         }
         else
         {
             State.Status = LibraGameStatus.Failed;
-            State.ResultMessage = $"{player.LinkedUser.DisplayName}님이 추측에 실패했습니다.";
+            State.ResultMessage = $"{player.LinkedUser.DisplayName}님이 추측에 실패했습니다. (추측: {gussingValues}, 정답: {goalValues})";
         }
 
         StateChanged?.Invoke(this, State);
