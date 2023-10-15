@@ -13,6 +13,7 @@ public partial class LibraBoard : JkwPageBase
     List<DropCubeItem> _cubes;
     Player _currentPlayer;
     LibraBoardSetting Setting = new();
+    string _remainTimeText = string.Empty;
 
     protected override Task OnPageInitializedAsync()
     {
@@ -25,6 +26,7 @@ public partial class LibraBoard : JkwPageBase
                 return Task.CompletedTask;
             }
             _gameEngine.StateChanged += GameEngine_StateChanged;
+            _gameEngine.RemainTimeChanged += OnRemainTimeChanged;
             _state = _gameEngine?.State;
             _cubes = GetCubes(_state);
             _currentPlayer = _state.Players.FirstOrDefault(x => x.Id == _state.CurrentPlayerId);
@@ -43,8 +45,24 @@ public partial class LibraBoard : JkwPageBase
             _state = e;
             _cubes = GetCubes(_state);
             _currentPlayer = _state.Players.FirstOrDefault(x => x.Id == _state.CurrentPlayerId);
+            _remainTimeText = string.Empty;
             StateHasChanged();
         });
+    }
+
+    private void OnRemainTimeChanged(object sender, RemainTime r)
+    {
+        var player = r.Player;
+        var remainTime = r.Time;
+
+        if (player.LinkedUser == User)
+        {
+            InvokeAsync(() =>
+            {
+                _remainTimeText = $"{remainTime}초 남았습니다.";
+                StateHasChanged();
+            });
+        }
     }
 
     protected override void OnPageDispose()
@@ -52,6 +70,7 @@ public partial class LibraBoard : JkwPageBase
         if (_gameEngine != null)
         {
             _gameEngine.StateChanged -= GameEngine_StateChanged;
+            _gameEngine.RemainTimeChanged -= OnRemainTimeChanged;
         }
         base.OnPageDispose();
     }

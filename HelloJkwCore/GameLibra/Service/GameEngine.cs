@@ -5,7 +5,16 @@ public class GameEngine
     public LibraGameState State { get; set; }
     public List<HistoryItem> History { get; set; } = new();
 
+    private TimeOverHandler _timeOverHandler = new();
+
     public event EventHandler<LibraGameState> StateChanged;
+    public event EventHandler<RemainTime> RemainTimeChanged;
+
+    public GameEngine()
+    {
+        _timeOverHandler.RemainTimeChanged += (sender, e) => RemainTimeChanged?.Invoke(sender, e);
+        _timeOverHandler.TimeOver += (sender, player) => OnTimeOver(player);
+    }
 
     public void Start()
     {
@@ -16,6 +25,8 @@ public class GameEngine
 
         State.Status = LibraGameStatus.Playing;
         State.CurrentPlayerId = State.Players.First().Id;
+
+        _timeOverHandler.StartNew(State.Players.First(), TimeSpan.FromSeconds(State.Rule.TimeOverSeconds));
 
         StateChanged?.Invoke(this, State);
     }
@@ -57,6 +68,8 @@ public class GameEngine
         {
             throw new Exception($"적어도 {State.Rule.MinimumApplyCubeCount}개 이상의 큐브를 올려야 합니다.");
         }
+
+        _timeOverHandler.Clear();
 
         foreach (var scale in State.Scales)
         {
@@ -105,6 +118,8 @@ public class GameEngine
         {
             var nextPlayer = State.Players[nextPlayerIndex];
             State.CurrentPlayerId = State.Players[nextPlayerIndex].Id;
+
+            _timeOverHandler.StartNew(nextPlayer, TimeSpan.FromSeconds(State.Rule.TimeOverSeconds));
         }
         else
         {
@@ -140,6 +155,8 @@ public class GameEngine
             .Select(x => x.Value.ToString())
             .StringJoin(", ");
 
+        _timeOverHandler.Clear();
+
         if (result)
         {
             State.Status = LibraGameStatus.Success;
@@ -152,6 +169,20 @@ public class GameEngine
         }
 
         StateChanged?.Invoke(this, State);
+    }
+
+    private void OnTimeOver(Player player)
+    {
+        try
+        {
+            State.Status = LibraGameStatus.Failed;
+            State.ResultMessage = $"{player.LinkedUser.DisplayName}님이 시간 초과했습니다.";
+
+            StateChanged?.Invoke(this, State);
+        }
+        catch
+        {
+        }
     }
 }
 

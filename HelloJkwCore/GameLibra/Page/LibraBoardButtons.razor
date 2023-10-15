@@ -52,3 +52,7 @@
     OnClick="OpenSetting"
 ></MudIconButton>
 
+@if (State.Status == LibraGameStatus.Playing && CurrentPlayer?.LinkedUser == User)
+{
+    <span>@RemainTimeText</span>
+}

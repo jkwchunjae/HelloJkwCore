@@ -35,6 +35,7 @@ public class GameStateBuilder
             MinimumApplyCubeCount = 2,
             ScaleCount = 2,
             VisibleOtherCube = false,
+            TimeOverSeconds = 300,
         };
         return this;
     }

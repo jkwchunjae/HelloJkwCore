@@ -43,4 +43,8 @@ public class LibraGameRule
     /// 다른 플레이어의 큐브를 볼 수 있는지
     /// </summary>
     public bool VisibleOtherCube { get; set; }
+    /// <summary>
+    /// 턴이 끝나는 시간 (초)
+    /// </summary>
+    public int TimeOverSeconds { get; set; }
 }

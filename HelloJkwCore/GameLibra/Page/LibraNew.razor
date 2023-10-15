@@ -37,6 +37,10 @@
         Validation="@(new Func<int, bool>((v) => v >= 0 && v <= 5))"
         ErrorText="0 ~ 5 사이의 숫자를 입력해주세요."
     />
+    <MudTextField Label="시간 초과 시간(초)" @bind-Value="_timeoverSeconds" InputType="InputType.Number"
+        Validation="@(new Func<int, bool>((v) => v >= 10 && v <= 600))"
+        ErrorText="10 ~ 600 사이의 숫자를 입력해주세요."
+    />
     <MudSwitch Label="다른 플레이어의 큐브를 볼 수 있는지" @bind-Checked="_visibleOtherCube" Color="Color.Success"/>
 </MudForm>
 <MudButton Variant="Variant.Filled" Color="Color.Info"
@@ -69,6 +73,7 @@ else
     private int _cubeMaxValue = 20;
     private int _cubePerPlayer = 2;
     private int _minimumApplyCubeCount = 2;
+    private int _timeoverSeconds = 300;
     private bool _visibleOtherCube = false;
 
     private bool _moreOption = false;
@@ -104,7 +109,8 @@ else
             CubeMaxValue = _cubeMaxValue,
             CubePerPlayer = _cubePerPlayer,
             MinimumApplyCubeCount = _minimumApplyCubeCount,
-            VisibleOtherCube = _visibleOtherCube
+            VisibleOtherCube = _visibleOtherCube,
+            TimeOverSeconds = _timeoverSeconds,
         };
     }
 }
