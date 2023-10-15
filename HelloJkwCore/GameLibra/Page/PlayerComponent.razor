@@ -31,7 +31,10 @@ else
     }
     else
     {
-        <CubeContainerComponent Cubes="@Player.Cubes" Setting="Setting"/>
+        @if (Rule.VisibleOtherCube || Player.LinkedUser == User || Player.LinkedUser == null)
+        {
+            <CubeContainerComponent Cubes="@Player.Cubes" Setting="Setting"/>
+        }
     }
 </div>
 

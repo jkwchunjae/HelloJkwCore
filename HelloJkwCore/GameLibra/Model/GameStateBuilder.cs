@@ -37,6 +37,7 @@ public class GameStateBuilder
             OpenFirst = true,
             MinimumApplyCubeCount = 2,
             ScaleCount = 2,
+            VisibleOtherCube = false,
         };
         return this;
     }

@@ -40,9 +40,10 @@
                 var p = player;
                 <PlayerComponent
                     @bind-Player="p"
-                    GameEngine="_gameEngine"
                     CurrentPlayerId="_state.CurrentPlayerId"
+                    Rule="_state.Rule"
                     Setting="Setting"
+                    PlayerLinked="@((x) => PlayerLinked(x.Player, x.User))"
                 />
             }
         </div>

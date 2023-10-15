@@ -118,6 +118,10 @@ public class GameEngine
 
     public void LinkPlayer(Player player, AppUser user)
     {
+        if (player.LinkedUser != null)
+        {
+            throw new Exception("이미 플레이어가 연결되어 있습니다.");
+        }
         player.LinkedUser = user;
 
         StateChanged?.Invoke(this, State);

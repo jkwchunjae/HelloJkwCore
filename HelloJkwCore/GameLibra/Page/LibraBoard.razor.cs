@@ -108,6 +108,21 @@ public partial class LibraBoard : JkwPageBase
             StateHasChanged();
         });
     }
+    private Task PlayerLinked(Player player, AppUser user)
+    {
+        try
+        {
+            _gameEngine.LinkPlayer(player, user);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error, options =>
+            {
+                options.VisibleStateDuration = 3000;
+            });
+        }
+        return Task.CompletedTask;
+    }
 }
 
 
