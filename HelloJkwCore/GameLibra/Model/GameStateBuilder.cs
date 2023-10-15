@@ -2,7 +2,6 @@
 
 public class GameStateBuilder
 {
-    private bool _useDevilsPlanRule = false;
     private LibraGameState _state = new();
     public GameStateBuilder SetId(string id)
     {
@@ -26,7 +25,6 @@ public class GameStateBuilder
     }
     public GameStateBuilder UseDevilsPlanRule()
     {
-        _useDevilsPlanRule = true;
         _state.Rule = new LibraGameRule
         {
             CubeCount = 5,
@@ -34,9 +32,10 @@ public class GameStateBuilder
             CubeMinValue = 1,
             CubeMaxValue = 20,
             CubePerPlayer = 2,
-            OpenFirst = true,
             MinimumApplyCubeCount = 2,
             ScaleCount = 2,
+            VisibleOtherCube = false,
+            TimeOverSeconds = 300,
         };
         return this;
     }
@@ -79,46 +78,22 @@ public class GameStateBuilder
             [6] = "f",
             [7] = "g",
             [8] = "h",
-            [9] = "i",
+            [9] = "x",
+            [10] = "z",
         };
 
-        if (_useDevilsPlanRule)
-        {
-            var rule = _state.Rule;
-            var randomNums = Enumerable.Range(rule.CubeMinValue, rule.CubeMaxValue - rule.CubeMinValue + 1)
-                .Where(x => x != 10)
-                .RandomShuffle()
-                .ToArray();
-            var value1 = randomNums.Where(x => x < 10).First();
-            var value2 = randomNums.Where(x => x < 10).Skip(1).First();
-            var value3 = 10;
-            var value4 = randomNums.Where(x => x >= 10).First();
-            var value5 = randomNums.Where(x => x >= 10).Skip(1).First();
-            return new[] { value1, value2, value3, value4, value5 }
-                .RandomShuffle()
-                .Select((value, i) => new Cube
-                {
-                    Id = i + 1,
-                    Name = _cubeName[i + 1],
-                    Value = value,
-                })
-                .ToList();
-        }
-        else
-        {
-            var rule = _state.Rule;
-            var cubeNumbers = Enumerable.Range(rule.CubeMinValue, rule.CubeMaxValue - rule.CubeMinValue + 1)
-                .RandomShuffle()
-                .Take(rule.CubeCount)
-                .ToArray();
-            return cubeNumbers
-                .Select((value, i) => new Cube
-                {
-                    Id = i + 1,
-                    Name = _cubeName[i + 1],
-                    Value = value,
-                })
-                .ToList();
-        }
+        var rule = _state.Rule;
+        var cubeValues = Enumerable.Range(rule.CubeMinValue, rule.CubeMaxValue - rule.CubeMinValue + 1)
+            .RandomShuffle()
+            .Take(rule.CubeCount)
+            .ToArray();
+        return cubeValues
+            .Select((value, i) => new Cube
+            {
+                Id = i + 1,
+                Name = _cubeName[i + 1],
+                Value = value,
+            })
+            .ToList();
     }
 }

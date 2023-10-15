@@ -5,24 +5,112 @@
 
 <h3>게임 생성</h3>
 
-<MudInput @bind-Value="_name" Label="게임 이름" />
-
+@if (_moreOption)
+{
+<MudForm >
+    <MudTextField Label="게임 이름" @bind-Value="_name" AutoFocus="true"/>
+    <MudTextField Label="큐브 종류" @bind-Value="_cubeCount" InputType="InputType.Number" T="int"
+        Validation="@(new Func<int, bool>((v) => v >= 1 && v <= 10))"
+        ErrorText="1 ~ 10 사이의 숫자를 입력해주세요."
+    />
+    <MudTextField Label="플레이어 수" @bind-Value="_playerCount" InputType="InputType.Number"
+        Validation="@(new Func<int, bool>((v) => v >= 2 && v <= 10))"
+        ErrorText="2 ~ 10 사이의 숫자를 입력해주세요."
+    />
+    <MudTextField Label="양팔저울 수" @bind-Value="_scaleCount" InputType="InputType.Number"
+        Validation="@(new Func<int, bool>((v) => v >= 1 && v <= 3))"
+        ErrorText="1 ~ 3 사이의 숫자를 입력해주세요."
+    />
+    <MudTextField Label="큐브 최소값" @bind-Value="_cubeMinValue" InputType="InputType.Number"
+        Validation="@(new Func<int, bool>((v) => v >= 1 && v <= 20))"
+        ErrorText="1 ~ 20 사이의 숫자를 입력해주세요."
+    />
+    <MudTextField Label="큐브 최대값" @bind-Value="_cubeMaxValue" InputType="InputType.Number"
+        Validation="@(new Func<int, bool>((v) => v >= 1 && v <= 100 && v > _cubeMinValue))"
+        ErrorText="1 ~ 100 사이의 숫자를 입력해주세요."
+    />
+    <MudTextField Label="플레이어당 큐브 수" @bind-Value="_cubePerPlayer" InputType="InputType.Number"
+        Validation="@(new Func<int, bool>((v) => v >= 1 && v <= 10))"
+        ErrorText="1 ~ 10 사이의 숫자를 입력해주세요."
+    />
+    <MudTextField Label="한 턴에 올려야 하는 큐브의 수" @bind-Value="_minimumApplyCubeCount" InputType="InputType.Number"
+        Validation="@(new Func<int, bool>((v) => v >= 0 && v <= 5))"
+        ErrorText="0 ~ 5 사이의 숫자를 입력해주세요."
+    />
+    <MudTextField Label="시간 초과 시간(초)" @bind-Value="_timeoverSeconds" InputType="InputType.Number"
+        Validation="@(new Func<int, bool>((v) => v >= 10 && v <= 600))"
+        ErrorText="10 ~ 600 사이의 숫자를 입력해주세요."
+    />
+    <MudSwitch Label="다른 플레이어의 큐브를 볼 수 있는지" @bind-Checked="_visibleOtherCube" Color="Color.Success"/>
+</MudForm>
 <MudButton Variant="Variant.Filled" Color="Color.Info"
     OnClick="CreateGame"
 >
     생성
 </MudButton>
+}
+else
+{
+    <MudInput @bind-Value="_name" Label="게임 이름" Placeholder="게임 이름" AutoFocus="true"/>
+    <MudButton Variant="Variant.Filled" Color="Color.Info"
+        OnClick="CreateGameWithDevilsPlan"
+    >
+        생성
+    </MudButton>
+    <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default" OnClick="@(new Action(() => _moreOption = true))">
+        옵션 더보기
+    </MudButton>
+}
+
 
 @code
 {
     private string _name;
+    private int _cubeCount = 5;
+    private int _playerCount = 7;
+    private int _scaleCount = 2;
+    private int _cubeMinValue = 1;
+    private int _cubeMaxValue = 20;
+    private int _cubePerPlayer = 2;
+    private int _minimumApplyCubeCount = 2;
+    private int _timeoverSeconds = 300;
+    private bool _visibleOtherCube = false;
+
+    private bool _moreOption = false;
+
+    private void CreateGameWithDevilsPlan()
+    {
+        if (!string.IsNullOrWhiteSpace(_name))
+        {
+            var rule = MakeRule();
+            var engine = LibraService.CreateGame(User, _name);
+            NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
+        }
+    }
 
     private void CreateGame()
     {
         if (!string.IsNullOrWhiteSpace(_name))
         {
-            var engine = LibraService.CreateGame(User, _name);
+            var rule = MakeRule();
+            var engine = LibraService.CreateGame(User, _name, rule);
             NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
         }
+    }
+
+    private LibraGameRule MakeRule()
+    {
+        return new LibraGameRule
+        {
+            CubeCount = _cubeCount,
+            PlayerCount = _playerCount,
+            ScaleCount = _scaleCount,
+            CubeMinValue = _cubeMinValue,
+            CubeMaxValue = _cubeMaxValue,
+            CubePerPlayer = _cubePerPlayer,
+            MinimumApplyCubeCount = _minimumApplyCubeCount,
+            VisibleOtherCube = _visibleOtherCube,
+            TimeOverSeconds = _timeoverSeconds,
+        };
     }
 }

@@ -16,8 +16,7 @@ public class GameStateBuilderTest
             .OrderBy(x => x)
             .ToArray();
 
-        Assert.Equal(5, cubeValues.Distinct().Count()); // °ãÄ¡Áö ¾Ê¾Æ¾ß ÇÔ
-        Assert.Contains(cubeValues, x => x == 10); // 10ÀÌ ÀÖ¾î¾ß ÇÔ
+        Assert.Equal(5, cubeValues.Distinct().Count()); // ê²¹ì¹˜ì§€ ì•Šì•„ì•¼ í•¨
         Assert.True(gameState.Rule.CubeCount == 5);
         Assert.True(gameState.Rule.PlayerCount == 7);
         Assert.True(gameState.Rule.CubeMinValue == 1);
