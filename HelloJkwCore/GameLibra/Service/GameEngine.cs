@@ -11,7 +11,7 @@ public class GameEngine
     {
         if (State.Players.Any(x => x.LinkedUser == null))
         {
-            throw new Exception("¸ğµç ÇÃ·¹ÀÌ¾î°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            throw new Exception("ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         }
 
         State.Status = LibraGameStatus.Playing;
@@ -23,14 +23,14 @@ public class GameEngine
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="player">Çàµ¿ÀÇ ÁÖÃ¼</param>
-    /// <param name="cubes">¾çÆÈÀú¿ï¿¡ ¿Ã¸± Å¥ºê ¼ö</param>
-    /// <param name="scale">Å¸°Ù ¾çÆÈÀú¿ï</param>
+    /// <param name="player">í–‰ë™ì˜ ì£¼ì²´</param>
+    /// <param name="cubes">ì–‘íŒ”ì €ìš¸ì— ì˜¬ë¦´ íë¸Œ ìˆ˜</param>
+    /// <param name="scale">íƒ€ê²Ÿ ì–‘íŒ”ì €ìš¸</param>
     public void DoAction(Player player, List<(DoubleScale Scale, List<Cube> Left, List<Cube> Right)> scaleAndCube)
     {
         if (State.Status != LibraGameStatus.Playing)
         {
-            throw new Exception("°ÔÀÓÀÌ ½ÃÀÛµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            throw new Exception("ê²Œì„ì´ ì‹œì‘ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         }
 
         Cube[] cubes = scaleAndCube.SelectMany(x => x.Left)
@@ -39,23 +39,23 @@ public class GameEngine
         DoubleScale[] scales = scaleAndCube.Select(x => x.Scale).ToArray();
         if (!player.HasCube(cubes))
         {
-            throw new Exception("ÇÃ·¹ÀÌ¾î°¡ Å¥ºê¸¦ °¡Áö°í ÀÖÁö ¾Ê½À´Ï´Ù.");
+            throw new Exception("í”Œë ˆì´ì–´ê°€ íë¸Œë¥¼ ê°€ì§€ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
         }
         if (State.Players.All(x => x.Id != player.Id))
         {
-            throw new Exception("ÇÃ·¹ÀÌ¾î°¡ °ÔÀÓ¿¡ Âü¿©ÇÏÁö ¾Ê¾Ò½À´Ï´Ù.");
+            throw new Exception("í”Œë ˆì´ì–´ê°€ ê²Œì„ì— ì°¸ì—¬í•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         }
 
         foreach (var (scale, left, right) in scaleAndCube)
         {
             if (!State.Scales.Contains(scale))
             {
-                throw new Exception("Å¸°Ù ¾çÆÈÀú¿ïÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
+                throw new Exception("íƒ€ê²Ÿ ì–‘íŒ”ì €ìš¸ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
             }
         }
         if (cubes.Count() < State.Rule.MinimumApplyCubeCount)
         {
-            throw new Exception($"Àû¾îµµ {State.Rule.MinimumApplyCubeCount}°³ ÀÌ»óÀÇ Å¥ºê¸¦ ¿Ã·Á¾ß ÇÕ´Ï´Ù.");
+            throw new Exception($"ì ì–´ë„ {State.Rule.MinimumApplyCubeCount}ê°œ ì´ìƒì˜ íë¸Œë¥¼ ì˜¬ë ¤ì•¼ í•©ë‹ˆë‹¤.");
         }
 
         foreach (var scale in State.Scales)
@@ -110,7 +110,7 @@ public class GameEngine
         {
             State.CurrentPlayerId = -1;
             State.Status = LibraGameStatus.Failed;
-            State.ResultMessage = "¸ğµç ÇÃ·¹ÀÌ¾î°¡ Å¥ºê¸¦ ´Ù »ç¿ëÇß½À´Ï´Ù.";
+            State.ResultMessage = "ëª¨ë“  í”Œë ˆì´ì–´ê°€ íë¸Œë¥¼ ë‹¤ ì‚¬ìš©í–ˆìŠµë‹ˆë‹¤.";
         }
 
         StateChanged?.Invoke(this, State);
@@ -131,12 +131,12 @@ public class GameEngine
         if (result)
         {
             State.Status = LibraGameStatus.Success;
-            State.ResultMessage = $"{player.LinkedUser.DisplayName}´ÔÀÇ ÃßÃø ¼º°ø!";
+            State.ResultMessage = $"{player.LinkedUser.DisplayName}ë‹˜ì˜ ì¶”ì¸¡ ì„±ê³µ!";
         }
         else
         {
             State.Status = LibraGameStatus.Failed;
-            State.ResultMessage = $"{player.LinkedUser.DisplayName}´ÔÀÌ ÃßÃø¿¡ ½ÇÆĞÇß½À´Ï´Ù.";
+            State.ResultMessage = $"{player.LinkedUser.DisplayName}ë‹˜ì´ ì¶”ì¸¡ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.";
         }
 
         StateChanged?.Invoke(this, State);
