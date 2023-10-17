@@ -3,7 +3,7 @@ namespace GameLibra;
 
 public interface ILibraService
 {
-    GameEngine CreateGame(AppUser owner, string name);
+    GameEngine CreateGameWithDevilsPlan(AppUser owner, string name);
     GameEngine CreateGame(AppUser owner, string name, LibraGameRule rule);
     IEnumerable<GameEngine> GetAllGames();
     GameEngine GetGame(string id);
@@ -12,7 +12,7 @@ public interface ILibraService
 public class LibraService : ILibraService
 {
     Dictionary<string, GameEngine> _games = new();
-    public GameEngine CreateGame(AppUser owner, string name)
+    public GameEngine CreateGameWithDevilsPlan(AppUser owner, string name)
     {
         var newId = GetNewId();
         var state = new GameStateBuilder()
