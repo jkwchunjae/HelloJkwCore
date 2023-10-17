@@ -35,6 +35,15 @@
                 RemainTimeText="@_remainTimeText"
                 />
         </div>
+        @if (_state.HintMessage?.Any() ?? false)
+        {
+        <div>
+            @foreach (var hint in _state.HintMessage)
+            {
+                <span style="display: block;">@hint</span>
+            }
+        </div>
+        }
         <div class="players">
             @foreach (var player in _state.Players)
             {

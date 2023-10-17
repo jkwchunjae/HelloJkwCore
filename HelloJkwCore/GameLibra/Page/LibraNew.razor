@@ -1,6 +1,5 @@
 ﻿@inherits JkwPageBase
 @page "/game/libra/new"
-@inject ILibraService LibraService
 @using MudBlazor
 
 <h3>게임 생성</h3>
@@ -41,6 +40,12 @@
         Validation="@(new Func<int, bool>((v) => v >= 10 && v <= 600))"
         ErrorText="10 ~ 600 사이의 숫자를 입력해주세요."
     />
+    <MudSelect T="LibraGameHint" Label="힌트" AnchorOrigin="Origin.BottomCenter" @bind-Value="_hint">
+        @foreach (var hintItem in _hintList)
+        {
+            <MudSelectItem Value="@hintItem.HintValue">@hintItem.HintDescription</MudSelectItem>
+        }
+    </MudSelect>
     <MudSwitch Label="다른 플레이어의 큐브를 볼 수 있는지" @bind-Checked="_visibleOtherCube" Color="Color.Success"/>
 </MudForm>
 <MudButton Variant="Variant.Filled" Color="Color.Info"
@@ -60,57 +65,4 @@ else
     <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default" OnClick="@(new Action(() => _moreOption = true))">
         옵션 더보기
     </MudButton>
-}
-
-
-@code
-{
-    private string _name;
-    private int _cubeCount = 5;
-    private int _playerCount = 7;
-    private int _scaleCount = 2;
-    private int _cubeMinValue = 1;
-    private int _cubeMaxValue = 20;
-    private int _cubePerPlayer = 2;
-    private int _minimumApplyCubeCount = 2;
-    private int _timeoverSeconds = 300;
-    private bool _visibleOtherCube = false;
-
-    private bool _moreOption = false;
-
-    private void CreateGameWithDevilsPlan()
-    {
-        if (!string.IsNullOrWhiteSpace(_name))
-        {
-            var rule = MakeRule();
-            var engine = LibraService.CreateGame(User, _name);
-            NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
-        }
-    }
-
-    private void CreateGame()
-    {
-        if (!string.IsNullOrWhiteSpace(_name))
-        {
-            var rule = MakeRule();
-            var engine = LibraService.CreateGame(User, _name, rule);
-            NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
-        }
-    }
-
-    private LibraGameRule MakeRule()
-    {
-        return new LibraGameRule
-        {
-            CubeCount = _cubeCount,
-            PlayerCount = _playerCount,
-            ScaleCount = _scaleCount,
-            CubeMinValue = _cubeMinValue,
-            CubeMaxValue = _cubeMaxValue,
-            CubePerPlayer = _cubePerPlayer,
-            MinimumApplyCubeCount = _minimumApplyCubeCount,
-            VisibleOtherCube = _visibleOtherCube,
-            TimeOverSeconds = _timeoverSeconds,
-        };
-    }
 }

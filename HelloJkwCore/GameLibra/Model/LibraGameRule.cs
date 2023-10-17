@@ -47,4 +47,8 @@ public class LibraGameRule
     /// 턴이 끝나는 시간 (초)
     /// </summary>
     public int TimeOverSeconds { get; set; }
+    /// <summary>
+    /// 힌트
+    /// </summary>
+    public LibraGameHint Hint { get; set; }
 }
