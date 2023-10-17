@@ -33,6 +33,13 @@
                     삭제
                 </MudButton>
             }
+            <AuthorizeView Roles="Admin">
+                <Authorized>
+                    <MudButton OnClick="@(() => DeleteGame(state.Id))" Variant="Variant.Filled">
+                        삭제
+                    </MudButton>
+                </Authorized>
+            </AuthorizeView>
         </MudCardActions>
     </MudCard>
 }
