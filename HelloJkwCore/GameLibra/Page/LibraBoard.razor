@@ -25,37 +25,44 @@
             }
         </div>
         <div class="d-flex">
-            <LibraBoardButtons
-                GameEngine="_gameEngine"
-                State="_state"
-                CurrentPlayer="_currentPlayer"
-                Cubes="_cubes"
-                Setting="Setting"
-                SettingChanged="@SettingChanged"
-                RemainTimeText="@_remainTimeText"
-                />
-        </div>
-        @if (_state.HintMessage?.Any() ?? false)
-        {
-        <div>
-            @foreach (var hint in _state.HintMessage)
-            {
-                <span style="display: block;">@hint</span>
-            }
-        </div>
-        }
-        <div class="players">
-            @foreach (var player in _state.Players)
-            {
-                var p = player;
-                <PlayerComponent
-                    @bind-Player="p"
-                    CurrentPlayerId="_state.CurrentPlayerId"
-                    Rule="_state.Rule"
-                    Setting="Setting"
-                    PlayerLinked="@((x) => PlayerLinked(x.Player, x.User))"
-                />
-            }
+            <div style="margin-right: 30px;">
+                <div class="d-flex">
+                    <LibraBoardButtons
+                        GameEngine="_gameEngine"
+                        State="_state"
+                        CurrentPlayer="_currentPlayer"
+                        Cubes="_cubes"
+                        Setting="Setting"
+                        SettingChanged="@SettingChanged"
+                        RemainTimeText="@_remainTimeText"
+                        />
+                </div>
+                @if (_state.HintMessage?.Any() ?? false)
+                {
+                <div>
+                    @foreach (var hint in _state.HintMessage)
+                    {
+                        <span style="display: block;">@hint</span>
+                    }
+                </div>
+                }
+                <div class="players">
+                    @foreach (var player in _state.Players)
+                    {
+                        var p = player;
+                        <PlayerComponent
+                            @bind-Player="p"
+                            CurrentPlayerId="_state.CurrentPlayerId"
+                            Rule="_state.Rule"
+                            Setting="Setting"
+                            PlayerLinked="@((x) => PlayerLinked(x.Player, x.User))"
+                        />
+                    }
+                </div>
+            </div>
+            <div>
+                <LibraAssistComponent AssistSets="_assistor?.Sets"/>
+            </div>
         </div>
     </ChildContent>
     <ItemRenderer>

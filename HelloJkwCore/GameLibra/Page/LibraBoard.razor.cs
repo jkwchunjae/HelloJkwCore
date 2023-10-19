@@ -1,4 +1,5 @@
-﻿
+﻿using GameLibra.Service;
+
 namespace GameLibra.Page;
 
 public partial class LibraBoard : JkwPageBase
@@ -10,6 +11,7 @@ public partial class LibraBoard : JkwPageBase
 
     GameEngine _gameEngine;
     LibraGameState _state;
+    LibraAssistor _assistor;
     List<DropCubeItem> _cubes;
     Player _currentPlayer;
     LibraBoardSetting Setting = new();
@@ -28,6 +30,7 @@ public partial class LibraBoard : JkwPageBase
             _gameEngine.StateChanged += GameEngine_StateChanged;
             _gameEngine.RemainTimeChanged += OnRemainTimeChanged;
             _state = _gameEngine?.State;
+            _assistor = _gameEngine?.Assistor;
             _cubes = GetCubes(_state);
             _currentPlayer = _state.Players.FirstOrDefault(x => x.Id == _state.CurrentPlayerId);
         }
