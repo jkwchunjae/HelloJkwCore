@@ -14,6 +14,7 @@ public class LibraGameState
     public string ResultMessage { get; set; }
     public string[] HintMessage { get; set; }
     public HintInfo[] HintInfos { get; set; }
+    public bool UseAssist { get; set; }
 }
 
 [TextJsonConverter(typeof(TextJsonStringEnumConverter))]

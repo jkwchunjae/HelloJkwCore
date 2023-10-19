@@ -61,7 +61,16 @@
                 </div>
             </div>
             <div>
-                <LibraAssistComponent AssistSets="_assistor?.Sets"/>
+                @if (_state.UseAssist)
+                {
+                    <LibraAssistComponent AssistSets="_assistor?.Sets"/>
+                }
+                else
+                {
+                    <MudButton Size="Size.Large" Variant="Variant.Outlined" OnClick="@(() => UseAssist())">
+                        저는 도움을 받고 싶어요
+                    </MudButton>
+                }
             </div>
         </div>
     </ChildContent>

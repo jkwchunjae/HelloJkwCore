@@ -145,6 +145,12 @@ public partial class LibraBoard : JkwPageBase
         }
         return Task.CompletedTask;
     }
+
+    private Task UseAssist()
+    {
+        _gameEngine.UseAssist();
+        return Task.CompletedTask;
+    }
 }
 
 

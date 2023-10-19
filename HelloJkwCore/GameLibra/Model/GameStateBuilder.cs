@@ -69,6 +69,8 @@ public class GameStateBuilder
         var (hintMessage, hintInfo) = MakeHint(_state);
         _state.HintMessage = hintMessage;
         _state.HintInfos = hintInfo;
+        _state.UseAssist = false;
+
         return _state;
     }
 
