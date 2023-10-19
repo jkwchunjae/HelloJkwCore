@@ -1,9 +1,12 @@
+using GameLibra.Service;
+
 namespace GameLibra;
 
 public class GameEngine
 {
     public LibraGameState State { get; set; }
     public List<HistoryItem> History { get; set; } = new();
+    public LibraAssistor Assistor { get; set; }
 
     private TimeOverHandler _timeOverHandler = new();
 
@@ -93,6 +96,24 @@ public class GameEngine
             var stateScale = State.Scales.First(x => x.Id == scale.Id);
             stateScale.Left.Add(left);
             stateScale.Right.Add(right);
+        }
+
+        foreach (var scale in State.Scales)
+        {
+            var leftCubes = scale.Left.Cubes.Select(x => x.Name).ToArray();
+            var rightCubes = scale.Right.Cubes.Select(x => x.Name).ToArray();
+            if (scale.Left.Value == scale.Right.Value)
+            {
+                Assistor.SameValue(leftCubes, rightCubes);
+            }
+            else if (scale.Left.Value < scale.Right.Value)
+            {
+                Assistor.LessThan(leftCubes, rightCubes);
+            }
+            else
+            {
+                Assistor.GreaterThan(leftCubes, rightCubes);
+            }
         }
 
         StateChanged?.Invoke(this, State);
