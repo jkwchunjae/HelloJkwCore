@@ -59,7 +59,7 @@ public class LibraAssistor
     public void SetOrder(string cubeName, int order)
     {
         _sets = _sets
-            .OrderBy(set => Test(set))
+            .Where(set => Test(set))
             .ToList();
 
         bool Test(IReadOnlyDictionary<string, int> set)
