@@ -4,8 +4,8 @@ namespace GameLibra;
 
 public interface ILibraService
 {
-    GameEngine CreateGameWithDevilsPlan(AppUser owner, string name);
-    GameEngine CreateGame(AppUser owner, string name, LibraGameRule rule);
+    Task<GameEngine> CreateGameWithDevilsPlan(AppUser owner, string name);
+    Task<GameEngine> CreateGame(AppUser owner, string name, LibraGameRule rule);
     IEnumerable<GameEngine> GetAllGames();
     GameEngine GetGame(string id);
     void DeleteGame(string id);
@@ -13,23 +13,26 @@ public interface ILibraService
 public class LibraService : ILibraService
 {
     Dictionary<string, GameEngine> _games = new();
-    public GameEngine CreateGameWithDevilsPlan(AppUser owner, string name)
+    public Task<GameEngine> CreateGameWithDevilsPlan(AppUser owner, string name)
     {
-        var newId = GetNewId();
-        var state = new GameStateBuilder()
-            .SetId(newId)
-            .SetName(name)
-            .SetOwner(owner)
-            .UseDevilsPlanRule()
-            .Build();
-        var engine = new GameEngine
+        return Task.Run(() =>
         {
-            State = state,
-            Assistor = new LibraAssistor(state),
-        };
-        _games.Add(state.Id, engine);
+            var newId = GetNewId();
+            var state = new GameStateBuilder()
+                .SetId(newId)
+                .SetName(name)
+                .SetOwner(owner)
+                .UseDevilsPlanRule()
+                .Build();
+            var engine = new GameEngine
+            {
+                State = state,
+                Assistor = new LibraAssistor(state),
+            };
+            _games.Add(state.Id, engine);
 
-        return engine;
+            return engine;
+        });
 
         string GetNewId()
         {
@@ -41,23 +44,26 @@ public class LibraService : ILibraService
             return id.ToString();
         }
     }
-    public GameEngine CreateGame(AppUser owner, string name, LibraGameRule rule)
+    public Task<GameEngine> CreateGame(AppUser owner, string name, LibraGameRule rule)
     {
-        var newId = GetNewId();
-        var state = new GameStateBuilder()
-            .SetId(newId)
-            .SetName(name)
-            .SetOwner(owner)
-            .SetRule(rule)
-            .Build();
-        var engine = new GameEngine
+        return Task.Run(() =>
         {
-            State = state,
-            Assistor = new LibraAssistor(state),
-        };
-        _games.Add(state.Id, engine);
+            var newId = GetNewId();
+            var state = new GameStateBuilder()
+                .SetId(newId)
+                .SetName(name)
+                .SetOwner(owner)
+                .SetRule(rule)
+                .Build();
+            var engine = new GameEngine
+            {
+                State = state,
+                Assistor = new LibraAssistor(state),
+            };
+            _games.Add(state.Id, engine);
 
-        return engine;
+            return engine;
+        });
 
         string GetNewId()
         {

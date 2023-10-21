@@ -48,20 +48,20 @@
     </MudSelect>
     <MudSwitch Label="다른 플레이어의 큐브를 볼 수 있는지" @bind-Checked="_visibleOtherCube" Color="Color.Success"/>
 </MudForm>
-<MudButton Variant="Variant.Filled" Color="Color.Info"
+<OneClickButton Variant="Variant.Filled" Color="Color.Info"
     OnClick="CreateGame"
 >
     생성
-</MudButton>
+</OneClickButton>
 }
 else
 {
     <MudInput @bind-Value="_name" Label="게임 이름" Placeholder="게임 이름" AutoFocus="true"/>
-    <MudButton Variant="Variant.Filled" Color="Color.Info"
+    <OneClickButton Variant="Variant.Filled" Color="Color.Info"
         OnClick="CreateGameWithDevilsPlan"
     >
         생성
-    </MudButton>
+    </OneClickButton>
     <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default" OnClick="@(new Action(() => _moreOption = true))">
         옵션 더보기
     </MudButton>

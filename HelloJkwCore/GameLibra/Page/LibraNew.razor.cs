@@ -36,21 +36,21 @@ public partial class LibraNew : JkwPageBase
         return base.OnPageInitializedAsync();
     }
 
-    private void CreateGameWithDevilsPlan()
+    private async Task CreateGameWithDevilsPlan()
     {
         if (!string.IsNullOrWhiteSpace(_name))
         {
-            var engine = LibraService.CreateGameWithDevilsPlan(User, _name);
+            var engine = await LibraService.CreateGameWithDevilsPlan(User, _name);
             NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
         }
     }
 
-    private void CreateGame()
+    private async Task CreateGame()
     {
         if (!string.IsNullOrWhiteSpace(_name))
         {
             var rule = MakeRule();
-            var engine = LibraService.CreateGame(User, _name, rule);
+            var engine = await LibraService.CreateGame(User, _name, rule);
             NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
         }
     }
