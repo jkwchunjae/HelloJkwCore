@@ -13,6 +13,8 @@ public class LibraGameState
     public int CurrentPlayerId { get; set; }
     public string ResultMessage { get; set; }
     public string[] HintMessage { get; set; }
+    public HintInfo[] HintInfos { get; set; }
+    public bool UseAssist { get; set; }
 }
 
 [TextJsonConverter(typeof(TextJsonStringEnumConverter))]
@@ -97,4 +99,11 @@ public class DropCubeItem
     public Cube Cube { get; set; }
     public string Origin { get; set; }
     public string Identifier { get; set; }
+}
+
+public class HintInfo
+{
+    public string CubeName { get; set; }
+    public int Order { get; set; }
+    public int Value { get; set; }
 }

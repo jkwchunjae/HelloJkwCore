@@ -90,6 +90,7 @@ public partial class LibraBoardButtons : JkwPageBase
             var param = new DialogParameters
             {
                 ["State"] = State,
+                ["Assistor"] = GameEngine.Assistor,
             };
 
             var options = new DialogOptions { CloseOnEscapeKey = true };

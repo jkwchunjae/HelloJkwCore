@@ -1,9 +1,12 @@
+using GameLibra.Service;
+
 namespace GameLibra;
 
 public class GameEngine
 {
     public LibraGameState State { get; set; }
     public List<HistoryItem> History { get; set; } = new();
+    public LibraAssistor Assistor { get; set; }
 
     private TimeOverHandler _timeOverHandler = new();
 
@@ -82,6 +85,14 @@ public class GameEngine
                 cube.New = false;
             }
         }
+        if (State.UseAssist)
+        {
+            foreach (var scale in State.Scales.Where(x => x.Left.Value == x.Right.Value))
+            {
+                scale.Left.Cubes.Clear();
+                scale.Right.Cubes.Clear();
+            }
+        }
 
         foreach (var (scale, left, right) in scaleAndCube)
         {
@@ -93,6 +104,46 @@ public class GameEngine
             var stateScale = State.Scales.First(x => x.Id == scale.Id);
             stateScale.Left.Add(left);
             stateScale.Right.Add(right);
+        }
+
+        if (State.UseAssist)
+        {
+            foreach (var scale in State.Scales)
+            {
+                foreach (var cube in State.CubeInfo)
+                {
+                    var leftCount = scale.Left.Cubes.Count(c => c.Id == cube.Id);
+                    var rightCount = scale.Right.Cubes.Count(c => c.Id == cube.Id);
+
+                    if (leftCount > 0 && rightCount > 0)
+                    {
+                        var removeCount = Math.Min(leftCount, rightCount);
+                        for (var i = 0; i < removeCount; i++)
+                        {
+                            scale.Left.Cubes.Remove(scale.Left.Cubes.First(c => c.Id == cube.Id));
+                            scale.Right.Cubes.Remove(scale.Right.Cubes.First(c => c.Id == cube.Id));
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach (var scale in State.Scales)
+        {
+            var leftCubes = scale.Left.Cubes.Select(x => x.Name).ToArray();
+            var rightCubes = scale.Right.Cubes.Select(x => x.Name).ToArray();
+            if (scale.Left.Value == scale.Right.Value)
+            {
+                Assistor.SameValue(leftCubes, rightCubes);
+            }
+            else if (scale.Left.Value < scale.Right.Value)
+            {
+                Assistor.LessThan(leftCubes, rightCubes);
+            }
+            else
+            {
+                Assistor.GreaterThan(leftCubes, rightCubes);
+            }
         }
 
         StateChanged?.Invoke(this, State);
@@ -183,6 +234,12 @@ public class GameEngine
         catch
         {
         }
+    }
+
+    public void UseAssist()
+    {
+        State.UseAssist = true;
+        StateChanged?.Invoke(this, State);
     }
 }
 

@@ -1,3 +1,4 @@
+using GameLibra.Service;
 
 namespace GameLibra;
 
@@ -24,6 +25,7 @@ public class LibraService : ILibraService
         var engine = new GameEngine
         {
             State = state,
+            Assistor = new LibraAssistor(state),
         };
         _games.Add(state.Id, engine);
 
@@ -51,6 +53,7 @@ public class LibraService : ILibraService
         var engine = new GameEngine
         {
             State = state,
+            Assistor = new LibraAssistor(state),
         };
         _games.Add(state.Id, engine);
 

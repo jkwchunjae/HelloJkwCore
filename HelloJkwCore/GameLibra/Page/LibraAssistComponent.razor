@@ -1,0 +1,30 @@
+@inherits JkwPageBase
+@using MudBlazor
+
+@if (Sets != null)
+{
+<MudTable Items="@Sets" Dense="true">
+    <HeaderContent>
+        @foreach (var cubeId in CubeIds)
+        {
+            <MudTh>@cubeId</MudTh>
+        }
+    </HeaderContent>
+    <RowTemplate>
+        @foreach (var cubeId in CubeIds)
+        {
+            var value = context[cubeId];
+            <MudTd>
+                @value
+            </MudTd>
+        }
+    </RowTemplate>
+</MudTable>
+}
+else
+{
+    var count = AssistSets?.Count() ?? 0;
+<span>
+    너무 많은 경우가 있습니다. 100개 이하로 줄어들면 표시됩니다. 현재 @count
+</span>
+}
