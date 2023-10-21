@@ -85,6 +85,14 @@ public class GameEngine
                 cube.New = false;
             }
         }
+        if (State.UseAssist)
+        {
+            foreach (var scale in State.Scales.Where(x => x.Left.Value == x.Right.Value))
+            {
+                scale.Left.Cubes.Clear();
+                scale.Right.Cubes.Clear();
+            }
+        }
 
         foreach (var (scale, left, right) in scaleAndCube)
         {
