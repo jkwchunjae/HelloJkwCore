@@ -19,7 +19,7 @@ public partial class LibraAssistComponent : JkwPageBase
             }
         }
     }
-    List<string> CubeIds => Sets.First()
+    List<string> CubeNames => Sets.First()
         .OrderBy(x => x.Value)
         .Select(x => x.Key)
         .ToList();

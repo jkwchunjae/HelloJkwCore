@@ -5,19 +5,42 @@
 {
 <MudTable Items="@Sets" Dense="true">
     <HeaderContent>
-        @foreach (var cubeId in CubeIds)
+        @foreach (var cubeName in CubeNames)
         {
-            <MudTh>@cubeId</MudTh>
+            <MudTh>@cubeName</MudTh>
+        }
+        @foreach (var scale in State.Scales)
+        {
+            var leftName = $"L{scale.Id}";
+            var rightName = $"R{scale.Id}";
+            <MudTh>@leftName</MudTh>
+            <MudTh>@rightName</MudTh>
         }
     </HeaderContent>
     <RowTemplate>
-        @foreach (var cubeId in CubeIds)
+        @foreach (var cubeName in CubeNames)
         {
-            var value = context[cubeId];
+            var value = context[cubeName];
             <MudTd>
                 @value
             </MudTd>
         }
+        @foreach (var scale in State.Scales)
+        {
+            var leftName = $"L{scale.Id}";
+            var rightName = $"R{scale.Id}";
+            var leftValue = scale.Left.Cubes.Sum(c => context[c.Name]);
+            var rightValue = scale.Right.Cubes.Sum(c => context[c.Name]);
+            <MudTd>@leftValue</MudTd>
+            <MudTd>@rightValue</MudTd>
+        }
+        <MudTd>
+            @if (calcResult.ContainsKey(context))
+            {
+                var result = calcResult[context];
+                <span>@result</span>
+            }
+        </MudTd>
     </RowTemplate>
 </MudTable>
 }
