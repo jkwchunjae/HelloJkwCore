@@ -40,113 +40,116 @@ public class GameEngine
     /// <param name="player">행동의 주체</param>
     /// <param name="cubes">양팔저울에 올릴 큐브 수</param>
     /// <param name="scale">타겟 양팔저울</param>
-    public void DoAction(Player player, List<(DoubleScale Scale, List<Cube> Left, List<Cube> Right)> scaleAndCube)
+    public Task DoAction(Player player, List<(DoubleScale Scale, List<Cube> Left, List<Cube> Right)> scaleAndCube)
     {
-        if (State.Status != LibraGameStatus.Playing)
+        return Task.Run(() =>
         {
-            throw new Exception("게임이 시작되지 않았습니다.");
-        }
-
-        Cube[] cubes = scaleAndCube.SelectMany(x => x.Left)
-            .Concat(scaleAndCube.SelectMany(x => x.Right))
-            .ToArray();
-        DoubleScale[] scales = scaleAndCube.Select(x => x.Scale).ToArray();
-        if (!player.HasCube(cubes))
-        {
-            throw new Exception("플레이어가 큐브를 가지고 있지 않습니다.");
-        }
-        if (State.Players.All(x => x.Id != player.Id))
-        {
-            throw new Exception("플레이어가 게임에 참여하지 않았습니다.");
-        }
-
-        foreach (var (scale, left, right) in scaleAndCube)
-        {
-            if (!State.Scales.Contains(scale))
+            if (State.Status != LibraGameStatus.Playing)
             {
-                throw new Exception("타겟 양팔저울이 존재하지 않습니다.");
+                throw new Exception("게임이 시작되지 않았습니다.");
             }
-        }
-        if (cubes.Count() < State.Rule.MinimumApplyCubeCount)
-        {
-            throw new Exception($"적어도 {State.Rule.MinimumApplyCubeCount}개 이상의 큐브를 올려야 합니다.");
-        }
 
-        _timeOverHandler.Clear();
+            Cube[] cubes = scaleAndCube.SelectMany(x => x.Left)
+                .Concat(scaleAndCube.SelectMany(x => x.Right))
+                .ToArray();
+            DoubleScale[] scales = scaleAndCube.Select(x => x.Scale).ToArray();
+            if (!player.HasCube(cubes))
+            {
+                throw new Exception("플레이어가 큐브를 가지고 있지 않습니다.");
+            }
+            if (State.Players.All(x => x.Id != player.Id))
+            {
+                throw new Exception("플레이어가 게임에 참여하지 않았습니다.");
+            }
 
-        foreach (var scale in State.Scales)
-        {
-            foreach (var cube in scale.Left.Cubes)
+            foreach (var (scale, left, right) in scaleAndCube)
             {
-                cube.New = false;
+                if (!State.Scales.Contains(scale))
+                {
+                    throw new Exception("타겟 양팔저울이 존재하지 않습니다.");
+                }
             }
-            foreach (var cube in scale.Right.Cubes)
+            if (cubes.Count() < State.Rule.MinimumApplyCubeCount)
             {
-                cube.New = false;
+                throw new Exception($"적어도 {State.Rule.MinimumApplyCubeCount}개 이상의 큐브를 올려야 합니다.");
             }
-        }
-        if (State.UseAssist)
-        {
-            foreach (var scale in State.Scales.Where(x => x.Left.Value == x.Right.Value))
-            {
-                scale.Left.Cubes.Clear();
-                scale.Right.Cubes.Clear();
-            }
-        }
 
-        foreach (var (scale, left, right) in scaleAndCube)
-        {
-            foreach (var cube in left.Concat(right))
-            {
-                player.Cubes.Remove(cube);
-                cube.New = true;
-            }
-            var stateScale = State.Scales.First(x => x.Id == scale.Id);
-            stateScale.Left.Add(left);
-            stateScale.Right.Add(right);
-        }
+            _timeOverHandler.Clear();
 
-        if (State.UseAssist)
-        {
             foreach (var scale in State.Scales)
             {
-                foreach (var cube in State.CubeInfo)
+                foreach (var cube in scale.Left.Cubes)
                 {
-                    var leftCount = scale.Left.Cubes.Count(c => c.Id == cube.Id);
-                    var rightCount = scale.Right.Cubes.Count(c => c.Id == cube.Id);
+                    cube.New = false;
+                }
+                foreach (var cube in scale.Right.Cubes)
+                {
+                    cube.New = false;
+                }
+            }
+            if (State.UseAssist)
+            {
+                foreach (var scale in State.Scales.Where(x => x.Left.Value == x.Right.Value))
+                {
+                    scale.Left.Cubes.Clear();
+                    scale.Right.Cubes.Clear();
+                }
+            }
 
-                    if (leftCount > 0 && rightCount > 0)
+            foreach (var (scale, left, right) in scaleAndCube)
+            {
+                foreach (var cube in left.Concat(right))
+                {
+                    player.Cubes.Remove(cube);
+                    cube.New = true;
+                }
+                var stateScale = State.Scales.First(x => x.Id == scale.Id);
+                stateScale.Left.Add(left);
+                stateScale.Right.Add(right);
+            }
+
+            if (State.UseAssist)
+            {
+                foreach (var scale in State.Scales)
+                {
+                    foreach (var cube in State.CubeInfo)
                     {
-                        var removeCount = Math.Min(leftCount, rightCount);
-                        for (var i = 0; i < removeCount; i++)
+                        var leftCount = scale.Left.Cubes.Count(c => c.Id == cube.Id);
+                        var rightCount = scale.Right.Cubes.Count(c => c.Id == cube.Id);
+
+                        if (leftCount > 0 && rightCount > 0)
                         {
-                            scale.Left.Cubes.Remove(scale.Left.Cubes.First(c => c.Id == cube.Id));
-                            scale.Right.Cubes.Remove(scale.Right.Cubes.First(c => c.Id == cube.Id));
+                            var removeCount = Math.Min(leftCount, rightCount);
+                            for (var i = 0; i < removeCount; i++)
+                            {
+                                scale.Left.Cubes.Remove(scale.Left.Cubes.First(c => c.Id == cube.Id));
+                                scale.Right.Cubes.Remove(scale.Right.Cubes.First(c => c.Id == cube.Id));
+                            }
                         }
                     }
                 }
             }
-        }
 
-        foreach (var scale in State.Scales)
-        {
-            var leftCubes = scale.Left.Cubes.Select(x => x.Name).ToArray();
-            var rightCubes = scale.Right.Cubes.Select(x => x.Name).ToArray();
-            if (scale.Left.Value == scale.Right.Value)
+            foreach (var scale in State.Scales)
             {
-                Assistor.SameValue(leftCubes, rightCubes);
+                var leftCubes = scale.Left.Cubes.Select(x => x.Name).ToArray();
+                var rightCubes = scale.Right.Cubes.Select(x => x.Name).ToArray();
+                if (scale.Left.Value == scale.Right.Value)
+                {
+                    Assistor.SameValue(leftCubes, rightCubes);
+                }
+                else if (scale.Left.Value < scale.Right.Value)
+                {
+                    Assistor.LessThan(leftCubes, rightCubes);
+                }
+                else
+                {
+                    Assistor.GreaterThan(leftCubes, rightCubes);
+                }
             }
-            else if (scale.Left.Value < scale.Right.Value)
-            {
-                Assistor.LessThan(leftCubes, rightCubes);
-            }
-            else
-            {
-                Assistor.GreaterThan(leftCubes, rightCubes);
-            }
-        }
 
-        StateChanged?.Invoke(this, State);
+            StateChanged?.Invoke(this, State);
+        });
     }
 
     public void EndTurn()

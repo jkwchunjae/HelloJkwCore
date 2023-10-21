@@ -35,7 +35,7 @@ public partial class LibraBoardButtons : JkwPageBase
             });
         }
     }
-    private void Confirm()
+    private async Task Confirm()
     {
         try
         {
@@ -65,7 +65,7 @@ public partial class LibraBoardButtons : JkwPageBase
                         return (scale, left, right);
                     })
                     .ToList();
-                GameEngine.DoAction(player, scaleAndCubes);
+                await GameEngine.DoAction(player, scaleAndCubes);
             }
 
             //foreach (var dropItem in cubeInScale)
