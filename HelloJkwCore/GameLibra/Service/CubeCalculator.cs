@@ -56,7 +56,7 @@ internal class CubeCalculator
         {
             return (true, string.Empty);
         }
-        return (false, "수식을 잘못 입력하셨습니다");
+        return (false, "수식을 잘못 입력하였습니다");
     }
     public object CalculateFormula(string formula, IReadOnlyDictionary<string, int> set)
     {

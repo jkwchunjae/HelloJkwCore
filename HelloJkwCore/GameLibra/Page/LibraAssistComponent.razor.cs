@@ -48,21 +48,31 @@ public partial class LibraAssistComponent : JkwPageBase
             return Task.CompletedTask;
         }
 
-        var (testResult, errorMessage) = new CubeCalculator().TestValidFormula(formula, CubeNames);
-        if (!testResult)
+        try
         {
-            Snackbar.Add(errorMessage, Severity.Error, options =>
+            var (testResult, errorMessage) = new CubeCalculator().TestValidFormula(formula, CubeNames);
+            if (!testResult)
+            {
+                Snackbar.Add(errorMessage, Severity.Error, options =>
+                {
+                    options.VisibleStateDuration = 3000;
+                });
+                return Task.CompletedTask;
+            }
+
+            Sets?.ForEach(set =>
+            {
+                var result = new CubeCalculator().CalculateFormula(formula, set);
+                calcResult[set] = result;
+            });
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error, options =>
             {
                 options.VisibleStateDuration = 3000;
             });
-            return Task.CompletedTask;
         }
-
-        Sets?.ForEach(set =>
-        {
-            var result = new CubeCalculator().CalculateFormula(formula, set);
-            calcResult[set] = result;
-        });
 
         return Task.CompletedTask;
     }
