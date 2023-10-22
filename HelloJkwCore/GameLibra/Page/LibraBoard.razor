@@ -63,7 +63,9 @@
             <div>
                 @if (_state.UseAssist)
                 {
-                    <LibraAssistComponent AssistSets="_assistor?.Sets"/>
+                    <LibraAssistComponent
+                        State="_state"
+                        AssistSets="_assistor?.Sets"/>
                 }
                 else
                 {

@@ -9,6 +9,7 @@ public class GameEngine
     public LibraAssistor Assistor { get; set; }
 
     private TimeOverHandler _timeOverHandler = new();
+    private int _turnCount = 0;
 
     public event EventHandler<LibraGameState> StateChanged;
     public event EventHandler<RemainTime> RemainTimeChanged;
@@ -148,6 +149,12 @@ public class GameEngine
                 }
             }
 
+            _turnCount++;
+
+            if (_turnCount == State.Players.Count())
+            {
+                Assistor.Init(State);
+            }
             StateChanged?.Invoke(this, State);
         });
     }

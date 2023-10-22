@@ -55,6 +55,28 @@ public partial class LibraNew : JkwPageBase
         }
     }
 
+    private async Task CreateGame2()
+    {
+        if (!string.IsNullOrWhiteSpace(_name))
+        {
+            var rule = new LibraGameRule
+            {
+                CubeCount = 5,
+                PlayerCount = 7,
+                ScaleCount = 2,
+                CubeMinValue = 1,
+                CubeMaxValue = 30,
+                CubePerPlayer = 3,
+                MinimumApplyCubeCount = 1,
+                VisibleOtherCube = true,
+                TimeOverSeconds = 300,
+                Hint = LibraGameHint.None,
+            };
+            var engine = await LibraService.CreateGame(User, _name, rule);
+            NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
+        }
+    }
+
     private LibraGameRule MakeRule()
     {
         return new LibraGameRule

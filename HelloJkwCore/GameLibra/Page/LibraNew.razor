@@ -60,7 +60,12 @@ else
     <OneClickButton Variant="Variant.Filled" Color="Color.Info"
         OnClick="CreateGameWithDevilsPlan"
     >
-        생성
+        생성 (데블스플랜)
+    </OneClickButton>
+    <OneClickButton Variant="Variant.Filled" Color="Color.Info"
+        OnClick="CreateGame2"
+    >
+        생성 (1-30, 도움받으면 재밋음)
     </OneClickButton>
     <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default" OnClick="@(new Action(() => _moreOption = true))">
         옵션 더보기

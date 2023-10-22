@@ -27,7 +27,7 @@ public class LibraService : ILibraService
             var engine = new GameEngine
             {
                 State = state,
-                Assistor = new LibraAssistor(state),
+                Assistor = new LibraAssistor(),
             };
             _games.Add(state.Id, engine);
 
@@ -58,7 +58,7 @@ public class LibraService : ILibraService
             var engine = new GameEngine
             {
                 State = state,
-                Assistor = new LibraAssistor(state),
+                Assistor = new LibraAssistor(),
             };
             _games.Add(state.Id, engine);
 
