@@ -25,7 +25,7 @@ else if (Sets != null)
             <MudTh>@rightName</MudTh>
         }
         <MudTh>
-            <MudTextField T="string" Value="calcFormula" ValueChanged="FormulaChagned" Immediate="true"/>
+            <MudTextField T="string" Value="calcFormula" ValueChanged="FormulaChagned" Immediate="true" PlaceHolder="aab < c" Margin="Margin.Dense"/>
             @if (calcResult.Any() && calcResult.First().Value is Boolean)
             {
                 var trueCount = calcResult.Count(r => r.Value is Boolean b && b == true);
