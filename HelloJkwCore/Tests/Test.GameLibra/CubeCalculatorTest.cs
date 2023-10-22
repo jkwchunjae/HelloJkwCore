@@ -29,6 +29,8 @@ public class CubeCalculatorTest
     [InlineData("ab+cd", 10)]
     [InlineData("a+b-c-d", -4)]
     [InlineData("a+6", 7)]
+    [InlineData("e-a-1", 3)]
+    [InlineData("e-a-10", -6)]
     public void Test_expression(string expression, int expected)
     {
         var set = new Dictionary<string, int>

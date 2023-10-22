@@ -97,8 +97,15 @@ internal class CubeCalculator
         }
         else
         {
-            return formula
-                .Sum(x => set[x.ToString()]);
+            if (int.TryParse(formula, out var result))
+            {
+                return result;
+            }
+            else
+            {
+                return formula
+                    .Sum(x => set[x.ToString()]);
+            }
         }
     }
 }
