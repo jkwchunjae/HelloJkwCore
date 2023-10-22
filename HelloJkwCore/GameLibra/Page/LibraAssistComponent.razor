@@ -24,9 +24,7 @@
         @foreach (var cubeName in CubeNames)
         {
             var value = context[cubeName];
-            <MudTd>
-                @value
-            </MudTd>
+            <MudTd>@value</MudTd>
         }
         @foreach (var scale in State.Scales)
         {
@@ -37,13 +35,32 @@
             <MudTd>@leftValue</MudTd>
             <MudTd>@rightValue</MudTd>
         }
-        <MudTd>
-            @if (calcResult.ContainsKey(context))
+        @if (calcResult.ContainsKey(context))
+        {
+            var result = calcResult[context];
+            if (result is Boolean rBool && rBool == true)
             {
-                var result = calcResult[context];
-                <span>@result</span>
+                <MudTd style="background-color: #3dc03d; color: white;">
+                    @result
+                </MudTd>
             }
-        </MudTd>
+            else if (result is Boolean rBool2 && rBool2 == false)
+            {
+                <MudTd style="background-color: #ff5d2c; color: white;">
+                    @result
+                </MudTd>
+            }
+            else
+            {
+                <MudTd>
+                    @result
+                </MudTd>
+            }
+        }
+        else
+        {
+            <MudTd></MudTd>
+        }
     </RowTemplate>
 </MudTable>
 }
@@ -51,6 +68,6 @@ else
 {
     var count = AssistSets?.Count() ?? 0;
 <span>
-    너무 많은 경우가 있습니다. 100개 이하로 줄어들면 표시됩니다. 현재 @count
+    너무 많은 경우가 있습니다. 1000개 이하로 줄어들면 표시됩니다. 현재 @count
 </span>
 }
