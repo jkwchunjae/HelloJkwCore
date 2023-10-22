@@ -11,7 +11,7 @@ public partial class LibraAssistComponent : JkwPageBase
     {
         get
         {
-            if (AssistSets?.Count() < 1000)
+            if (AssistSets?.Count() < 10000)
             {
                 return AssistSets;
             }
