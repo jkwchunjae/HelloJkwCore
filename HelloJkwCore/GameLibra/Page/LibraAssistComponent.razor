@@ -16,6 +16,9 @@
             <MudTh>@leftName</MudTh>
             <MudTh>@rightName</MudTh>
         }
+        <MudTh>
+            <MudTextField T="string" Value="calcFormula" ValueChanged="FormulaChagned" Immediate="true"/>
+        </MudTh>
     </HeaderContent>
     <RowTemplate>
         @foreach (var cubeName in CubeNames)
