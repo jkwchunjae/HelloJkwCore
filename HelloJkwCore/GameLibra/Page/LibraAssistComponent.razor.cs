@@ -4,6 +4,7 @@ namespace GameLibra.Page;
 
 public partial class LibraAssistComponent : JkwPageBase
 {
+    [Inject] public ISnackbar Snackbar { get; set; }
     [Parameter] public LibraGameState State { get; set; }
     [Parameter] public IReadOnlyList<IReadOnlyDictionary<string, int>> AssistSets { get; set; }
     IReadOnlyList<IReadOnlyDictionary<string, int>> Sets
@@ -47,8 +48,13 @@ public partial class LibraAssistComponent : JkwPageBase
             return Task.CompletedTask;
         }
 
-        if (!new CubeCalculator().TestValidFormula(formula, CubeNames))
+        var (testResult, errorMessage) = new CubeCalculator().TestValidFormula(formula, CubeNames);
+        if (!testResult)
         {
+            Snackbar.Add(errorMessage, Severity.Error, options =>
+            {
+                options.VisibleStateDuration = 3000;
+            });
             return Task.CompletedTask;
         }
 

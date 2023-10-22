@@ -16,7 +16,7 @@ public class CubeCalculatorTest
     {
         var cubeNames = new List<string> { "a", "b", "c", "d", "e" };
 
-        var result = new CubeCalculator().TestValidFormula(formula, cubeNames);
+        var (result, _) = new CubeCalculator().TestValidFormula(formula, cubeNames);
 
         Assert.Equal(expected, result);
     }
@@ -28,6 +28,7 @@ public class CubeCalculatorTest
     [InlineData("abcd", 10)]
     [InlineData("ab+cd", 10)]
     [InlineData("a+b-c-d", -4)]
+    [InlineData("a+6", 7)]
     public void Test_expression(string expression, int expected)
     {
         var set = new Dictionary<string, int>

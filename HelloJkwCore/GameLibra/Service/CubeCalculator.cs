@@ -15,13 +15,14 @@ internal class CubeCalculator
         ["<"] = (a, b) => a < b,
         [">"] = (a, b) => a > b,
     };
-    public bool TestValidFormula(string formula, List<string> cubeNames)
+    static readonly char[] digits = "0123456789".ToCharArray();
+    public (bool Result, string Message) TestValidFormula(string formula, List<string> cubeNames)
     {
         formula = formula.Replace(" ", "");
 
         if (formula.StartsWith('-'))
         {
-            return false;
+            return (false, "음수로 시작할 수 없습니다");
         }
         if (compareDic.Any(x => formula.Contains(x.Key)))
         {
@@ -33,23 +34,29 @@ internal class CubeCalculator
             {
                 var left = split[0].Trim();
                 var right = split[1].Trim();
-                if (!TestValidFormula(left, cubeNames))
+                var leftTest = TestValidFormula(left, cubeNames);
+                var rightTest = TestValidFormula(right, cubeNames);
+                if (!leftTest.Result)
                 {
-                    return false;
+                    return leftTest;
                 }
-                if (!TestValidFormula(right, cubeNames))
+                if (!rightTest.Result)
                 {
-                    return false;
+                    return rightTest;
                 }
-                return true;
+                return (true, string.Empty);
+            }
+            else
+            {
+                return (false, "비교 연산자는 한번만 사용할 수 있습니다");
             }
         }
         var split2 = formula.Split('+', '-').SelectMany(x => x).ToArray();
         if (split2.All(x => cubeNames.Contains(x.ToString())))
         {
-            return true;
+            return (true, string.Empty);
         }
-        return false;
+        return (false, "수식을 잘못 입력하셨습니다");
     }
     public object CalculateFormula(string formula, IReadOnlyDictionary<string, int> set)
     {
