@@ -67,7 +67,7 @@
                         State="_state"
                         AssistSets="_assistor?.Sets"/>
                 }
-                else
+                else if (_state.Rule.MaybeUseAssist)
                 {
                     <MudButton Size="Size.Large" Variant="Variant.Outlined" OnClick="@(() => UseAssist())">
                         저는 도움을 받고 싶어요
