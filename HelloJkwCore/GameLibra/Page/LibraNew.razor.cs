@@ -66,7 +66,7 @@ public partial class LibraNew : JkwPageBase
                 ScaleCount = 2,
                 CubeMinValue = 1,
                 CubeMaxValue = 30,
-                CubePerPlayer = 3,
+                CubePerPlayer = 2,
                 MinimumApplyCubeCount = 1,
                 VisibleOtherCube = true,
                 TimeOverSeconds = 300,
