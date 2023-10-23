@@ -10,6 +10,25 @@
         </MudCheckBox>
         <MudCheckBox @bind-Checked="@Setting.HideOtherPlayerCube" Label="내 차례의 큐브만 볼래요">
         </MudCheckBox>
+
+        <MudSimpleTable Dense="true">
+            <MudTr>
+                <MudTd>큐브 최소값</MudTd>
+                <MudTd>@Rule.CubeMinValue</MudTd>
+            </MudTr>
+            <MudTr>
+                <MudTd>큐브 최대값</MudTd>
+                <MudTd>@Rule.CubeMaxValue</MudTd>
+            </MudTr>
+            <MudTr>
+                <MudTd>한 턴에 올려야 하는 큐브 수</MudTd>
+                <MudTd>@Rule.MinimumApplyCubeCount</MudTd>
+            </MudTr>
+            <MudTr>
+                <MudTd>시간 초과 시간</MudTd>
+                <MudTd>@Rule.TimeOverSeconds</MudTd>
+            </MudTr>
+        </MudSimpleTable>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel" Variant="Variant.Outlined">취소</MudButton>
@@ -20,6 +39,7 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter] public LibraBoardSetting Setting { get; set; }
+    [Parameter] public LibraGameRule Rule { get; set; }
 
     void Cancel()
     {

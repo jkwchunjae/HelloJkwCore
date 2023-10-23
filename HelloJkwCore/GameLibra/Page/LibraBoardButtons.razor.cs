@@ -121,6 +121,7 @@ public partial class LibraBoardButtons : JkwPageBase
         var param = new DialogParameters
         {
             ["Setting"] = Setting,
+            ["Rule"] = State.Rule,
         };
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var dialog = DialogService.Show<LibraBoardSettingDialogComponent>("화면 구성", param, options);
