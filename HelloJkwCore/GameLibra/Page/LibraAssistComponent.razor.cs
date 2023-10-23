@@ -21,7 +21,7 @@ public partial class LibraAssistComponent : JkwPageBase
             }
         }
     }
-    List<string> CubeNames => Sets.First()
+    List<string> CubeNames => AssistSets.First()
         .OrderBy(x => x.Value)
         .Select(x => x.Key)
         .ToList();
@@ -60,7 +60,7 @@ public partial class LibraAssistComponent : JkwPageBase
                 return Task.CompletedTask;
             }
 
-            Sets?.ForEach(set =>
+            AssistSets?.ForEach(set =>
             {
                 var result = new CubeCalculator().CalculateFormula(formula, set);
                 calcResult[set] = result;
