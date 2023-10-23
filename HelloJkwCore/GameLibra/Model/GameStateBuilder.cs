@@ -39,6 +39,7 @@ public class GameStateBuilder
             VisibleOtherCube = false,
             TimeOverSeconds = 300,
             Hint = LibraGameHint.OpenMiddle1,
+            MaybeUseAssist = false,
         };
         return this;
     }

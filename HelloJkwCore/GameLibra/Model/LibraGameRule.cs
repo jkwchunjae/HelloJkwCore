@@ -51,4 +51,8 @@ public class LibraGameRule
     /// 힌트
     /// </summary>
     public LibraGameHint Hint { get; set; }
+    /// <summary>
+    /// 도움이 필요할 수도 있음!
+    /// </summary>
+    public bool MaybeUseAssist { get; set; }
 }

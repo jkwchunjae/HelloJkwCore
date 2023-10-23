@@ -16,6 +16,7 @@ public partial class LibraNew : JkwPageBase
     private int _minimumApplyCubeCount = 2;
     private int _timeoverSeconds = 300;
     private bool _visibleOtherCube = false;
+    private bool _maybeUseAssist = true;
     private LibraGameHint _hint = LibraGameHint.None;
 
     private bool _moreOption = false;
@@ -66,11 +67,12 @@ public partial class LibraNew : JkwPageBase
                 ScaleCount = 2,
                 CubeMinValue = 1,
                 CubeMaxValue = 30,
-                CubePerPlayer = 3,
+                CubePerPlayer = 2,
                 MinimumApplyCubeCount = 1,
                 VisibleOtherCube = true,
                 TimeOverSeconds = 300,
                 Hint = LibraGameHint.None,
+                MaybeUseAssist = true,
             };
             var engine = await LibraService.CreateGame(User, _name, rule);
             NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
@@ -91,6 +93,7 @@ public partial class LibraNew : JkwPageBase
             VisibleOtherCube = _visibleOtherCube,
             TimeOverSeconds = _timeoverSeconds,
             Hint = _hint,
+            MaybeUseAssist = _maybeUseAssist,
         };
     }
 }

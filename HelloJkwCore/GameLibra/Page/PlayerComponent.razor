@@ -29,7 +29,7 @@ else
             Class="d-flex border-2 border-solid docs-gray-bg mud-border-lines-default rounded"
         />
     }
-    else
+    else if (!Setting.HideOtherPlayerCube)
     {
         @if (Rule.VisibleOtherCube || Player.LinkedUser == User || Player.LinkedUser == null)
         {

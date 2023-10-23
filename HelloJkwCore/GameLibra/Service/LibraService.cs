@@ -29,6 +29,10 @@ public class LibraService : ILibraService
                 State = state,
                 Assistor = new LibraAssistor(),
             };
+            foreach (var hint in state.HintInfos)
+            {
+                engine.Assistor.SetValue(hint.CubeName, hint.Value);
+            }
             _games.Add(state.Id, engine);
 
             return engine;
@@ -60,6 +64,10 @@ public class LibraService : ILibraService
                 State = state,
                 Assistor = new LibraAssistor(),
             };
+            foreach (var hint in state.HintInfos)
+            {
+                engine.Assistor.SetValue(hint.CubeName, hint.Value);
+            }
             _games.Add(state.Id, engine);
 
             return engine;
