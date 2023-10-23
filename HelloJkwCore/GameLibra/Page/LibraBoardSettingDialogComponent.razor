@@ -8,6 +8,8 @@
         </MudCheckBox>
         <MudCheckBox @bind-Checked="@Setting.OrderedConatiner" Label="큐브를 색깔별로 보고 싶어요">
         </MudCheckBox>
+        <MudCheckBox @bind-Checked="@Setting.HideOtherPlayerCube" Label="내 차례의 큐브만 볼래요">
+        </MudCheckBox>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel" Variant="Variant.Outlined">취소</MudButton>
