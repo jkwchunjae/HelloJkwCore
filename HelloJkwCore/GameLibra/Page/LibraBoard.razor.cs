@@ -65,7 +65,7 @@ public partial class LibraBoard : JkwPageBase
             InvokeAsync(() =>
             {
                 _remainTimeText = $"{remainTime}초 남았습니다.";
-                _remainTimeStyle = remainTime > 10 ? "font-size: 24px;" : "font-size: 36px; color: red;";
+                _remainTimeStyle = remainTime > 60 ? "font-size: 24px;" : "font-size: 36px; color: red;";
                 StateHasChanged();
             });
         }
