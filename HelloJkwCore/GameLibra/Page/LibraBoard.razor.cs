@@ -16,6 +16,7 @@ public partial class LibraBoard : JkwPageBase
     Player _currentPlayer;
     LibraBoardSetting Setting = new();
     string _remainTimeText = string.Empty;
+    string _remainTimeStyle = string.Empty;
 
     protected override Task OnPageInitializedAsync()
     {
@@ -49,6 +50,7 @@ public partial class LibraBoard : JkwPageBase
             _cubes = GetCubes(_state);
             _currentPlayer = _state.Players.FirstOrDefault(x => x.Id == _state.CurrentPlayerId);
             _remainTimeText = string.Empty;
+            _remainTimeStyle = string.Empty;
             StateHasChanged();
         });
     }
@@ -63,6 +65,7 @@ public partial class LibraBoard : JkwPageBase
             InvokeAsync(() =>
             {
                 _remainTimeText = $"{remainTime}초 남았습니다.";
+                _remainTimeStyle = remainTime > 60 ? "font-size: 24px;" : "font-size: 36px; color: red;";
                 StateHasChanged();
             });
         }
