@@ -25,6 +25,11 @@ public partial class LibraNew : JkwPageBase
 
     protected override Task OnPageInitializedAsync()
     {
+        if (!IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+            return Task.CompletedTask;
+        }
         _hintList = Enum.GetValues<LibraGameHint>()
             .Select(hintValue =>
             {
