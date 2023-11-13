@@ -59,6 +59,11 @@ else
 {
     <MudInput @bind-Value="_name" Label="게임 이름" Placeholder="게임 이름" AutoFocus="true"/>
     <OneClickButton Variant="Variant.Filled" Color="Color.Info"
+        OnClick="CreateGameForBeginner"
+    >
+        생성 (1-10, 초보자 추천)
+    </OneClickButton>
+    <OneClickButton Variant="Variant.Filled" Color="Color.Info"
         OnClick="CreateGameWithDevilsPlan"
     >
         생성 (데블스플랜)

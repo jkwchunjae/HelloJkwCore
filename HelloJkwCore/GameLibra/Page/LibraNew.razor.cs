@@ -25,6 +25,11 @@ public partial class LibraNew : JkwPageBase
 
     protected override Task OnPageInitializedAsync()
     {
+        if (!IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+            return Task.CompletedTask;
+        }
         _hintList = Enum.GetValues<LibraGameHint>()
             .Select(hintValue =>
             {
@@ -67,6 +72,29 @@ public partial class LibraNew : JkwPageBase
                 ScaleCount = 2,
                 CubeMinValue = 1,
                 CubeMaxValue = 30,
+                CubePerPlayer = 2,
+                MinimumApplyCubeCount = 1,
+                VisibleOtherCube = true,
+                TimeOverSeconds = 300,
+                Hint = LibraGameHint.None,
+                MaybeUseAssist = true,
+            };
+            var engine = await LibraService.CreateGame(User, _name, rule);
+            NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
+        }
+    }
+
+    private async Task CreateGameForBeginner()
+    {
+        if (!string.IsNullOrWhiteSpace(_name))
+        {
+            var rule = new LibraGameRule
+            {
+                CubeCount = 5,
+                PlayerCount = 7,
+                ScaleCount = 2,
+                CubeMinValue = 1,
+                CubeMaxValue = 10,
                 CubePerPlayer = 2,
                 MinimumApplyCubeCount = 1,
                 VisibleOtherCube = true,
