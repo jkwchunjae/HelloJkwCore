@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameLibra", "GameLibra\Game
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.GameLibra", "Tests\Test.GameLibra\Test.GameLibra.csproj", "{FA822191-B4E1-4F94-8B61-2D245250098E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloJkwCore2", "HelloJkwCore2\HelloJkwCore2.csproj", "{256D43C7-74EA-4180-91D5-4EB964039356}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{FA822191-B4E1-4F94-8B61-2D245250098E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA822191-B4E1-4F94-8B61-2D245250098E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA822191-B4E1-4F94-8B61-2D245250098E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{256D43C7-74EA-4180-91D5-4EB964039356}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{256D43C7-74EA-4180-91D5-4EB964039356}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{256D43C7-74EA-4180-91D5-4EB964039356}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{256D43C7-74EA-4180-91D5-4EB964039356}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
