@@ -14,7 +14,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.0" />
     <PackageReference Include="Microsoft.JSInterop" Version="8.0.0" />
     <PackageReference Include="MudBlazor" Version="6.2.5" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Runtime.Caching" Version="8.0.0" />
   </ItemGroup>
 </Project>
