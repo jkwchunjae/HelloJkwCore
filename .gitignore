@@ -350,7 +350,7 @@ MigrationBackup/
 .ionide/
 
 # secrets
-HelloJkwCore/HelloJkwCore/appsettings.User.json
+appsettings.User.json
 
 # local file system
 HelloJkwCore/HelloJkwCore/fs/
