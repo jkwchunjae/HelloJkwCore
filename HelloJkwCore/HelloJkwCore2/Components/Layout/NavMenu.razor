@@ -1,12 +1,21 @@
-﻿@* @inherits JkwPageBase *@
+﻿@inherits JkwPageBase2
 
 <MudNavMenu Class="mud-nav-menu-custom">
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
         Home
     </MudNavLink>
-    <MudNavLink Href="account/login" Icon="@Icons.Material.Filled.Login">
-        로그인
-    </MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="account/user" Icon="@Icons.Material.Filled.Login">
+                @(User?.DisplayName ?? "??") 안녕하세요
+            </MudNavLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Href="account/login" Icon="@Icons.Material.Filled.Login">
+                로그인
+            </MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
     <MudNavLink Href="diary" Icon="@Icons.Material.Filled.MenuBook">
         일기장
     </MudNavLink>
