@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.user.json", optional: true);
 
 var coreOption = CoreOption.Create(builder.Configuration);
+builder.Services.AddSingleton(coreOption);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

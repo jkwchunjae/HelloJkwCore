@@ -2,6 +2,7 @@
 
 namespace HelloJkwCore2.Authentication;
 
-public class ApplicationUser : IdentityUser
+public class ApplicationUser : IdentityUser<UserId>
 {
+    public List<AppLoginInfo> Logins { get; set; } = new();
 }
