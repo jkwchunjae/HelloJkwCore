@@ -1,0 +1,23 @@
+@page "/account/user"
+@inherits JkwPageBase2
+
+
+<AuthorizeView>
+    <Authorized>
+        <PageTitle>@User?.DisplayName</PageTitle>
+
+        <MudText Typo="Typo.h1">@User?.DisplayName</MudText>
+
+        <form action="Account/Logout" method="post">
+            <AntiforgeryToken />
+            <input type="hidden" name="ReturnUrl" value="" />
+            <MudButton ButtonType="ButtonType.Submit">Logout</MudButton>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <MudText Typo="Typo.h1">로그인 하지 않았습니다.</MudText>
+
+        <h1>Not Authorized</h1>
+        <p>You're not signed in.</p>
+    </NotAuthorized>
+</AuthorizeView>
