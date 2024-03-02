@@ -37,7 +37,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
-AuthUtil authUtil = AuthUtil.Create(builder.Configuration, coreOption);
+AuthUtil authUtil = new AuthUtil(coreOption);
 
 builder.Services
     .AddAuthentication(options =>

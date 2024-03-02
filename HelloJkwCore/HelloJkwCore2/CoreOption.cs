@@ -1,8 +1,10 @@
-﻿namespace HelloJkwCore2;
+﻿using HelloJkwCore2.Authentication;
+
+namespace HelloJkwCore2;
 
 public class CoreOption
 {
-    public FileSystemSelectOption? AuthFileSystem { get; set; }
+    public Dictionary<string, OAuthConfig>? AuthOptions { get; set; }
     public FileSystemSelectOption? UserStoreFileSystem { get; set; }
     public PathMap? Path { get; set; }
 
