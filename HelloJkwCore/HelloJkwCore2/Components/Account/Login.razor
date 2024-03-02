@@ -1,0 +1,24 @@
+﻿@page "/account/login"
+
+<PageTitle>로그인</PageTitle>
+
+<MudText Typo="Typo.h3">로그인</MudText>
+
+@foreach (var provider in externalLogins)
+{
+    var loginImage = LoginImage(provider.Name);
+    var url = $"Account/PerformExternalLogin?ReturnUrl={ReturnUrl}&provider={provider.Name}";
+
+    <form action="Account/PerformExternalLogin" method="post">
+        <AntiforgeryToken />
+        <input type="hidden" name="ReturnUrl" value="@ReturnUrl" />
+        <input type="hidden" name="provider" value="@provider.Name" />
+        <MudButton ButtonType="ButtonType.Submit">
+            <MudImage Src="@loginImage" />
+        </MudButton>
+    </form>
+
+    <MudButton Href="@url">
+        <MudImage Src="@loginImage" />
+    </MudButton>
+}

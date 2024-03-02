@@ -21,7 +21,6 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>
 
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 
     public Task<ApplicationUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
