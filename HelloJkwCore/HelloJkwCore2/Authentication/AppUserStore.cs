@@ -221,8 +221,9 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
 
     public Task<bool> IsInRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
     {
+        _logger.LogInformation($"IsInRoleAsync: {user.UserName}, {roleName}");
         var role = ParseRole(roleName);
-        return Task.FromResult(user.Roles.Contains(role));
+        return Task.FromResult(user.HasRole(role));
     }
 
     public async Task<IList<ApplicationUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
@@ -233,6 +234,6 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
             return users;
 
         var role = ParseRole(roleName);
-        return users.Where(x => x.Roles.Contains(role)).ToList();
+        return users.Where(user => user.HasRole(role)).ToList();
     }
 }

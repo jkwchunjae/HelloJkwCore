@@ -10,6 +10,8 @@ public class JkwPageBase2 : ComponentBase
     [Inject] protected IJSRuntime Js { get; set; } = null!;
     [Inject] private AppUserManager UserManager { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    protected NavigationManager Navi => NavigationManager;
 
     protected bool IsAuthenticated { get; private set; } = false;
     protected ApplicationUser? User { get; private set; } = default;

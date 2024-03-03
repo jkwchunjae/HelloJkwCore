@@ -7,7 +7,7 @@
     <AuthorizeView>
         <Authorized>
             <MudNavLink Href="account/user" Icon="@Icons.Material.Filled.Login">
-                @(User?.DisplayName ?? "??") 안녕하세요
+                @(User?.DisplayName ?? "??")
             </MudNavLink>
         </Authorized>
         <NotAuthorized>
@@ -34,4 +34,11 @@
     <MudNavLink Href="https://github.com/jkwchunjae" Icon="@Icons.Custom.Brands.GitHub" Target="_blank">
         GitHub
     </MudNavLink>
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <MudNavLink Href="admin/users" Icon="@Icons.Material.Filled.People">
+                유저 관리
+            </MudNavLink>
+        </Authorized>
+    </AuthorizeView>
 </MudNavMenu>
