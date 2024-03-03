@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HelloJkwCore2.Authentication;
 
-public class AppUserStore : IUserLoginStore<ApplicationUser>
+public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<ApplicationUser>
 {
     private readonly ILogger _logger;
     private readonly IFileSystem _fs;
+    private readonly Dictionary<string, UserRole> _cachedRoles;
 
     public AppUserStore(
         CoreOption coreOption,
@@ -15,10 +16,35 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>
     {
         _logger = loggerFactory.CreateLogger<AppUserStore>();
         _fs = fsService.GetFileSystem(coreOption.UserStoreFileSystem, coreOption.Path);
+        _cachedRoles = typeof(UserRole).GetValues<UserRole>()
+            .Select(role => new { RoleName = role.ToString().ToLower(), Role = role })
+            .ToDictionary(x => x.RoleName, x => x.Role);
     }
 
     public void Dispose()
     {
+    }
+
+    private async Task<List<ApplicationUser>> LoadUserListAsync(CancellationToken ct = default)
+    {
+        var files = await _fs.GetFilesAsync(path => path["Users"], ".json", ct);
+        var users = await files.Select(async file =>
+            {
+                try
+                {
+                    return await _fs.ReadJsonAsync<ApplicationUser>(path => Path.Join(path["Users"], file));
+                }
+                catch
+                {
+                    return null;
+                }
+            })
+            .WhenAll();
+
+        return users
+            .Where(user => user != null)
+            .Select(user => user!)
+            .ToList();
     }
     public async Task AddLoginAsync(ApplicationUser user, UserLoginInfo login, CancellationToken cancellationToken)
     {
@@ -159,5 +185,54 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>
         var userFilePath = (Paths path) => Path.Join(path["Users"], userFileName);
         await _fs.WriteJsonAsync<ApplicationUser>(userFilePath, user, cancellationToken);
         return IdentityResult.Success;
+    }
+
+    private UserRole ParseRole(string roleName)
+    {
+        return _cachedRoles[roleName.ToLower()];
+    }
+    public async Task AddToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
+    {
+        var role = ParseRole(roleName);
+
+        if (user.Roles.Contains(role))
+            return;
+
+        user.Roles.Add(role);
+        await UpdateAsync(user, cancellationToken);
+    }
+
+    public async Task RemoveFromRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
+    {
+        var role = ParseRole(roleName);
+
+        if (user.Roles.Contains(role))
+        {
+            user.Roles.RemoveAll(x => x == role);
+            await UpdateAsync(user, cancellationToken);
+        }
+    }
+
+    public Task<IList<string>> GetRolesAsync(ApplicationUser user, CancellationToken cancellationToken)
+    {
+        var roles = user.Roles.Select(x => x.ToString()).ToList();
+        return Task.FromResult<IList<string>>(roles);
+    }
+
+    public Task<bool> IsInRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
+    {
+        var role = ParseRole(roleName);
+        return Task.FromResult(user.Roles.Contains(role));
+    }
+
+    public async Task<IList<ApplicationUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+    {
+        var users = await LoadUserListAsync(cancellationToken);
+
+        if (roleName.ToLower() == "all")
+            return users;
+
+        var role = ParseRole(roleName);
+        return users.Where(x => x.Roles.Contains(role)).ToList();
     }
 }
