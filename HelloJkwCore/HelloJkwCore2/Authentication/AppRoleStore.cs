@@ -16,7 +16,6 @@ public class AppRoleStore : IRoleStore<ApplicationRole>
 
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 
     public Task<ApplicationRole?> FindByIdAsync(string roleId, CancellationToken cancellationToken)
