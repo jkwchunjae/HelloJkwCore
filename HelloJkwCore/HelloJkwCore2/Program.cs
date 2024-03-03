@@ -56,7 +56,7 @@ builder.Services
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IUserStore<ApplicationUser>, AppUserStore>();
-builder.Services.AddSingleton<IRoleStore<ApplicationRole>, AppRoleStore>();
+// builder.Services.AddSingleton<IRoleStore<ApplicationRole>, AppRoleStore>();
 
 #endregion
 
