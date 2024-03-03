@@ -9,9 +9,9 @@ namespace HelloJkwCore.Components.Account;
 
 public partial class ExternalLogin : ComponentBase
 {
-    [Inject] SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
-    [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
-    [Inject] IUserStore<ApplicationUser> UserStore { get; set; } = null!;
+    [Inject] SignInManager<AppUser> SignInManager { get; set; } = null!;
+    [Inject] UserManager<AppUser> UserManager { get; set; } = null!;
+    [Inject] IUserStore<AppUser> UserStore { get; set; } = null!;
     [Inject] NavigationManager NavigationManager { get; set; } = null!;
     [Inject] IdentityRedirectManager RedirectManager { get; set; } = null!;
     [Inject] ILogger<ExternalLogin> Logger { get; set; } = null!;
@@ -111,19 +111,19 @@ public partial class ExternalLogin : ComponentBase
         message = $"Error: {string.Join(",", result.Errors.Select(error => error.Description))}";
     }
 
-    private ApplicationUser CreateUser()
+    private AppUser CreateUser()
     {
         try
         {
-            return new ApplicationUser
+            return new AppUser
             {
                 Id = new UserId($"user.{externalLoginInfo.ProviderKey}"),
             };
         }
         catch
         {
-            throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor");
+            throw new InvalidOperationException($"Can't create an instance of '{nameof(AppUser)}'. " +
+                $"Ensure that '{nameof(AppUser)}' is not an abstract class and has a parameterless constructor");
         }
     }
 

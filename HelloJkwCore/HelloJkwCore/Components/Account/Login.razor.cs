@@ -11,7 +11,7 @@ public partial class Login : ComponentBase
 {
     [Inject] public IJSRuntime Js { get; set; } = default!;
     [Inject] public ISnackbar Snackbar { get; set; } = default!;
-    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
+    [Inject] private SignInManager<AppUser> SignInManager { get; set; } = default!;
 
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
     private AuthenticationScheme[] externalLogins = [];

@@ -50,17 +50,22 @@ builder.Services
     .AddIdentityCookies();
 
 builder.Services
-    .AddIdentityCore<ApplicationUser>()
+    .AddIdentityCore<AppUser>()
     .AddUserManager<AppUserManager>()
     .AddRoles<ApplicationRole>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IUserStore<ApplicationUser>, AppUserStore>();
+builder.Services.AddSingleton<IUserStore<AppUser>, AppUserStore>();
 builder.Services.AddSingleton<IRoleStore<ApplicationRole>, AppRoleStore>();
 
 #endregion
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Diary",
+        policy => policy.RequireAuthenticatedUser());
+});
 builder.Services.AddDiaryService(builder.Configuration);
 builder.Services.AddBadukService(builder.Configuration);
 builder.Services.AddPingpongService(builder.Configuration);

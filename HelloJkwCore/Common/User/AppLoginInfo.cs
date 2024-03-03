@@ -1,7 +1,6 @@
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 
-namespace HelloJkwCore.Authentication;
+namespace Common;
 
 public class AppLoginInfo
 {
@@ -12,5 +11,5 @@ public class AppLoginInfo
     public DateTime LastLoginTime { get; set; }
     public UserId? ConnectedUserId { get; set; }
 
-    [JsonIgnore] public UserLoginInfo LoginInfo => new UserLoginInfo(Provider, ProviderKey, ProviderDisplayName);
+    [TextJsonIgnore] public UserLoginInfo LoginInfo => new UserLoginInfo(Provider, ProviderKey, ProviderDisplayName);
 }

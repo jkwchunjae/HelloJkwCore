@@ -1,5 +1,5 @@
 @page "/admin/users"
-@inherits JkwPageBase2
+@inherits JkwPageBase
 @using HelloJkwCore.Authentication
 @using HelloJkwCore.Components
 
@@ -7,12 +7,12 @@
     <HeaderContent>
         <MudTh>ID</MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<ApplicationUser, object>(user => user.UserName ?? string.Empty)">
+            <MudTableSortLabel SortBy="new Func<AppUser, object>(user => user.UserName ?? string.Empty)">
                 이름
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<ApplicationUser, object>(user => user.Nickname ?? string.Empty)">
+            <MudTableSortLabel SortBy="new Func<AppUser, object>(user => user.NickName ?? string.Empty)">
                 닉네임
             </MudTableSortLabel>
         </MudTh>
@@ -20,12 +20,12 @@
             로그인
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<ApplicationUser, object>(user => user.CreateTime)">
+            <MudTableSortLabel SortBy="new Func<AppUser, object>(user => user.CreateTime)">
                 가입일
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<ApplicationUser, object>(user => user.LastLoginTime)">
+            <MudTableSortLabel SortBy="new Func<AppUser, object>(user => user.LastLoginTime)">
                 마지막 접속
             </MudTableSortLabel>
         </MudTh>
@@ -39,7 +39,7 @@
     <RowTemplate Context="user">
         <MudTd>@user.Id</MudTd>
         <MudTd>@user.UserName</MudTd>
-        <MudTd>@user.Nickname</MudTd>
+        <MudTd>@user.NickName</MudTd>
         <MudTd>
             @foreach (var login in user.Logins)
             {

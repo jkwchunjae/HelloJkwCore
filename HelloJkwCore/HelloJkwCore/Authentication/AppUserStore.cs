@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HelloJkwCore.Authentication;
 
-public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<ApplicationUser>
+public class AppUserStore : IUserLoginStore<AppUser>, IUserRoleStore<AppUser>
 {
     private readonly ILogger _logger;
     private readonly IFileSystem _fs;
@@ -25,14 +25,14 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
     {
     }
 
-    private async Task<List<ApplicationUser>> LoadUserListAsync(CancellationToken ct = default)
+    private async Task<List<AppUser>> LoadUserListAsync(CancellationToken ct = default)
     {
         var files = await _fs.GetFilesAsync(path => path["Users"], ".json", ct);
         var users = await files.Select(async file =>
             {
                 try
                 {
-                    return await _fs.ReadJsonAsync<ApplicationUser>(path => Path.Join(path["Users"], file));
+                    return await _fs.ReadJsonAsync<AppUser>(path => Path.Join(path["Users"], file));
                 }
                 catch
                 {
@@ -46,7 +46,7 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
             .Select(user => user!)
             .ToList();
     }
-    public async Task AddLoginAsync(ApplicationUser user, UserLoginInfo login, CancellationToken cancellationToken)
+    public async Task AddLoginAsync(AppUser user, UserLoginInfo login, CancellationToken cancellationToken)
     {
         var externalId = $"{login.LoginProvider}.{login.ProviderKey}";
         var loginFileName = $"{externalId}.json";
@@ -66,7 +66,7 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
         user.Logins.Add(loginInfo);
     }
 
-    public async Task<ApplicationUser?> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
+    public async Task<AppUser?> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
     {
         var loginFileName = $"{loginProvider}.{providerKey}.json";
         var loginFilePath = (Paths path) => Path.Join(path["Logins"], loginFileName);
@@ -82,13 +82,13 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
         return default;
     }
 
-    public Task<IList<UserLoginInfo>> GetLoginsAsync(ApplicationUser user, CancellationToken cancellationToken)
+    public Task<IList<UserLoginInfo>> GetLoginsAsync(AppUser user, CancellationToken cancellationToken)
     {
         var logins = user.Logins.Select(x => x.LoginInfo).ToList();
         return Task.FromResult<IList<UserLoginInfo>>(logins);
     }
 
-    public async Task RemoveLoginAsync(ApplicationUser user, string loginProvider, string providerKey, CancellationToken cancellationToken)
+    public async Task RemoveLoginAsync(AppUser user, string loginProvider, string providerKey, CancellationToken cancellationToken)
     {
         var loginFileName = $"{loginProvider}.{providerKey}.json";
         var loginFilePath = (Paths path) => Path.Join(path["Logins"], loginFileName);
@@ -102,15 +102,15 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
         user.Logins.RemoveAll(x => x.Provider == loginProvider && x.ProviderKey == providerKey);
     }
 
-    public async Task<IdentityResult> CreateAsync(ApplicationUser user, CancellationToken cancellationToken)
+    public async Task<IdentityResult> CreateAsync(AppUser user, CancellationToken cancellationToken)
     {
         var userFileName = $"{user.Id}.json";
         var userFilePath = (Paths path) => Path.Join(path["Users"], userFileName);
-        await _fs.WriteJsonAsync<ApplicationUser>(userFilePath, user, cancellationToken);
+        await _fs.WriteJsonAsync<AppUser>(userFilePath, user, cancellationToken);
         return IdentityResult.Success;
     }
 
-    public async Task<IdentityResult> DeleteAsync(ApplicationUser user, CancellationToken cancellationToken)
+    public async Task<IdentityResult> DeleteAsync(AppUser user, CancellationToken cancellationToken)
     {
         await user.Logins
             .Select(async loginInfo =>
@@ -134,56 +134,56 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
         return IdentityResult.Success;
     }
 
-    public async Task<ApplicationUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
+    public async Task<AppUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
     {
         var userFileName = $"{userId}.json";
         var userFilePath = (Paths path) => Path.Join(path["Users"], userFileName);
         if (await _fs.FileExistsAsync(userFilePath))
         {
-            var appUser = await _fs.ReadJsonAsync<ApplicationUser>(userFilePath, cancellationToken);
+            var appUser = await _fs.ReadJsonAsync<AppUser>(userFilePath, cancellationToken);
             return appUser;
         }
         return default;
     }
 
-    public Task<ApplicationUser?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+    public Task<AppUser?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<string?> GetNormalizedUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
+    public Task<string?> GetNormalizedUserNameAsync(AppUser user, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken cancellationToken)
+    public Task<string> GetUserIdAsync(AppUser user, CancellationToken cancellationToken)
     {
         return Task.FromResult(user.Id.Id);
     }
 
-    public Task<string?> GetUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
+    public Task<string?> GetUserNameAsync(AppUser user, CancellationToken cancellationToken)
     {
         var userName = user.UserName;
         return Task.FromResult(userName);
     }
 
-    public Task SetNormalizedUserNameAsync(ApplicationUser user, string? normalizedName, CancellationToken cancellationToken)
+    public Task SetNormalizedUserNameAsync(AppUser user, string? normalizedName, CancellationToken cancellationToken)
     {
         user.NormalizedUserName = normalizedName;
         return Task.CompletedTask;
     }
 
-    public Task SetUserNameAsync(ApplicationUser user, string? userName, CancellationToken cancellationToken)
+    public Task SetUserNameAsync(AppUser user, string? userName, CancellationToken cancellationToken)
     {
         user.UserName = userName;
         return Task.CompletedTask;
     }
 
-    public async Task<IdentityResult> UpdateAsync(ApplicationUser user, CancellationToken cancellationToken)
+    public async Task<IdentityResult> UpdateAsync(AppUser user, CancellationToken cancellationToken)
     {
         var userFileName = $"{user.Id}.json";
         var userFilePath = (Paths path) => Path.Join(path["Users"], userFileName);
-        await _fs.WriteJsonAsync<ApplicationUser>(userFilePath, user, cancellationToken);
+        await _fs.WriteJsonAsync<AppUser>(userFilePath, user, cancellationToken);
         return IdentityResult.Success;
     }
 
@@ -191,7 +191,7 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
     {
         return _cachedRoles[roleName.ToLower()];
     }
-    public async Task AddToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
+    public async Task AddToRoleAsync(AppUser user, string roleName, CancellationToken cancellationToken)
     {
         var role = ParseRole(roleName);
 
@@ -202,7 +202,7 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
         await UpdateAsync(user, cancellationToken);
     }
 
-    public async Task RemoveFromRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
+    public async Task RemoveFromRoleAsync(AppUser user, string roleName, CancellationToken cancellationToken)
     {
         var role = ParseRole(roleName);
 
@@ -213,20 +213,20 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>, IUserRoleStore<App
         }
     }
 
-    public Task<IList<string>> GetRolesAsync(ApplicationUser user, CancellationToken cancellationToken)
+    public Task<IList<string>> GetRolesAsync(AppUser user, CancellationToken cancellationToken)
     {
         var roles = user.Roles.Select(x => x.ToString()).ToList();
         return Task.FromResult<IList<string>>(roles);
     }
 
-    public Task<bool> IsInRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
+    public Task<bool> IsInRoleAsync(AppUser user, string roleName, CancellationToken cancellationToken)
     {
         _logger.LogInformation($"IsInRoleAsync: {user.UserName}, {roleName}");
         var role = ParseRole(roleName);
         return Task.FromResult(user.HasRole(role));
     }
 
-    public async Task<IList<ApplicationUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+    public async Task<IList<AppUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
     {
         var users = await LoadUserListAsync(cancellationToken);
 

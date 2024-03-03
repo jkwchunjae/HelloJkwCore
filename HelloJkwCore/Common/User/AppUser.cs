@@ -1,33 +1,19 @@
-﻿namespace Common;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class AppUser : IEquatable<AppUser>
+namespace Common;
+
+public class AppUser : IdentityUser<UserId>, IEquatable<AppUser>
 {
-    public static UserId UserId(string loginProvider, string providerKey)
-    {
-        return new UserId($"{loginProvider}.{providerKey}".ToLower());
-    }
-
-    public UserId Id { get; set; }
+    public string? NickName { get; set; }
+    public List<AppLoginInfo> Logins { get; set; } = new();
+    public List<UserRole> Roles { get; set; } = new();
     public DateTime CreateTime { get; set; }
     public DateTime LastLoginTime { get; set; }
-    public string UserName { get; set; }
-    public string NickName { get; set; }
-    [JsonNetIgnore][TextJsonIgnore] public string DisplayName => !string.IsNullOrEmpty(NickName) ? NickName : UserName;
-    public string Email { get; set; }
     public ThemeType Theme { get; set; }
-    public List<UserRole> Roles { get; set; }
 
-    public AppUser() { }
+    [TextJsonIgnore] public string? DisplayName => NickName ?? UserName;
 
-    public AppUser(string loginProvider, string providerKey)
-    {
-        Id = UserId(loginProvider, providerKey);
-    }
-
-    public bool HasRole(UserRole role)
-    {
-        return Roles?.Contains(role) ?? false;
-    }
+    public bool HasRole(UserRole role) => Roles.Contains(role);
 
     public static bool operator ==(AppUser obj1, AppUser obj2)
     {
@@ -52,7 +38,7 @@ public class AppUser : IEquatable<AppUser>
         return !(obj1 == obj2);
     }
 
-    public bool Equals(AppUser other)
+    public bool Equals(AppUser? other)
     {
         if (ReferenceEquals(other, null))
         {
@@ -66,9 +52,16 @@ public class AppUser : IEquatable<AppUser>
         return Id == other.Id;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-        return Equals(obj as AppUser);
+        if (obj is AppUser user)
+        {
+            return Equals(user);
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public override int GetHashCode()
