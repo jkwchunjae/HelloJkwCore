@@ -1,17 +1,15 @@
-﻿namespace HelloJkwCore;
+﻿namespace HelloJkwCore.Authentication;
 
 public class AuthUtil
 {
-    private List<OAuthOption> _oauthOptions;
+    private List<OAuthConfig> _oauthOptions;
 
-    public AuthUtil(IFileSystem fs)
+    public AuthUtil(CoreOption core)
     {
-        var task = fs.ReadJsonAsync<List<OAuthOption>>(path => path["OAuthOption"]);
-        task.Wait();
-        _oauthOptions = task.Result;
+        _oauthOptions = core.AuthOptions?.Select(x => x.Value).ToList() ?? new List<OAuthConfig>();
     }
 
-    public OAuthOption GetAuthOption(AuthProvider provider)
+    public OAuthConfig? GetAuthOption(AuthProvider provider)
     {
         return _oauthOptions
             ?.FirstOrDefault(x => x.Provider == provider);

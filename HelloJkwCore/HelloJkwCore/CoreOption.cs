@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HelloJkwCore.Authentication;
 
 namespace HelloJkwCore;
 
 public class CoreOption
 {
-    public FileSystemSelectOption AuthFileSystem { get; set; }
-    public FileSystemSelectOption UserStoreFileSystem { get; set; }
-    public PathMap Path { get; set; }
+    public Dictionary<string, OAuthConfig>? AuthOptions { get; set; }
+    public FileSystemSelectOption? UserStoreFileSystem { get; set; }
+    public PathMap? Path { get; set; }
 
     public static CoreOption Create(IConfiguration configuration)
     {
