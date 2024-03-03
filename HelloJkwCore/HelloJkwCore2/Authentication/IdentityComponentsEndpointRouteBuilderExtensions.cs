@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using HelloJkwCore2.Components.Account;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -79,8 +80,7 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
             var redirectUrl = UriHelper.BuildRelative(
                 context.Request.PathBase,
                 "/Account/Manage/ExternalLogins",
-                //QueryString.Create("Action", ExternalLogins.LinkLoginCallbackAction));
-                QueryString.Create("Action", "LinkLoginCallback"));
+                QueryString.Create("Action", UserPage.LinkLoginCallbackAction));
 
             var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, signInManager.UserManager.GetUserId(context.User));
             return TypedResults.Challenge(properties, [provider]);

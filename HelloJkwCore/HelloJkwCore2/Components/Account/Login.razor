@@ -9,7 +9,7 @@
     var loginImage = LoginImage(provider.Name);
     var url = $"Account/PerformExternalLogin?ReturnUrl={ReturnUrl}&provider={provider.Name}";
 
-    <form action="Account/PerformExternalLogin" method="post">
+    <form @formname="@($"login-{provider.Name}")" action="Account/PerformExternalLogin" method="post">
         <AntiforgeryToken />
         <input type="hidden" name="ReturnUrl" value="@ReturnUrl" />
         <input type="hidden" name="provider" value="@provider.Name" />
@@ -17,8 +17,4 @@
             <MudImage Src="@loginImage" />
         </MudButton>
     </form>
-
-    <MudButton Href="@url">
-        <MudImage Src="@loginImage" />
-    </MudButton>
 }
