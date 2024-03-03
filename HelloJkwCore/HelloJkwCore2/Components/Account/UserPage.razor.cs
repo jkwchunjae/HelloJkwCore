@@ -48,36 +48,36 @@ public partial class UserPage : JkwPageBase2
     {
         if (User == null)
         {
-            RedirectManager.RedirectToCurrentPageWithStatus("Error: The user is not authenticated.", HttpContext);
+            RedirectManager.RedirectToCurrentPageWithStatus("Error: The user is not authenticated.", HttpContext!);
         }
 
         var info = await SignInManager.GetExternalLoginInfoAsync(User.Id.Id);
         if (info is null)
         {
-            RedirectManager.RedirectToCurrentPageWithStatus("Error: Could not load external login info.", HttpContext);
+            RedirectManager.RedirectToCurrentPageWithStatus("Error: Could not load external login info.", HttpContext!);
         }
 
         var result = await UserManager.AddLoginAsync(User, info);
         if (!result.Succeeded)
         {
-            RedirectManager.RedirectToCurrentPageWithStatus("Error: The external login was not added. External logins can only be associated with one account.", HttpContext);
+            RedirectManager.RedirectToCurrentPageWithStatus("Error: The external login was not added. External logins can only be associated with one account.", HttpContext!);
         }
 
         // Clear the existing external cookie to ensure a clean login process
-        await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        await HttpContext!.SignOutAsync(IdentityConstants.ExternalScheme);
 
-        RedirectManager.RedirectToCurrentPageWithStatus("The external login was added.", HttpContext);
+        RedirectManager.RedirectToCurrentPageWithStatus("The external login was added.", HttpContext!);
     }
 
     private async Task OnSubmitAsync()
     {
-        var result = await UserManager.RemoveLoginAsync(User, LoginProvider!, ProviderKey!);
+        var result = await UserManager.RemoveLoginAsync(User!, LoginProvider!, ProviderKey!);
         if (!result.Succeeded)
         {
-            RedirectManager.RedirectToCurrentPageWithStatus("Error: The external login was not removed.", HttpContext);
+            RedirectManager.RedirectToCurrentPageWithStatus("Error: The external login was not removed.", HttpContext!);
         }
 
-        await SignInManager.RefreshSignInAsync(User);
-        RedirectManager.RedirectToCurrentPageWithStatus("The external login was removed.", HttpContext);
+        await SignInManager.RefreshSignInAsync(User!);
+        RedirectManager.RedirectToCurrentPageWithStatus("The external login was removed.", HttpContext!);
     }
 }
