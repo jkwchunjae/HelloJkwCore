@@ -27,8 +27,8 @@
                     <MudCardActions>
                         <form @formname="@($"remove-login-{loginInfo.Provider}")" @onsubmit="OnSubmitAsync" method="post">
                             <AntiforgeryToken />
-                            <input type="hidden" name="@nameof(LoginProvider)" value="@loginInfo.Provider" />
-                            <input type="hidden" name="@nameof(ProviderKey)" value="@loginInfo.ProviderKey" />
+                            <input type="hidden" name="LoginProvider" value="@loginInfo.Provider" />
+                            <input type="hidden" name="ProviderKey" value="@loginInfo.ProviderKey" />
                             <MudButton ButtonType="ButtonType.Submit">Remove</MudButton>
                         </form>
                     </MudCardActions>
