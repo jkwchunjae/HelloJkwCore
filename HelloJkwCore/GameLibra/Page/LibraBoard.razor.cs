@@ -2,7 +2,7 @@
 
 namespace GameLibra.Page;
 
-public partial class LibraBoard : JkwPageBase
+public partial class LibraBoard : JkwPageBase, IDisposable
 {
     [Parameter] public string GameId { get; set; }
     [Inject] public ILibraService LibraService { get; set; }
@@ -71,14 +71,13 @@ public partial class LibraBoard : JkwPageBase
         }
     }
 
-    protected override void OnPageDispose()
+    public void Dispose()
     {
         if (_gameEngine != null)
         {
             _gameEngine.StateChanged -= GameEngine_StateChanged;
             _gameEngine.RemainTimeChanged -= OnRemainTimeChanged;
         }
-        base.OnPageDispose();
     }
 
     private List<DropCubeItem> GetCubes(LibraGameState state)

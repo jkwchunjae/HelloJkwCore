@@ -5,14 +5,14 @@ using MudBlazor;
 
 namespace HelloJkwCore.Components.Account;
 
-public partial class UserManagePage : JkwPageBase2
+public partial class UserManagePage : JkwPageBase
 {
     [Inject] AppUserManager UserManager { get; set; } = default!;
     [Inject] IDialogService DialogService { get; set; } = default!;
 
-    private List<ApplicationUser> Users { get; set; } = new();
+    private List<AppUser> Users { get; set; } = new();
 
-    private IEnumerable<ApplicationUser> FilteredUsers => Users;
+    private IEnumerable<AppUser> FilteredUsers => Users;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -26,7 +26,7 @@ public partial class UserManagePage : JkwPageBase2
             .ToList();
     }
 
-    private async Task DeleteUserAsync(ApplicationUser user)
+    private async Task DeleteUserAsync(AppUser user)
     {
         await UserManager.DeleteAsync(user);
 
@@ -34,7 +34,7 @@ public partial class UserManagePage : JkwPageBase2
         StateHasChanged();
     }
 
-    private async Task ManageUserRole(ApplicationUser user)
+    private async Task ManageUserRole(AppUser user)
     {
         var param = new DialogParameters
         {
@@ -76,4 +76,4 @@ public partial class UserManagePage : JkwPageBase2
     }
 }
 
-record UserRoleResult(ApplicationUser User, List<UserRole> Role);
+record UserRoleResult(AppUser User, List<UserRole> Role);

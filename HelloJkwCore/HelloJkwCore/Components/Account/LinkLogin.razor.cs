@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HelloJkwCore.Components.Account;
 
-public partial class LinkLogin : JkwPageBase2
+public partial class LinkLogin : JkwPageBase
 {
     public const string LinkLoginCallbackAction = "LinkLoginCallback";
 
-    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
+    [Inject] private SignInManager<AppUser> SignInManager { get; set; } = default!;
     [Inject] private AppUserManager UserManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
 

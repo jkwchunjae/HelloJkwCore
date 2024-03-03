@@ -8,21 +8,43 @@ using System.Security.Claims;
 
 namespace Common;
 
-public class JkwPageBase : ComponentBase, IDisposable
+public class JkwPageBase : ComponentBase
 {
-    [Inject] protected IJSRuntime Js { get; set; }
-    [Inject] protected IUserStore<AppUser> UserStore { get; set; }
-    [Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-    [Inject] protected NavigationManager NavigationManager { get; set; }
-    [Inject] protected IHttpContextAccessor HttpContextAccessor { get; set; }
+    [Inject] protected IJSRuntime Js { get; set; } = null!;
+    [Inject] private AppUserManager UserManager { get; set; } = null!;
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     protected NavigationManager Navi => NavigationManager;
 
-    [CascadingParameter]
-    private AuthenticationState _authenticationState { get; set; }
+    protected bool IsAuthenticated { get; private set; } = false;
+    protected AppUser? User { get; private set; } = default;
 
-    protected bool IsAuthenticated { get; private set; }
+    protected sealed override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
 
-    protected AppUser User { get; set; }
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var contextUser = authState?.User;
+        var authenticated = false;
+        if (contextUser != null)
+        {
+            var user = await UserManager.GetUserAsync(contextUser);
+            if (user != null)
+            {
+                authenticated = true;
+                IsAuthenticated = true;
+                User = user;
+            }
+        }
+
+        if (!authenticated)
+        {
+            IsAuthenticated = false;
+            User = null;
+        }
+
+        await OnPageInitializedAsync();
+    }
 
     public sealed override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -45,36 +67,7 @@ public class JkwPageBase : ComponentBase, IDisposable
     protected sealed override void OnInitialized()
     {
         base.OnInitialized();
-
-        NavigationManager.LocationChanged += HandleLocationChanged;
-
         OnPageInitialized();
-    }
-
-    protected sealed override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        IsAuthenticated = _authenticationState.User?.Identity?.IsAuthenticated ?? false;
-
-        if (IsAuthenticated)
-        {
-            var userId = _authenticationState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            User = await UserStore.FindByIdAsync(userId, CancellationToken.None);
-
-            if (DateTime.Now - User.LastLoginTime > TimeSpan.FromDays(1))
-            {
-                User.LastLoginTime = DateTime.Now;
-                await UserStore.UpdateAsync(User, default);
-            }
-        }
-        else
-        {
-            User = null;
-        }
-
-        await OnPageInitializedAsync();
     }
 
     protected sealed override void OnParametersSet()
@@ -87,34 +80,6 @@ public class JkwPageBase : ComponentBase, IDisposable
     {
         await base.OnParametersSetAsync();
         await OnPageParametersSetAsync();
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= HandleLocationChanged;
-
-        OnPageDispose();
-    }
-
-    private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
-    {
-        //if (e.IsNavigationIntercepted == false)
-        //    return;
-
-        _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        IsAuthenticated = _authenticationState.User?.Identity?.IsAuthenticated ?? false;
-
-        if (IsAuthenticated)
-        {
-            var userId = _authenticationState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            User = await UserStore.FindByIdAsync(userId, CancellationToken.None);
-        }
-        else
-        {
-            User = null;
-        }
-
-        await HandleLocationChanged(e);
     }
 
     public virtual Task SetPageParametersAsync(ParameterView parameters)
@@ -133,10 +98,5 @@ public class JkwPageBase : ComponentBase, IDisposable
     protected virtual void OnPageParametersSet() { }
 
     protected virtual Task OnPageParametersSetAsync()
-        => Task.CompletedTask;
-
-    protected virtual void OnPageDispose() { }
-
-    protected virtual Task HandleLocationChanged(LocationChangedEventArgs e)
         => Task.CompletedTask;
 }

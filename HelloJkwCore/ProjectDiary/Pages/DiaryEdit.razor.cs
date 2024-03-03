@@ -1,6 +1,7 @@
-﻿namespace ProjectDiary.Pages;
+﻿
+namespace ProjectDiary.Pages;
 
-public partial class DiaryEdit : JkwPageBase
+public partial class DiaryEdit : JkwPageBase, IDisposable
 {
     [Inject] public IDiaryService DiaryService { get; set; }
     [Inject] private UserInstantData UserData { get; set; }
@@ -20,11 +21,17 @@ public partial class DiaryEdit : JkwPageBase
     private bool ContentHasError { get; set; }
     private bool HasError { get; set; }
 
+    public void Dispose()
+    {
+        Navi.LocationChanged -= HandleLocationChanged;
+    }
+
     protected override async Task OnPageInitializedAsync()
     {
+        Navi.LocationChanged += HandleLocationChanged;
         if (!IsAuthenticated)
         {
-            NavigationManager.NavigateTo("/login");
+            Navi.NavigateTo("/login");
             return;
         }
 
@@ -33,7 +40,18 @@ public partial class DiaryEdit : JkwPageBase
         StateHasChanged();
     }
 
-    protected override async Task HandleLocationChanged(LocationChangedEventArgs e)
+    private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        try
+        {
+            await HandleLocationChanged(e);
+        }
+        catch
+        {
+        }
+    }
+
+    protected async Task HandleLocationChanged(LocationChangedEventArgs e)
     {
         await InitDiary();
 

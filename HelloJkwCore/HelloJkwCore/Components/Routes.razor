@@ -8,12 +8,11 @@
 </Router>
 
 @code {
-    List<Assembly> assemblies = new()
-        {
-            typeof(Common.JkwPageBase).Assembly,
-            typeof(ProjectDiary.DiaryService).Assembly,
-            typeof(ProjectBaduk.BadukService).Assembly,
-            typeof(ProjectPingpong.PpService).Assembly,
-            typeof(GameLibra.LibraService).Assembly,
-        };
+    Assembly[] assemblies = [
+        typeof(Common.JkwPageBase).Assembly,
+        typeof(ProjectDiary.DiaryService).Assembly,
+        typeof(ProjectBaduk.BadukService).Assembly,
+        typeof(ProjectPingpong.PpService).Assembly,
+        typeof(GameLibra.LibraService).Assembly,
+    ];
 }
