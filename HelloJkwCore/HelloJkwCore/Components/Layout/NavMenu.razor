@@ -1,0 +1,51 @@
+﻿@inherits JkwPageBase2
+
+<MudNavMenu Class="mud-nav-menu-custom">
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+        Home
+    </MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="account/user" Icon="@Icons.Material.Filled.Login">
+                @(User?.DisplayName ?? "??")
+            </MudNavLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Href="account/login" Icon="@Icons.Material.Filled.Login">
+                로그인
+            </MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
+    <MudNavLink Href="diary" Icon="@Icons.Material.Filled.MenuBook">
+        일기장
+    </MudNavLink>
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <MudNavLink Href="diary/admintool" Icon="@Icons.Material.Filled.MenuBook">
+                일기장 관리
+            </MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+    <MudNavLink Href="baduk" Icon="@Icons.Material.Filled.Window">
+        바둑
+    </MudNavLink>
+    <MudNavLink Href="jangtak9" Icon="@Icons.Material.Filled.SportsTennis">
+        장탁구
+    </MudNavLink>
+    <MudNavLink Href="game/libra/home" Icon="@Icons.Material.Filled.Scale">
+        양팔 저울
+    </MudNavLink>
+    <MudNavLink Href="https://hellojkw.tistory.com" Icon="@Icons.Material.Filled.EditNote" Target="_blank">
+        블로그
+    </MudNavLink>
+    <MudNavLink Href="https://github.com/jkwchunjae" Icon="@Icons.Custom.Brands.GitHub" Target="_blank">
+        GitHub
+    </MudNavLink>
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <MudNavLink Href="admin/users" Icon="@Icons.Material.Filled.People">
+                유저 관리
+            </MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+</MudNavMenu>

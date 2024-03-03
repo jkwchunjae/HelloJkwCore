@@ -1,6 +1,5 @@
-﻿namespace HelloJkwCore;
+﻿namespace HelloJkwCore.Authentication;
 
-[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
 [TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum AuthProvider
 {

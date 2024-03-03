@@ -1,28 +1,90 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using HelloJkwCore.Authentication;
+using HelloJkwCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using MudBlazor.Services;
+using HelloJkwCore;
 
-namespace HelloJkwCore;
+var builder = WebApplication.CreateBuilder(args);
 
-public class Program
-{
-    public static void Main(string[] args)
+builder.Configuration.AddJsonFile("appsettings.user.json", optional: true);
+
+var coreOption = CoreOption.Create(builder.Configuration);
+builder.Services.AddSingleton(coreOption);
+
+// Add services to the container.
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+builder.Services.AddHostedService<QueuedHostedService>();
+builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+builder.Services.AddHttpClient();
+
+builder.Services.AddMudServices();
+
+#region FileSystem
+
+var fsOption = new FileSystemOption();
+builder.Configuration.GetSection("FileSystem").Bind(fsOption);
+builder.Services.AddSingleton(fsOption);
+builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
+
+#endregion
+
+#region Authentication
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+AuthUtil authUtil = new AuthUtil(coreOption);
+
+builder.Services
+    .AddAuthentication(options =>
     {
-        CreateHostBuilder(args).Build().Run();
-    }
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddGoogleAuthentication(authUtil)
+    .AddKakaoAuthentication(authUtil)
+    .AddIdentityCookies();
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration(config =>
-            {
-                config.AddJsonFile("appsettings.User.json", optional: true);
+builder.Services
+    .AddIdentityCore<ApplicationUser>()
+    .AddUserManager<AppUserManager>()
+    .AddRoles<ApplicationRole>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
 
-                if (args != null)
-                {
-                    config.AddCommandLine(args);
-                }
-            })
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
+builder.Services.AddSingleton<IUserStore<ApplicationUser>, AppUserStore>();
+builder.Services.AddSingleton<IRoleStore<ApplicationRole>, AppRoleStore>();
+
+#endregion
+
+builder.Services.AddDiaryService(builder.Configuration);
+builder.Services.AddBadukService(builder.Configuration);
+builder.Services.AddPingpongService(builder.Configuration);
+builder.Services.AddGameLibra(builder.Configuration);
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+// Add additional endpoints required by the Identity /Account Razor components.
+app.MapAdditionalIdentityEndpoints();
+
+app.Run();
