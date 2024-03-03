@@ -68,7 +68,9 @@ public class AppUserStore : IUserLoginStore<ApplicationUser>
         var loginFilePath = (Paths path) => Path.Join(path["Logins"], loginFileName);
         if (await _fs.FileExistsAsync(loginFilePath, cancellationToken))
         {
-            await _fs.DeleteFileAsync(loginFilePath, cancellationToken);
+            var loginInfo = await _fs.ReadJsonAsync<AppLoginInfo>(loginFilePath, cancellationToken);
+            loginInfo.ConnectedUserId = null;
+            await _fs.WriteJsonAsync<AppLoginInfo>(loginFilePath, loginInfo, cancellationToken);
         }
 
         user.Logins.RemoveAll(x => x.Provider == loginProvider && x.ProviderKey == providerKey);
