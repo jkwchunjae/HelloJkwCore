@@ -2,21 +2,43 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.JSInterop;
+using MudBlazor;
 
 namespace HelloJkwCore2.Components.Account;
 
 public partial class Login : ComponentBase
 {
-    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] public IJSRuntime Js { get; set; } = default!;
+    [Inject] public ISnackbar Snackbar { get; set; } = default!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
 
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
     private AuthenticationScheme[] externalLogins = [];
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+    private string UserAgent = string.Empty;
+    private bool IsInAppBrowser => ExceptApps.Any(app => UserAgent.Contains(app));
+    private string[] ExceptApps = new[] { "kakao", "naver" };
 
     protected override async Task OnInitializedAsync()
     {
         externalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToArray();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var userAgent = await Js.InvokeAsync<string>("navigator.userAgent");
+            await Js.InvokeVoidAsync("console.log", "UserAgent", userAgent);
+            UserAgent = userAgent.ToLower();
+            StateHasChanged();
+        }
+    }
+
+    private void LoginGoogleInOtherBrowser()
+    {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add("구글 로그인은 크롬에서 해주세요.");
     }
 
     private string LoginImage(string provider)
