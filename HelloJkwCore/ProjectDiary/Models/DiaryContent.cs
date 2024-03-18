@@ -8,6 +8,7 @@ public class DiaryContent
     public bool IsSecret { get; set; }
     public int Index { get; set; }
     public string Text { get; set; }
+    public List<string> Pictures { get; set; } = null;
 
     public string GetFileName()
     {
