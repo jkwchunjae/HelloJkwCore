@@ -99,4 +99,15 @@ public class InMemoryFileSystem : IFileSystem
         _files[path] = text;
         return Task.FromResult(true);
     }
+
+    public async Task<bool> WriteBlobAsync(Func<Paths, string> pathFunc, Stream stream, CancellationToken ct = default)
+    {
+        var path = pathFunc(GetPathOf());
+        using (var reader = new StreamReader(stream))
+        {
+            var text = await reader.ReadToEndAsync();
+            _files[path] = text;
+        }
+        return true;
+    }
 }
