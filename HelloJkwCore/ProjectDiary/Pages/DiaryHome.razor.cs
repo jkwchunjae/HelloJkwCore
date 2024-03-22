@@ -1,4 +1,6 @@
-﻿namespace ProjectDiary.Pages;
+﻿using Microsoft.AspNetCore.Components.Forms;
+
+namespace ProjectDiary.Pages;
 
 public partial class DiaryHome : JkwPageBase
 {
@@ -140,5 +142,18 @@ public partial class DiaryHome : JkwPageBase
 
         var diaryName = userDiaryInfo.MyDiaryList.First();
         return await GetDiaryInfo(diaryName);
+    }
+
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    private Task UploadFiles(IReadOnlyList<IBrowserFile> files)
+    {
+        foreach (var file in files)
+        {
+            this.files.Add(file);
+        }
+        const int _10MB = 10 * 1024 * 1024;
+        var stream = files[0].OpenReadStream(maxAllowedSize: _10MB);
+
+        return Task.CompletedTask;
     }
 }
