@@ -178,7 +178,8 @@ public partial class DiaryService : IDiaryService
             diaryContent.Pictures ??= new List<string>();
             diaryContent.Pictures.AddRange(images);
             await UpdateDiaryAsync(user, diary, view.DiaryContents);
-            return view;
+            var newView = await GetDiaryViewAsync(user, diary, date);
+            return newView;
         }
         else
         {

@@ -53,10 +53,23 @@ public partial class DiaryService : IDiaryService
             .Select(async fileName => await GetDiaryContentAsync(user, diary, fileName))
             .WhenAll();
 
+        var pictures = await todayContents
+            .Where(x => x?.Pictures?.Any() ?? false)
+            .SelectMany(x => x.Pictures)
+            .Select(async fileName =>
+            {
+                Func<Paths, string> picturePath = path => path.Picture(diary.DiaryName, date, fileName);
+                var bytes = await _fs.ReadBlobAsync(picturePath);
+                var base64 = Convert.ToBase64String(bytes);
+                return base64;
+            })
+            .WhenAll();
+
         return new DiaryView
         {
             DiaryInfo = diary,
             DiaryContents = todayContents.Where(x => x != null).ToList(),
+            PicturesBase64 = pictures.ToList(),
             DiaryNavigationData = new DiaryNavigationData
             {
                 Today = date.Date,
