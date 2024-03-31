@@ -1,4 +1,6 @@
-﻿namespace Tests.Diary;
+﻿using static Dropbox.Api.Files.ListRevisionsMode;
+
+namespace Tests.Diary;
 
 public class DiaryServiceTest
 {
@@ -41,8 +43,9 @@ public class DiaryServiceTest
 
         _diaryService = new DiaryService(diaryOption, null, null, fileSystemService);
 
-        _user = new AppUser("Test", "1234")
+        _user = new AppUser()
         {
+            Id = new UserId("Test.1234"),
             Email = "test@hellojkw.com",
             UserName = "test user",
         };
