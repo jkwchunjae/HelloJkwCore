@@ -1,4 +1,6 @@
-﻿namespace ProjectDiary;
+﻿using Microsoft.AspNetCore.Components.Forms;
+
+namespace ProjectDiary;
 
 public partial class DiaryService : IDiaryService
 {
@@ -153,5 +155,35 @@ public partial class DiaryService : IDiaryService
         }
 
         return await UpdateDiaryAsync(user, diary, contents);
+    }
+
+    public async Task<DiaryView> UploadImageAsync(AppUser user, DiaryInfo diary, DateTime date, IReadOnlyList<IBrowserFile> files)
+    {
+        var view = await GetDiaryViewAsync(user, diary, date);
+        if (view.DiaryContents?.Any() ?? false)
+        {
+            var diaryContent = view.DiaryContents.First();
+            var pictureLastIndex = diaryContent.PictureLastIndex;
+            var images = await files
+                .Select(async (file, index) =>
+                {
+                    var pictureIndex = pictureLastIndex + index + 1;
+                    var fileName = $"{date:yyyyMMdd}_{pictureIndex:D3}.{file.Name}";
+                    Func<Paths, string> picturePath = path => path.Picture(diary.DiaryName, fileName);
+                    const int _10MB = 10 * 1024 * 1024;
+                    await _fs.WriteBlobAsync(picturePath, file.OpenReadStream(maxAllowedSize: _10MB));
+                    return fileName;
+                })
+                .WhenAll();
+            diaryContent.Pictures ??= new List<string>();
+            diaryContent.Pictures.AddRange(images);
+            await UpdateDiaryAsync(user, diary, view.DiaryContents);
+            var newView = await GetDiaryViewAsync(user, diary, date);
+            return newView;
+        }
+        else
+        {
+            return view;
+        }
     }
 }

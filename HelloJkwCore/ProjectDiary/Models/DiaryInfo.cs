@@ -6,6 +6,7 @@ public class DiaryInfo
     public UserId Owner { get; set; }
     public DiaryName DiaryName { get; set; }
     public bool IsSecret { get; set; }
+    public bool AllowPicture { get; set; } = false;
     public List<UserId> Writers { get; set; } = new();
     public List<UserId> Viewers { get; set; } = new();
 
@@ -28,6 +29,7 @@ public class DiaryInfo
         IsSecret = info.IsSecret;
         Writers = info.Writers;
         Viewers = info.Viewers;
+        AllowPicture = info.AllowPicture;
     }
 
     public bool CanManage(UserId userId)

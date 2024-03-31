@@ -1,4 +1,6 @@
-﻿namespace ProjectDiary;
+﻿using Microsoft.AspNetCore.Components.Forms;
+
+namespace ProjectDiary;
 
 public interface IDiaryService
 {
@@ -25,5 +27,9 @@ public interface IDiaryService
     Task<DiaryContent> WriteDiaryAsync(AppUser user, DiaryInfo diary, DateTime date, string text, string password);
     Task<List<DiaryContent>> UpdateDiaryAsync(AppUser user, DiaryInfo diary, List<DiaryContent> contents);
     Task<List<DiaryContent>> UpdateDiaryAsync(AppUser user, DiaryInfo diary, List<DiaryContent> contents, string password);
+    #endregion
+
+    #region Images
+    Task<DiaryView> UploadImageAsync(AppUser user, DiaryInfo diary, DateTime date, IReadOnlyList<IBrowserFile> files);
     #endregion
 }

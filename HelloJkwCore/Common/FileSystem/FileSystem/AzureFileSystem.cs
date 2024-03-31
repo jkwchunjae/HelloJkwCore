@@ -214,4 +214,43 @@ public class AzureFileSystem : IFileSystem
             throw;
         }
     }
+
+    public async Task<bool> WriteBlobAsync(Func<Paths, string> pathFunc, Stream stream, CancellationToken ct = default)
+    {
+        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        _logger?.LogDebug("WriteBlobAsync. container: {container}, path: {path}", containerName, path);
+        try
+        {
+            var client = await GetContainerClient(containerName);
+            var blobClient = client.GetBlobClient(path);
+
+            var response = await blobClient.UploadAsync(stream, overwrite: true, cancellationToken: ct);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "[Error] WriteBlobAsync. container: {container}, path: {path}", containerName, path);
+            throw;
+        }
+    }
+
+    public async Task<byte[]> ReadBlobAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        _logger?.LogDebug("ReadBlobAsync. container: {container}, path: {path}", containerName, path);
+        try
+        {
+            var client = await GetContainerClient(containerName);
+            var blobClient = client.GetBlobClient(path);
+
+            var content = await blobClient.DownloadContentAsync(ct);
+            var bytes = content.Value.Content.ToArray();
+            return bytes;
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "[Error] ReadBlobAsync. container: {container}, path: {path}", containerName, path);
+            throw;
+        }
+    }
 }

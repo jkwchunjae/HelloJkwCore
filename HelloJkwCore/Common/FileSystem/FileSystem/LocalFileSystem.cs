@@ -109,4 +109,29 @@ public class LocalFileSystem : IFileSystem
         await File.WriteAllTextAsync(path, text, _encoding, ct);
         return true;
     }
+
+    public async Task<bool> WriteBlobAsync(Func<Paths, string> pathFunc, Stream stream, CancellationToken ct = default)
+    {
+        var path = pathFunc(GetPathOf());
+        var dir = Directory.GetParent(path);
+        if (!Directory.Exists(dir.FullName))
+        {
+            Directory.CreateDirectory(dir.FullName);
+        }
+        using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
+        {
+            await stream.CopyToAsync(fileStream, 4096, ct);
+        }
+        return true;
+    }
+
+    public async Task<byte[]> ReadBlobAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        var path = pathFunc(GetPathOf());
+        if (!File.Exists(path))
+            return [];
+
+        var bytes = await File.ReadAllBytesAsync(path);
+        return bytes;
+    }
 }

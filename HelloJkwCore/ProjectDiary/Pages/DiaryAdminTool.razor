@@ -9,12 +9,19 @@
       <HeaderContent>
         <MudTh>일기장</MudTh>
         <MudTh>글쓴이</MudTh>
+        <MudTh>사진</MudTh>
         <MudTh>글 수</MudTh>
         <MudTh>...</MudTh>
       </HeaderContent>
       <RowTemplate Context="diaryData">
         <MudTd DataLabel="일기장">@diaryData.DiaryName</MudTd>
         <MudTd DataLabel="글쓴이">@diaryData.OwnerName</MudTd>
+        <MudTd DataLabel="사진">
+            <MudSelect T="bool" Value="diaryData.AllowPicture" ValueChanged="@(async (value) => await ChangeAllowPicture(diaryData, value))">
+                <MudSelectItem Value="true">허용</MudSelectItem>
+                <MudSelectItem Value="false">금지</MudSelectItem>
+            </MudSelect>
+        </MudTd>
         <MudTd DataLabel="글 수">@diaryData.DiaryFileList.Count</MudTd>
         <MudTd>
           @if (diaryData.IsSecret == false)

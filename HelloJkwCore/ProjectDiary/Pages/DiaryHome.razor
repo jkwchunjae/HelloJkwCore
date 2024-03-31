@@ -52,23 +52,23 @@ else if (HasDiaryContent)
 
     <div class="button-group">
     <div id="button-left-group">
-        <MudButton Link="@DiaryUrl.PrevDate(View)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Surface" Disabled="!View.DiaryNavigationData.HasPrev">
+        <MudButton Href="@DiaryUrl.PrevDate(View)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Surface" Disabled="!View.DiaryNavigationData.HasPrev">
             이전
         </MudButton>
-        <MudButton Link="@DiaryUrl.NextDate(View)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Surface" Disabled="!View.DiaryNavigationData.HasNext">
+        <MudButton Href="@DiaryUrl.NextDate(View)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Surface" Disabled="!View.DiaryNavigationData.HasNext">
             다음
         </MudButton>
     </div>
     <div id="button-right-group">
         @if (DiaryInfo.CanWrite(User.Id))
         {
-            <MudButton Link="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
+            <MudButton Href="@DiaryUrl.ShowAll(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
                 전체보기
             </MudButton>
         }
         @if (DiaryInfo.IsSecret == false && DiaryInfo.CanWrite(User.Id))
         {
-            <MudButton Link="@DiaryUrl.Search(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
+            <MudButton Href="@DiaryUrl.Search(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info">
                 검색
             </MudButton>
         }
@@ -76,34 +76,58 @@ else if (HasDiaryContent)
         {
             var nextDate = View.DiaryContents.First().Date.AddDays(1);
 
-            <MudButton Link="@DiaryUrl.Write(DiaryInfo, nextDate)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Success">
+            <MudButton Href="@DiaryUrl.Write(DiaryInfo, nextDate)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Success">
                 쓰기
             </MudButton>
         }
         @if (IsMyText(View))
         {
-            <MudButton Link="@DiaryUrl.Edit(DiaryInfo, View.DiaryContents[0].Date)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Tertiary">
+            <MudButton Href="@DiaryUrl.Edit(DiaryInfo, View.DiaryContents[0].Date)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Tertiary">
                 수정
             </MudButton>
         }
         @if (DiaryInfo.IsSecret)
         {
-            <MudButton Link="@DiaryUrl.SetPassword()" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Tertiary">
+            <MudButton Href="@DiaryUrl.SetPassword()" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Tertiary">
                 암호
             </MudButton>
         }
         @if (User?.HasRole(UserRole.Admin) ?? false)
         {
-            <MudButton Link="@DiaryUrl.Settings(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Default">
+            <MudButton Href="@DiaryUrl.Settings(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Default">
                 공개설정
             </MudButton>
         }
+        @if (DiaryInfo.CanWrite(User.Id) && DiaryInfo.AllowPicture)
+        {
+        <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles" Accept=".jpg,.png">
+            <ButtonTemplate Context="fileUploadContext">
+                <MudButton HtmlTag="label"
+                            Variant="Variant.Outlined"
+                            Size="Size.Small"
+                            StartIcon="@Icons.Material.Filled.CloudUpload"
+                            for="@fileUploadContext.Id"
+                            >
+                    사진 업로드
+                </MudButton>
+            </ButtonTemplate>
+        </MudFileUpload>
+        }
+
     </div>
     </div>
 
     @foreach (var content in View.DiaryContents)
     {
         <pre style="white-space: pre-wrap">@content.Text</pre>
+    }
+
+    @if (DiaryInfo.AllowPicture && (View.PicturesBase64?.Any() ?? false))
+    {
+        @foreach (var picture in View.PicturesBase64)
+        {
+            <img src="data:image/jpg;base64,@picture" style="width: 100%;"/>
+        }
     }
 
         </Authorized>

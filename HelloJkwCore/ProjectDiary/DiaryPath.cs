@@ -4,6 +4,7 @@ public static class DiaryPathType
 {
     public static readonly string DiaryNameListFile = nameof(DiaryNameListFile);
     public static readonly string DiaryContentsRootPath = nameof(DiaryContentsRootPath);
+    public static readonly string DiaryPictureRootPath = nameof(DiaryPictureRootPath);
     public static readonly string DiaryListPath = nameof(DiaryListPath);
     public static readonly string DiaryTriePath = nameof(DiaryTriePath);
 }
@@ -23,6 +24,11 @@ public static class DiaryPath
     public static string DiaryNameListFile(this Paths paths)
     {
         return paths[DiaryPathType.DiaryNameListFile];
+    }
+
+    public static string DiaryPictures(this Paths paths)
+    {
+        return paths[DiaryPathType.DiaryPictureRootPath];
     }
 
     public static string UserDiaryInfo(this Paths paths, AppUser user)
@@ -54,5 +60,10 @@ public static class DiaryPath
     {
         var dirPath = paths[DiaryPathType.DiaryTriePath];
         return $"{dirPath}/trie.{diaryName}.{year}.json";
+    }
+
+    public static string Picture(this Paths paths, DiaryName diaryName, string fileName)
+    {
+        return $"{paths.DiaryPictures()}/{diaryName}/{fileName}";
     }
 }

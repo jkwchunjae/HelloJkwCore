@@ -168,4 +168,40 @@ public class DropboxFileSystem : IFileSystem
             return false;
         }
     }
+
+    public async Task<bool> WriteBlobAsync(Func<Paths, string> pathFunc, Stream stream, CancellationToken ct = default)
+    {
+        var path = pathFunc(_paths);
+        try
+        {
+            await _client.Files.UploadAsync(path, WriteMode.Overwrite.Instance, body: stream);
+            return true;
+        }
+        catch (ApiException<UploadError>)
+        {
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<byte[]> ReadBlobAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        var path = pathFunc(_paths);
+        try
+        {
+            using var response = await _client.Files.DownloadAsync(path);
+            return await response.GetContentAsByteArrayAsync();
+        }
+        catch (ApiException<DownloadError>)
+        {
+            return default;
+        }
+        catch
+        {
+            return default;
+        }
+    }
 }
