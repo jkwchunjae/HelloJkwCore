@@ -58,7 +58,7 @@ public partial class DiaryService : IDiaryService
             .SelectMany(x => x.Pictures)
             .Select(async fileName =>
             {
-                Func<Paths, string> picturePath = path => path.Picture(diary.DiaryName, date, fileName);
+                Func<Paths, string> picturePath = path => path.Picture(diary.DiaryName, fileName);
                 var bytes = await _fs.ReadBlobAsync(picturePath);
                 var base64 = Convert.ToBase64String(bytes);
                 return base64;
