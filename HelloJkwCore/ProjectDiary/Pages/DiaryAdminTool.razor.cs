@@ -119,6 +119,16 @@ public partial class DiaryAdminTool : JkwPageBase
         diaryData.Progress = (true, progressTotal, progressValue);
         StateHasChanged();
     }
+
+    async Task ChangeAllowPicture(DiaryData diaryData, bool allowPicture)
+    {
+        await DiaryService.UpdateDiaryInfoAsync(diaryData.OwnerUser, diaryData.DiaryName, info =>
+        {
+            info.AllowPicture = allowPicture;
+            return true;
+        });
+        diaryData.AllowPicture = allowPicture;
+    }
 }
 
 class DiaryData : DiaryInfo

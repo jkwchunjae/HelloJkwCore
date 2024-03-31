@@ -29,6 +29,7 @@ public class DiaryInfo
         IsSecret = info.IsSecret;
         Writers = info.Writers;
         Viewers = info.Viewers;
+        AllowPicture = info.AllowPicture;
     }
 
     public bool CanManage(UserId userId)
