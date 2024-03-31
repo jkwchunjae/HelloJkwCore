@@ -106,9 +106,20 @@ else if (HasDiaryContent)
         <pre style="white-space: pre-wrap">@content.Text</pre>
     }
 
+    @foreach (var content in View.DiaryContents)
+    {
+        @if (content.Pictures != null)
+        {
+            @foreach (var picture in content.Pictures)
+            {
+                <span>@picture</span>
+            }
+        }
+    }
+
     @if (DiaryInfo.CanWrite(User.Id))
     {
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles">
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles" Accept=".jpg,.png">
         <ButtonTemplate Context="fileUploadContext">
             <MudButton HtmlTag="label"
                         Variant="Variant.Filled"

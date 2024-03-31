@@ -145,15 +145,11 @@ public partial class DiaryHome : JkwPageBase
     }
 
     IList<IBrowserFile> files = new List<IBrowserFile>();
-    private Task UploadFiles(IReadOnlyList<IBrowserFile> files)
+    private async Task UploadFiles(IReadOnlyList<IBrowserFile> files)
     {
-        foreach (var file in files)
-        {
-            this.files.Add(file);
-        }
-        const int _10MB = 10 * 1024 * 1024;
-        var stream = files[0].OpenReadStream(maxAllowedSize: _10MB);
-
-        return Task.CompletedTask;
+        var today = View.DiaryNavigationData.Today;
+        var view = await DiaryService.UploadImageAsync(User, DiaryInfo, today, files);
+        View = view;
+        StateHasChanged();
     }
 }

@@ -14,4 +14,26 @@ public class DiaryContent
     {
         return $"{Date:yyyyMMdd}_{Index}.diary";
     }
+
+    [TextJsonIgnore]
+    public int PictureLastIndex
+    {
+        get
+        {
+            // picture = 19890201_001_FILE_NAME.jpg
+            if (Pictures?.Any() ?? false)
+            {
+                var lastIndex = Pictures
+                    .Select(pic => pic.Split(['_', '.']))
+                    .Where(arr => arr.Length >= 3)
+                    .Select(arr => int.Parse(arr[1]))
+                    .Max();
+                return lastIndex;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
 }
