@@ -186,4 +186,22 @@ public class DropboxFileSystem : IFileSystem
             return false;
         }
     }
+
+    public async Task<byte[]> ReadBlobAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        var path = pathFunc(_paths);
+        try
+        {
+            using var response = await _client.Files.DownloadAsync(path);
+            return await response.GetContentAsByteArrayAsync();
+        }
+        catch (ApiException<DownloadError>)
+        {
+            return default;
+        }
+        catch
+        {
+            return default;
+        }
+    }
 }

@@ -100,4 +100,9 @@ public class BackupFileSystem : IFileSystem
         //});
         return await _fs.WriteBlobAsync(pathFunc, stream, ct);
     }
+
+    public async Task<byte[]> ReadBlobAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        return await _fs.ReadBlobAsync(pathFunc, ct);
+    }
 }

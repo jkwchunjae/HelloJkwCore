@@ -103,11 +103,23 @@ public class InMemoryFileSystem : IFileSystem
     public async Task<bool> WriteBlobAsync(Func<Paths, string> pathFunc, Stream stream, CancellationToken ct = default)
     {
         var path = pathFunc(GetPathOf());
-        using (var reader = new StreamReader(stream))
+        using (var reader = new StreamReader(stream, Encoding.ASCII))
         {
             var text = await reader.ReadToEndAsync();
             _files[path] = text;
         }
         return true;
+    }
+
+    public Task<byte[]> ReadBlobAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        var path = pathFunc(GetPathOf());
+
+        if (!_files.ContainsKey(path))
+            return Task.FromResult<byte[]>([]);
+
+        var text = _files[path];
+        var bytes = Encoding.ASCII.GetBytes(text);
+        return Task.FromResult(bytes);
     }
 }

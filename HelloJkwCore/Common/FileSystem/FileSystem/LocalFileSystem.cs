@@ -124,4 +124,14 @@ public class LocalFileSystem : IFileSystem
         }
         return true;
     }
+
+    public async Task<byte[]> ReadBlobAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        var path = pathFunc(GetPathOf());
+        if (!File.Exists(path))
+            return [];
+
+        var bytes = await File.ReadAllBytesAsync(path);
+        return bytes;
+    }
 }

@@ -10,6 +10,7 @@ public interface IFileSystem
     Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
     Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default);
     Task<bool> WriteBlobAsync(Func<Paths, string> pathFunc, Stream stream, CancellationToken ct = default);
+    Task<byte[]> ReadBlobAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
     Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
     Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
 }
