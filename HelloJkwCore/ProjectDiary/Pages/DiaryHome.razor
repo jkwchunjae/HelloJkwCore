@@ -92,7 +92,7 @@ else if (HasDiaryContent)
                 암호
             </MudButton>
         }
-        @if (User?.HasRole(UserRole.Admin) ?? false)
+        @if (DiaryInfo.CanManage(User.Id))
         {
             <MudButton Href="@DiaryUrl.Settings(DiaryInfo.DiaryName)" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Default">
                 공개설정
