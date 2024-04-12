@@ -79,6 +79,8 @@ public partial class DiaryService : IDiaryService
         var content = new DiaryContent
         {
             Date = date,
+            WriterId = user?.Id,
+            WirterName = user?.DisplayName,
             Text = text,
             IsSecret = isSecret,
             RegDate = DateTime.Now,

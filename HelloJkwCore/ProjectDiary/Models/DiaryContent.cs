@@ -5,6 +5,8 @@ public class DiaryContent
     public DateTime Date { get; set; }
     public DateTime RegDate { get; set; }
     public DateTime LastModifyDate { get; set; }
+    public UserId WriterId { get; set; } = null;
+    public string WirterName { get; set; } = null;
     public bool IsSecret { get; set; }
     public int Index { get; set; }
     public string Text { get; set; }
