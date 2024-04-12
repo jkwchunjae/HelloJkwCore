@@ -5,5 +5,12 @@
     <MudAlert Severity="Severity.Warning">한 단어가 너무 깁니다. 중간중간 띄어쓰기를 넣어주세요. @LongWord</MudAlert>
 }
 
-<MudTextField T="string" Value="@Text" ValueChanged="OnTextChanged" Lines="15" Style="line-height: 30px;" AutoFocus="AutoFocus"/>
+<MudTextField T="string"
+    Value="@Text"
+    DebounceInterval="1000"
+    OnDebounceIntervalElapsed="OnTextChanged"
+    Lines="15"
+    Style="line-height: 30px;"
+    AutoFocus="AutoFocus"
+/>
 
