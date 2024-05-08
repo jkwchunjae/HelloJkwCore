@@ -6,10 +6,11 @@
 }
 
 <MudTextField T="string"
+    @ref="_textField"
     Value="@Text"
     DebounceInterval="1000"
     OnDebounceIntervalElapsed="OnTextChanged"
-    OnBlur="OnTextChanged"
+    OnBlur="OnBlur"
     Lines="15"
     Style="line-height: 30px;"
     AutoFocus="AutoFocus"

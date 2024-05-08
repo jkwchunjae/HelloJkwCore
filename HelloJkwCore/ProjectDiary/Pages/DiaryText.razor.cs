@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
+using MudBlazor;
 
 namespace ProjectDiary.Pages;
 
@@ -12,6 +13,13 @@ public partial class DiaryText : JkwPageBase
     private bool WarningTooLongWord { get; set; }
     private string LongWord { get; set; }
 
+    MudTextField<string> _textField;
+
+    private async Task OnBlur(FocusEventArgs args)
+    {
+        var text = _textField.Value;
+        await OnTextChanged(text);
+    }
 
     private async Task OnTextChanged(string text)
     {
