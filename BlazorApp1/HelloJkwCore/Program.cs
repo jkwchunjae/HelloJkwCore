@@ -14,8 +14,19 @@ builder.Services.AddSingleton(coreOption);
 
 // Add services to the container.
 builder.Services.AddRazorComponents();
+builder.Services.AddHostedService<QueuedHostedService>();
+builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 
 builder.Services.AddMudServices();
+
+#region FileSystem
+
+var fsOption = new FileSystemOption();
+builder.Configuration.GetSection("FileSystem").Bind(fsOption);
+builder.Services.AddSingleton(fsOption);
+builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
+
+#endregion
 
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 AuthUtil authUtil = new AuthUtil(coreOption);
