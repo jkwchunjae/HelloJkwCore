@@ -1,9 +1,44 @@
+using HelloJkwCore;
+using HelloJkwCore.Authentication;
 using HelloJkwCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.user.json", optional: true);
+
+var coreOption = CoreOption.Create(builder.Configuration);
+builder.Services.AddSingleton(coreOption);
+
 // Add services to the container.
 builder.Services.AddRazorComponents();
+
+builder.Services.AddMudServices();
+
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+AuthUtil authUtil = new AuthUtil(coreOption);
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddGoogleAuthentication(authUtil)
+    .AddKakaoAuthentication(authUtil)
+    .AddIdentityCookies();
+
+builder.Services
+    .AddIdentityCore<AppUser>()
+    .AddUserManager<AppUserManager>()
+    .AddRoles<ApplicationRole>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddSingleton<IUserStore<AppUser>, AppUserStore>();
+builder.Services.AddSingleton<IRoleStore<ApplicationRole>, AppRoleStore>();
 
 var app = builder.Build();
 
