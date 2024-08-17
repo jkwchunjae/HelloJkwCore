@@ -24,7 +24,7 @@ public class FileSystemService : IFileSystemService
     {
         _fsOption = fsOption;
         _loggerFactory = loggerFactory;
-        _logger = loggerFactory?.CreateLogger<FileSystemService>();
+        _logger = loggerFactory.CreateLogger<FileSystemService>();
         _queue = backgroundTaskQueue;
     }
 
