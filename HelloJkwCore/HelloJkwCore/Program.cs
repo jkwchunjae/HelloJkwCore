@@ -1,9 +1,9 @@
+using HelloJkwCore;
 using HelloJkwCore.Authentication;
 using HelloJkwCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using MudBlazor.Services;
-using HelloJkwCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
