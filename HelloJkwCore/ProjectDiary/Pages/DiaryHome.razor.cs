@@ -33,7 +33,7 @@ public partial class DiaryHome : JkwPageBase, IDisposable
         Navi.LocationChanged += HandleLocationChanged;
         if (!IsAuthenticated)
         {
-            Navi.NavigateTo("/login");
+            Navi.NavigateTo("/account/login");
             return;
         }
 
