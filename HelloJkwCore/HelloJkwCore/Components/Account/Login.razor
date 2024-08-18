@@ -26,3 +26,14 @@
         </form>
     }
 }
+
+<script>
+    function checkAntiforgeryToken() {
+        var inputs = document.getElementsByName("__RequestVerificationToken");
+        return inputs.length != 0;
+    }
+
+    function reload() {
+        location.reload();
+    }
+</script>

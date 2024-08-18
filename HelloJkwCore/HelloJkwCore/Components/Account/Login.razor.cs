@@ -28,6 +28,13 @@ public partial class Login : ComponentBase
     {
         if (firstRender)
         {
+            var hasAntiforgeryToken = await Js.InvokeAsync<bool>("checkAntiforgeryToken");
+            if (!hasAntiforgeryToken)
+            {
+                await Js.InvokeVoidAsync("reload");
+                return;
+            }
+
             var userAgent = await Js.InvokeAsync<string>("getUserAgent");
             await Js.InvokeVoidAsync("console.log", "UserAgent", userAgent);
             UserAgent = userAgent.ToLower();
