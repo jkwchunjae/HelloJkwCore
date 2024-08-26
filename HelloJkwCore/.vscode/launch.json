@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/HelloJkwCore/bin/Debug/net7.0/HelloJkwCore.dll",
+            "program": "${workspaceFolder}/HelloJkwCore/bin/Debug/net8.0/HelloJkwCore.dll",
             "args": [],
             "cwd": "${workspaceFolder}/HelloJkwCore",
             "stopAtEntry": false,
