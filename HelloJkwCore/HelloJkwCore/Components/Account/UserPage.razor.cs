@@ -2,6 +2,7 @@ using HelloJkwCore.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.JSInterop;
 
 namespace HelloJkwCore.Components.Account;
 
@@ -31,6 +32,19 @@ public partial class UserPage : JkwPageBase
         else
         {
             externalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToArray();
+        }
+    }
+
+    protected override async Task OnPageAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var hasAntiforgeryToken = await Js.InvokeAsync<bool>("checkAntiforgeryToken");
+            if (!hasAntiforgeryToken)
+            {
+                await Js.InvokeVoidAsync("reload");
+                return;
+            }
         }
     }
 
