@@ -45,8 +45,8 @@ builder.Services
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
-    .AddGoogleAuthentication(authUtil)
-    .AddKakaoAuthentication(authUtil)
+    .AddGoogleAuthentication(authUtil.GetAuthOption(AuthProvider.Google))
+    .AddKakaoAuthentication(authUtil.GetAuthOption(AuthProvider.KakaoTalk))
     .AddIdentityCookies();
 
 builder.Services

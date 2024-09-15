@@ -14,6 +14,11 @@ public class AppUserStore : IUserLoginStore<AppUser>, IUserRoleStore<AppUser>
         ILoggerFactory loggerFactory,
         IFileSystemService fsService)
     {
+        if (coreOption.UserStoreFileSystem == null)
+            throw new ArgumentNullException(nameof(coreOption.UserStoreFileSystem));
+        if (coreOption.Path == null)
+            throw new ArgumentNullException(nameof(coreOption.Path));
+
         _logger = loggerFactory.CreateLogger<AppUserStore>();
         _fs = fsService.GetFileSystem(coreOption.UserStoreFileSystem, coreOption.Path);
         _cachedRoles = typeof(UserRole).GetValues<UserRole>()

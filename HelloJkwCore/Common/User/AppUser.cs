@@ -15,7 +15,7 @@ public class AppUser : IdentityUser<UserId>, IEquatable<AppUser>
 
     public bool HasRole(UserRole role) => Roles.Contains(role);
 
-    public static bool operator ==(AppUser obj1, AppUser obj2)
+    public static bool operator ==(AppUser? obj1, AppUser? obj2)
     {
         if (ReferenceEquals(obj1, obj2))
         {
@@ -33,7 +33,7 @@ public class AppUser : IdentityUser<UserId>, IEquatable<AppUser>
         return obj1.Equals(obj2);
     }
 
-    public static bool operator !=(AppUser obj1, AppUser obj2)
+    public static bool operator !=(AppUser? obj1, AppUser? obj2)
     {
         return !(obj1 == obj2);
     }

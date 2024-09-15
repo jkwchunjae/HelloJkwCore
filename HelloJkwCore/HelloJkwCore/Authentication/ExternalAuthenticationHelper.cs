@@ -4,34 +4,30 @@ namespace HelloJkwCore.Authentication;
 
 public static class ExternalAuthenticationHelper
 {
-    public static AuthenticationBuilder AddGoogleAuthentication(this AuthenticationBuilder builder, AuthUtil authUtil)
+    public static AuthenticationBuilder AddGoogleAuthentication(this AuthenticationBuilder builder, OAuthConfig? googleAuthConfig)
     {
-        OAuthConfig? config = authUtil.GetAuthOption(AuthProvider.Google);
-
-        if (config != null)
+        if (googleAuthConfig != null)
         {
             builder.AddGoogle(options =>
             {
-                options.ClientId = config?.ClientId ?? string.Empty;
-                options.ClientSecret = config?.ClientSecret ?? string.Empty;
-                options.CallbackPath = config?.Callback;
+                options.ClientId = googleAuthConfig.ClientId ?? string.Empty;
+                options.ClientSecret = googleAuthConfig.ClientSecret ?? string.Empty;
+                options.CallbackPath = googleAuthConfig.Callback;
                 options.ClaimActions.MapJsonKey("urn:google:profile", "link");
                 options.ClaimActions.MapJsonKey("urn:google:image", "picture");
             });
         }
         return builder;
     }
-    public static AuthenticationBuilder AddKakaoAuthentication(this AuthenticationBuilder builder, AuthUtil authUtil)
+    public static AuthenticationBuilder AddKakaoAuthentication(this AuthenticationBuilder builder, OAuthConfig? kakaoAuthConfig)
     {
-        OAuthConfig? config = authUtil.GetAuthOption(AuthProvider.KakaoTalk);
-
-        if (config != null)
+        if (kakaoAuthConfig != null)
         {
             builder.AddKakaoTalk(options =>
             {
-                options.ClientId = config?.ClientId ?? string.Empty;
-                options.ClientSecret = config?.ClientSecret ?? string.Empty;
-                options.CallbackPath = config?.Callback;
+                options.ClientId = kakaoAuthConfig.ClientId ?? string.Empty;
+                options.ClientSecret = kakaoAuthConfig.ClientSecret ?? string.Empty;
+                options.CallbackPath = kakaoAuthConfig.Callback;
             });
         }
         return builder;
