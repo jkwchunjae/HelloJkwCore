@@ -2,6 +2,6 @@
 
 namespace HelloJkwCore.Authentication;
 
-public class ApplicationRole : IdentityRole<UserRole2>
+public class ApplicationRole : IdentityRole
 {
 }
