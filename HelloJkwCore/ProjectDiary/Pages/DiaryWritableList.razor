@@ -7,7 +7,7 @@
   @foreach (var writable in UserDiaryInfo.WriterList)
   {
     var diaryPath = $"/diary/{writable}";
-    var label = writable.Name.ToLower() == "summer" ? "하정이 육아일기장" : writable.Name;
+    var label = writable.Id.ToLower() == "summer" ? "하정이 육아일기장" : writable.Id;
     <MudListItem>
       <MudButton Href="@diaryPath" Variant="Variant.Outlined">@label</MudButton>
     </MudListItem>

@@ -25,12 +25,12 @@ public class StoneLogData
     public StoneColor Color { get; set; }
 }
 
-[JsonNetConverter(typeof(StringIdJsonNetConverter<BadukDiaryName>))]
 [TextJsonConverter(typeof(StringIdTextJsonConverter<BadukDiaryName>))]
-public class BadukDiaryName : StringName
+public record BadukDiaryName : StringId
 {
-    public BadukDiaryName() { }
-    public BadukDiaryName(string name) : base(name) { }
+    public BadukDiaryName(string id) : base(id)
+    {
+    }
 }
 
 public class BadukDiary

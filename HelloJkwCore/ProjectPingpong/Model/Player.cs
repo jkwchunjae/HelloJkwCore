@@ -3,12 +3,11 @@
 namespace ProjectPingpong;
 
 [TextJsonConverter(typeof(StringIdTextJsonConverter<PlayerName>))]
-public class PlayerName : StringName
+public record PlayerName : StringId
 {
     public static readonly PlayerName Default = new PlayerName(string.Empty);
-    public PlayerName() { }
-    public PlayerName(string name)
-        : base(name)
+
+    public PlayerName(string id) : base(id)
     {
     }
 }

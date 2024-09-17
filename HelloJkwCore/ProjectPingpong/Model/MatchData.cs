@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace ProjectPingpong;
 
 [TextJsonConverter(typeof(StringIdTextJsonConverter<MatchId>))]
-public class MatchId : StringId
+public record MatchId : StringId
 {
     public static readonly MatchId Default = new MatchId(string.Empty);
     public static class Types
@@ -48,7 +48,6 @@ public class MatchId : StringId
         }
     }
 
-    public MatchId() { }
     public MatchId(string id)
         : base(id)
     {

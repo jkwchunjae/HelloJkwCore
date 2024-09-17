@@ -32,7 +32,7 @@ public partial class DiaryService : IDiaryService
             return false;
         if (diaryName.Length > 30)
             return false;
-        if (!Regex.IsMatch(diaryName.Name, @"^[a-z]+$"))
+        if (!Regex.IsMatch(diaryName, @"^[a-z]+$"))
             return false;
 
         // TODO lock

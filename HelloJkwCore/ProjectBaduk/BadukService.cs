@@ -17,7 +17,7 @@ public class BadukService : IBadukService
             .Where(gameName => gameName != subject)
             .ToList();
 
-        await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName.Name), diary);
+        await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName), diary);
         await _fs.DeleteFileAsync(path => GameDataFilePath(path, diaryName, subject));
 
         return diary;
@@ -61,7 +61,7 @@ public class BadukService : IBadukService
         }
         diary.GameDataList = gameDataList;
 
-        await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName.Name), diary);
+        await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName), diary);
         await _fs.WriteJsonAsync(path => GameDataFilePath(path, diaryName, badukGameData.Subject), badukGameData);
 
         return diary;
@@ -69,17 +69,17 @@ public class BadukService : IBadukService
 
     public async Task<BadukDiary> GetBadukDiary(BadukDiaryName diaryName)
     {
-        if (!await _fs.FileExistsAsync(path => DiaryFilePath(path, diaryName.Name)))
+        if (!await _fs.FileExistsAsync(path => DiaryFilePath(path, diaryName)))
         {
             return null;
         }
-        var diary = await _fs.ReadJsonAsync<BadukDiary>(path => DiaryFilePath(path, diaryName.Name));
+        var diary = await _fs.ReadJsonAsync<BadukDiary>(path => DiaryFilePath(path, diaryName));
 
         if (diary.GameDataList == null)
         {
             var list = await GetBadukSummaryList(diaryName);
             diary.GameDataList = list.Select(x => x.Subject).ToList();
-            await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName.Name), diary);
+            await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName), diary);
         }
         return diary;
     }
@@ -99,7 +99,7 @@ public class BadukService : IBadukService
 
         var result = diaryList.ToList()
             .Where(x => x.ConnectUserIdList?.Contains(user.Id) ?? false)
-            .OrderBy(x => x.Name)
+            .OrderBy(x => x)
             .ToList();
 
         return result;
@@ -107,7 +107,7 @@ public class BadukService : IBadukService
 
     public async Task CreateBadukDiary(AppUser user, BadukDiaryName diaryName)
     {
-        var duplicated = await _fs.FileExistsAsync(path => DiaryFilePath(path, diaryName.Name));
+        var duplicated = await _fs.FileExistsAsync(path => DiaryFilePath(path, diaryName));
         if (duplicated)
         {
             return;
@@ -118,7 +118,7 @@ public class BadukService : IBadukService
             OwnerUserId = user.Id,
             ConnectUserIdList = new() { user.Id },
         };
-        await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName.Name), diaryData);
+        await _fs.WriteJsonAsync(path => DiaryFilePath(path, diaryName), diaryData);
     }
 
     public async Task DeleteBadukDiary(AppUser user, BadukDiaryName diaryName)
@@ -129,7 +129,7 @@ public class BadukService : IBadukService
 
         if (deleteDiary != null)
         {
-            await _fs.DeleteFileAsync(path => DiaryFilePath(path, diaryName.Name));
+            await _fs.DeleteFileAsync(path => DiaryFilePath(path, diaryName));
         }
     }
 

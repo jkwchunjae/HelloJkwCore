@@ -141,7 +141,7 @@ public partial class DiaryHome : JkwPageBase, IDisposable
 
     private async Task<DiaryInfo> GetDiaryInfo(DiaryName diaryName)
     {
-        if (string.IsNullOrWhiteSpace(diaryName?.Name))
+        if (string.IsNullOrWhiteSpace(diaryName))
             return null;
 
         return await DiaryService.GetDiaryInfoAsync(User, diaryName);
