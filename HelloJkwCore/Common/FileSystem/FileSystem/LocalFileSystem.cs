@@ -5,12 +5,13 @@ public class LocalFileSystem : IFileSystem
     protected readonly Paths _pathOf;
     private readonly Encoding _encoding;
 
-    public LocalFileSystem(PathMap pathOption, Encoding encoding = null)
+    public LocalFileSystem(PathMap pathOption, Encoding? encoding = null)
     {
-        if (pathOption.Local != null)
+        if (pathOption.Local == null)
         {
-            _pathOf = new Paths(pathOption, FileSystemType.Local);
+            throw new ArgumentNullException(nameof(pathOption.Local));
         }
+        _pathOf = new Paths(pathOption, FileSystemType.Local!);
         _encoding = encoding ?? new UTF8Encoding(false);
     }
 
@@ -41,7 +42,7 @@ public class LocalFileSystem : IFileSystem
         return Task.FromResult(File.Exists(path));
     }
 
-    public Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default)
+    public Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string? extension = null, CancellationToken ct = default)
     {
         var path = pathFunc(GetPathOf());
 
@@ -69,11 +70,15 @@ public class LocalFileSystem : IFileSystem
     public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
         var path = pathFunc(GetPathOf());
-        if (!File.Exists(path))
-            return default(T);
-
-        var text = await File.ReadAllTextAsync(path, _encoding);
-        return Json.Deserialize<T>(text);
+        if (File.Exists(path))
+        {
+            var text = await File.ReadAllTextAsync(path, _encoding);
+            return Json.Deserialize<T>(text);
+        }
+        else
+        {
+            throw new FileNotFoundException(path);
+        }
     }
 
     public async Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
@@ -90,7 +95,7 @@ public class LocalFileSystem : IFileSystem
     {
         var path = pathFunc(GetPathOf());
         var dir = Directory.GetParent(path);
-        if (!Directory.Exists(dir.FullName))
+        if (!Directory.Exists(dir!.FullName))
         {
             Directory.CreateDirectory(dir.FullName);
         }
@@ -102,7 +107,7 @@ public class LocalFileSystem : IFileSystem
     {
         var path = pathFunc(GetPathOf());
         var dir = Directory.GetParent(path);
-        if (!Directory.Exists(dir.FullName))
+        if (!Directory.Exists(dir!.FullName))
         {
             Directory.CreateDirectory(dir.FullName);
         }
@@ -114,7 +119,7 @@ public class LocalFileSystem : IFileSystem
     {
         var path = pathFunc(GetPathOf());
         var dir = Directory.GetParent(path);
-        if (!Directory.Exists(dir.FullName))
+        if (!Directory.Exists(dir!.FullName))
         {
             Directory.CreateDirectory(dir.FullName);
         }

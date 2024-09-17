@@ -24,7 +24,7 @@ public static class Json
     public static T Deserialize<T>(string jsonText)
     {
         //return JsonConvert.DeserializeObject<T>(jsonText);
-        return JsonSerializer.Deserialize<T>(jsonText, _options);
+        return JsonSerializer.Deserialize<T>(jsonText, _options)!;
     }
 
     public static string Serialize<T>(T value)

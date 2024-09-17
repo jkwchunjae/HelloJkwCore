@@ -11,6 +11,10 @@ public class InMemoryFileSystem : IFileSystem
         {
             _pathOf = new Paths(pathOption, FileSystemType.InMemory);
         }
+        else
+        {
+            throw new ArgumentNullException(nameof(pathOption));
+        }
     }
 
     public Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
@@ -38,7 +42,7 @@ public class InMemoryFileSystem : IFileSystem
         return Task.FromResult(_files.ContainsKey(path));
     }
 
-    public Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default)
+    public Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string? extension = null, CancellationToken ct = default)
     {
         var path = pathFunc(GetPathOf());
         if (!path.EndsWith("/"))
@@ -68,11 +72,14 @@ public class InMemoryFileSystem : IFileSystem
     {
         var path = pathFunc(GetPathOf());
 
-        if (!_files.ContainsKey(path))
-            return Task.FromResult(default(T));
-
-        var text = _files[path];
-        return Task.FromResult(Json.Deserialize<T>(text));
+        if (_files.TryGetValue(path, out var text))
+        {
+            return Task.FromResult(Json.Deserialize<T>(text));
+        }
+        else
+        {
+            throw new FileNotFoundException();
+        }
     }
 
     public Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)

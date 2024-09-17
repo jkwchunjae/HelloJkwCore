@@ -27,7 +27,7 @@ public static class DropboxExtensions
         return fileText;
     }
 
-    public static async Task<FileMetadata> WriteTextAsync(this DropboxClient client, string path, string text, Encoding encoding = null)
+    public static async Task<FileMetadata> WriteTextAsync(this DropboxClient client, string path, string text, Encoding? encoding = null)
     {
         encoding ??= _defaultEncoding;
 
@@ -39,7 +39,7 @@ public static class DropboxExtensions
         }
     }
 
-    public static async Task<FileMetadata> WriteJsonAsync<T>(this DropboxClient client, string path, T obj, Encoding encoding = null)
+    public static async Task<FileMetadata> WriteJsonAsync<T>(this DropboxClient client, string path, T obj, Encoding? encoding = null)
     {
         var text = Json.Serialize(obj);
         return await client.WriteTextAsync(path, text, encoding);

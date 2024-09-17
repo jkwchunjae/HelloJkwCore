@@ -78,12 +78,19 @@ static class FsDicExtension
 {
     public static IFileSystem GetFileSystem(this Dictionary<FileSystemType, IFileSystem> fsDic, FileSystemType fsType)
     {
-        return fsDic.ContainsKey(fsType) ? fsDic[fsType] : null;
+        if (fsDic.TryGetValue(fsType, out var fs))
+        {
+            return fs;
+        }
+        else
+        {
+            throw new ArgumentException();
+        }
     }
 
     public static IFileSystem CreateMainFileSystem(this Dictionary<FileSystemType, IFileSystem> fsDic, FileSystemOption fsOption, IBackgroundTaskQueue backgroundTaskQueue)
     {
-        if (fsOption.MainFileSystem.UseBackup)
+        if (fsOption.MainFileSystem?.UseBackup ?? false)
         {
             var fsMain = fsDic.GetFileSystem(fsOption.MainFileSystem.MainFileSystem);
             var fsBackup = fsDic.GetFileSystem(fsOption.MainFileSystem.BackupFileSystem);
@@ -92,7 +99,7 @@ static class FsDicExtension
         }
         else
         {
-            var fs = fsDic.GetFileSystem(fsOption.MainFileSystem.MainFileSystem);
+            var fs = fsDic.GetFileSystem(fsOption.MainFileSystem?.MainFileSystem ?? FileSystemType.Local);
             return fs;
         }
     }

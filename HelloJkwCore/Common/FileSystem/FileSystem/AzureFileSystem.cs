@@ -16,17 +16,16 @@ public class AzureFileSystem : IFileSystem
         PathMap pathOption,
         string connectionString,
         ILoggerFactory loggerFactory,
-        Encoding encoding = null)
+        Encoding? encoding = null)
     {
+        if (pathOption.Azure == null)
+        {
+            throw new ArgumentNullException(nameof(pathOption.Azure));
+        }
         _pathOf = new Paths(pathOption, FileSystemType.Azure);
         _connectionString = connectionString;
         _encoding = encoding ?? new UTF8Encoding(false);
-        _logger = loggerFactory?.CreateLogger<AzureFileSystem>();
-
-        if (_logger != null)
-        {
-            _logger.LogDebug("AzureFileSystem Logger is working.");
-        }
+        _logger = loggerFactory.CreateLogger<AzureFileSystem>();
     }
 
     private async Task<BlobContainerClient> GetContainerClient(string containerName)
@@ -100,7 +99,7 @@ public class AzureFileSystem : IFileSystem
         return response.Value;
     }
 
-    public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default(CancellationToken))
+    public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string? extension = null, CancellationToken ct = default(CancellationToken))
     {
         var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
         _logger?.LogDebug("GetFilesAsync. container: {container}, path: {path}", containerName, path);
@@ -143,7 +142,7 @@ public class AzureFileSystem : IFileSystem
         catch (RequestFailedException ex)
         {
             _logger?.LogError(ex, "[Error] ReadJsonAsync. container: {container}, path: {path}", containerName, path);
-            return default(T);
+            throw new Exception($"Error in ReadJsonAsync. container: {containerName}, path: {path}", ex);
         }
     }
 

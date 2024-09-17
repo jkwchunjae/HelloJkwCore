@@ -51,7 +51,7 @@ public class BackupFileSystem : IFileSystem
         return await _fs.FileExistsAsync(pathFunc, ct);
     }
 
-    public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default)
+    public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string? extension = null, CancellationToken ct = default)
     {
         //_backgroundQueue.QueueBackgroundWorkItem(async token =>
         //{

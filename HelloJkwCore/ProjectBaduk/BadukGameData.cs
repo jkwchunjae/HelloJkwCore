@@ -42,21 +42,18 @@ public class BadukDiary
     public List<string> GameDataList { get; set; }
 }
 
-[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
 [TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum StoneColor
 {
     None, Black, White
 }
 
-[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
 [TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum StoneAction
 {
     Set, Remove
 }
 
-[JsonNetConverter(typeof(JsonNetStringEnumConverter))]
 [TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum StoneChangeMode
 {

@@ -9,7 +9,7 @@ public class DropboxFileSystem : IFileSystem
     private readonly DropboxClient _client;
     private readonly Encoding _encoding;
 
-    public DropboxFileSystem(PathMap pathOption, DropboxClient client, Encoding encoding = null)
+    public DropboxFileSystem(PathMap pathOption, DropboxClient client, Encoding? encoding = null)
     {
         _paths = new Paths(pathOption, FileSystemType.Dropbox);
         _client = client;
@@ -78,7 +78,7 @@ public class DropboxFileSystem : IFileSystem
         }
     }
 
-    public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string extension = null, CancellationToken ct = default)
+    public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string? extension = null, CancellationToken ct = default)
     {
         var path = pathFunc(_paths);
         var fileMetadataList = new List<Metadata>();
@@ -106,13 +106,9 @@ public class DropboxFileSystem : IFileSystem
         {
             return await _client.ReadJsonAsync<T>(path);
         }
-        catch (ApiException<DownloadError>)
-        {
-            return default;
-        }
         catch
         {
-            return default;
+            throw;
         }
     }
 
@@ -123,13 +119,9 @@ public class DropboxFileSystem : IFileSystem
         {
             return await _client.ReadTextAsync(path);
         }
-        catch (ApiException<DownloadError>)
-        {
-            return default;
-        }
         catch
         {
-            return default;
+            throw;
         }
     }
 
@@ -141,13 +133,9 @@ public class DropboxFileSystem : IFileSystem
             await _client.WriteJsonAsync(path, obj, _encoding);
             return true;
         }
-        catch (ApiException<UploadError>)
-        {
-            return false;
-        }
         catch
         {
-            return false;
+            throw;
         }
     }
 
@@ -195,13 +183,9 @@ public class DropboxFileSystem : IFileSystem
             using var response = await _client.Files.DownloadAsync(path);
             return await response.GetContentAsByteArrayAsync();
         }
-        catch (ApiException<DownloadError>)
-        {
-            return default;
-        }
         catch
         {
-            return default;
+            throw;
         }
     }
 }

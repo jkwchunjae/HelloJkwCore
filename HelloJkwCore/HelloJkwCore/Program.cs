@@ -68,7 +68,6 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddDiaryService(builder.Configuration);
 builder.Services.AddBadukService(builder.Configuration);
-builder.Services.AddPingpongService(builder.Configuration);
 builder.Services.AddGameLibra(builder.Configuration);
 
 var app = builder.Build();

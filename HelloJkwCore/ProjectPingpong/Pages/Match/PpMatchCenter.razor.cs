@@ -32,11 +32,6 @@ public partial class PpMatchCenter : JkwPageBase, IDisposable
             MatchNotify = MatchService.Watch(MatchId);
             MatchNotify.Updated += MatchUpdator_Updated;
         }
-
-        if (Navi.TryGetQueryString("league", out string leagueId))
-        {
-            LeagueId = leagueId;
-        }
     }
 
     private async void MatchUpdator_Updated(object? sender, MatchData data)
