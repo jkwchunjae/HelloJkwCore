@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace ProjectWorldCup;
+﻿namespace ProjectWorldCup;
 
 public class WcFinalBettingItem<TTeam> : WcBettingItem<TTeam> where TTeam : Team
 {

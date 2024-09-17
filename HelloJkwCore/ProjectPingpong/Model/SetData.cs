@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace ProjectPingpong;
+﻿namespace ProjectPingpong;
 
 [TextJsonConverter(typeof(GamePointJsonConverter))]
 public class GamePoint

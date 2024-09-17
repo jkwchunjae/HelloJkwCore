@@ -1,12 +1,10 @@
 ﻿global using Xunit;
 global using JkwExtensions;
-global using Newtonsoft.Json;
 global using Common;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.AspNetCore.Components;
 global using Microsoft.JSInterop;
-global using Newtonsoft.Json.Converters;
 global using System;
 global using System.Collections.Generic;
 global using System.Linq;
