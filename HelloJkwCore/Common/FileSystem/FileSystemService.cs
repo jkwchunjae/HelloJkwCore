@@ -14,18 +14,21 @@ public class FileSystemService : IFileSystemService
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger<FileSystemService> _logger;
     private IBackgroundTaskQueue _queue;
+    private ISerializer _serializer;
 
     //public IFileSystem MainFileSystem { get; private set; }
 
     public FileSystemService(
         FileSystemOption fsOption,
         IBackgroundTaskQueue backgroundTaskQueue,
+        ISerializer serializer,
         ILoggerFactory loggerFactory)
     {
         _fsOption = fsOption;
         _loggerFactory = loggerFactory;
         _logger = loggerFactory.CreateLogger<FileSystemService>();
         _queue = backgroundTaskQueue;
+        _serializer = serializer;
     }
 
     private Dictionary<FileSystemType, IFileSystem> CreateFileSystem(FileSystemOption fsOption, PathMap pathOption)

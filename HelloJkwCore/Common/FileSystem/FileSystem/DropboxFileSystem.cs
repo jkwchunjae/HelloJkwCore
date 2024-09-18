@@ -5,14 +5,21 @@ namespace Common;
 
 public class DropboxFileSystem : IFileSystem
 {
+    public FileSystemType FileSystemType => FileSystemType.Dropbox;
     protected readonly Paths _paths;
     private readonly DropboxClient _client;
     private readonly Encoding _encoding;
+    private readonly ISerializer _serializer;
 
-    public DropboxFileSystem(PathMap pathOption, DropboxClient client, Encoding? encoding = null)
+    public DropboxFileSystem(
+        PathMap pathOption,
+        DropboxClient client,
+        ISerializer serializer,
+        Encoding? encoding = null)
     {
         _paths = new Paths(pathOption, FileSystemType.Dropbox);
         _client = client;
+        _serializer = serializer;
         _encoding = encoding ?? new UTF8Encoding(false);
     }
 
@@ -25,13 +32,9 @@ public class DropboxFileSystem : IFileSystem
             await _client.Files.CreateFolderV2Async(path);
             return true;
         }
-        catch (ApiException<CreateFolderError>)
-        {
-            return false;
-        }
         catch
         {
-            return false;
+            throw;
         }
     }
 
@@ -50,13 +53,9 @@ public class DropboxFileSystem : IFileSystem
             var metadata = await _client.Files.GetMetadataAsync(path);
             return metadata.IsFolder;
         }
-        catch (ApiException<GetMetadataError>)
-        {
-            return false;
-        }
         catch
         {
-            return false;
+            throw;
         }
     }
 
@@ -68,13 +67,9 @@ public class DropboxFileSystem : IFileSystem
             var metadata = await _client.Files.GetMetadataAsync(path);
             return metadata.IsFile;
         }
-        catch (ApiException<GetMetadataError>)
-        {
-            return false;
-        }
         catch
         {
-            return false;
+            throw;
         }
     }
 
@@ -104,7 +99,9 @@ public class DropboxFileSystem : IFileSystem
         var path = pathFunc(_paths);
         try
         {
-            return await _client.ReadJsonAsync<T>(path);
+            var text = await ReadTextAsync(pathFunc, ct);
+            var parsed = _serializer.Deserialize<T>(text);
+            return parsed;
         }
         catch
         {
@@ -114,10 +111,12 @@ public class DropboxFileSystem : IFileSystem
 
     public async Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
         try
         {
-            return await _client.ReadTextAsync(path);
+            var path = pathFunc(_paths);
+            var fileMetadata = await _client.Files.DownloadAsync(path);
+            var fileText = await fileMetadata.GetContentAsStringAsync();
+            return fileText;
         }
         catch
         {
@@ -127,11 +126,11 @@ public class DropboxFileSystem : IFileSystem
 
     public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
         try
         {
-            await _client.WriteJsonAsync(path, obj, _encoding);
-            return true;
+            var path = pathFunc(_paths);
+            var text = _serializer.Serialize(obj);
+            return await WriteTextAsync(pathFunc, text, ct);
         }
         catch
         {
@@ -144,16 +143,15 @@ public class DropboxFileSystem : IFileSystem
         var path = pathFunc(_paths);
         try
         {
-            await _client.WriteTextAsync(path, text, _encoding);
+            var bytes = _encoding.GetBytes(text);
+            using var stream = new MemoryStream(bytes);
+            var uploadArgs = new UploadArg(path, mode: WriteMode.Overwrite.Instance);
+            await _client.Files.UploadAsync(uploadArgs, stream);
             return true;
-        }
-        catch (ApiException<UploadError>)
-        {
-            return false;
         }
         catch
         {
-            return false;
+            throw;
         }
     }
 
@@ -165,13 +163,9 @@ public class DropboxFileSystem : IFileSystem
             await _client.Files.UploadAsync(path, WriteMode.Overwrite.Instance, body: stream);
             return true;
         }
-        catch (ApiException<UploadError>)
-        {
-            return false;
-        }
         catch
         {
-            return false;
+            throw;
         }
     }
 

@@ -2,6 +2,7 @@
 
 public interface IFileSystem
 {
+    FileSystemType FileSystemType { get; }
     Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
     Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string text, CancellationToken ct = default);
     Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default);

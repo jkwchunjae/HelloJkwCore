@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using HelloJkwCore;
 using HelloJkwCore.Authentication;
 using HelloJkwCore.Components;
@@ -27,6 +28,7 @@ var fsOption = new FileSystemOption();
 builder.Configuration.GetSection("FileSystem").Bind(fsOption);
 builder.Services.AddSingleton(fsOption);
 builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
+builder.Services.AddSingleton<ISerializer, Json>();
 
 #endregion
 
@@ -60,6 +62,9 @@ builder.Services.AddSingleton<IUserStore<AppUser>, AppUserStore>();
 builder.Services.AddSingleton<IRoleStore<ApplicationRole>, AppRoleStore>();
 
 #endregion
+
+builder.Services.AddSingleton<JsonConverter>(new StringIdTextJsonConverter<UserId>(id => new UserId(id)));
+builder.Services.AddSingleton<Json, Json>();
 
 builder.Services.AddAuthorization(options =>
 {
