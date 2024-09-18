@@ -5,6 +5,8 @@ public class InMemoryFileSystem : IFileSystem
     protected readonly Paths _pathOf;
     private readonly Dictionary<string, string> _files = new();
 
+    public FileSystemType FileSystemType => FileSystemType.InMemory;
+
     public InMemoryFileSystem(PathMap pathOption)
     {
         if (pathOption.InMemory != null)

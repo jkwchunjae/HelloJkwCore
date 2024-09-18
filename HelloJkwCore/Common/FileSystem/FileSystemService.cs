@@ -2,21 +2,16 @@
 
 public interface IFileSystemService
 {
-    //IFileSystem MainFileSystem { get; }
-    //IFileSystem GetFileSystem(FileSystemType fsType);
     IFileSystem GetFileSystem(FileSystemSelectOption fileSystemSelectOption, PathMap pathOption);
 }
 
 public class FileSystemService : IFileSystemService
 {
-    //private readonly Dictionary<FileSystemType, IFileSystem> _fsDic = new();
     private readonly FileSystemOption _fsOption;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger<FileSystemService> _logger;
     private IBackgroundTaskQueue _queue;
     private ISerializer _serializer;
-
-    //public IFileSystem MainFileSystem { get; private set; }
 
     public FileSystemService(
         FileSystemOption fsOption,
@@ -40,7 +35,7 @@ public class FileSystemService : IFileSystemService
             if (fsOption.Dropbox != null)
             {
                 var dropboxClient = DropboxExtensions.GetDropboxClient(fsOption.Dropbox);
-                fsDic.Add(FileSystemType.Dropbox, new DropboxFileSystem(pathOption, dropboxClient));
+                fsDic.Add(FileSystemType.Dropbox, new DropboxFileSystem(pathOption, dropboxClient, _serializer));
             }
         }
         if (pathOption.Azure != null)

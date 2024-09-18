@@ -12,6 +12,8 @@ public class AzureFileSystem : IFileSystem
 
     private Dictionary<string, BlobContainerClient> _containerClients = new();
 
+    public FileSystemType FileSystemType => FileSystemType.Azure;
+
     public AzureFileSystem(
         PathMap pathOption,
         string connectionString,

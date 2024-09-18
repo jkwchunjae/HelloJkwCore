@@ -5,6 +5,8 @@ public class LocalFileSystem : IFileSystem
     protected readonly Paths _pathOf;
     private readonly Encoding _encoding;
 
+    public FileSystemType FileSystemType => FileSystemType.Local;
+
     public LocalFileSystem(PathMap pathOption, Encoding? encoding = null)
     {
         if (pathOption.Local == null)
