@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjectDiary;
@@ -16,5 +17,6 @@ public static partial class DiaryServiceHelper
         services.AddSingleton<IDiarySearchService, DiarySearchService>();
         services.AddSingleton<IDiaryAdminService, DiaryAdminService>();
         services.AddSingleton<IDiaryTemporaryService, DiaryTemporaryService>();
+        services.AddSingleton<JsonConverter>(new StringIdTextJsonConverter<DiaryName>(id => new DiaryName(id)));
     }
 }

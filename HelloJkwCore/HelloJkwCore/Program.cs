@@ -28,7 +28,11 @@ var fsOption = new FileSystemOption();
 builder.Configuration.GetSection("FileSystem").Bind(fsOption);
 builder.Services.AddSingleton(fsOption);
 builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
-builder.Services.AddSingleton<ISerializer, Json>();
+builder.Services.AddSingleton<ISerializer, Json>(serviceProvider =>
+{
+    var converters = serviceProvider.GetServices<JsonConverter>();
+    return new Json(converters);
+});
 builder.Services.AddInMemoryFileSystem();
 builder.Services.AddLocalFileSystem();
 if (fsOption.Dropbox != null)
@@ -70,11 +74,10 @@ builder.Services
 
 builder.Services.AddSingleton<IUserStore<AppUser>, AppUserStore>();
 builder.Services.AddSingleton<IRoleStore<ApplicationRole>, AppRoleStore>();
+builder.Services.AddSingleton<JsonConverter>(new StringIdTextJsonConverter<UserId>(id => new UserId(id)));
 
 #endregion
 
-builder.Services.AddSingleton<JsonConverter>(new StringIdTextJsonConverter<UserId>(id => new UserId(id)));
-builder.Services.AddSingleton<Json, Json>();
 
 builder.Services.AddAuthorization(options =>
 {
