@@ -29,6 +29,16 @@ builder.Configuration.GetSection("FileSystem").Bind(fsOption);
 builder.Services.AddSingleton(fsOption);
 builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
 builder.Services.AddSingleton<ISerializer, Json>();
+builder.Services.AddInMemoryFileSystem();
+builder.Services.AddLocalFileSystem();
+if (fsOption.Dropbox != null)
+{
+    builder.Services.AddDropboxFileSystem(fsOption.Dropbox);
+}
+if (fsOption.Azure != null)
+{
+    builder.Services.AddAzureFileSystem(fsOption.Azure);
+}
 
 #endregion
 

@@ -15,3 +15,9 @@ public interface IFileSystem
     Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
     Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default);
 }
+
+public interface IFileSystemBuilder
+{
+    FileSystemType FileSystemType { get; }
+    IFileSystem Build(PathMap pathMap);
+}

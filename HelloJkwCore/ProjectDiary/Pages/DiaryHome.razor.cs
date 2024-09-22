@@ -93,8 +93,6 @@ public partial class DiaryHome : JkwPageBase, IDisposable
             return;
         }
 
-        Logger?.LogDebug("Set DiaryInfo: {diaryInfo}", Json.Serialize(DiaryInfo));
-
         if (DiaryInfo.IsSecret && string.IsNullOrWhiteSpace(UserData.Password))
         {
             Navi.NavigateTo(DiaryUrl.SetPassword());

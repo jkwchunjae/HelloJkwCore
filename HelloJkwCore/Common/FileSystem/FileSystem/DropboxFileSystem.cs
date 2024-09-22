@@ -1,23 +1,64 @@
 ﻿using Dropbox.Api;
 using Dropbox.Api.Files;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Common;
+
+public class DropboxFileSystemBuilder : IFileSystemBuilder
+{
+    public FileSystemType FileSystemType => FileSystemType.Dropbox;
+
+    private readonly DropboxClient _client;
+    private readonly ISerializer _serializer;
+    private readonly Encoding _encoding;
+
+    public DropboxFileSystemBuilder(
+        DropboxClient client,
+        ISerializer serializer,
+        Encoding? encoding = null
+    )
+    {
+        _client = client;
+        _serializer = serializer;
+        _encoding = encoding ?? new UTF8Encoding(false);
+    }
+
+    public IFileSystem Build(PathMap pathMap)
+    {
+        var paths = new Paths(pathMap, FileSystemType.Dropbox);
+        return new DropboxFileSystem(paths, _client, _serializer, _encoding);
+    }
+}
+
+public static class DropboxFileSystemExtensions
+{
+    public static IServiceCollection AddDropboxFileSystem(this IServiceCollection services, DropboxOption dropboxOption)
+    {
+        services.AddSingleton<IFileSystemBuilder, DropboxFileSystemBuilder>(serviceProvider =>
+        {
+            var dropboxClient = DropboxExtensions.GetDropboxClient(dropboxOption);
+            var serializer = serviceProvider.GetRequiredService<ISerializer>();
+            return new DropboxFileSystemBuilder(dropboxClient, serializer);
+        });
+        return services;
+    }
+}
 
 public class DropboxFileSystem : IFileSystem
 {
     public FileSystemType FileSystemType => FileSystemType.Dropbox;
-    protected readonly Paths _paths;
+    private readonly Paths _paths;
     private readonly DropboxClient _client;
     private readonly Encoding _encoding;
     private readonly ISerializer _serializer;
 
     public DropboxFileSystem(
-        PathMap pathOption,
+        Paths paths,
         DropboxClient client,
         ISerializer serializer,
         Encoding? encoding = null)
     {
-        _paths = new Paths(pathOption, FileSystemType.Dropbox);
+        _paths = paths;
         _client = client;
         _serializer = serializer;
         _encoding = encoding ?? new UTF8Encoding(false);

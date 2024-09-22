@@ -1,31 +1,72 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Common;
 
-public class AzureFileSystem : IFileSystem
+public class AzureFileSystemBuilder : IFileSystemBuilder
 {
-    private Paths _pathOf;
-    private string _connectionString;
-    private Encoding _encoding;
-    private ILogger<AzureFileSystem> _logger;
-
-    private Dictionary<string, BlobContainerClient> _containerClients = new();
-
     public FileSystemType FileSystemType => FileSystemType.Azure;
 
-    public AzureFileSystem(
-        PathMap pathOption,
+    private readonly string _connectionString;
+    private readonly ISerializer _serializer;
+    private readonly Encoding _encoding;
+    private readonly ILoggerFactory _loggerFactory;
+
+    public AzureFileSystemBuilder(
         string connectionString,
+        ISerializer serializer,
         ILoggerFactory loggerFactory,
         Encoding? encoding = null)
     {
-        if (pathOption.Azure == null)
-        {
-            throw new ArgumentNullException(nameof(pathOption.Azure));
-        }
-        _pathOf = new Paths(pathOption, FileSystemType.Azure);
         _connectionString = connectionString;
+        _serializer = serializer;
+        _encoding = encoding ?? new UTF8Encoding(false);
+        _loggerFactory = loggerFactory;
+    }
+
+    public IFileSystem Build(PathMap pathMap)
+    {
+        var paths = new Paths(pathMap, FileSystemType.Azure);
+        return new AzureFileSystem(paths, _connectionString, _serializer, _loggerFactory, _encoding);
+    }
+}
+
+public static class AzureFileSystemExtensions
+{
+    public static IServiceCollection AddAzureFileSystem(this IServiceCollection services, AzureOption azureOption)
+    {
+        services.AddSingleton<IFileSystemBuilder, AzureFileSystemBuilder>(serviceProvider =>
+        {
+            var serializer = serviceProvider.GetRequiredService<ISerializer>();
+            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+            return new AzureFileSystemBuilder(azureOption.ConnectionString, serializer, loggerFactory);
+        });
+        return services;
+    }
+}
+
+public class AzureFileSystem : IFileSystem
+{
+    public FileSystemType FileSystemType => FileSystemType.Azure;
+    private readonly Paths _paths;
+    private readonly string _connectionString;
+    private readonly ISerializer _serializer;
+    private readonly Encoding _encoding;
+    private readonly ILogger<AzureFileSystem> _logger;
+    private readonly Dictionary<string, BlobContainerClient> _containerClients = new();
+
+
+    public AzureFileSystem(
+        Paths paths,
+        string connectionString,
+        ISerializer serializer,
+        ILoggerFactory loggerFactory,
+        Encoding? encoding = null)
+    {
+        _paths = paths;
+        _connectionString = connectionString;
+        _serializer = serializer;
         _encoding = encoding ?? new UTF8Encoding(false);
         _logger = loggerFactory.CreateLogger<AzureFileSystem>();
     }
@@ -76,7 +117,7 @@ public class AzureFileSystem : IFileSystem
 
     public async Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default(CancellationToken))
     {
-        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        var (containerName, path) = ParsePath(pathFunc(_paths));
         var client = await GetContainerClient(containerName);
 
         await client.DeleteBlobIfExistsAsync(path);
@@ -90,7 +131,7 @@ public class AzureFileSystem : IFileSystem
 
     public async Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default(CancellationToken))
     {
-        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        var (containerName, path) = ParsePath(pathFunc(_paths));
         _logger?.LogDebug("FileExistsAsync. container: {container}, path: {path}", containerName, path);
         var client = await GetContainerClient(containerName);
 
@@ -103,7 +144,7 @@ public class AzureFileSystem : IFileSystem
 
     public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string? extension = null, CancellationToken ct = default(CancellationToken))
     {
-        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        var (containerName, path) = ParsePath(pathFunc(_paths));
         _logger?.LogDebug("GetFilesAsync. container: {container}, path: {path}", containerName, path);
         var client = await GetContainerClient(containerName);
 
@@ -120,14 +161,9 @@ public class AzureFileSystem : IFileSystem
         return result;
     }
 
-    public Paths GetPathOf()
-    {
-        return _pathOf;
-    }
-
     public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default(CancellationToken))
     {
-        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        var (containerName, path) = ParsePath(pathFunc(_paths));
         _logger?.LogDebug("ReadJsonAsync. container: {container}, path: {path}", containerName, path);
         try
         {
@@ -139,7 +175,7 @@ public class AzureFileSystem : IFileSystem
             var reader = new StreamReader(response.Value.Content);
             string text = await reader.ReadToEndAsync();
 
-            return Json.Deserialize<T>(text);
+            return _serializer.Deserialize<T>(text);
         }
         catch (RequestFailedException ex)
         {
@@ -150,14 +186,14 @@ public class AzureFileSystem : IFileSystem
 
     public async Task<bool> WriteJsonAsync<T>(Func<Paths, string> pathFunc, T obj, CancellationToken ct = default(CancellationToken))
     {
-        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        var (containerName, path) = ParsePath(pathFunc(_paths));
         _logger?.LogDebug("WriteJsonAsync. container: {container}, path: {path}", containerName, path);
         try
         {
             var client = await GetContainerClient(containerName);
             var blobClient = client.GetBlobClient(path);
 
-            var data = Json.Serialize(obj);
+            var data = _serializer.Serialize(obj);
             using (var stream = new MemoryStream(_encoding.GetBytes(data)))
             {
                 var response = await blobClient.UploadAsync(stream, overwrite: true, cancellationToken: ct);
@@ -173,7 +209,7 @@ public class AzureFileSystem : IFileSystem
 
     public async Task<string> ReadTextAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        var (containerName, path) = ParsePath(pathFunc(_paths));
         _logger?.LogDebug("ReadTextAsync. container: {container}, path: {path}", containerName, path);
         try
         {
@@ -196,7 +232,7 @@ public class AzureFileSystem : IFileSystem
 
     public async Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string text, CancellationToken ct = default)
     {
-        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        var (containerName, path) = ParsePath(pathFunc(_paths));
         _logger?.LogDebug("WriteTextAsync. container: {container}, path: {path}", containerName, path);
         try
         {
@@ -218,7 +254,7 @@ public class AzureFileSystem : IFileSystem
 
     public async Task<bool> WriteBlobAsync(Func<Paths, string> pathFunc, Stream stream, CancellationToken ct = default)
     {
-        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        var (containerName, path) = ParsePath(pathFunc(_paths));
         _logger?.LogDebug("WriteBlobAsync. container: {container}, path: {path}", containerName, path);
         try
         {
@@ -237,7 +273,7 @@ public class AzureFileSystem : IFileSystem
 
     public async Task<byte[]> ReadBlobAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        var (containerName, path) = ParsePath(pathFunc(GetPathOf()));
+        var (containerName, path) = ParsePath(pathFunc(_paths));
         _logger?.LogDebug("ReadBlobAsync. container: {container}, path: {path}", containerName, path);
         try
         {
