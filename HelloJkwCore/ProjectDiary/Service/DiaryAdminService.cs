@@ -5,10 +5,9 @@ public class DiaryAdminService : IDiaryAdminService
     private readonly IFileSystem _fs;
 
     public DiaryAdminService(
-        DiaryOption option,
-        IFileSystemService fsService)
+        [FromKeyedServices(nameof(DiaryService))] IFileSystem fileSystem)
     {
-        _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
+        _fs = fileSystem;
     }
 
     public async Task<List<DiaryInfo>> GetAllDiaryListAsync(AppUser user)

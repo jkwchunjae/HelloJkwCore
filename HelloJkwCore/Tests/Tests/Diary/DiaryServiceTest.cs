@@ -21,34 +21,13 @@ public class DiaryServiceTest
             },
         };
 
-        var fsOption = new FileSystemOption
-        {
-            MainFileSystem = new MainFileSystemOption
-            {
-                UseBackup = false,
-                MainFileSystem = FileSystemType.InMemory,
-            },
-        };
-
-        var diaryOption = new DiaryOption
-        {
-            FileSystemSelect = new FileSystemSelectOption
-            {
-                UseMainFileSystem = true,
-            },
-            Path = pathOption,
-        };
-
         var serializer = new Json([
             new StringIdTextJsonConverter<UserId>(id => new UserId(id)),
             new StringIdTextJsonConverter<DiaryName>(id => new DiaryName(id)),
         ]);
-        var inmemoryFs = new InMemoryFileSystemBuilder(serializer);
-        var loggerFactory = new Mock<ILoggerFactory>();
+        var inmemoryFs = new InMemoryFileSystem(new Paths(pathOption, FileSystemType.InMemory), serializer);
 
-        var fileSystemService = new FileSystemService(fsOption, [inmemoryFs], null, serializer, loggerFactory.Object);
-
-        _diaryService = new DiaryService(diaryOption, null, null, fileSystemService);
+        _diaryService = new DiaryService(null, null, inmemoryFs);
 
         _user = new AppUser()
         {

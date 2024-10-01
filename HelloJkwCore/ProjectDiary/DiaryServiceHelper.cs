@@ -18,5 +18,12 @@ public static partial class DiaryServiceHelper
         services.AddSingleton<IDiaryAdminService, DiaryAdminService>();
         services.AddSingleton<IDiaryTemporaryService, DiaryTemporaryService>();
         services.AddSingleton<JsonConverter>(new StringIdTextJsonConverter<DiaryName>(id => new DiaryName(id)));
+        services.AddKeyedSingleton<IFileSystem>(nameof(DiaryService), (provider, key) =>
+        {
+            var option = provider.GetRequiredService<DiaryOption>();
+            var fileSystemService = provider.GetRequiredService<IFileSystemService>();
+            var fileSystem = fileSystemService.GetFileSystem(option.FileSystemSelect, option.Path);
+            return fileSystem;
+        });
     }
 }

@@ -10,14 +10,13 @@ public partial class DiaryService : IDiaryService
     private readonly IBackgroundTaskQueue _backgroundQueue;
 
     public DiaryService(
-        DiaryOption option,
         IBackgroundTaskQueue backgroundQueue,
         IDiarySearchService diarySearchService,
-        IFileSystemService fsService)
+        [FromKeyedServices(nameof(DiaryService))] IFileSystem fileSystem)
     {
         _backgroundQueue = backgroundQueue;
         _diarySearchService = diarySearchService;
-        _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
+        _fs = fileSystem;
     }
 
     private async Task<List<DiaryFileName>> GetDiaryListAsync(DiaryName diaryName)

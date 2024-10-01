@@ -9,24 +9,17 @@ public class FileSystemService : IFileSystemService
 {
     private readonly FileSystemOption _fsOption;
     private readonly IEnumerable<IFileSystemBuilder> _fileSystems;
-    private readonly ILoggerFactory _loggerFactory;
-    private readonly ILogger<FileSystemService> _logger;
     private IBackgroundTaskQueue _queue;
-    private ISerializer _serializer;
 
     public FileSystemService(
         FileSystemOption fsOption,
         IEnumerable<IFileSystemBuilder> fileSystems,
-        IBackgroundTaskQueue backgroundTaskQueue,
-        ISerializer serializer,
-        ILoggerFactory loggerFactory)
+        IBackgroundTaskQueue backgroundTaskQueue
+    )
     {
         _fsOption = fsOption;
         _fileSystems = fileSystems;
-        _loggerFactory = loggerFactory;
-        _logger = loggerFactory.CreateLogger<FileSystemService>();
         _queue = backgroundTaskQueue;
-        _serializer = serializer;
     }
 
     public IFileSystem GetFileSystem(FileSystemSelectOption fileSystemSelectOption, PathMap pathMap)
