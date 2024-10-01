@@ -117,7 +117,7 @@ public partial class ExternalLogin : ComponentBase
         {
             return new AppUser
             {
-                Id = new UserId($"user.{externalLoginInfo.ProviderKey}"),
+                Id = new UserId($"user.{externalLoginInfo.LoginProvider}.{externalLoginInfo.ProviderKey}".ToLower()),
             };
         }
         catch

@@ -53,8 +53,7 @@ public class AppUserStore : IUserLoginStore<AppUser>, IUserRoleStore<AppUser>
     }
     public async Task AddLoginAsync(AppUser user, UserLoginInfo login, CancellationToken cancellationToken)
     {
-        var externalId = $"{login.LoginProvider}.{login.ProviderKey}";
-        var loginFileName = $"{externalId}.json";
+        var loginFileName = $"{login.LoginProvider}.{login.ProviderKey}.json".ToLower();
         var loginFilePath = (Paths path) => Path.Join(path["Logins"], loginFileName);
 
         var loginInfo = new AppLoginInfo
@@ -73,7 +72,7 @@ public class AppUserStore : IUserLoginStore<AppUser>, IUserRoleStore<AppUser>
 
     public async Task<AppUser?> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
     {
-        var loginFileName = $"{loginProvider}.{providerKey}.json";
+        var loginFileName = $"{loginProvider}.{providerKey}.json".ToLower();
         var loginFilePath = (Paths path) => Path.Join(path["Logins"], loginFileName);
         if (await _fs.FileExistsAsync(loginFilePath, cancellationToken))
         {
@@ -95,7 +94,7 @@ public class AppUserStore : IUserLoginStore<AppUser>, IUserRoleStore<AppUser>
 
     public async Task RemoveLoginAsync(AppUser user, string loginProvider, string providerKey, CancellationToken cancellationToken)
     {
-        var loginFileName = $"{loginProvider}.{providerKey}.json";
+        var loginFileName = $"{loginProvider}.{providerKey}.json".ToLower();
         var loginFilePath = (Paths path) => Path.Join(path["Logins"], loginFileName);
         if (await _fs.FileExistsAsync(loginFilePath, cancellationToken))
         {
@@ -120,7 +119,7 @@ public class AppUserStore : IUserLoginStore<AppUser>, IUserRoleStore<AppUser>
         await user.Logins
             .Select(async loginInfo =>
             {
-                var loginFileName = $"{loginInfo.Provider}.{loginInfo.ProviderKey}.json";
+                var loginFileName = $"{loginInfo.Provider}.{loginInfo.ProviderKey}.json".ToLower();
                 var loginFilePath = (Paths path) => Path.Join(path["Logins"], loginFileName);
                 if (await _fs.FileExistsAsync(loginFilePath))
                 {
