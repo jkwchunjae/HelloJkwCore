@@ -1,4 +1,4 @@
-using Shouldly;
+using FluentAssertions;
 
 namespace Tests.Common;
 
@@ -11,12 +11,12 @@ public class StringIdTest
         var id2 = new StringId("test");
         var id3 = new StringId("test2");
 
-        id1.Id.ShouldBe("test");
-        id2.Id.ShouldBe("test");
-        id3.Id.ShouldBe("test2");
+        id1.Id.Should().Be("test");
+        id2.Id.Should().Be("test");
+        id3.Id.Should().Be("test2");
 
-        id1.ShouldBe(id2);
-        id1.ShouldNotBe(id3);
-        id2.ShouldNotBe(id3);
+        id1.Should().Be(id2);
+        id1.Should().NotBe(id3);
+        id2.Should().NotBe(id3);
     }
 }
