@@ -1,4 +1,4 @@
-﻿using static Dropbox.Api.Files.ListRevisionsMode;
+﻿using Moq;
 
 namespace Tests.Diary;
 
@@ -39,7 +39,14 @@ public class DiaryServiceTest
             Path = pathOption,
         };
 
-        var fileSystemService = new FileSystemService(fsOption, null, null);
+        var serializer = new Json([
+            new StringIdTextJsonConverter<UserId>(id => new UserId(id)),
+            new StringIdTextJsonConverter<DiaryName>(id => new DiaryName(id)),
+        ]);
+        var inmemoryFs = new InMemoryFileSystemBuilder(serializer);
+        var loggerFactory = new Mock<ILoggerFactory>();
+
+        var fileSystemService = new FileSystemService(fsOption, [inmemoryFs], null, serializer, loggerFactory.Object);
 
         _diaryService = new DiaryService(diaryOption, null, null, fileSystemService);
 

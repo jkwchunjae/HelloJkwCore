@@ -8,6 +8,6 @@ public class AppUserTest
         var user1 = new AppUser() { Id = new UserId("google.111") };
         var user2 = new AppUser() { Id = new UserId("google.111") };
 
-        Assert.True(user1 == user2);
+        user1.Should().Be(user2);
     }
 }
