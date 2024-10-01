@@ -10,11 +10,11 @@ public class DiarySearchService : IDiarySearchService
     private readonly ISerializer _serializer;
 
     public DiarySearchService(
-        IFileSystemService fsService,
-        ISerializer serializer,
-        DiaryOption diaryOption)
+        [FromKeyedServices(nameof(DiarySearchService))] IFileSystem fileSystem,
+        ISerializer serializer
+    )
     {
-        _fs = fsService.GetFileSystem(diaryOption.SearchEngineFileSystem, diaryOption.Path);
+        _fs = fileSystem;
         _serializer = serializer;
     }
 

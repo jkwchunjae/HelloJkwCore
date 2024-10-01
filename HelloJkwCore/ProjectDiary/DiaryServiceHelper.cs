@@ -25,5 +25,12 @@ public static partial class DiaryServiceHelper
             var fileSystem = fileSystemService.GetFileSystem(option.FileSystemSelect, option.Path);
             return fileSystem;
         });
+        services.AddKeyedSingleton<IFileSystem>(nameof(DiarySearchService), (provider, key) =>
+        {
+            var option = provider.GetRequiredService<DiaryOption>();
+            var fileSystemService = provider.GetRequiredService<IFileSystemService>();
+            var fileSystem = fileSystemService.GetFileSystem(option.SearchEngineFileSystem, option.Path);
+            return fileSystem;
+        });
     }
 }
