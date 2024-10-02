@@ -25,11 +25,7 @@ public static class LocalFileSystemExtensions
 {
     public static IServiceCollection AddLocalFileSystem(this IServiceCollection services)
     {
-        services.AddSingleton<IFileSystemBuilder, LocalFileSystemBuilder>(serviceProvider =>
-        {
-            var serializer = serviceProvider.GetRequiredService<ISerializer>();
-            return new LocalFileSystemBuilder(serializer);
-        });
+        services.AddSingleton<IFileSystemBuilder, LocalFileSystemBuilder>();
         return services;
     }
 }

@@ -36,7 +36,10 @@ public static class DropboxFileSystemExtensions
     {
         services.AddSingleton<IFileSystemBuilder, DropboxFileSystemBuilder>(serviceProvider =>
         {
-            var dropboxClient = DropboxExtensions.GetDropboxClient(dropboxOption);
+            var dropboxClient = new DropboxClient(
+                dropboxOption.RefreshToken,
+                dropboxOption.ClientId,
+                dropboxOption.ClientSecret);
             var serializer = serviceProvider.GetRequiredService<ISerializer>();
             return new DropboxFileSystemBuilder(dropboxClient, serializer);
         });

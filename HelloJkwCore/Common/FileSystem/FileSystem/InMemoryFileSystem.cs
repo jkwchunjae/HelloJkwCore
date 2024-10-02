@@ -24,11 +24,7 @@ public static class InMemoryFileSystemExtensions
 {
     public static IServiceCollection AddInMemoryFileSystem(this IServiceCollection services)
     {
-        services.AddSingleton<IFileSystemBuilder, InMemoryFileSystemBuilder>(serviceProvider =>
-        {
-            var serializer = serviceProvider.GetRequiredService<ISerializer>();
-            return new InMemoryFileSystemBuilder(serializer);
-        });
+        services.AddSingleton<IFileSystemBuilder, InMemoryFileSystemBuilder>();
         return services;
     }
 }

@@ -27,11 +27,7 @@ builder.Services.AddMudServices();
 var fsOption = builder.Configuration.GetSection("FileSystem").Get<FileSystemOption>()!;
 builder.Services.AddSingleton(fsOption);
 builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
-builder.Services.AddSingleton<ISerializer, Json>(serviceProvider =>
-{
-    var converters = serviceProvider.GetServices<JsonConverter>();
-    return new Json(converters);
-});
+builder.Services.AddSingleton<ISerializer, Json>();
 builder.Services.AddInMemoryFileSystem();
 builder.Services.AddLocalFileSystem();
 if (fsOption.Dropbox != null)
@@ -84,11 +80,7 @@ builder.Services.AddSingleton<JsonConverter>(new StringIdTextJsonConverter<UserI
 #endregion
 
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Diary",
-        policy => policy.RequireAuthenticatedUser());
-});
+builder.Services.AddAuthorization();
 builder.Services.AddDiaryService(builder.Configuration);
 builder.Services.AddBadukService(builder.Configuration);
 builder.Services.AddGameLibra(builder.Configuration);
