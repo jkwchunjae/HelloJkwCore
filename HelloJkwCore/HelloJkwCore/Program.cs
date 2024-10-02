@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.user.json", optional: true);
 
-var coreOption = CoreOption.Create(builder.Configuration);
+var coreOption = builder.Configuration.GetSection("HelloJkw").Get<CoreOption>()!;
 builder.Services.AddSingleton(coreOption);
 
 // Add services to the container.
@@ -24,8 +24,7 @@ builder.Services.AddMudServices();
 
 #region FileSystem
 
-var fsOption = new FileSystemOption();
-builder.Configuration.GetSection("FileSystem").Bind(fsOption);
+var fsOption = builder.Configuration.GetSection("FileSystem").Get<FileSystemOption>()!;
 builder.Services.AddSingleton(fsOption);
 builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
 builder.Services.AddSingleton<ISerializer, Json>(serviceProvider =>
