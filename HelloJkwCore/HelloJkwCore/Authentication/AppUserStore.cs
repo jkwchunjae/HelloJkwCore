@@ -10,17 +10,11 @@ public class AppUserStore : IUserLoginStore<AppUser>, IUserRoleStore<AppUser>
     private readonly Dictionary<string, UserRole> _cachedRoles;
 
     public AppUserStore(
-        CoreOption coreOption,
-        ILoggerFactory loggerFactory,
-        IFileSystemService fsService)
+        IFileSystem fileSystem,
+        ILoggerFactory loggerFactory)
     {
-        if (coreOption.UserStoreFileSystem == null)
-            throw new ArgumentNullException(nameof(coreOption.UserStoreFileSystem));
-        if (coreOption.Path == null)
-            throw new ArgumentNullException(nameof(coreOption.Path));
-
+        _fs = fileSystem;
         _logger = loggerFactory.CreateLogger<AppUserStore>();
-        _fs = fsService.GetFileSystem(coreOption.UserStoreFileSystem, coreOption.Path);
         _cachedRoles = typeof(UserRole).GetValues<UserRole>()
             .Select(role => new { RoleName = role.ToString().ToLower(), Role = role })
             .ToDictionary(x => x.RoleName, x => x.Role);

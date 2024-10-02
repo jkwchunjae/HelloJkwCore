@@ -4,14 +4,13 @@ namespace HelloJkwCore;
 
 public class CoreOption
 {
-    public Dictionary<string, OAuthConfig>? AuthOptions { get; set; }
-    public FileSystemSelectOption? UserStoreFileSystem { get; set; }
-    public PathMap? Path { get; set; }
+    public required Dictionary<string, OAuthConfig> AuthOptions { get; set; }
+    public required FileSystemSelectOption UserStoreFileSystem { get; set; }
+    public required PathMap Path { get; set; }
 
     public static CoreOption Create(IConfiguration configuration)
     {
-        var option = new CoreOption();
-        configuration.GetSection("HelloJkw").Bind(option);
+        var option = configuration.GetSection("HelloJkw").Get<CoreOption>()!;
         return option;
     }
 }

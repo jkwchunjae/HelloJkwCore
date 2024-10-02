@@ -72,7 +72,13 @@ builder.Services
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IUserStore<AppUser>, AppUserStore>();
+builder.Services.AddSingleton<IUserStore<AppUser>, AppUserStore>(provider =>
+{
+    var option = provider.GetRequiredService<CoreOption>();
+    var fileSystemService = provider.GetRequiredService<IFileSystemService>();
+    var fileSystem = fileSystemService.GetFileSystem(option.UserStoreFileSystem, option.Path);
+    return new AppUserStore(fileSystem, provider.GetRequiredService<ILoggerFactory>());
+});
 builder.Services.AddSingleton<IRoleStore<ApplicationRole>, AppRoleStore>();
 builder.Services.AddSingleton<JsonConverter>(new StringIdTextJsonConverter<UserId>(id => new UserId(id)));
 
