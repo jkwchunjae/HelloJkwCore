@@ -1,13 +1,15 @@
-﻿namespace ProjectBaduk;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace ProjectBaduk;
 
 public class BadukService : IBadukService
 {
-    IFileSystem _fs;
+    private readonly IFileSystem _fs;
     public BadukService(
-        BadukOption option,
-        IFileSystemService fsService)
+        [FromKeyedServices(nameof(BadukService))] IFileSystem fileSystem
+    )
     {
-        _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
+        _fs = fileSystem;
     }
 
     public async Task<BadukDiary> DeleteBadukGameData(BadukDiaryName diaryName, string subject)
