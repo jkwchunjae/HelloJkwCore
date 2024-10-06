@@ -69,10 +69,9 @@ public class DropboxFileSystem : IFileSystem
 
     public async Task<bool> CreateDirectoryAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
-
         try
         {
+            var path = pathFunc(_paths);
             await _client.Files.CreateFolderV2Async(path);
             return true;
         }
@@ -84,16 +83,23 @@ public class DropboxFileSystem : IFileSystem
 
     public async Task<bool> DeleteFileAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
-        await _client.Files.DeleteV2Async(path);
-        return true;
+        try
+        {
+            var path = pathFunc(_paths);
+            await _client.Files.DeleteV2Async(path);
+            return true;
+        }
+        catch
+        {
+            throw;
+        }
     }
 
     public async Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
         try
         {
+            var path = pathFunc(_paths);
             var metadata = await _client.Files.GetMetadataAsync(path);
             return metadata.IsFolder;
         }
@@ -105,9 +111,9 @@ public class DropboxFileSystem : IFileSystem
 
     public async Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
         try
         {
+            var path = pathFunc(_paths);
             var metadata = await _client.Files.GetMetadataAsync(path);
             return metadata.IsFile;
         }
@@ -119,30 +125,37 @@ public class DropboxFileSystem : IFileSystem
 
     public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string? extension = null, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
-        var fileMetadataList = new List<Metadata>();
-
-        var result = await _client.Files.ListFolderAsync(path);
-        fileMetadataList.AddRange(result.Entries);
-
-        while (result.HasMore)
+        try
         {
-            result = await _client.Files.ListFolderContinueAsync(result.Cursor);
-            fileMetadataList.AddRange(result.Entries);
-        }
+            var path = pathFunc(_paths);
+            var fileMetadataList = new List<Metadata>();
 
-        return fileMetadataList
-            .Where(x => x.IsFile)
-            .Select(x => x.Name)
-            .Where(x => extension == null || x.EndsWith(extension))
-            .ToList();
+            var result = await _client.Files.ListFolderAsync(path);
+            fileMetadataList.AddRange(result.Entries);
+
+            while (result.HasMore)
+            {
+                result = await _client.Files.ListFolderContinueAsync(result.Cursor);
+                fileMetadataList.AddRange(result.Entries);
+            }
+
+            return fileMetadataList
+                .Where(x => x.IsFile)
+                .Select(x => x.Name)
+                .Where(x => extension == null || x.EndsWith(extension))
+                .ToList();
+        }
+        catch
+        {
+            throw;
+        }
     }
 
     public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
         try
         {
+            var path = pathFunc(_paths);
             var text = await ReadTextAsync(pathFunc, ct);
             var parsed = _serializer.Deserialize<T>(text);
             return parsed;
@@ -184,9 +197,9 @@ public class DropboxFileSystem : IFileSystem
 
     public async Task<bool> WriteTextAsync(Func<Paths, string> pathFunc, string text, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
         try
         {
+            var path = pathFunc(_paths);
             var bytes = _encoding.GetBytes(text);
             using var stream = new MemoryStream(bytes);
             var uploadArgs = new UploadArg(path, mode: WriteMode.Overwrite.Instance);
@@ -201,9 +214,9 @@ public class DropboxFileSystem : IFileSystem
 
     public async Task<bool> WriteBlobAsync(Func<Paths, string> pathFunc, Stream stream, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
         try
         {
+            var path = pathFunc(_paths);
             await _client.Files.UploadAsync(path, WriteMode.Overwrite.Instance, body: stream);
             return true;
         }
@@ -215,9 +228,9 @@ public class DropboxFileSystem : IFileSystem
 
     public async Task<byte[]> ReadBlobAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        var path = pathFunc(_paths);
         try
         {
+            var path = pathFunc(_paths);
             using var response = await _client.Files.DownloadAsync(path);
             return await response.GetContentAsByteArrayAsync();
         }

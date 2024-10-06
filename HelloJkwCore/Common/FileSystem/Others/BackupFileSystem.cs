@@ -37,37 +37,21 @@ public class BackupFileSystem : IFileSystem
 
     public async Task<bool> DirExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        //_backgroundQueue.QueueBackgroundWorkItem(async token =>
-        //{
-        //    await _backup.DirExistsAsync(pathFunc, token);
-        //});
         return await _fs.DirExistsAsync(pathFunc, ct);
     }
 
     public async Task<bool> FileExistsAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        //_backgroundQueue.QueueBackgroundWorkItem(async token =>
-        //{
-        //    await _backup.FileExistsAsync(pathFunc, token);
-        //});
         return await _fs.FileExistsAsync(pathFunc, ct);
     }
 
     public async Task<List<string>> GetFilesAsync(Func<Paths, string> pathFunc, string? extension = null, CancellationToken ct = default)
     {
-        //_backgroundQueue.QueueBackgroundWorkItem(async token =>
-        //{
-        //    await _backup.GetFilesAsync(pathFunc, extension, token);
-        //});
         return await _fs.GetFilesAsync(pathFunc, extension, ct);
     }
 
     public async Task<T> ReadJsonAsync<T>(Func<Paths, string> pathFunc, CancellationToken ct = default)
     {
-        //_backgroundQueue.QueueBackgroundWorkItem(async token =>
-        //{
-        //    await _backup.ReadJsonAsync(pathFunc, token);
-        //});
         return await _fs.ReadJsonAsync<T>(pathFunc, ct);
     }
 
