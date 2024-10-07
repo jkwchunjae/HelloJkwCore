@@ -1,6 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits JkwLayoutBase
 
-<MudThemeProvider Theme="currentTheme" />
+<MudThemeProvider @bind-IsDarkMode="_isDarkMode" Theme="currentTheme"/>
+<MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -30,3 +31,8 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+    using HelloJkwCore.Shared;
+
+#line default
+#line hidden
+#nullable disable

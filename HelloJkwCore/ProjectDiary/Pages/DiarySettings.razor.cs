@@ -185,7 +185,7 @@ public partial class DiarySettings : JkwPageBase
     private AppUser SearchedWriter;
     private AppUser SearchedViewer;
     private IList<AppUser> _allUsers;
-    private async Task<IEnumerable<AppUser>> SearchUser(string keyword)
+    private async Task<IEnumerable<AppUser>> SearchUser(string keyword, CancellationToken ct)
     {
         if (!IsAuthenticated)
             return new List<AppUser>();

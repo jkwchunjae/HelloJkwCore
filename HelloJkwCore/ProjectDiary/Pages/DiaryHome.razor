@@ -100,18 +100,6 @@ else if (HasDiaryContent)
         }
         @if (DiaryInfo.CanWrite(User.Id) && DiaryInfo.AllowPicture)
         {
-        <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles" Accept=".jpg,.png">
-            <ButtonTemplate Context="fileUploadContext">
-                <MudButton HtmlTag="label"
-                            Variant="Variant.Outlined"
-                            Size="Size.Small"
-                            StartIcon="@Icons.Material.Filled.CloudUpload"
-                            for="@fileUploadContext.Id"
-                            >
-                    사진 업로드
-                </MudButton>
-            </ButtonTemplate>
-        </MudFileUpload>
         }
 
     </div>

@@ -8,7 +8,7 @@
   <h3>@DiaryInfo.DiaryName 일기장의 공개 범위를 설정합니다. </h3>
 
 <MudPaper MaxWidth="500px">
-  <MudList>
+  <MudList T="string">
     <MudListSubheader>
       <h5> 관리자 </h5>
     </MudListSubheader>
@@ -19,7 +19,7 @@
 </MudPaper>
 
 <MudPaper MaxWidth="500px" Style="margin-top: 30px;">
-  <MudList>
+  <MudList T="string">
     <MudListSubheader>
       <h5> 일기를 쓸 수 있는 사람들 </h5>
     </MudListSubheader>
@@ -34,7 +34,6 @@
       <MudAutocomplete T="AppUser" Label="일기 쓸 수 있는 사람을 추가합니다" @bind-Value="SearchedWriter"
         SearchFunc="@SearchUser"
         ToStringFunc="@(user => user?.DisplayName)"
-        SelectOnClick="true"
         @onselect="@(async () => await OnWriterSelect())"
       />
     </MudListItem>
@@ -42,7 +41,7 @@
 </MudPaper>
 
 <MudPaper MaxWidth="500px" Style="margin-top: 30px;">
-  <MudList>
+  <MudList T="string">
     <MudListSubheader>
       <h5> 일기를 읽을 수 있는 사람들 </h5>
     </MudListSubheader>
@@ -57,7 +56,6 @@
       <MudAutocomplete T="AppUser" Label="일기를 읽을 수 있는 사람을 추가합니다" @bind-Value="SearchedViewer"
         SearchFunc="@SearchUser"
         ToStringFunc="@(user => user?.DisplayName)"
-        SelectOnClick="true"
         @onselect="@(async () => await OnViewerSelect())"
       />
     </MudListItem>

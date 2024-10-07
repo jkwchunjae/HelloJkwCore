@@ -3,7 +3,7 @@
 @if (UserDiaryInfo?.ViewList?.Any() ?? false)
 {
     <MudText Typo="Typo.h5">내가 읽을 수 있는 일기장</MudText>
-<MudList>
+<MudList T="string">
   @foreach (var viewable in UserDiaryInfo.ViewList)
   {
     var diaryPath = $"/diary/{viewable}";
