@@ -96,11 +96,22 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
+    .AddAdditionalAssemblies([
+        typeof(Common.JkwPageBase).Assembly,
+        typeof(ProjectDiary.DiaryService).Assembly,
+        typeof(ProjectBaduk.BadukService).Assembly,
+        typeof(GameLibra.LibraService).Assembly,
+    ])
     .AddInteractiveServerRenderMode();
 
 // Add additional endpoints required by the Identity /Account Razor components.
