@@ -16,6 +16,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.6" />
     <PackageReference Include="Microsoft.JSInterop" Version="8.0.6" />
     <PackageReference Include="MudBlazor" Version="7.5.0" />
-    <PackageReference Include="System.Runtime.Caching" Version="8.0.0" />
+    <PackageReference Include="System.Runtime.Caching" Version="8.0.1" />
   </ItemGroup>
 </Project>
