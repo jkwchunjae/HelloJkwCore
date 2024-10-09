@@ -1,18 +1,11 @@
-@namespace HelloJkwCore.Components
 @inherits MudButton
-@using Microsoft.AspNetCore.Components.Web
-@using MudBlazor
-@using Microsoft.JSInterop
-@inject IJSRuntime Js
-
 
 <MudButton OnClick="Click"
            Disabled="Disabled"
            ButtonType="ButtonType"
            Href="@Href"
            Target="@Target"
-           DisableElevation="DisableElevation"
-           DisableRipple="DisableRipple"
+           Ripple="@Ripple"
            StartIcon="@StartIcon"
            EndIcon="@EndIcon"
            IconColor="IconColor"
@@ -24,7 +17,8 @@
            Class="@Class"
            Style="@Style"
            Tag="Tag"
-           UserAttributes="UserAttributes">
+           UserAttributes="UserAttributes"
+>
         @ChildContent
 </MudButton>
 
@@ -36,7 +30,7 @@
     [Parameter] public Variant ActionVariant { get; set; } = Variant.Filled;
 
     private bool _clicked = false;
-    private CancellationTokenSource _cts;
+    private CancellationTokenSource? _cts;
 
     protected async Task Click(MouseEventArgs ev)
     {

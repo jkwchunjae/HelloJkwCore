@@ -1,7 +1,7 @@
 ﻿namespace ProjectPingpong;
 
 [TextJsonConverter(typeof(StringIdTextJsonConverter<KnockoutId>))]
-public class KnockoutId : StringId
+public record KnockoutId : StringId
 {
     public static readonly KnockoutId Default = new KnockoutId(string.Empty);
     private CompetitionName _competitionName = CompetitionName.Default;
@@ -20,9 +20,7 @@ public class KnockoutId : StringId
             _competitionName = value;
         }
     }
-    public KnockoutId() { }
-    public KnockoutId(string id)
-        : base(id)
+    public KnockoutId(string id) : base(id)
     {
         CompetitionName = Parse(id);
     }
@@ -82,7 +80,7 @@ public class KnockoutUpdator
             knockoutData.PlayerList ??= new();
 
             // 진짜 추가된 유저 추가
-            var newPlayers = players.Where(p => knockoutData.PlayerList.Empty(pp => pp.Name == p.Name));
+            var newPlayers = players.Where(p => knockoutData.PlayerList.Empty(pp => pp == p));
             knockoutData.PlayerList = knockoutData.PlayerList
                 .Concat(newPlayers)
                 .ToList();

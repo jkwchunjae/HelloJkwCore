@@ -23,6 +23,7 @@ public partial class DiaryText : JkwPageBase
 
     private async Task OnTextChanged(string text)
     {
+        text ??= string.Empty;
         Text = text;
 
         await TextChanged.InvokeAsync(text);

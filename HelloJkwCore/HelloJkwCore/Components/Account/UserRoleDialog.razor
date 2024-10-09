@@ -1,0 +1,59 @@
+@using HelloJkwCore.Authentication
+@using System.Reflection
+@using JkwExtensions
+
+<MudDialog>
+    <DialogContent>
+        @foreach (var role in typeof(UserRole).GetValues<UserRole>())
+        {
+            bool isChecked = CheckedRoles?.Contains(role) ?? false;
+
+            <MudCheckBox T="bool" Value="isChecked" Label="@role.ToString()" Dense="true"
+                        ValueChanged="@(check => RoleChanged(role, check))"/>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Outlined">취소</MudButton>
+        <MudButton OnClick="Submit" Variant="Variant.Outlined" Color="SubmitColor">@SubmitText</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public AppUser User { get; set; } = default!;
+    [Parameter] public string SubmitText { get; set; } = "확인";
+    [Parameter] public Color SubmitColor { get; set; } = Color.Default;
+
+    private List<UserRole>? CheckedRoles;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        this.CheckedRoles = User.Roles?.ToList() ?? new List<UserRole>();
+    }
+
+    void RoleChanged(UserRole role, bool isChecked)
+    {
+        if (isChecked)
+        {
+        this.CheckedRoles?.Add(role);
+        }
+        else
+        {
+        this.CheckedRoles?.Remove(role);
+        }
+    }
+
+    void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    void Submit()
+    {
+        this.CheckedRoles = this.CheckedRoles?.Distinct().ToList() ?? new();
+        var result = new UserRoleResult(User, this.CheckedRoles);
+        MudDialog.Close(DialogResult.Ok(result));
+    }
+}

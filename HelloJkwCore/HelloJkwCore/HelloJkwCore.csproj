@@ -2,20 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <UserSecretsId>3f3a2065-dd51-4cf6-9af5-94b95114243b</UserSecretsId>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MudBlazor" Version="7.5.0" />
     <PackageReference Include="AspNet.Security.OAuth.KakaoTalk" Version="8.0.0" />
-    <PackageReference Include="Jkw.Extensions" Version="1.0.13" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.6" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\ProjectBaduk\ProjectBaduk.csproj" />
     <ProjectReference Include="..\ProjectDiary\ProjectDiary.csproj" />
-    <ProjectReference Include="..\ProjectPingpong\ProjectPingpong.csproj" />
     <ProjectReference Include="..\GameLibra\GameLibra.csproj" />
   </ItemGroup>
+
 </Project>

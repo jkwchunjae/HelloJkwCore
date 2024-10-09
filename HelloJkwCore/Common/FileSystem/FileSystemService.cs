@@ -2,97 +2,64 @@
 
 public interface IFileSystemService
 {
-    //IFileSystem MainFileSystem { get; }
-    //IFileSystem GetFileSystem(FileSystemType fsType);
     IFileSystem GetFileSystem(FileSystemSelectOption fileSystemSelectOption, PathMap pathOption);
 }
 
 public class FileSystemService : IFileSystemService
 {
-    //private readonly Dictionary<FileSystemType, IFileSystem> _fsDic = new();
     private readonly FileSystemOption _fsOption;
-    private readonly ILoggerFactory _loggerFactory;
-    private readonly ILogger<FileSystemService> _logger;
+    private readonly IEnumerable<IFileSystemBuilder> _fileSystems;
     private IBackgroundTaskQueue _queue;
-
-    //public IFileSystem MainFileSystem { get; private set; }
 
     public FileSystemService(
         FileSystemOption fsOption,
-        IBackgroundTaskQueue backgroundTaskQueue,
-        ILoggerFactory loggerFactory)
+        IEnumerable<IFileSystemBuilder> fileSystems,
+        IBackgroundTaskQueue backgroundTaskQueue
+    )
     {
         _fsOption = fsOption;
-        _loggerFactory = loggerFactory;
-        _logger = loggerFactory?.CreateLogger<FileSystemService>();
+        _fileSystems = fileSystems;
         _queue = backgroundTaskQueue;
     }
 
-    private Dictionary<FileSystemType, IFileSystem> CreateFileSystem(FileSystemOption fsOption, PathMap pathOption)
+    public IFileSystem GetFileSystem(FileSystemSelectOption fileSystemSelectOption, PathMap pathMap)
     {
-        Dictionary<FileSystemType, IFileSystem> fsDic = new();
-
-        if (pathOption.Dropbox != null)
-        {
-            if (fsOption.Dropbox != null)
-            {
-                var dropboxClient = DropboxExtensions.GetDropboxClient(fsOption.Dropbox);
-                fsDic.Add(FileSystemType.Dropbox, new DropboxFileSystem(pathOption, dropboxClient));
-            }
-        }
-        if (pathOption.Azure != null)
-        {
-            if (fsOption.Azure != null)
-            {
-                fsDic.Add(FileSystemType.Azure, new AzureFileSystem(pathOption, fsOption.Azure.ConnectionString, _loggerFactory));
-            }
-        }
-        if (pathOption.InMemory != null)
-        {
-            fsDic.Add(FileSystemType.InMemory, new InMemoryFileSystem(pathOption));
-        }
-        if (pathOption.Local != null)
-        {
-            fsDic.Add(FileSystemType.Local, new LocalFileSystem(pathOption));
-        }
-
-        return fsDic;
-    }
-
-    public IFileSystem GetFileSystem(FileSystemSelectOption fileSystemSelectOption, PathMap pathOption)
-    {
-        var fsDic = CreateFileSystem(_fsOption, pathOption);
-
         if (fileSystemSelectOption.UseMainFileSystem)
         {
-            return fsDic.CreateMainFileSystem(_fsOption, _queue);
+            return CreateMainFileSystem(_fsOption, pathMap, _queue);
         }
         else
         {
-            return fsDic.GetFileSystem(fileSystemSelectOption.FileSystemType);
+            return GetFileSystemBuilder(fileSystemSelectOption.FileSystemType)
+                .Build(pathMap);
         }
     }
-}
 
-static class FsDicExtension
-{
-    public static IFileSystem GetFileSystem(this Dictionary<FileSystemType, IFileSystem> fsDic, FileSystemType fsType)
+    private IFileSystemBuilder GetFileSystemBuilder(FileSystemType fsType)
     {
-        return fsDic.ContainsKey(fsType) ? fsDic[fsType] : null;
+        var fileSystem = _fileSystems.FirstOrDefault(fs => fs.FileSystemType == fsType);
+        if (fileSystem == null)
+        {
+            throw new ArgumentException();
+        }
+        return fileSystem;
     }
 
-    public static IFileSystem CreateMainFileSystem(this Dictionary<FileSystemType, IFileSystem> fsDic, FileSystemOption fsOption, IBackgroundTaskQueue backgroundTaskQueue)
+    private IFileSystem CreateMainFileSystem(FileSystemOption fsOption, PathMap pathMap, IBackgroundTaskQueue backgroundTaskQueue)
     {
-        if (fsOption.MainFileSystem.UseBackup)
+        if (fsOption.MainFileSystem?.UseBackup ?? false)
         {
-            var fsMain = fsDic.GetFileSystem(fsOption.MainFileSystem.MainFileSystem);
-            var fsBackup = fsDic.GetFileSystem(fsOption.MainFileSystem.BackupFileSystem);
+            var fsMain = GetFileSystemBuilder(fsOption.MainFileSystem.MainFileSystem)
+                .Build(pathMap);
+            var fsBackup = GetFileSystemBuilder(fsOption.MainFileSystem.BackupFileSystem)
+                .Build(pathMap);
             var fs = new BackupFileSystem(fsMain, fsBackup, backgroundTaskQueue);
             return fs;
         }
         else
         {
-            var fs = fsDic.GetFileSystem(fsOption.MainFileSystem.MainFileSystem);
+            var fs = GetFileSystemBuilder(fsOption.MainFileSystem?.MainFileSystem ?? FileSystemType.Local)
+                .Build(pathMap);
             return fs;
         }
     }

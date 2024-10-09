@@ -2,13 +2,13 @@
 
 <MudDialog>
     <DialogContent>
-        <MudCheckBox @bind-Checked="@Setting.VisibleCubeName" Label="큐브 이름을 보고 싶어요">
+        <MudCheckBox @bind-Value="@Setting.VisibleCubeName" Label="큐브 이름을 보고 싶어요">
         </MudCheckBox>
-        <MudCheckBox @bind-Checked="@Setting.LargeContainer" Label="양팔 저울의 크기를 키우고 싶어요">
+        <MudCheckBox @bind-Value="@Setting.LargeContainer" Label="양팔 저울의 크기를 키우고 싶어요">
         </MudCheckBox>
-        <MudCheckBox @bind-Checked="@Setting.OrderedConatiner" Label="큐브를 색깔별로 보고 싶어요">
+        <MudCheckBox @bind-Value="@Setting.OrderedConatiner" Label="큐브를 색깔별로 보고 싶어요">
         </MudCheckBox>
-        <MudCheckBox @bind-Checked="@Setting.HideOtherPlayerCube" Label="내 차례의 큐브만 볼래요">
+        <MudCheckBox @bind-Value="@Setting.HideOtherPlayerCube" Label="내 차례의 큐브만 볼래요">
         </MudCheckBox>
 
         <MudSimpleTable Dense="true">

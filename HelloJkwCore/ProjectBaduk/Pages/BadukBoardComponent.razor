@@ -2,14 +2,14 @@
 
 @using ProjectBaduk;
 
-<table>
+<div class="table-container">
     @for (var roww = 1; roww <= Size; roww++)
     {
         var row = roww;
         var flagTop = row == 1 ? 1 : 0;
         var flagBottom = row == Size ? 1 : 0;
         var flagPointRow = PointArray[Size].Any(num => num == row);
-        <tr class="baduk">
+        <div class="row-container">
             @for (var columnn = 1; columnn <= Size; columnn++)
             {
                 var column = columnn;
@@ -24,17 +24,16 @@
                 var whiteDisplay = hasStone && stone?.Color == StoneColor.White ? "block" : "none";
                 var indexColorClass = !hasStone || !Board.VisibleStoneIndex ? "stone-index-none" :
                     stone?.Color == StoneColor.Black ? "stone-index-black" : "stone-index-white";
-                <td class="board-cell" @onclick="(async () => await ClickCell(row, column))">
+                <div class="cell-container" @onclick="(async () => await ClickCell(row, column))">
                     <img class="image-stone" src="/images/baduk/black-go-stone24.png" style="display: @blackDisplay" />
                     <img class="image-stone" src="/images/baduk/white-go-stone24.png" style="display: @whiteDisplay" />
                     <span class="stone-index @indexColorClass">@index</span>
-                    <img class="image-cell" src="@cellImageSrc" />
-                </td>
+                    <img src="@cellImageSrc" />
+                </div>
             }
-            <td><div style="width: 24px;"></div></td>
-        </tr>
+        </div>
     }
-</table>
+</div>
 <div>
     <div class="board-info">
     <div class="btn-group" role="group">

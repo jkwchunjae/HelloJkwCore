@@ -1,12 +1,20 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Common;
 
-public static class Json
+public interface ISerializer
 {
-    private static JsonSerializerOptions _options;
-    private static JsonSerializerOptions _optionsNoIndent;
-    static Json()
+    T Deserialize<T>(string jsonText);
+    string Serialize<T>(T value);
+    string SerializeNoIndent<T>(T value);
+}
+
+public class Json : ISerializer
+{
+    private JsonSerializerOptions _options;
+    private JsonSerializerOptions _optionsNoIndent;
+    public Json(IEnumerable<JsonConverter> converters)
     {
         _options = new JsonSerializerOptions
         {
@@ -14,28 +22,25 @@ public static class Json
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             WriteIndented = true,
         };
-        _optionsNoIndent = new JsonSerializerOptions
+        converters.ForEach(_options.Converters.Add);
+
+        _optionsNoIndent = new JsonSerializerOptions(_options)
         {
-            AllowTrailingCommas = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             WriteIndented = false,
         };
     }
-    public static T Deserialize<T>(string jsonText)
+    public T Deserialize<T>(string jsonText)
     {
-        //return JsonConvert.DeserializeObject<T>(jsonText);
-        return JsonSerializer.Deserialize<T>(jsonText, _options);
+        return JsonSerializer.Deserialize<T>(jsonText, _options)!;
     }
 
-    public static string Serialize<T>(T value)
+    public string Serialize<T>(T value)
     {
-        //return JsonConvert.SerializeObject(value, Formatting.Indented);
         return JsonSerializer.Serialize<T>(value, _options);
     }
 
-    public static string SerializeNoIndent<T>(T value)
+    public string SerializeNoIndent<T>(T value)
     {
-        //return JsonConvert.SerializeObject(value);
         return JsonSerializer.Serialize<T>(value, _optionsNoIndent);
     }
 }

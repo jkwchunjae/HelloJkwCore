@@ -27,7 +27,7 @@ public partial class LibraNew : JkwPageBase
     {
         if (!IsAuthenticated)
         {
-            NavigationManager.NavigateTo("/login");
+            Navi.NavigateTo("/login");
             return Task.CompletedTask;
         }
         _hintList = Enum.GetValues<LibraGameHint>()
@@ -47,7 +47,7 @@ public partial class LibraNew : JkwPageBase
         if (!string.IsNullOrWhiteSpace(_name))
         {
             var engine = await LibraService.CreateGameWithDevilsPlan(User, _name);
-            NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
+            Navi.NavigateTo($"game/libra/room/{engine.State.Id}");
         }
     }
 
@@ -57,7 +57,7 @@ public partial class LibraNew : JkwPageBase
         {
             var rule = MakeRule();
             var engine = await LibraService.CreateGame(User, _name, rule);
-            NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
+            Navi.NavigateTo($"game/libra/room/{engine.State.Id}");
         }
     }
 
@@ -80,7 +80,7 @@ public partial class LibraNew : JkwPageBase
                 MaybeUseAssist = true,
             };
             var engine = await LibraService.CreateGame(User, _name, rule);
-            NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
+            Navi.NavigateTo($"game/libra/room/{engine.State.Id}");
         }
     }
 
@@ -103,7 +103,7 @@ public partial class LibraNew : JkwPageBase
                 MaybeUseAssist = true,
             };
             var engine = await LibraService.CreateGame(User, _name, rule);
-            NavigationManager.NavigateTo($"game/libra/room/{engine.State.Id}");
+            Navi.NavigateTo($"game/libra/room/{engine.State.Id}");
         }
     }
 

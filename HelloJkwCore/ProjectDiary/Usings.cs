@@ -10,10 +10,7 @@ global using System.IO;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.AspNetCore.Components.Routing;
 global using Microsoft.JSInterop;
-
-global using JsonNetConverter = Newtonsoft.Json.JsonConverterAttribute;
-global using JsonNetIgnore = Newtonsoft.Json.JsonIgnoreAttribute;
-global using JsonNetStringEnumConverter = Newtonsoft.Json.Converters.StringEnumConverter;
+global using Microsoft.Extensions.DependencyInjection;
 
 global using TextJsonConverter = System.Text.Json.Serialization.JsonConverterAttribute;
 global using TextJsonIgnore = System.Text.Json.Serialization.JsonIgnoreAttribute;

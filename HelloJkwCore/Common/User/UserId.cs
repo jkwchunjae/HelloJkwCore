@@ -1,12 +1,9 @@
 ﻿namespace Common;
 
-[JsonNetConverter(typeof(StringIdJsonNetConverter<UserId>))]
 [TextJsonConverter(typeof(StringIdTextJsonConverter<UserId>))]
-public class UserId : StringId
+public record UserId : StringId
 {
-    public UserId() { }
-    public UserId(string id)
-        : base(id)
+    public UserId(string id) : base(id)
     {
     }
 }

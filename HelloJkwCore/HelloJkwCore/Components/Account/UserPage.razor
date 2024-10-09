@@ -1,0 +1,71 @@
+@page "/Account/User"
+@page "/Account/Manage/ExternalLogins"
+@inherits JkwPageBase
+
+<AuthorizeView>
+    <Authorized>
+        <PageTitle>@User?.DisplayName</PageTitle>
+
+        <MudText Typo="Typo.h3">@User?.DisplayName</MudText>
+
+        <form action="Account/Logout" method="post">
+            <AntiforgeryToken />
+            <input type="hidden" name="ReturnUrl" value="" />
+            <MudButton ButtonType="ButtonType.Submit">Logout</MudButton>
+        </form>
+
+        @if (User?.Logins?.Any() ?? false)
+        {
+            @foreach (var loginInfo in User.Logins)
+            {
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.h5">@loginInfo.Provider</MudText>
+                        <MudText Typo="Typo.body2">@loginInfo.ProviderKey</MudText>
+                        <MudText Typo="Typo.body2">@loginInfo.CreateTime</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <form @formname="@($"remove-login-{loginInfo.Provider}")" @onsubmit="OnSubmitAsync" method="post">
+                            <AntiforgeryToken />
+                            <input type="hidden" name="LoginProvider" value="@loginInfo.Provider" />
+                            <input type="hidden" name="ProviderKey" value="@loginInfo.ProviderKey" />
+                            <MudButton ButtonType="ButtonType.Submit">Remove</MudButton>
+                        </form>
+                    </MudCardActions>
+                </MudCard>
+            }
+        }
+
+        <MudText Typo="Typo.h5">다른 계정을 연결할 수 있습니다.</MudText>
+
+        @foreach (var provider in externalLogins)
+        {
+            var loginImage = LoginImage(provider.Name);
+
+            <form action="Account/Manage/LinkExternalLogin" method="post">
+                <AntiforgeryToken />
+                <input type="hidden" name="provider" value="@provider.Name" />
+                <MudButton ButtonType="ButtonType.Submit">
+                    <MudImage Src="@loginImage" />
+                </MudButton>
+            </form>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <MudText Typo="Typo.h3">로그인 하지 않았습니다.</MudText>
+
+        <h1>Not Authorized</h1>
+        <p>You're not signed in.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+<script>
+    function checkAntiforgeryToken() {
+        var inputs = document.getElementsByName("__RequestVerificationToken");
+        return inputs.length != 0;
+    }
+
+    function reload() {
+        location.reload();
+    }
+</script>

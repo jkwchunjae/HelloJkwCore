@@ -9,7 +9,7 @@
 else if (MyDiaryInfo != null && !HasDiaryInfo)
 {
     <PageTitle>일기장</PageTitle>
-    <AuthorizeView Policy="Diary">
+    <AuthorizeView>
         <Authorized>
             <span>없는 일기장입니다.</span>
         </Authorized>
@@ -44,7 +44,7 @@ else if (!HasDiaryContent)
 }
 else if (HasDiaryContent)
 {
-    <AuthorizeView Policy="Diary">
+    <AuthorizeView>
         <Authorized>
 
     <PageTitle>@User.DisplayName 님의 일기장 </PageTitle>
@@ -100,18 +100,6 @@ else if (HasDiaryContent)
         }
         @if (DiaryInfo.CanWrite(User.Id) && DiaryInfo.AllowPicture)
         {
-        <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles" Accept=".jpg,.png">
-            <ButtonTemplate Context="fileUploadContext">
-                <MudButton HtmlTag="label"
-                            Variant="Variant.Outlined"
-                            Size="Size.Small"
-                            StartIcon="@Icons.Material.Filled.CloudUpload"
-                            for="@fileUploadContext.Id"
-                            >
-                    사진 업로드
-                </MudButton>
-            </ButtonTemplate>
-        </MudFileUpload>
         }
 
     </div>

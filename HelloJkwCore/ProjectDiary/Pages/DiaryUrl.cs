@@ -4,7 +4,7 @@ public static class DiaryUrl
 {
     public static string Home(DiaryName diaryName = null)
     {
-        if (string.IsNullOrWhiteSpace(diaryName?.Name))
+        if (string.IsNullOrWhiteSpace(diaryName))
         {
             return $"/diary";
         }

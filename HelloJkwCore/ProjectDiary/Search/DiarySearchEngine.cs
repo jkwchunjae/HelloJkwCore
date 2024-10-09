@@ -6,6 +6,12 @@ class DiarySearchEngine
     private DiaryTrie _trie { get; set; } = new DiaryTrie();
 
     private ReaderWriterLockSlim _lock = new();
+    private readonly ISerializer _serializer;
+
+    public DiarySearchEngine(ISerializer serializer)
+    {
+        _serializer = serializer;
+    }
 
     public void AddText(string text, string source)
     {
@@ -79,7 +85,7 @@ class DiarySearchEngine
     {
         using (_lock.AcquireReaderLock())
         {
-            return Json.SerializeNoIndent(_trie);
+            return _serializer.SerializeNoIndent(_trie);
         }
     }
 }

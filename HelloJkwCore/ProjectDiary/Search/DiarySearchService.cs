@@ -7,12 +7,15 @@ public class DiarySearchService : IDiarySearchService
     private Dictionary<string, DiarySearchEngine> _engineDic = new();
 
     private ReaderWriterLockSlim _lock = new();
+    private readonly ISerializer _serializer;
 
     public DiarySearchService(
-        IFileSystemService fsService,
-        DiaryOption diaryOption)
+        [FromKeyedServices(nameof(DiarySearchService))] IFileSystem fileSystem,
+        ISerializer serializer
+    )
     {
-        _fs = fsService.GetFileSystem(diaryOption.SearchEngineFileSystem, diaryOption.Path);
+        _fs = fileSystem;
+        _serializer = serializer;
     }
 
     private async Task<DiarySearchEngine> GetSearchEngineAsync(DiaryName diaryName, int year)
@@ -33,7 +36,7 @@ public class DiarySearchService : IDiarySearchService
             {
                 throw new TooManyDiaryEngineException();
             }
-            engine = new DiarySearchEngine();
+            engine = new DiarySearchEngine(_serializer);
 
             Func<Paths, string> triePath = path => path.DiaryTrie(diaryName, year);
             if (await _fs.FileExistsAsync(triePath))

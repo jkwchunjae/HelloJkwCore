@@ -1,0 +1,17 @@
+﻿@using System.Reflection
+
+<Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="@assemblies">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+</Router>
+
+@code {
+    Assembly[] assemblies = [
+        typeof(Common.JkwPageBase).Assembly,
+        typeof(ProjectDiary.DiaryService).Assembly,
+        typeof(ProjectBaduk.BadukService).Assembly,
+        typeof(GameLibra.LibraService).Assembly,
+    ];
+}

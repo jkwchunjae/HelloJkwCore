@@ -1,12 +1,18 @@
-﻿tr.baduk {
+﻿.table-container {
+    display: flex;
+    flex-direction: column;
 }
 
-td.board-cell {
-    padding: 0;
-    line-height: initial;
+.row-container {
+    display: flex;
+    flex-direction: row;
+    height: 24px;
+    /* border: 1px solid black; */
 }
 
-img.image-cell {
+.cell-container {
+    width: 24px;
+    /* border: 1px solid red; */
 }
 
 img.image-stone {

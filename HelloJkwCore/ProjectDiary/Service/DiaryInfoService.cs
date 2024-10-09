@@ -32,16 +32,11 @@ public partial class DiaryService : IDiaryService
             return false;
         if (diaryName.Length > 30)
             return false;
-        if (!Regex.IsMatch(diaryName.Name, @"^[a-z]+$"))
+        if (!Regex.IsMatch(diaryName, @"^[a-z]+$"))
             return false;
 
         // TODO lock
-        var diaryNameList = await _fs.ReadJsonAsync<List<DiaryName>>(path => path.DiaryNameListFile());
-        if (diaryNameList == default(List<DiaryName>))
-        {
-            diaryNameList = new List<DiaryName>();
-        }
-
+        var diaryNameList = await GetDiaryNameListAsync();
         if (diaryNameList.Contains(diaryName))
         {
             return false;
@@ -51,6 +46,19 @@ public partial class DiaryService : IDiaryService
         await _fs.WriteJsonAsync(path => path.DiaryNameListFile(), diaryNameList);
 
         return true;
+
+        async Task<List<DiaryName>> GetDiaryNameListAsync()
+        {
+            try
+            {
+                var diaryNameList = await _fs.ReadJsonAsync<List<DiaryName>>(path => path.DiaryNameListFile());
+                return diaryNameList;
+            }
+            catch (FileNotFoundException)
+            {
+                return new();
+            }
+        }
     }
 
     public async Task<DiaryInfo> CreateDiaryInfoAsync(AppUser user, DiaryName diaryName, bool isSecret)

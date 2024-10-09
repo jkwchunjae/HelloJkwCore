@@ -26,7 +26,7 @@
       {
         @foreach (var league in CompetitionData.LeagueList)
         {
-          var leagueUrl = @$"/jangtak9/league/{league.Id.ToUrl()}";
+          var leagueUrl = $"/jangtak9/league/{league.Id.ToUrl()}";
           <MudDropZone T="Player" Identifier="@league.Id.Id"
                   CanDrop="@((_) => Setting ? true : false)"
                   CanDropClass="mud-border-info"

@@ -4,7 +4,7 @@ using static Dropbox.Api.Files.ListRevisionsMode;
 namespace ProjectPingpong;
 
 [TextJsonConverter(typeof(StringIdTextJsonConverter<LeagueId>))]
-public class LeagueId : StringId
+public record LeagueId : StringId
 {
     public static readonly LeagueId Default = new LeagueId(string.Empty);
 
@@ -40,7 +40,6 @@ public class LeagueId : StringId
             _leagueName = value;
         }
     }
-    public LeagueId() { }
     public LeagueId(string id)
         : base(id)
     {

@@ -46,8 +46,8 @@
             <MudSelectItem Value="@hintItem.HintValue">@hintItem.HintDescription</MudSelectItem>
         }
     </MudSelect>
-    <MudSwitch Label="다른 플레이어의 큐브를 볼 수 있는지" @bind-Checked="_visibleOtherCube" Color="Color.Success"/>
-    <MudSwitch Label="도움 받기 버튼 표시" @bind-Checked="_maybeUseAssist" Color="Color.Success"/>
+    <MudSwitch T="bool" Label="다른 플레이어의 큐브를 볼 수 있는지" @bind-Checked="_visibleOtherCube" Color="Color.Success"/>
+    <MudSwitch T="bool" Label="도움 받기 버튼 표시" @bind-Checked="_maybeUseAssist" Color="Color.Success"/>
 </MudForm>
 <OneClickButton Variant="Variant.Filled" Color="Color.Info"
     OnClick="CreateGame"

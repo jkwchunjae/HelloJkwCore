@@ -2,7 +2,7 @@
 
 namespace ProjectDiary.Pages;
 
-public partial class DiaryHome : JkwPageBase
+public partial class DiaryHome : JkwPageBase, IDisposable
 {
     [Inject] private IDiaryService DiaryService { get; set; }
     [Inject] private UserInstantData UserData { get; set; }
@@ -23,15 +23,17 @@ public partial class DiaryHome : JkwPageBase
     private bool HasDiaryInfo => DiaryInfo != null;
     private bool HasDiaryContent => HasDiaryInfo && (View?.DiaryContents?.Any() ?? false);
 
-    public DiaryHome()
+    public void Dispose()
     {
+        Navi.LocationChanged -= HandleLocationChanged;
     }
 
     protected override async Task OnPageInitializedAsync()
     {
+        Navi.LocationChanged += HandleLocationChanged;
         if (!IsAuthenticated)
         {
-            NavigationManager.NavigateTo("/login");
+            Navi.NavigateTo("/account/login");
             return;
         }
 
@@ -42,7 +44,18 @@ public partial class DiaryHome : JkwPageBase
         StateHasChanged();
     }
 
-    protected override async Task HandleLocationChanged(LocationChangedEventArgs e)
+    private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        try
+        {
+            await HandleLocationChanged(e);
+        }
+        catch
+        {
+        }
+    }
+
+    protected async Task HandleLocationChanged(LocationChangedEventArgs e)
     {
         Loading = true;
         await InitDiary();
@@ -79,8 +92,6 @@ public partial class DiaryHome : JkwPageBase
             Logger?.LogDebug("DiaryInfo is null");
             return;
         }
-
-        Logger?.LogDebug("Set DiaryInfo: {diaryInfo}", Json.Serialize(DiaryInfo));
 
         if (DiaryInfo.IsSecret && string.IsNullOrWhiteSpace(UserData.Password))
         {
@@ -128,7 +139,7 @@ public partial class DiaryHome : JkwPageBase
 
     private async Task<DiaryInfo> GetDiaryInfo(DiaryName diaryName)
     {
-        if (string.IsNullOrWhiteSpace(diaryName?.Name))
+        if (string.IsNullOrWhiteSpace(diaryName))
             return null;
 
         return await DiaryService.GetDiaryInfoAsync(User, diaryName);

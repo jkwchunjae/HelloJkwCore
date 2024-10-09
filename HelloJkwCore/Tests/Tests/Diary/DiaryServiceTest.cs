@@ -1,4 +1,6 @@
-﻿namespace Tests.Diary;
+﻿using Moq;
+
+namespace Tests.Diary;
 
 public class DiaryServiceTest
 {
@@ -19,30 +21,17 @@ public class DiaryServiceTest
             },
         };
 
-        var fsOption = new FileSystemOption
+        var serializer = new Json([
+            new StringIdTextJsonConverter<UserId>(id => new UserId(id)),
+            new StringIdTextJsonConverter<DiaryName>(id => new DiaryName(id)),
+        ]);
+        var inmemoryFs = new InMemoryFileSystem(new Paths(pathOption, FileSystemType.InMemory), serializer);
+
+        _diaryService = new DiaryService(null, null, inmemoryFs);
+
+        _user = new AppUser()
         {
-            MainFileSystem = new MainFileSystemOption
-            {
-                UseBackup = false,
-                MainFileSystem = FileSystemType.InMemory,
-            },
-        };
-
-        var diaryOption = new DiaryOption
-        {
-            FileSystemSelect = new FileSystemSelectOption
-            {
-                UseMainFileSystem = true,
-            },
-            Path = pathOption,
-        };
-
-        var fileSystemService = new FileSystemService(fsOption, null, null);
-
-        _diaryService = new DiaryService(diaryOption, null, null, fileSystemService);
-
-        _user = new AppUser("Test", "1234")
-        {
+            Id = new UserId("Test.1234"),
             Email = "test@hellojkw.com",
             UserName = "test user",
         };

@@ -1,6 +1,6 @@
 ﻿namespace ProjectPingpong.Pages.Match;
 
-public partial class PpMatchCenter : JkwPageBase
+public partial class PpMatchCenter : JkwPageBase, IDisposable
 {
     [Parameter] public string? MatchIdText { get; set; }
     private MatchId MatchId { get; set; } = MatchId.Default;
@@ -12,6 +12,16 @@ public partial class PpMatchCenter : JkwPageBase
     private IPpNotifier<MatchData>? MatchNotify { get; set; }
     private string? LeagueId { get; set; } = null;
 
+    public void Dispose()
+    {
+        if (MatchId != MatchId.Default && MatchNotify != null)
+        {
+            MatchNotify.Updated -= MatchUpdator_Updated;
+            MatchService!.Unwatch(MatchId);
+            MatchNotify = null;
+        }
+    }
+
     protected override async Task OnPageParametersSetAsync()
     {
         if (MatchIdText != null)
@@ -22,11 +32,6 @@ public partial class PpMatchCenter : JkwPageBase
             MatchNotify = MatchService.Watch(MatchId);
             MatchNotify.Updated += MatchUpdator_Updated;
         }
-
-        if (Navi.TryGetQueryString("league", out string leagueId))
-        {
-            LeagueId = leagueId;
-        }
     }
 
     private async void MatchUpdator_Updated(object? sender, MatchData data)
@@ -36,16 +41,6 @@ public partial class PpMatchCenter : JkwPageBase
             Match = data;
             StateHasChanged();
         });
-    }
-
-    protected override void OnPageDispose()
-    {
-        if (MatchId != MatchId.Default && MatchNotify != null)
-        {
-            MatchNotify.Updated -= MatchUpdator_Updated;
-            MatchService!.Unwatch(MatchId);
-            MatchNotify = null;
-        }
     }
 
     private async Task StartMatch()
