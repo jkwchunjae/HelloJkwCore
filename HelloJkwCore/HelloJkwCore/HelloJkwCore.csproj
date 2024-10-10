@@ -10,6 +10,7 @@
     <PackageReference Include="MudBlazor" Version="7.5.0" />
     <PackageReference Include="AspNet.Security.OAuth.KakaoTalk" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.6" />
+    <PackageReference Include="TableViewer.MudBlazor" Version="0.3.3" />
   </ItemGroup>
 
   <ItemGroup>
