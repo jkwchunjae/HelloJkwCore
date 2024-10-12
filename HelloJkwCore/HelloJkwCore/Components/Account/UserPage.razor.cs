@@ -23,8 +23,11 @@ public partial class UserPage : JkwPageBase
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
+    private TvOptions? tvOptionsLogins;
+
     protected override async Task OnPageInitializedAsync()
     {
+        tvOptionsLogins = MakeTvOptionsLogins();
         if (HttpMethods.IsGet(HttpContext?.Request?.Method ?? string.Empty) && Action == LinkLoginCallbackAction)
         {
             await OnGetLinkLoginCallbackAsync();
@@ -83,15 +86,97 @@ public partial class UserPage : JkwPageBase
         RedirectManager.RedirectToCurrentPageWithStatus("The external login was added.", HttpContext!);
     }
 
-    private async Task OnSubmitAsync()
+    private async Task RemoveLoginFromUserAsync(string loginProvider, string providerKey)
     {
-        var result = await UserManager.RemoveLoginAsync(User!, LoginProvider!, ProviderKey!);
+        var result = await UserManager.RemoveLoginAsync(User!, loginProvider, providerKey);
         if (!result.Succeeded)
         {
             RedirectManager.RedirectToCurrentPageWithStatus("Error: The external login was not removed.", HttpContext!);
         }
 
-        await SignInManager.RefreshSignInAsync(User!);
-        RedirectManager.RedirectToCurrentPageWithStatus("The external login was removed.", HttpContext!);
+        await Js.InvokeVoidAsync("reload");
+    }
+
+    private TvOptions MakeTvOptionsLogins()
+    {
+        return new TvOptions
+        {
+            Title = "유저 정보",
+            GlobalOpenDepth = 2,
+            Style =
+            {
+                RootClass = { "mt-8" },
+            },
+            Buttons =
+            {
+                new TvPopupAction<AppLoginInfo>
+                {
+                    Action = (loginInfo) => RemoveLoginFromUserAsync(loginInfo.Provider, loginInfo.ProviderKey),
+                    Label = "연결 해제",
+                    PopupContent = (loginInfo) => $"정말로 {loginInfo.Provider} 계정을 연결 해제하시겠습니까?",
+                    PopupTitle = (loginInfo) => $"{loginInfo.Provider} 계정 연결 해제",
+                    Condition = (loginInfo, depth) => User!.Logins.Count() > 1,
+                    InnerButtonOptions =
+                    {
+                        ConfirmLabel = "연결 해제",
+                        ConfirmButtonStyle =
+                        {
+                            Color = Color.Error,
+                        },
+                        CloseLabel = "취소",
+                    },
+                    Style =
+                    {
+                        Variant = Variant.Outlined,
+                        Color = Color.Error,
+                    },
+                },
+            },
+            TitleButtons =
+            {
+                new TvAction<AppUser>
+                {
+                    Label = "로그아웃",
+                    Action = async user =>
+                    {
+                        await Js.InvokeVoidAsync("logout");
+                    },
+                },
+                new TvAction<AppUser>
+                {
+                    Label = "새로고침",
+                    Action = async (user) =>
+                    {
+                        await Js.InvokeVoidAsync("reload");
+                    },
+                },
+            },
+            DisableKeys =
+            {
+                nameof(AppUser.NormalizedUserName),
+                nameof(AppUser.Email),
+                nameof(AppUser.EmailConfirmed),
+                nameof(AppUser.NormalizedEmail),
+                nameof(AppUser.PasswordHash),
+                nameof(AppUser.SecurityStamp),
+                nameof(AppUser.ConcurrencyStamp),
+                nameof(AppUser.PhoneNumber),
+                nameof(AppUser.PhoneNumberConfirmed),
+                nameof(AppUser.TwoFactorEnabled),
+                nameof(AppUser.LockoutEnd),
+                nameof(AppUser.LockoutEnabled),
+                nameof(AppUser.AccessFailedCount),
+                nameof(AppLoginInfo.Provider),
+                nameof(AppLoginInfo.ProviderKey),
+                nameof(AppLoginInfo.ProviderDisplayName),
+                nameof(AppLoginInfo.CreateTime),
+                nameof(AppLoginInfo.ConnectedUserId),
+                nameof(AppLoginInfo.LoginInfo),
+            },
+            DateTime = new TvDateTimeOption
+            {
+                Format = "yyyy-MM-dd HH:mm:ss",
+            },
+        };
     }
 }
