@@ -6,34 +6,17 @@
     <Authorized>
         <PageTitle>@User?.DisplayName</PageTitle>
 
-        <MudText Typo="Typo.h3">@User?.DisplayName</MudText>
+        <MudText Typo="Typo.h4">@User?.DisplayName</MudText>
 
-        <form action="Account/Logout" method="post">
+        <form action="Account/Logout" method="post" id="logout-form" style="display: none;">
             <AntiforgeryToken />
             <input type="hidden" name="ReturnUrl" value="" />
             <MudButton ButtonType="ButtonType.Submit">Logout</MudButton>
         </form>
 
-        @if (User?.Logins?.Any() ?? false)
+        @if (User != null && tvOptionsLogins != null)
         {
-            @foreach (var loginInfo in User.Logins)
-            {
-                <MudCard>
-                    <MudCardContent>
-                        <MudText Typo="Typo.h5">@loginInfo.Provider</MudText>
-                        <MudText Typo="Typo.body2">@loginInfo.ProviderKey</MudText>
-                        <MudText Typo="Typo.body2">@loginInfo.CreateTime</MudText>
-                    </MudCardContent>
-                    <MudCardActions>
-                        <form @formname="@($"remove-login-{loginInfo.Provider}")" @onsubmit="OnSubmitAsync" method="post">
-                            <AntiforgeryToken />
-                            <input type="hidden" name="LoginProvider" value="@loginInfo.Provider" />
-                            <input type="hidden" name="ProviderKey" value="@loginInfo.ProviderKey" />
-                            <MudButton ButtonType="ButtonType.Submit">Remove</MudButton>
-                        </form>
-                    </MudCardActions>
-                </MudCard>
-            }
+            <TableViewer Data="User" Options="@tvOptionsLogins"/>
         }
 
         <MudText Typo="Typo.h5">다른 계정을 연결할 수 있습니다.</MudText>
@@ -54,8 +37,7 @@
     <NotAuthorized>
         <MudText Typo="Typo.h3">로그인 하지 않았습니다.</MudText>
 
-        <h1>Not Authorized</h1>
-        <p>You're not signed in.</p>
+        <p>로그인 후 이용해주세요.</p>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -67,5 +49,13 @@
 
     function reload() {
         location.reload();
+    }
+
+    function logout() {
+        if (checkAntiforgeryToken()) {
+            document.getElementById("logout-form").submit();
+        } else {
+            reload();
+        }
     }
 </script>

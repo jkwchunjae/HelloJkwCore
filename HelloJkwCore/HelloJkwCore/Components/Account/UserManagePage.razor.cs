@@ -1,5 +1,3 @@
-using HelloJkwCore.Authentication;
-using JkwExtensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -10,9 +8,9 @@ public partial class UserManagePage : JkwPageBase
     [Inject] AppUserManager UserManager { get; set; } = default!;
     [Inject] IDialogService DialogService { get; set; } = default!;
 
-    private List<AppUser> Users { get; set; } = new();
+    private List<AppUser>? Users { get; set; }
 
-    private IEnumerable<AppUser> FilteredUsers => Users;
+    private TvOptions? tvOptions;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -24,14 +22,18 @@ public partial class UserManagePage : JkwPageBase
         Users = (await UserManager.GetUsersInRoleAsync("all"))
             .OrderByDescending(x => x.LastLoginTime)
             .ToList();
+        tvOptions = MakeTvOptions();
     }
 
     private async Task DeleteUserAsync(AppUser user)
     {
         await UserManager.DeleteAsync(user);
 
-        Users.Remove(user);
-        StateHasChanged();
+        if (Users != null)
+        {
+            Users.Remove(user);
+            StateHasChanged();
+        }
     }
 
     private async Task ManageUserRole(AppUser user)
@@ -44,7 +46,7 @@ public partial class UserManagePage : JkwPageBase
         var dialog = DialogService.Show<UserRoleDialog>($"{user.DisplayName} 권한 관리", param, options);
         var result = await dialog.Result;
 
-        if (result.Canceled)
+        if (result?.Canceled ?? true)
         {
             return;
         }
@@ -73,6 +75,71 @@ public partial class UserManagePage : JkwPageBase
         {
             return roles1.OrderBy(x => x).SequenceEqual(roles2.OrderBy(x => x));
         }
+    }
+
+    private TvOptions MakeTvOptions()
+    {
+        return new TvOptions()
+        {
+            Title = "사용자 관리",
+            GlobalOpenDepth = 1,
+            ColumnVisible =
+            {
+                new TvColumnVisibleOption
+                {
+                    Before = [nameof(User.NickName), nameof(User.Id), nameof(User.UserName), nameof(User.CreateTime), nameof(User.LastLoginTime)],
+                    After = [nameof(User.Id), nameof(User.UserName), nameof(User.NickName), nameof(User.CreateTime), nameof(User.LastLoginTime), nameof(User.Roles), nameof(User.Logins)],
+                }
+            },
+            Buttons =
+            {
+                new TvPopupAction<AppUser>
+                {
+                    Action = DeleteUserAsync,
+                    Label = "삭제",
+                    Style =
+                    {
+                        Color = Color.Error,
+                        StartIcon = Icons.Material.Filled.Delete,
+                        IconColor = Color.Error,
+                    },
+                    PopupTitle = (user) => $"유저 삭제",
+                    PopupContent = (user) => $"정말로 {user.DisplayName}을 삭제하시겠습니까?",
+                    InnerButtonOptions =
+                    {
+                        ConfirmLabel = "삭제",
+                        ConfirmButtonStyle =
+                        {
+                            Color = Color.Error,
+                        },
+                        CloseLabel = "취소",
+                        CloseButtonStyle =
+                        {
+                            Color = Color.Dark,
+                            Variant = Variant.Outlined,
+                        },
+                    },
+                },
+                new TvAction<AppUser>
+                {
+                    Action = ManageUserRole,
+                    Label = "권한 관리",
+                },
+            },
+            DateTime = new TvDateTimeOption
+            {
+                Format = "yyyy-MM-dd HH:mm:ss",
+            },
+            DisableKeys =
+            {
+                nameof(AppLoginInfo.ProviderDisplayName),
+                nameof(AppLoginInfo.ConnectedUserId),
+                nameof(AppLoginInfo.LoginInfo),
+                nameof(AppLoginInfo.계정종류),
+                nameof(AppLoginInfo.아이디),
+                nameof(AppLoginInfo.연결시간),
+            },
+        };
     }
 }
 

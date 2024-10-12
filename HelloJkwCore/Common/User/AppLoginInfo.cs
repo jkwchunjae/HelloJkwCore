@@ -8,8 +8,10 @@ public class AppLoginInfo
     public required string ProviderKey { get; set; }
     public string? ProviderDisplayName { get; set; }
     public DateTime CreateTime { get; set; }
-    public DateTime LastLoginTime { get; set; }
     public UserId? ConnectedUserId { get; set; }
 
     [TextJsonIgnore] public UserLoginInfo LoginInfo => new UserLoginInfo(Provider, ProviderKey, ProviderDisplayName);
+    [TextJsonIgnore] public string 계정종류 => Provider;
+    [TextJsonIgnore] public string 아이디 => ProviderKey;
+    [TextJsonIgnore] public DateTime 연결시간 => CreateTime;
 }

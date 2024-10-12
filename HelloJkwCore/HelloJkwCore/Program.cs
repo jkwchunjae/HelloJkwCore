@@ -21,6 +21,7 @@ builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddMudServices();
+builder.Services.AddTableViewer();
 
 #region FileSystem
 
