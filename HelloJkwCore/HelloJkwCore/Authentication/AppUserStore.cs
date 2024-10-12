@@ -56,7 +56,6 @@ public class AppUserStore : IUserLoginStore<AppUser>, IUserRoleStore<AppUser>
             ProviderKey = login.ProviderKey,
             ProviderDisplayName = login.ProviderDisplayName,
             CreateTime = DateTime.Now,
-            LastLoginTime = DateTime.Now,
             ConnectedUserId = user.Id
         };
         await _fs.WriteJsonAsync<AppLoginInfo>(loginFilePath, loginInfo, cancellationToken);
@@ -104,6 +103,8 @@ public class AppUserStore : IUserLoginStore<AppUser>, IUserRoleStore<AppUser>
     {
         var userFileName = $"{user.Id}.json";
         var userFilePath = (Paths path) => Path.Join(path["Users"], userFileName);
+        user.CreateTime = DateTime.Now;
+        user.LastLoginTime = DateTime.Now;
         await _fs.WriteJsonAsync<AppUser>(userFilePath, user, cancellationToken);
         return IdentityResult.Success;
     }

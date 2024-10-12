@@ -8,6 +8,8 @@ global using System.Threading.Tasks;
 global using System.Collections.Concurrent;
 global using System.IO;
 global using JkwExtensions;
+global using TableViewerBlazor;
+global using TableViewerBlazor.Public;
 global using Microsoft.Extensions.Logging;
 
 global using TextJsonConverter = System.Text.Json.Serialization.JsonConverterAttribute;
