@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 using HelloJkwCore;
 using HelloJkwCore.Authentication;
@@ -5,6 +6,12 @@ using HelloJkwCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using MudBlazor.Services;
+
+var culture = new CultureInfo("ko-KR");
+CultureInfo.CurrentCulture = culture;
+CultureInfo.CurrentUICulture = culture;
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 var builder = WebApplication.CreateBuilder(args);
 
