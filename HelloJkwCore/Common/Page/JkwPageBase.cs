@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
-using System.Security.Claims;
 
 namespace Common;
 
@@ -23,27 +19,48 @@ public class JkwPageBase : ComponentBase
     {
         await base.OnInitializedAsync();
 
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var contextUser = authState?.User;
-        var authenticated = false;
-        if (contextUser != null)
-        {
-            var user = await UserManager.GetUserAsync(contextUser);
-            if (user != null)
-            {
-                authenticated = true;
-                IsAuthenticated = true;
-                User = user;
-            }
-        }
+        var (authenticated, user) = await TryGetAppUser();
 
-        if (!authenticated)
+        if (authenticated)
+        {
+            IsAuthenticated = true;
+            User = user;
+
+            await UpdateLastLoginTime(User!);
+        }
+        else
         {
             IsAuthenticated = false;
             User = null;
         }
 
         await OnPageInitializedAsync();
+
+        async Task<(bool Authenticated, AppUser? User)> TryGetAppUser()
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var contextUser = authState?.User;
+
+            if (contextUser != null)
+            {
+                var user = await UserManager.GetUserAsync(contextUser);
+                var authenticated = user != null;
+                return (authenticated, user);
+            }
+            else
+            {
+                return (false, default);
+            }
+        }
+
+        async Task UpdateLastLoginTime(AppUser user)
+        {
+            if (DateTime.Now - user.LastLoginTime > TimeSpan.FromDays(1))
+            {
+                user.LastLoginTime = DateTime.Now;
+                await UserManager.UpdateAsync(user);
+            }
+        }
     }
 
     public sealed override async Task SetParametersAsync(ParameterView parameters)
