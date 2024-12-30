@@ -11,7 +11,7 @@
             <MudTextField T="string" Label="일기장 이름 (소문자 3-30글자)" @bind-Value="_createModel.DiaryName"
                           Required="true" RequiredError="일기장 이름을 입력해주세요."
                           Validation="@(new Func<string, IEnumerable<string>>(DiaryNameValidator))" />
-            <MudCheckBox T="bool" Label="암호화 설정" @bind-Checked="_createModel.IsSecret" />
+            <MudCheckBox T="bool" Label="암호화 설정" @bind-Value="_createModel.IsSecret" />
             <ul style="font-size: small">
                 <li>암호화 설정을 하면 일기의 내용을 암호화해서 저장합니다.</li>
                 <li>DB가 유출되어도 아무도 일기를 읽을 수 없습니다.</li>
