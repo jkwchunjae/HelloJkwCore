@@ -60,7 +60,7 @@ public class JkwLayoutBase : LayoutComponentBase, IDisposable
 
         if (IsAuthenticated)
         {
-            var userId = _authenticationState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = _authenticationState.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             User = await UserStore.FindByIdAsync(userId, CancellationToken.None);
 
             if (User == null)
@@ -93,7 +93,7 @@ public class JkwLayoutBase : LayoutComponentBase, IDisposable
         OnPageDispose();
     }
 
-    private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    private async void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         //if (e.IsNavigationIntercepted == false)
         //    return;
@@ -103,7 +103,7 @@ public class JkwLayoutBase : LayoutComponentBase, IDisposable
 
         if (IsAuthenticated)
         {
-            var userId = _authenticationState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = _authenticationState.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             User = await UserStore.FindByIdAsync(userId, CancellationToken.None);
         }
         else

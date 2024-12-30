@@ -17,7 +17,7 @@ public partial class MainLayout : JkwLayoutBase
         _isDarkMode = false;
         if (IsAuthenticated)
         {
-            _currentThemeType = User.Theme;
+            _currentThemeType = User!.Theme;
             _isDarkMode = _currentThemeType == ThemeType.Dark;
             currentTheme = ThemeFamily.GetTheme(User.Theme);
         }
@@ -38,7 +38,7 @@ public partial class MainLayout : JkwLayoutBase
 
         if (IsAuthenticated)
         {
-           User.Theme = _currentThemeType;
+           User!.Theme = _currentThemeType;
            await UserStore.UpdateAsync(User, CancellationToken.None);
         }
     }
