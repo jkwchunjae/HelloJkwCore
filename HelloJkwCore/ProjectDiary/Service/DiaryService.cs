@@ -194,8 +194,11 @@ public partial class DiaryService : IDiaryService
     private async Task<Stream> ResizeImageAsync(Stream opededReadStream, int width)
     {
         using var image = await Image.LoadAsync(opededReadStream);
-        var height = (int)(image.Height * width / (double)image.Width);
-        image.Mutate(x => x.Resize(width, height));
+        if (image.Width > width)
+        {
+            var height = (int)(image.Height * width / (double)image.Width);
+            image.Mutate(x => x.Resize(width, height));
+        }
         var outputStream = new MemoryStream();
         await image.SaveAsJpegAsync(outputStream);
         outputStream.Position = 0;
