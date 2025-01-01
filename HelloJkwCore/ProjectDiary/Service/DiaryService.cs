@@ -174,7 +174,7 @@ public partial class DiaryService : IDiaryService
                     var fileName = $"{date:yyyyMMdd}_{pictureIndex:D3}.{file.Name}";
                     Func<Paths, string> picturePath = path => path.Picture(diary.DiaryName, fileName);
                     const int _10MB = 10 * 1024 * 1024;
-                    var imageStream = await ResizeImageAsync(file.OpenReadStream(maxAllowedSize: _10MB), width: 1024);
+                    var imageStream = await ResizeImageAsync(file.OpenReadStream(maxAllowedSize: _10MB), width: 1920);
                     await _fs.WriteBlobAsync(picturePath, imageStream);
                     return fileName;
                 })
