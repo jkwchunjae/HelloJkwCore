@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
+using Azure.Storage.Sas;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Common;
@@ -287,6 +288,38 @@ public class AzureFileSystem : IFileSystem
         catch (Exception ex)
         {
             _logger?.LogError(ex, "[Error] ReadBlobAsync. container: {container}, path: {path}", containerName, path);
+            throw;
+        }
+    }
+
+    public async Task<string> GenerateSasUrlAsync(Func<Paths, string> pathFunc, CancellationToken ct = default)
+    {
+        var (containerName, path) = ParsePath(pathFunc(_paths));
+        _logger?.LogDebug("GenerateSasUrlAsync. container: {container}, path: {path}", containerName, path);
+        try
+        {
+            var client = await GetContainerClient(containerName);
+            var blobClient = client.GetBlobClient(path);
+
+            var sasBuilder = new BlobSasBuilder
+            {
+                BlobContainerName = containerName,
+                BlobName = path,
+                Resource = "b", // Blob에 대한 SAS
+                StartsOn = DateTimeOffset.UtcNow.AddMinutes(-5),
+                ExpiresOn = DateTimeOffset.UtcNow.AddHours(1),
+            };
+
+            sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+            var uri = blobClient.GenerateSasUri(sasBuilder);
+            _logger?.LogInformation("GenerateSasUrlAsync. container: {container}, path: {path}, uri: {uri}", containerName, path, uri);
+
+            return uri.ToString();
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "[Error] GenerateSasUrlAsync. container: {container}, path: {path}", containerName, path);
             throw;
         }
     }
