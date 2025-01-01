@@ -110,11 +110,11 @@ else if (HasDiaryContent)
         <pre style="white-space: pre-wrap">@content.Text</pre>
     }
 
-    @if (DiaryInfo.AllowPicture && (View.PicturesBase64?.Any() ?? false))
+    @if (DiaryInfo.AllowPicture && (View.PicturesUrl?.Any() ?? false))
     {
-        @foreach (var picture in View.PicturesBase64)
+        @foreach (var picture in View.PicturesUrl)
         {
-            <img src="data:image/jpg;base64,@picture" style="max-height: 70vh;"/>
+            <img src="@picture" style="max-height: 70vh;"/>
         }
     }
 
