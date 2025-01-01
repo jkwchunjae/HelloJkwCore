@@ -59,13 +59,18 @@ public partial class DiaryService : IDiaryService
             .Select(async fileName =>
             {
                 Func<Paths, string> picturePath = path => path.Picture(diary.DiaryName, fileName);
-                if (_fs is AzureFileSystem azureFs)
+                IDiaryPicture picture = _fs switch
                 {
-                    var url = await azureFs.GenerateSasUrlAsync(picturePath);
-                    return url;
-                } else {
-                    return string.Empty;
-                }
+                    AzureFileSystem azureFs => new DiarySasUrlPicture
+                    {
+                        SasUrl = await azureFs.GenerateSasUrlAsync(picturePath),
+                    },
+                    _ => new DiaryBase64Picture
+                    {
+                        Base64 = Convert.ToBase64String(await _fs.ReadBlobAsync(picturePath)),
+                    },
+                };
+                return picture;
             })
             .WhenAll();
 
@@ -73,7 +78,7 @@ public partial class DiaryService : IDiaryService
         {
             DiaryInfo = diary,
             DiaryContents = todayContents.Where(x => x != null).ToList(),
-            PicturesUrl = pictures.Where(p => !string.IsNullOrEmpty(p)).ToList(),
+            Pictures = pictures.ToList(),
             DiaryNavigationData = new DiaryNavigationData
             {
                 Today = date.Date,

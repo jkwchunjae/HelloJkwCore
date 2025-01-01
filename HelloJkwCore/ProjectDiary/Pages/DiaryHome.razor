@@ -119,11 +119,18 @@ else if (HasDiaryContent)
         <pre style="white-space: pre-wrap">@content.Text</pre>
     }
 
-    @if (DiaryInfo.AllowPicture && (View.PicturesUrl?.Any() ?? false))
+    @if (DiaryInfo.AllowPicture && (View.Pictures?.Any() ?? false))
     {
-        @foreach (var picture in View.PicturesUrl)
+        @foreach (var picture in View.Pictures)
         {
-            <img src="@picture" style="max-height: 70vh;"/>
+            if (picture is DiarySasUrlPicture sasPicture)
+            {
+                <img src="@sasPicture.SasUrl" style="max-height: 70vh;"/>
+            }
+            else if (picture is DiaryBase64Picture base64Picture)
+            {
+                <img src="data:image/jpg;base64,@base64Picture.Base64" style="max-height: 70vh;"/>
+            }
         }
     }
 
