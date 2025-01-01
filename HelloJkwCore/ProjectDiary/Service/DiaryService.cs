@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace ProjectDiary;
 
@@ -172,7 +174,8 @@ public partial class DiaryService : IDiaryService
                     var fileName = $"{date:yyyyMMdd}_{pictureIndex:D3}.{file.Name}";
                     Func<Paths, string> picturePath = path => path.Picture(diary.DiaryName, fileName);
                     const int _10MB = 10 * 1024 * 1024;
-                    await _fs.WriteBlobAsync(picturePath, file.OpenReadStream(maxAllowedSize: _10MB));
+                    var imageStream = await ResizeImageAsync(file.OpenReadStream(maxAllowedSize: _10MB), width: 1024);
+                    await _fs.WriteBlobAsync(picturePath, imageStream);
                     return fileName;
                 })
                 .WhenAll();
@@ -186,5 +189,16 @@ public partial class DiaryService : IDiaryService
         {
             return view;
         }
+    }
+
+    private async Task<Stream> ResizeImageAsync(Stream opededReadStream, int width)
+    {
+        using var image = await Image.LoadAsync(opededReadStream);
+        var height = (int)(image.Height * width / (double)image.Width);
+        image.Mutate(x => x.Resize(width, height));
+        var outputStream = new MemoryStream();
+        await image.SaveAsJpegAsync(outputStream);
+        outputStream.Position = 0;
+        return outputStream;
     }
 }
