@@ -156,7 +156,7 @@ public partial class DiaryHome : JkwPageBase, IDisposable
     }
 
     IList<IBrowserFile> files = new List<IBrowserFile>();
-    private async Task UploadFiles(IReadOnlyList<IBrowserFile> files)
+    private async Task UploadImages(IReadOnlyList<IBrowserFile> files)
     {
         var today = View.DiaryNavigationData.Today;
         var view = await DiaryService.UploadImageAsync(User, DiaryInfo, today, files);

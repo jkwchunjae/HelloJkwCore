@@ -100,6 +100,15 @@ else if (HasDiaryContent)
         }
         @if (DiaryInfo.CanWrite(User.Id) && DiaryInfo.AllowPicture)
         {
+            <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadImages" Accept=".jpg,.jpeg,.png,.gif" MaximumFileCount="3" Class="d-inline-block">
+                <ActivatorContent>
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small"
+                            Color="Color.Primary"
+                            StartIcon="@Icons.Material.Filled.CloudUpload">
+                        사진
+                    </MudButton>
+                </ActivatorContent>
+            </MudFileUpload>
         }
 
     </div>
@@ -110,11 +119,18 @@ else if (HasDiaryContent)
         <pre style="white-space: pre-wrap">@content.Text</pre>
     }
 
-    @if (DiaryInfo.AllowPicture && (View.PicturesBase64?.Any() ?? false))
+    @if (DiaryInfo.AllowPicture && (View.Pictures?.Any() ?? false))
     {
-        @foreach (var picture in View.PicturesBase64)
+        @foreach (var picture in View.Pictures)
         {
-            <img src="data:image/jpg;base64,@picture" style="max-height: 70vh;"/>
+            if (picture is DiarySasUrlPicture sasPicture)
+            {
+                <img src="@sasPicture.SasUrl" style="max-height: 70vh;"/>
+            }
+            else if (picture is DiaryBase64Picture base64Picture)
+            {
+                <img src="data:image/jpg;base64,@base64Picture.Base64" style="max-height: 70vh;"/>
+            }
         }
     }
 
