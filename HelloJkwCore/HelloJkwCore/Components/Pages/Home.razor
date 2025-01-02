@@ -1,7 +1,32 @@
 ﻿@page "/"
+@inherits JkwPageBase
 
-<PageTitle>Home</PageTitle>
+<PageTitle>HelloJkw</PageTitle>
 
-<h1>Hello, world!</h1>
+@if (IsAuthenticated)
+{
+    <MudText Typo="Typo.h4">안녕하세요, @User!.DisplayName 님.</MudText>
+    <AuthorizeView Roles="DiaryWriter">
+        <Authorized>
+            <MudButton
+                Href="diary"
+                StartIcon="@Icons.Material.Filled.MenuBook"
+                Variant="Variant.Outlined"
+                Color="Color.Dark"
+            >
+                일기장
+            </MudButton>
+        </Authorized>
+    </AuthorizeView>
+}
+else
+{
+    <MudText Typo="Typo.h4">안녕하세요.</MudText>
 
-Welcome to your new app.
+    <MudButton Href="/account/login"
+        Variant="Variant.Outlined"
+        Size="Size.Large"
+    >
+        로그인
+    </MudButton>
+}
