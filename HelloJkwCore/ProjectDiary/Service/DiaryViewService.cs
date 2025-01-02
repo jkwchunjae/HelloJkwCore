@@ -65,6 +65,10 @@ public partial class DiaryService : IDiaryService
                     {
                         SasUrl = await azureFs.GenerateSasUrlAsync(picturePath),
                     },
+                    BackupFileSystem backupFs when backupFs.MainFileSystem is AzureFileSystem azureFs => new DiarySasUrlPicture
+                    {
+                        SasUrl = await azureFs.GenerateSasUrlAsync(picturePath),
+                    },
                     _ => new DiaryBase64Picture
                     {
                         Base64 = Convert.ToBase64String(await _fs.ReadBlobAsync(picturePath)),

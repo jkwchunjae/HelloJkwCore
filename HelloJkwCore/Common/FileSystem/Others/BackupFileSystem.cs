@@ -9,6 +9,8 @@ public class BackupFileSystem : IFileSystem
 
     public FileSystemType FileSystemType => _fs.FileSystemType;
 
+    public IFileSystem MainFileSystem => _fs;
+
     public BackupFileSystem(IFileSystem fsMain, IFileSystem fsBackup, IBackgroundTaskQueue backgroundQueue)
     {
         _backgroundQueue = backgroundQueue;
