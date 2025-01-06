@@ -22,7 +22,10 @@ public class Json : ISerializer
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             WriteIndented = true,
         };
-        converters.ForEach(_options.Converters.Add);
+        foreach (var converter in converters)
+        {
+            _options.Converters.Add(converter);
+        }
 
         _optionsNoIndent = new JsonSerializerOptions(_options)
         {
