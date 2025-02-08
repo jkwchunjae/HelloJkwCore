@@ -12,10 +12,10 @@
     <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
     <PackageReference Include="Dropbox.Api" Version="7.0.0" />
     <PackageReference Include="Jkw.Extensions" Version="1.0.13" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.0" />
-    <PackageReference Include="Microsoft.JSInterop" Version="9.0.0" />
-    <PackageReference Include="MudBlazor" Version="7.15.0" />
-    <PackageReference Include="System.Runtime.Caching" Version="9.0.0" />
-    <PackageReference Include="TableViewer.MudBlazor" Version="0.3.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.1" />
+    <PackageReference Include="Microsoft.JSInterop" Version="9.0.1" />
+    <PackageReference Include="MudBlazor" Version="8.1.0" />
+    <PackageReference Include="System.Runtime.Caching" Version="9.0.1" />
+    <PackageReference Include="TableViewer.MudBlazor" Version="0.3.4" />
   </ItemGroup>
 </Project>
