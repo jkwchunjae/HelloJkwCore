@@ -95,7 +95,7 @@ public partial class LibraBoardButtons : JkwPageBase
             };
 
             var options = new DialogOptions { CloseOnEscapeKey = true };
-            var dialog = DialogService.Show<LibraBoardGuessingDialog>("정답 제출", param, options);
+            var dialog = await DialogService.ShowAsync<LibraBoardGuessingDialog>("정답 제출", param, options);
             var result = await dialog.Result;
 
             if (result.Canceled)
@@ -125,7 +125,7 @@ public partial class LibraBoardButtons : JkwPageBase
             ["Rule"] = State.Rule,
         };
         var options = new DialogOptions { CloseOnEscapeKey = true };
-        var dialog = DialogService.Show<LibraBoardSettingDialogComponent>("화면 구성", param, options);
+        var dialog = await DialogService.ShowAsync<LibraBoardSettingDialogComponent>("화면 구성", param, options);
         var result = await dialog.Result;
 
         if (result.Canceled)

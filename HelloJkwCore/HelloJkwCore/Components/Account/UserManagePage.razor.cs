@@ -43,7 +43,7 @@ public partial class UserManagePage : JkwPageBase
             ["User"] = user,
         };
         DialogOptions options = new DialogOptions() { CloseOnEscapeKey = true };
-        var dialog = DialogService.Show<UserRoleDialog>($"{user.DisplayName} 권한 관리", param, options);
+        var dialog = await DialogService.ShowAsync<UserRoleDialog>($"{user.DisplayName} 권한 관리", param, options);
         var result = await dialog.Result;
 
         if (result?.Canceled ?? true)
