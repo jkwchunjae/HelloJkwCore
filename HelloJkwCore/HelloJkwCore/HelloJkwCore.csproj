@@ -7,10 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="8.1.0" />
     <PackageReference Include="AspNet.Security.OAuth.KakaoTalk" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.0" />
-    <PackageReference Include="TableViewer.MudBlazor" Version="0.3.4" />
   </ItemGroup>
 
   <ItemGroup>
