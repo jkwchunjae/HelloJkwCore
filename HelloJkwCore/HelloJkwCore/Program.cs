@@ -119,6 +119,7 @@ app.MapRazorComponents<App>()
         typeof(ProjectDiary.DiaryService).Assembly,
         typeof(ProjectBaduk.BadukService).Assembly,
         typeof(GameLibra.LibraService).Assembly,
+        typeof(TableViewerDocument.Pages.TableViewerDocumentHome).Assembly,
     ])
     .AddInteractiveServerRenderMode();
 

@@ -16,6 +16,7 @@
     <ProjectReference Include="..\ProjectBaduk\ProjectBaduk.csproj" />
     <ProjectReference Include="..\ProjectDiary\ProjectDiary.csproj" />
     <ProjectReference Include="..\GameLibra\GameLibra.csproj" />
+    <ProjectReference Include="..\TableViewerDocument\TableViewerDocument.csproj" />
   </ItemGroup>
 
 </Project>

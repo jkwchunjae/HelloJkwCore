@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameLibra", "GameLibra\Game
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.GameLibra", "Tests\Test.GameLibra\Test.GameLibra.csproj", "{FA822191-B4E1-4F94-8B61-2D245250098E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableViewerDocument", "TableViewerDocument\TableViewerDocument.csproj", "{C67BED95-6066-4C6F-946A-F35B66F4988C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{FA822191-B4E1-4F94-8B61-2D245250098E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA822191-B4E1-4F94-8B61-2D245250098E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA822191-B4E1-4F94-8B61-2D245250098E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C67BED95-6066-4C6F-946A-F35B66F4988C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C67BED95-6066-4C6F-946A-F35B66F4988C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C67BED95-6066-4C6F-946A-F35B66F4988C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C67BED95-6066-4C6F-946A-F35B66F4988C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
