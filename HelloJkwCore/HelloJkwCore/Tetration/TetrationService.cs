@@ -39,8 +39,11 @@ public class TetrationService
             var result = new TetrationResult(Convert.ToBase64String(base64Image), default, default, options);
             OnTetrationResult?.Invoke(this, result);
         });
+        await SaveBoolArrayAsImage(divergenceMap, imagePath);
         var base64Image = await File.ReadAllBytesAsync(imagePath);
-        return new TetrationResult(Convert.ToBase64String(base64Image), default, default, options);
+        var result = new TetrationResult(Convert.ToBase64String(base64Image), default, default, options);
+        OnTetrationResult?.Invoke(this, result);
+        return result;
     }
 
     /// <summary>
@@ -183,7 +186,7 @@ public class TetrationService
                 for (int x = 0; x < width; x++)
                 {
                     byte color = data[x, y] ? (byte)255 : (byte)0;
-                    image[x, height - y - 1] = new L8(color); // Flip vertically if needed
+                    image[x, y] = new L8(color);
                 }
             }
 

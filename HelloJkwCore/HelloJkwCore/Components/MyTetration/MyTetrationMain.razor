@@ -2,30 +2,81 @@
 @inherits JkwPageBase
 @using HelloJkwCore.Tetration
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnClick">
-    테트레이션 이미지 생성
-</MudButton>
-
-@if (!string.IsNullOrEmpty(base64Image))
+@if (tetrationService != null)
 {
-    <img src="data:image/png;base64,@base64Image" style="max-height: 70vh;"/>
+    <ComplexPlaneComponent TetrationService="tetrationService" RectangleUpdated="OnRectangleUpdated" />
 }
 
-
 @code {
-    private string? base64Image;
-    private async Task OnClick()
+    [SupplyParameterFromQuery]
+    public double CenterX { get; set; } = 0;
+    [SupplyParameterFromQuery]
+    public double CenterY { get; set; } = 0;
+    [SupplyParameterFromQuery]
+    public double Eps { get; set; } = 5;
+
+    private TetrationService? tetrationService;
+
+    bool afterRender = false;
+
+    protected override Task OnPageInitializedAsync()
     {
-        var TetrationService = new TetrationService();
-        TetrationService.OnTetrationResult += (sender, result) =>
+        tetrationService = new();
+        return Task.CompletedTask;
+    }
+
+    protected override async Task OnPageAfterRenderAsync(bool firstRender)
+    {
+        afterRender = true;
+        if (firstRender)
         {
-            base64Image = result.Base64Image;
+            if (Eps == 0)
+            {
+                Eps = 5;
+            }
+            double beginX = CenterX - Eps;
+            double beginY = CenterY - Eps / 1920 * 1080;
+            double endX = CenterX + Eps;
+            double endY = CenterY + Eps / 1920 * 1080;
+            await Js.InvokeVoidAsync("console.log", "OnPageAfterRenderAsync", new { CenterX, CenterY, Eps });
+            await Js.InvokeVoidAsync("console.log", "OnPageAfterRenderAsync", new { beginX, beginY, endX, endY });
+            var result = await tetrationService!.CreateTetrationImageChunk(new TeRactangle(new TePoint(beginX, beginY), new TePoint(endX, endY)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
             StateHasChanged();
-        };
-        var result = await TetrationService.CreateTetrationImageChunk(new TeRactangle(new TePoint(-5, -5.0 / 1920 * 1080), new TePoint(5, 5.0 / 1920 * 1080)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
+        }
+    }
 
-        base64Image = result.Base64Image;
+    protected override async Task OnPageParametersSetAsync()
+    {
+        if (!afterRender)
+        {
+            return;
+        }
+        if (Eps == 0)
+        {
+            return;
+        }
+        if (tetrationService == null)
+        {
+            return;
+        }
+        if (CenterX != 0 || CenterY != 0 || Eps != 5)
+        {
+            double beginX = CenterX - Eps;
+            double beginY = CenterY - Eps / 1920 * 1080;
+            double endX = CenterX + Eps;
+            double endY = CenterY + Eps / 1920 * 1080;
+            await Js.InvokeVoidAsync("console.log", "OnPageParametersSetAsync", new { CenterX, CenterY, Eps });
+            await Js.InvokeVoidAsync("console.log", "OnPageParametersSetAsync", new { beginX, beginY, endX, endY });
+            await tetrationService.CreateTetrationImageChunk(new TeRactangle(new TePoint(beginX, beginY), new TePoint(endX, endY)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
+            StateHasChanged();
+        }
+    }
 
-        StateHasChanged();
+    private void OnRectangleUpdated(Rectangle rectangle)
+    {
+        var centerX = rectangle.X + rectangle.Width / 2;
+        var centerY = rectangle.Y + rectangle.Height / 2;
+        var eps = rectangle.Width / 2;
+        Navi.NavigateTo($"/mytetration?centerX={centerX}&centerY={centerY}&eps={eps}");
     }
 }
