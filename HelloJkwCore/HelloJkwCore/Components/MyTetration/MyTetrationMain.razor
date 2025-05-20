@@ -1,0 +1,89 @@
+@page "/mytetration"
+@inherits JkwPageBase
+@implements IDisposable
+@layout TetrationLayout
+@using HelloJkwCore.Tetration
+
+@if (tetrationService != null)
+{
+    <ComplexPlaneComponent TetrationService="tetrationService" RectangleUpdated="OnRectangleUpdated" />
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    public double CenterX { get; set; } = 0;
+    [SupplyParameterFromQuery]
+    public double CenterY { get; set; } = 0;
+    [SupplyParameterFromQuery]
+    public double Eps { get; set; } = 5;
+
+    private TetrationService? tetrationService;
+
+    bool afterRender = false;
+
+    public void Dispose()
+    {
+        tetrationService?.Dispose();
+    }
+
+    protected override Task OnPageInitializedAsync()
+    {
+        tetrationService = new();
+        return Task.CompletedTask;
+    }
+
+    protected override async Task OnPageAfterRenderAsync(bool firstRender)
+    {
+        afterRender = true;
+        if (firstRender)
+        {
+            if (Eps == 0)
+            {
+                Eps = 5;
+            }
+            double beginX = CenterX - Eps;
+            double beginY = CenterY - Eps / 1920 * 1080;
+            double endX = CenterX + Eps;
+            double endY = CenterY + Eps / 1920 * 1080;
+            await Js.InvokeVoidAsync("console.log", "OnPageAfterRenderAsync", new { CenterX, CenterY, Eps });
+            await Js.InvokeVoidAsync("console.log", "OnPageAfterRenderAsync", new { beginX, beginY, endX, endY });
+            var result = await tetrationService!.CreateTetrationImageChunk(new TeRactangle(new TePoint(beginX, beginY), new TePoint(endX, endY)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnPageParametersSetAsync()
+    {
+        if (!afterRender)
+        {
+            return;
+        }
+        if (Eps == 0)
+        {
+            return;
+        }
+        if (tetrationService == null)
+        {
+            return;
+        }
+        if (CenterX != 0 || CenterY != 0 || Eps != 5)
+        {
+            double beginX = CenterX - Eps;
+            double beginY = CenterY - Eps / 1920 * 1080;
+            double endX = CenterX + Eps;
+            double endY = CenterY + Eps / 1920 * 1080;
+            await Js.InvokeVoidAsync("console.log", "OnPageParametersSetAsync", new { CenterX, CenterY, Eps });
+            await Js.InvokeVoidAsync("console.log", "OnPageParametersSetAsync", new { beginX, beginY, endX, endY });
+            await tetrationService.CreateTetrationImageChunk(new TeRactangle(new TePoint(beginX, beginY), new TePoint(endX, endY)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
+            StateHasChanged();
+        }
+    }
+
+    private void OnRectangleUpdated(Rectangle rectangle)
+    {
+        var centerX = rectangle.X + rectangle.Width / 2;
+        var centerY = rectangle.Y + rectangle.Height / 2;
+        var eps = rectangle.Width / 2;
+        Navi.NavigateTo($"/mytetration?centerX={centerX}&centerY={centerY}&eps={eps}");
+    }
+}

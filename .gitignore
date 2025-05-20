@@ -356,3 +356,5 @@ appsettings.User.json
 HelloJkwCore/HelloJkwCore/fs/
 HelloJkwCore/HelloJkwCore2/fs/
 .DS_Store
+
+my-tetration/
