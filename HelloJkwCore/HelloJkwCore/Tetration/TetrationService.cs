@@ -10,13 +10,26 @@ public record struct TeSize(int Width, int Height);
 public record struct TeRactangle(TePoint LeftTop, TePoint RightBottom);
 public record struct TeOptions(int MaxIterations, double DivergenceRadius, double EpsX);
 public record struct TetrationResult(string Base64Image, TePoint Center, TeSize Size, TeOptions Options);
-public class TetrationService
+public class TetrationService : IDisposable
 {
     public event EventHandler<TetrationResult>? OnTetrationResult;
+    private List<string> _imagePaths = new();
+
+    public void Dispose()
+    {
+        _imagePaths
+            .Where(File.Exists)
+            .ToList()
+            .ForEach(File.Delete);
+
+        _imagePaths.Clear();
+    }
+
     public async Task<TetrationResult> CreateTetrationImage(TePoint center, TeSize size, TeOptions options)
     {
         var divergenceMap = GetTetrationDivergedTable(center, size, options);
         var imagePath = @$"./my-tetration/image-{Guid.NewGuid()}.png";
+        _imagePaths.Add(imagePath);
         await SaveBoolArrayAsImage(divergenceMap, imagePath);
         var base64Image = await File.ReadAllBytesAsync(imagePath);
         return new TetrationResult(Convert.ToBase64String(base64Image), center, size, options);
@@ -25,6 +38,7 @@ public class TetrationService
     {
         var divergenceMap = GetTetrationDivergedTable(rectangle, imageSize, options);
         var imagePath = @$"./my-tetration/image-{Guid.NewGuid()}.png";
+        _imagePaths.Add(imagePath);
         await SaveBoolArrayAsImage(divergenceMap, imagePath);
         var base64Image = await File.ReadAllBytesAsync(imagePath);
         return new TetrationResult(Convert.ToBase64String(base64Image), default, default, options);
@@ -32,6 +46,7 @@ public class TetrationService
     public async Task<TetrationResult> CreateTetrationImageChunk(TeRactangle rectangle, TeSize imageSize, TeOptions options)
     {
         var imagePath = @$"./my-tetration/image-{Guid.NewGuid()}.png";
+        _imagePaths.Add(imagePath);
         var divergenceMap = await GetTetrationDivergedTable(rectangle, imageSize, options, async (map) =>
         {
             await SaveBoolArrayAsImage(map, imagePath);
