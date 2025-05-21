@@ -39,12 +39,14 @@ public partial class ComplexPlaneComponent : JkwPageBase
 
     public async Task DrawBase64Image(string base64Image)
     {
-        if (module != null)
+        await InvokeAsync(async () =>
         {
-            // await Js.InvokeVoidAsync("console.log", "DrawBase64Image");
-            await module.InvokeVoidAsync("drawBase64Image", base64Image);
-            StateHasChanged();
-        }
+            if (module != null)
+            {
+                await module.InvokeVoidAsync("drawBase64Image", base64Image);
+                StateHasChanged();
+            }
+        });
     }
 
     [JSInvokable]

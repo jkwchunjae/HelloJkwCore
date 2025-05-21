@@ -9,6 +9,14 @@ public class TetrationResultRequest
     public required string Base64Image { get; set; }
 }
 
+public class TetrationProgressRequest
+{
+    public required string TaskId { get; set; }
+    public required string Base64Image { get; set; }
+    public required int Progress { get; set; }
+    public required int Total { get; set; }
+}
+
 [ApiController]
 [Route("api/[controller]")]
 [AllowAnonymous]
@@ -40,6 +48,13 @@ public class HelloController(
     public IActionResult TetrationResult([FromBody] TetrationResultRequest request)
     {
         tetrationGlobalService.CompleteTask(request.TaskId, request.Base64Image);
+        return Ok();
+    }
+
+    [HttpPost("tetration/progress")]
+    public IActionResult TetrationProgress([FromBody] TetrationProgressRequest request)
+    {
+        tetrationGlobalService.ProgressTask(request.TaskId, request.Base64Image, request.Progress, request.Total);
         return Ok();
     }
 } 

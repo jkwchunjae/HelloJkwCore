@@ -15,6 +15,11 @@ public class TetrationService(TetrationGlobalService tetrationGlobalService)
     public event EventHandler<TetrationResult>? OnTetrationResult;
     private List<string> _imagePaths = new();
 
+    public void Progress(TetrationResult result)
+    {
+        OnTetrationResult?.Invoke(this, result);
+    }
+
     public async Task<TetrationResult> CreateTetrationImage(TePoint center, TeSize size, TeOptions options)
     {
         var divergenceMap = GetTetrationDivergedTable(center, size, options);
@@ -27,7 +32,7 @@ public class TetrationService(TetrationGlobalService tetrationGlobalService)
     }
     public async Task<TetrationResult> CreateTetrationImage(TeRectangle rectangle, TeSize imageSize, TeOptions options)
     {
-        var result = await tetrationGlobalService.CreateTetrationImage(rectangle, imageSize, options);
+        var result = await tetrationGlobalService.CreateTetrationImage(this, rectangle, imageSize, options);
         OnTetrationResult?.Invoke(this, result);
         return result;
     }
