@@ -7,10 +7,10 @@ namespace HelloJkwCore.Tetration;
 
 public record struct TePoint(double X, double Y);
 public record struct TeSize(int Width, int Height);
-public record struct TeRactangle(TePoint LeftTop, TePoint RightBottom);
+public record struct TeRectangle(TePoint LeftTop, TePoint RightBottom);
 public record struct TeOptions(int MaxIterations, double DivergenceRadius, double EpsX);
 public record struct TetrationResult(string Base64Image, TePoint Center, TeSize Size, TeOptions Options);
-public class TetrationService
+public class TetrationService(TetrationGlobalService tetrationGlobalService)
 {
     public event EventHandler<TetrationResult>? OnTetrationResult;
     private List<string> _imagePaths = new();
@@ -25,17 +25,13 @@ public class TetrationService
         File.Delete(imagePath);
         return new TetrationResult(Convert.ToBase64String(base64Image), center, size, options);
     }
-    public async Task<TetrationResult> CreateTetrationImage(TeRactangle rectangle, TeSize imageSize, TeOptions options)
+    public async Task<TetrationResult> CreateTetrationImage(TeRectangle rectangle, TeSize imageSize, TeOptions options)
     {
-        var divergenceMap = GetTetrationDivergedTable(rectangle, imageSize, options);
-        var imagePath = @$"./my-tetration/image-{Guid.NewGuid()}.png";
-        _imagePaths.Add(imagePath);
-        await SaveBoolArrayAsImage(divergenceMap, imagePath);
-        var base64Image = await File.ReadAllBytesAsync(imagePath);
-        File.Delete(imagePath);
-        return new TetrationResult(Convert.ToBase64String(base64Image), default, default, options);
+        var result = await tetrationGlobalService.CreateTetrationImage(rectangle, imageSize, options);
+        OnTetrationResult?.Invoke(this, result);
+        return result;
     }
-    public async Task<TetrationResult> CreateTetrationImageChunk(TeRactangle rectangle, TeSize imageSize, TeOptions options)
+    public async Task<TetrationResult> CreateTetrationImageChunk(TeRectangle rectangle, TeSize imageSize, TeOptions options)
     {
         var imagePath = @$"./my-tetration/image-{Guid.NewGuid()}.png";
         _imagePaths.Add(imagePath);
@@ -61,7 +57,7 @@ public class TetrationService
     /// <param name="imageSize">이미지 크기</param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public bool[,] GetTetrationDivergedTable(TeRactangle rectangle, TeSize imageSize, TeOptions options)
+    public bool[,] GetTetrationDivergedTable(TeRectangle rectangle, TeSize imageSize, TeOptions options)
     {
         bool[,] divergenceMap = new bool[imageSize.Width, imageSize.Height];
 
@@ -88,7 +84,7 @@ public class TetrationService
 
         return divergenceMap;
     }
-    public async Task<bool[,]> GetTetrationDivergedTable(TeRactangle rectangle, TeSize imageSize, TeOptions options, Func<bool[,], Task> onProgress)
+    public async Task<bool[,]> GetTetrationDivergedTable(TeRectangle rectangle, TeSize imageSize, TeOptions options, Func<bool[,], Task> onProgress)
     {
         bool[,] divergenceMap = new bool[imageSize.Width, imageSize.Height];
 
