@@ -10,20 +10,10 @@ public record struct TeSize(int Width, int Height);
 public record struct TeRactangle(TePoint LeftTop, TePoint RightBottom);
 public record struct TeOptions(int MaxIterations, double DivergenceRadius, double EpsX);
 public record struct TetrationResult(string Base64Image, TePoint Center, TeSize Size, TeOptions Options);
-public class TetrationService : IDisposable
+public class TetrationService
 {
     public event EventHandler<TetrationResult>? OnTetrationResult;
     private List<string> _imagePaths = new();
-
-    public void Dispose()
-    {
-        _imagePaths
-            .Where(File.Exists)
-            .ToList()
-            .ForEach(File.Delete);
-
-        _imagePaths.Clear();
-    }
 
     public async Task<TetrationResult> CreateTetrationImage(TePoint center, TeSize size, TeOptions options)
     {
@@ -32,6 +22,7 @@ public class TetrationService : IDisposable
         _imagePaths.Add(imagePath);
         await SaveBoolArrayAsImage(divergenceMap, imagePath);
         var base64Image = await File.ReadAllBytesAsync(imagePath);
+        File.Delete(imagePath);
         return new TetrationResult(Convert.ToBase64String(base64Image), center, size, options);
     }
     public async Task<TetrationResult> CreateTetrationImage(TeRactangle rectangle, TeSize imageSize, TeOptions options)
@@ -41,6 +32,7 @@ public class TetrationService : IDisposable
         _imagePaths.Add(imagePath);
         await SaveBoolArrayAsImage(divergenceMap, imagePath);
         var base64Image = await File.ReadAllBytesAsync(imagePath);
+        File.Delete(imagePath);
         return new TetrationResult(Convert.ToBase64String(base64Image), default, default, options);
     }
     public async Task<TetrationResult> CreateTetrationImageChunk(TeRactangle rectangle, TeSize imageSize, TeOptions options)
@@ -58,6 +50,7 @@ public class TetrationService : IDisposable
         var base64Image = await File.ReadAllBytesAsync(imagePath);
         var result = new TetrationResult(Convert.ToBase64String(base64Image), default, default, options);
         OnTetrationResult?.Invoke(this, result);
+        File.Delete(imagePath);
         return result;
     }
 

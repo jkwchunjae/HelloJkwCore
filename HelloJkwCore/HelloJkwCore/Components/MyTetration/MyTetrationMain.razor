@@ -1,6 +1,5 @@
 @page "/mytetration"
 @inherits JkwPageBase
-@implements IDisposable
 @layout TetrationLayout
 @using HelloJkwCore.Tetration
 
@@ -20,11 +19,6 @@
     private TetrationService? tetrationService;
 
     bool afterRender = false;
-
-    public void Dispose()
-    {
-        tetrationService?.Dispose();
-    }
 
     protected override Task OnPageInitializedAsync()
     {
