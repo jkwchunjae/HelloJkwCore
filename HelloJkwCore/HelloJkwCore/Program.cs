@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using HelloJkwCore;
 using HelloJkwCore.Authentication;
 using HelloJkwCore.Components;
+using HelloJkwCore.Tetration;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using MudBlazor.Services;
@@ -23,6 +24,7 @@ builder.Services.AddSingleton(coreOption);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddControllers();
 builder.Services.AddHostedService<QueuedHostedService>();
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 builder.Services.AddHttpClient();
@@ -92,6 +94,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddDiaryService(builder.Configuration);
 builder.Services.AddBadukService(builder.Configuration);
 builder.Services.AddGameLibra(builder.Configuration);
+builder.Services.AddSingleton<TetrationGlobalService>();
 
 var app = builder.Build();
 
@@ -112,6 +115,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAntiforgery();
+
+app.MapControllers();
 
 app.MapRazorComponents<App>()
     .AddAdditionalAssemblies([

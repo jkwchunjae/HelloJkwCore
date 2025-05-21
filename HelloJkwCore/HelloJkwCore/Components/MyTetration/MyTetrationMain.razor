@@ -1,8 +1,8 @@
 @page "/mytetration"
 @inherits JkwPageBase
-@implements IDisposable
 @layout TetrationLayout
 @using HelloJkwCore.Tetration
+@inject TetrationGlobalService tetrationGlobalService
 
 @if (tetrationService != null)
 {
@@ -21,14 +21,9 @@
 
     bool afterRender = false;
 
-    public void Dispose()
-    {
-        tetrationService?.Dispose();
-    }
-
     protected override Task OnPageInitializedAsync()
     {
-        tetrationService = new();
+        tetrationService = new TetrationService(tetrationGlobalService);
         return Task.CompletedTask;
     }
 
@@ -47,7 +42,7 @@
             double endY = CenterY + Eps / 1920 * 1080;
             await Js.InvokeVoidAsync("console.log", "OnPageAfterRenderAsync", new { CenterX, CenterY, Eps });
             await Js.InvokeVoidAsync("console.log", "OnPageAfterRenderAsync", new { beginX, beginY, endX, endY });
-            var result = await tetrationService!.CreateTetrationImageChunk(new TeRactangle(new TePoint(beginX, beginY), new TePoint(endX, endY)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
+            var result = await tetrationService!.CreateTetrationImage(new TeRectangle(new TePoint(beginX, beginY), new TePoint(endX, endY)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
             StateHasChanged();
         }
     }
@@ -74,7 +69,7 @@
             double endY = CenterY + Eps / 1920 * 1080;
             await Js.InvokeVoidAsync("console.log", "OnPageParametersSetAsync", new { CenterX, CenterY, Eps });
             await Js.InvokeVoidAsync("console.log", "OnPageParametersSetAsync", new { beginX, beginY, endX, endY });
-            await tetrationService.CreateTetrationImageChunk(new TeRactangle(new TePoint(beginX, beginY), new TePoint(endX, endY)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
+            await tetrationService.CreateTetrationImage(new TeRectangle(new TePoint(beginX, beginY), new TePoint(endX, endY)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
             StateHasChanged();
         }
     }
