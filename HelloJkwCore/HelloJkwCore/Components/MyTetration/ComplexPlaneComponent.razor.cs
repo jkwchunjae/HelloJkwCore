@@ -18,7 +18,7 @@ public partial class ComplexPlaneComponent : JkwPageBase
         {
             TetrationService.OnTetrationResult += async (sender, result) =>
             {
-                await DrawBase64Image(result.Base64Image);
+                await DrawBase64Image(result);
             };
         }
         return Task.CompletedTask;
@@ -37,13 +37,17 @@ public partial class ComplexPlaneComponent : JkwPageBase
         }
     }
 
-    public async Task DrawBase64Image(string base64Image)
+    public async Task DrawBase64Image(TetrationResult result)
     {
         await InvokeAsync(async () =>
         {
             if (module != null)
             {
-                await module.InvokeVoidAsync("drawBase64Image", base64Image);
+                var centerX = (result.Rectangle.RightBottom.X + result.Rectangle.LeftTop.X) / 2;
+                var centerY = (result.Rectangle.RightBottom.Y + result.Rectangle.LeftTop.Y) / 2;
+                var width = result.Rectangle.RightBottom.X - result.Rectangle.LeftTop.X;
+                var height = result.Rectangle.RightBottom.Y - result.Rectangle.LeftTop.Y;
+                await module.InvokeVoidAsync("drawBase64Image", result.Base64Image, centerX, centerY, width, height);
                 StateHasChanged();
             }
         });

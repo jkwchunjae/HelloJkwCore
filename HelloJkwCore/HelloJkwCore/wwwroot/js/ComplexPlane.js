@@ -83,8 +83,9 @@ function updatePosition(_centerX, _centerY, _width, _height) {
     unit = aaaa.filter(a => width / a >= 2 && width / a <= 10).reverse()[0];
     console.log('unit', unit);
 
-    // clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // 검정색으로 초기화
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 export function initComplexPlane() {
@@ -229,7 +230,9 @@ export function drawText(x, y, text, color = 'black') {
 }
 
 // canvas에 base64 이미지 그리기
-export function drawBase64Image(base64Image) {
+export function drawBase64Image(base64Image, centerX, centerY, width, height) {
+    updatePosition(centerX, centerY, width, height);
+
     img = new Image();
     img.src = `data:image/png;base64,${base64Image}`;
     ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);

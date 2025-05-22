@@ -49,8 +49,7 @@ public class TetrationGlobalService
             var task = _tasks.FirstOrDefault(t => t.TaskId == taskId);
             if (task != default)
             {
-                var center = new TePoint((task.Rectangle.RightBottom.X + task.Rectangle.LeftTop.X) / 2, (task.Rectangle.RightBottom.Y + task.Rectangle.LeftTop.Y) / 2);
-                var result = new TetrationResult(base64Image, center, task.ImageSize, task.Options);
+                var result = new TetrationResult(base64Image, task.Rectangle, task.ImageSize, task.Options);
                 _tasks.Remove(task);
                 _tcsDictionary[taskId].SetResult(result);
                 _tcsDictionary.Remove(taskId);
@@ -66,8 +65,7 @@ public class TetrationGlobalService
             var task = _tasks.FirstOrDefault(t => t.TaskId == taskId);
             if (task != default)
             {
-                var center = new TePoint((task.Rectangle.RightBottom.X + task.Rectangle.LeftTop.X) / 2, (task.Rectangle.RightBottom.Y + task.Rectangle.LeftTop.Y) / 2);
-                var result = new TetrationResult(base64Image, center, task.ImageSize, task.Options);
+                var result = new TetrationResult(base64Image, task.Rectangle, task.ImageSize, task.Options);
                 var service = _serviceDictionary[taskId];
                 service.Progress(result);
             }

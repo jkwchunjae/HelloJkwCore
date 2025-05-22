@@ -9,7 +9,7 @@ public record struct TePoint(double X, double Y);
 public record struct TeSize(int Width, int Height);
 public record struct TeRectangle(TePoint LeftTop, TePoint RightBottom);
 public record struct TeOptions(int MaxIterations, double DivergenceRadius, double EpsX);
-public record struct TetrationResult(string Base64Image, TePoint Center, TeSize Size, TeOptions Options);
+public record struct TetrationResult(string Base64Image, TeRectangle Rectangle, TeSize Size, TeOptions Options);
 public class TetrationService(TetrationGlobalService tetrationGlobalService)
 {
     public event EventHandler<TetrationResult>? OnTetrationResult;
@@ -20,16 +20,6 @@ public class TetrationService(TetrationGlobalService tetrationGlobalService)
         OnTetrationResult?.Invoke(this, result);
     }
 
-    public async Task<TetrationResult> CreateTetrationImage(TePoint center, TeSize size, TeOptions options)
-    {
-        var divergenceMap = GetTetrationDivergedTable(center, size, options);
-        var imagePath = @$"./my-tetration/image-{Guid.NewGuid()}.png";
-        _imagePaths.Add(imagePath);
-        await SaveBoolArrayAsImage(divergenceMap, imagePath);
-        var base64Image = await File.ReadAllBytesAsync(imagePath);
-        File.Delete(imagePath);
-        return new TetrationResult(Convert.ToBase64String(base64Image), center, size, options);
-    }
     public async Task<TetrationResult> CreateTetrationImage(TeRectangle rectangle, TeSize imageSize, TeOptions options)
     {
         var result = await tetrationGlobalService.CreateTetrationImage(this, rectangle, imageSize, options);
