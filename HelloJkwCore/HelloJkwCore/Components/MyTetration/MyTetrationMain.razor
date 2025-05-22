@@ -79,6 +79,10 @@
         var centerX = rectangle.X + rectangle.Width / 2;
         var centerY = rectangle.Y + rectangle.Height / 2;
         var eps = rectangle.Width / 2;
-        Navi.NavigateTo($"/mytetration?centerX={centerX}&centerY={centerY}&eps={eps}");
+
+        var centerXStr = centerX.ToString("0.000000000000000000000000000");
+        var centerYStr = centerY.ToString("0.000000000000000000000000000");
+        var epsStr = eps.ToString("0.000000000000000000000000000");
+        Navi.NavigateTo($"/mytetration?centerX={centerXStr}&centerY={centerYStr}&eps={epsStr}");
     }
 }
