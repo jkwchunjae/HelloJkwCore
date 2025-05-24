@@ -8,6 +8,8 @@ from typing import Tuple, Optional
 from numba import jit, prange
 import time
 import json
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 @dataclass
 class TePoint:
@@ -40,12 +42,13 @@ class TetrationTask:
 
 class TetrationProcessor:
     def __init__(self, base_url: str = "https://hellojkwcore.azurewebsites.net"):
+    # def __init__(self, base_url: str = "https://localhost:44333"):
         self.base_url = base_url
         self.session = requests.Session()
 
     def get_tetration_task(self) -> Optional[TetrationTask]:
         try:
-            response = self.session.get(f"{self.base_url}/api/Hello/tetration/task")
+            response = self.session.get(f"{self.base_url}/api/Hello/tetration/task", verify=False)
             if response.status_code == 200:
                 data = response.json()
                 return TetrationTask(
@@ -73,7 +76,8 @@ class TetrationProcessor:
                 json={
                     "taskId": task.task_id,
                     "base64Image": image_base64
-                }
+                },
+                verify=False
             )
             print(f"Response: {response.status_code}")
             return response.status_code == 200
@@ -90,7 +94,8 @@ class TetrationProcessor:
                     "base64Image": image_base64,
                     "progress": progress,
                     "total": total
-                }
+                },
+                verify=False
             )
             return response.status_code == 200
         except Exception as e:
@@ -214,18 +219,6 @@ def main():
 
                 print(f"Processing task {task.task_id}")
                 image_base64 = process_tetration_task(task)
-                processor.send_progress(task, image_base64, 0, 100)
-                time.sleep(0.1)
-                processor.send_progress(task, image_base64, 0, 100)
-                time.sleep(0.1)
-                processor.send_progress(task, image_base64, 0, 100)
-                time.sleep(0.1)
-                processor.send_progress(task, image_base64, 0, 100)
-                time.sleep(0.1)
-                processor.send_progress(task, image_base64, 0, 100)
-                time.sleep(0.1)
-                processor.send_progress(task, image_base64, 0, 100)
-                time.sleep(0.1)
                 processor.send_progress(task, image_base64, 0, 100)
                 time.sleep(0.1)
                 processor.send_progress(task, image_base64, 0, 100)
