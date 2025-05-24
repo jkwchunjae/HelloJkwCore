@@ -61,17 +61,15 @@
         {
             return;
         }
-        if (CenterX != 0 || CenterY != 0 || Eps != 5)
-        {
-            double beginX = CenterX - Eps;
-            double beginY = CenterY - Eps / 1920 * 1080;
-            double endX = CenterX + Eps;
-            double endY = CenterY + Eps / 1920 * 1080;
-            await Js.InvokeVoidAsync("console.log", "OnPageParametersSetAsync", new { CenterX, CenterY, Eps });
-            await Js.InvokeVoidAsync("console.log", "OnPageParametersSetAsync", new { beginX, beginY, endX, endY });
-            await tetrationService.CreateTetrationImage(new TeRectangle(new TePoint(beginX, beginY), new TePoint(endX, endY)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
-            StateHasChanged();
-        }
+
+        double beginX = CenterX - Eps;
+        double beginY = CenterY - Eps / 1920 * 1080;
+        double endX = CenterX + Eps;
+        double endY = CenterY + Eps / 1920 * 1080;
+        await Js.InvokeVoidAsync("console.log", "OnPageParametersSetAsync", new { CenterX, CenterY, Eps });
+        await Js.InvokeVoidAsync("console.log", "OnPageParametersSetAsync", new { beginX, beginY, endX, endY });
+        await tetrationService.CreateTetrationImage(new TeRectangle(new TePoint(beginX, beginY), new TePoint(endX, endY)), new TeSize(1920, 1080), new TeOptions(100, 1e10, 5));
+        StateHasChanged();
     }
 
     private void OnRectangleUpdated(Rectangle rectangle)

@@ -17,6 +17,7 @@ var width = 0;
 var height = 0;
 // 좌표 평면 상 눈금 간격
 var unit = 0;
+var unitLength = 0;
 
 // 캔버스 상의 크기
 var canvasWidth = 0; // 1920
@@ -79,9 +80,24 @@ function updatePosition(_centerX, _centerY, _width, _height) {
     endX = centerX + width / 2;
     endY = centerY + height / 2;
 
-    var aaaa = [1, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005, 0.000001];
-    unit = aaaa.filter(a => width / a >= 2 && width / a <= 10).reverse()[0];
-    console.log('unit', unit);
+    var aaaa = [
+        1,
+        0.5, 0.1,
+        0.05, 0.01,
+        0.005, 0.001,
+        0.0005, 0.0001,
+        0.00005, 0.00001,
+        0.000005, 0.000001,
+        0.0000005, 0.0000001,
+        0.00000005, 0.00000001,
+        0.000000005, 0.000000001,
+        0.0000000005, 0.0000000001,
+        0.00000000005, 0.00000000001,
+    ];
+    var unitData = aaaa.map((a, i) => ({ a, i })).filter(a => width / a.a >= 2 && width / a.a < 20).sort((a, b) => a.i - b.i).reverse()[0];
+    console.log('unit', unitData.a);
+    unit = unitData.a;
+    unitLength = (unitData.i + 1) / 2;
 
     // 검정색으로 초기화
     ctx.fillStyle = 'black';
@@ -201,14 +217,14 @@ function drawBasicLines() {
     var modX = beginX % unit;
     var startX = beginX + unit - (modX < 0 ? modX + unit : modX);
     for (var x = startX; x <= beginX + width; x += unit) {
-        drawText(x, beginY + unit / 10, `x = ${x}`, 'gray');
+        drawText(x, beginY + unit / 10, `x = ${x.toFixed(Math.max(0, unitLength))}`, 'gray');
         drawLine(x, beginY, x, endY, 'gray');
     }
 
     var modY = beginY % unit;
     var startY = beginY + unit - (modY < 0 ? modY + unit : modY);
     for (var y = startY; y <= beginY + height; y += unit) {
-        drawText(beginX, y, `y = ${y}`, 'gray');
+        drawText(beginX, y, `y = ${y.toFixed(Math.max(0, unitLength))}`, 'gray');
         drawLine(beginX, y, endX, y, 'gray');
     }
 }
