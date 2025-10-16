@@ -1,0 +1,35 @@
+@inherits JkwPageBase
+@page "/typing"
+
+<PageTitle>세벌식 타자연습</PageTitle>
+
+<p>최근 입력된 키: @string.Join(", ", lastKey)</p>
+
+@code {
+    private List<string> lastKey = new List<string>();
+
+    protected override async Task OnPageAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Js.InvokeVoidAsync("keyListener.initialize", DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public void OnKeyDown(string key)
+    {
+        if (!lastKey.Contains(key))
+        {
+            lastKey.Add(key);
+        }
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnKeyUp(string key)
+    {
+        lastKey.Remove(key);
+        StateHasChanged();
+    }
+}
