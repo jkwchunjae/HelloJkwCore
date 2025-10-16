@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET Core Launch (HelloJkwCore)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/HelloJkwCore/HelloJkwCore/bin/Debug/net9.0/HelloJkwCore.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/HelloJkwCore/HelloJkwCore",
+      "stopAtEntry": false,
+      "console": "internalConsole"
+    }
+  ]
+}
