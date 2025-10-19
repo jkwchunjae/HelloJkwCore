@@ -203,6 +203,7 @@ public class HangulAutomata3
         }
     }
     #endregion
+    
     /// <summary> 세벌식 입력 </summary>
     public void Handle3(Input3 input)
     {
@@ -388,6 +389,22 @@ public class HangulAutomata3
                 CurrentChanged?.Invoke(this, Compose(_currentState));
             }
         }
+        else if (lastInput.IsTailing)
+        {
+            if (table.Any(item => item.Result == _currentState.Tailing))
+            {
+                var doubleTailing = table.FirstOrDefault(item => item.Result == _currentState.Tailing);
+                _currentState = _currentState with { Tailing = doubleTailing.Input1 };
+                _history.RemoveAt(_history.Count - 1);
+                CurrentChanged?.Invoke(this, Compose(_currentState));
+            }
+            else
+            {
+                _currentState = _currentState with { Tailing = default };
+                _history.RemoveAt(_history.Count - 1);
+                CurrentChanged?.Invoke(this, Compose(_currentState));
+            }
+        }
     }
     /// <summary> 일반 키보드 입력 (두벌식, 영문) 모두 세벌식으로 처리 </summary>
     public void Handle2(string input, bool shift)
@@ -395,7 +412,7 @@ public class HangulAutomata3
         var input3 = Input2ToInput3(new Input2(input, shift));
         Handle3(input3);
     }
-    
+
     private Input3 Input2ToInput3(Input2 input2)
     {
         return input2 switch
@@ -403,7 +420,7 @@ public class HangulAutomata3
             { Value: "Enter" } => Input3.Enter,
             { Value: "Backspace" } => Input3.Backspace,
             { Value: " " } => Input3.Space,
-            
+
             { Value: "`" } => Input3.Util("`"),
             { Value: "1" } => Input3.Tailing("ㅎ"),
             { Value: "2" } => Input3.Tailing("ㅆ"),
