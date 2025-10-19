@@ -287,7 +287,10 @@ internal class Hangul3Automata
     public void Handle2(string input, bool shift)
     {
         var input3 = InputConverter.Input2ToInput3(new Input2(input, shift));
-        Handle3(input3);
+        if (input3 != default)
+        {
+            Handle3(input3);
+        }
     }
 
 }
