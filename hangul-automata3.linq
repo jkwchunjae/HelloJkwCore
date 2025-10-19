@@ -30,6 +30,23 @@ void Main()
     keyboard.Handle3(Input3.Backspace);
     keyboard.Handle3(Input3.Backspace);
     keyboard.Handle3(Input3.Backspace);
+
+    keyboard.Handle3(Input3.Leading("ㅈ"));
+    keyboard.Handle3(Input3.Vowel("ㅜ"));
+    keyboard.Handle3(Input3.Tailing("ㅇ"));
+    keyboard.Handle3(Input3.Leading("ㄱ"));
+    keyboard.Handle3(Input3.Vowel("ㅏ"));
+    keyboard.Handle3(Input3.Tailing("ㄴ"));
+    keyboard.Handle3(Input3.Leading("ㄱ"));
+    keyboard.Handle3(Input3.Vowel("ㅏ"));
+    keyboard.Handle3(Input3.Tailing("ㅂ"));
+    keyboard.Handle3(Input3.Tailing("ㅅ"));
+    keyboard.Handle3(Input3.Leading("ㅈ"));
+    keyboard.Handle3(Input3.Vowel("ㅓ"));
+    keyboard.Handle3(Input3.Tailing("ㅇ"));
+    keyboard.Handle3(Input3.Leading("ㄹ"));
+    keyboard.Handle3(Input3.Vowel("ㅣ"));
+    keyboard.Handle3(Input3.Space);
 }
 
 public static class Ex
@@ -58,8 +75,13 @@ public record struct Input3(string Value, JasoType Type)
     public bool IsVowel => Type == JasoType.Vowel;
     public bool IsTailing => Type == JasoType.Tailing;
 
+    public static Input3 Leading(string value) => new Input3(value, JasoType.Leading);
+    public static Input3 Vowel(string value) => new Input3(value, JasoType.Vowel);
+    public static Input3 Tailing(string value) => new Input3(value, JasoType.Tailing);
+
     public static Input3 Enter => new Input3("Enter", JasoType.Util);
     public static Input3 Backspace => new Input3("Backspace", JasoType.Util);
+    public static Input3 Space => new Input3(" ", JasoType.Util);
 }
 public record struct TableItem(Input3 Input1, Input3 Input2, Input3 Result)
 {
@@ -180,12 +202,12 @@ public class HangulAutomata3
     /// <summary> 세벌식 입력 </summary>
     public void Handle3(Input3 input)
     {
-        if (input.Value == "Enter" || input.Value == " ")
+        if (input == Input3.Enter || input == Input3.Space)
         {
             CommitCurrent();
-            if (input.Value == " ")
+            if (input == Input3.Space)
             {
-                Composed?.Invoke(this, " ");
+                Composed?.Invoke(this, Input3.Space.Value);
             }
         }
         else if (input == Input3.Backspace)
@@ -294,6 +316,18 @@ public class HangulAutomata3
             else if (CanDoubleTailing(out var nextTailing))
             {
                 // 기존 입력한 종성과 지금 입력한 종성을 합쳤을 때 새 종성을 만들 수 있는 경우
+                _currentState = _currentState with { Tailing = nextTailing };
+                _history.Add(input);
+                CurrentChanged?.Invoke(this, Compose(_currentState));
+            }
+            else
+            {
+                // 기존 입력한 종성과 연결되지 않는 경우.
+                // 지금 것은 commit 시키고, 종성을 입력한다.
+                CommitCurrent();
+                _currentState = new Jaso(default, default, input);
+                _history.Add(input);
+                CurrentChanged?.Invoke(this, Compose(_currentState));
             }
         }
         else
