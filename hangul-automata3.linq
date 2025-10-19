@@ -199,13 +199,17 @@ public class HangulAutomata3
                 Backspace?.Invoke(this, default!);
             }
         }
-        else if (input.Type == JasoType.Leading)
+        else if (input.IsLeading)
         {
             HandleLeading(input);
         }
-        else if (input.Type == JasoType.Vowel)
+        else if (input.IsVowel)
         {
             HandleVowel(input);
+        }
+        else if (input.IsTailing)
+        {
+            HandleTailing(input);
         }
     }
     private void HandleLeading(Input3 input)
@@ -253,7 +257,6 @@ public class HangulAutomata3
             _currentState = _currentState with { Vowel = input };
             _history.Add(input);
             CurrentChanged?.Invoke(this, Compose(_currentState));
-            return;
         }
         else if (CanDoubleVowel(out var nextVowel))
         {
@@ -261,7 +264,6 @@ public class HangulAutomata3
             _currentState = _currentState with { Vowel = nextVowel };
             _history.Add(input);
             CurrentChanged?.Invoke(this, Compose(_currentState));
-            return;
         }
         else
         {
@@ -275,6 +277,39 @@ public class HangulAutomata3
         {
             nextVowel = table.FirstOrDefault(item => item.Input1 == _currentState.Vowel && item.Input2 == input).Result;
             return table.Any(item => item.Input1 == _currentState.Vowel && item.Input2 == input);
+        }
+    }
+    private void HandleTailing(Input3 input)
+    {
+        if (_currentState.HasLeading && _currentState.HasVowel)
+        {
+            // 초성과 모임이 입력되어 있는 경우
+            if (!_currentState.HasTailing)
+            {
+                // 종성이 입력되어 있지 않은 경우. 가장 간단한 경우
+                _currentState = _currentState with { Tailing = input };
+                _history.Add(input);
+                CurrentChanged?.Invoke(this, Compose(_currentState));
+            }
+            else if (CanDoubleTailing(out var nextTailing))
+            {
+                // 기존 입력한 종성과 지금 입력한 종성을 합쳤을 때 새 종성을 만들 수 있는 경우
+            }
+        }
+        else
+        {
+            // 초성, 모임 중 하나가 입력되어 있지 않은 경우
+            // 지금 것은 commit 시키고, 종성을 입력한다.
+            CommitCurrent();
+            _currentState = new Jaso(default, default, input);
+            _history.Add(input);
+            CurrentChanged?.Invoke(this, Compose(_currentState));
+        }
+        
+        bool CanDoubleTailing(out Input3 nextTailing)
+        {
+            nextTailing = table.FirstOrDefault(item => item.Input1 == _currentState.Tailing && item.Input2 == input).Result;
+            return nextTailing != default;
         }
     }
 
