@@ -18,7 +18,7 @@ public static class CommonExtensions
 
         var up = (value / (tens / 10)) % 10 >= N; // digits에 해당하는 숫자가 N 이상인지? N이상이면 올림한다.
         result += (up ? 1 : 0);
-        result  *= tens;
+        result *= tens;
 
         return result;
     }
@@ -27,5 +27,19 @@ public static class CommonExtensions
     public static DateTime UtcToKst(this DateTime utcTime)
     {
         return TimeZoneInfo.ConvertTimeFromUtc(utcTime, KST);
+    }
+
+    public static int IndexOf<T>(this IEnumerable<T> source, T value)
+    {
+        if (source == null)
+            throw new ArgumentNullException(nameof(source));
+        int index = 0;
+        foreach (var item in source)
+        {
+            if (EqualityComparer<T>.Default.Equals(item, value))
+                return index;
+            index++;
+        }
+        return -1;
     }
 }
