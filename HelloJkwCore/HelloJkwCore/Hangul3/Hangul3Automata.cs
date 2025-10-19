@@ -282,6 +282,22 @@ internal class Hangul3Automata
                 CurrentChanged?.Invoke(this, Compose(_currentState));
             }
         }
+        else if (lastInput.IsTailing)
+        {
+            if (table.Any(item => item.Result == _currentState.Tailing))
+            {
+                var doubleTailing = table.FirstOrDefault(item => item.Result == _currentState.Tailing);
+                _currentState = _currentState with { Tailing = doubleTailing.Input1 };
+                _history.RemoveAt(_history.Count - 1);
+                CurrentChanged?.Invoke(this, Compose(_currentState));
+            }
+            else
+            {
+                _currentState = _currentState with { Tailing = default };
+                _history.RemoveAt(_history.Count - 1);
+                CurrentChanged?.Invoke(this, Compose(_currentState));
+            }
+        }
     }
     /// <summary> 일반 키보드 입력 (두벌식, 영문) 모두 세벌식으로 처리 </summary>
     public void Handle2(string input, bool shift)
