@@ -6,7 +6,37 @@
 
 <p>최근 입력된 키: @string.Join(", ", lastKey)</p>
 
-<p> @DisplayText </p>
+<div>
+    <span class="final-text">@FinalText</span>
+    <span class="current-text">@CurrentText</span>
+</div>
+
+<style>
+    .final-text {
+        font-size: 24px;
+        color: black;
+    }
+    .current-text {
+        font-size: 24px;
+        color: black;
+        text-decoration: underline;
+    }
+    .current-text::after {
+        content: '|';
+        animation: blink 1s step-start 0s infinite;
+    }
+    @@keyframes blink {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+</style>
 
 @code {
     private List<string> lastKey = new List<string>();

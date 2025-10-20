@@ -46,8 +46,8 @@ internal class Hangul3Automata
     private void CommitCurrent()
     {
         var hangul = Compose(_currentState);
-        Composed?.Invoke(this, hangul);
         CurrentChanged?.Invoke(this, string.Empty);
+        Composed?.Invoke(this, hangul);
         _currentState = default;
         _history.Clear();
     }
