@@ -1,26 +1,18 @@
 ﻿@inherits JkwPageBase
 
-<div>
-    <span class="final-text">@FinalText</span>
-    <span class="current-text">@CurrentText</span>
-</div>
+<div class="hangul3-input" tabindex="0" @onfocus="OnFocus" @onblur="OnBlur">
+    <span class="text">
+        @RenderSegments()
+    </span>
+  </div>
 
 <style>
-    .final-text {
-        font-size: 24px;
-        color: black;
-    }
-
-    .current-text {
-        font-size: 24px;
-        color: black;
-        text-decoration: underline;
-    }
-
-    .current-text::after {
-        content: '|';
-        animation: blink 1s step-start 0s infinite;
-    }
+    .hangul3-input { font-size: 24px; color: black; outline: none; display: inline-block; min-width: 2ch; }
+    .text { white-space: pre-wrap; }
+    .caret { display: inline-block; width: 1px; background: black; height: 1em; vertical-align: bottom; animation: blink 1s step-start 0s infinite; }
+    .selection { background: #b3d4fc; }
+    .composing { text-decoration: underline; }
+    .sr-only { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 
     @@keyframes blink {
         0% {
