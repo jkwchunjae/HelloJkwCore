@@ -255,18 +255,17 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     // 화면 렌더 조각
     private RenderFragment RenderSegments() => builder =>
     {
-        var seq = 0;
         // 클릭으로 커서 배치할 수 있도록 1글자 단위로 span 구성
         for (int i = 0; i <= FinalText.Length; i++)
         {
             // i 위치에 클릭 포인트
-            builder.OpenElement(seq++, "span");
-            builder.AddAttribute(seq++, "style", "display:inline-block;width:0;height:1em");
-            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => SetCaret(i, false)));
+            builder.OpenElement(0, "span");
+            builder.AddAttribute(1, "style", "display:inline-block;width:0;height:1em");
+            builder.AddAttribute(2, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => SetCaret(i, false)));
             if (isFocused && !HasSelection() && i == caretIndex)
             {
-                builder.OpenElement(seq++, "span");
-                builder.AddAttribute(seq++, "class", "caret");
+                builder.OpenElement(3, "span");
+                builder.AddAttribute(4, "class", "caret");
                 builder.CloseElement();
             }
             builder.CloseElement();
@@ -275,13 +274,13 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
             {
                 var ch = FinalText[i].ToString();
                 bool selected = HasSelection() && i >= GetSelectionRange().start && i < GetSelectionRange().end;
-                builder.OpenElement(seq++, "span");
+                builder.OpenElement(5, "span");
                 if (selected)
                 {
-                    builder.AddAttribute(seq++, "class", "selection");
+                    builder.AddAttribute(6, "class", "selection");
                 }
-                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => SetCaret(i + 1, false)));
-                builder.AddContent(seq++, ch);
+                builder.AddAttribute(7, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => SetCaret(i + 1, false)));
+                builder.AddContent(8, ch);
                 builder.CloseElement();
             }
         }
@@ -289,9 +288,9 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         // 조합 중인 글자는 캐럿 위치에 표시
         if (!string.IsNullOrEmpty(CurrentText))
         {
-            builder.OpenElement(seq++, "span");
-            builder.AddAttribute(seq++, "class", "composing");
-            builder.AddContent(seq++, CurrentText);
+            builder.OpenElement(9, "span");
+            builder.AddAttribute(10, "class", "composing");
+            builder.AddContent(11, CurrentText);
             builder.CloseElement();
         }
     };
