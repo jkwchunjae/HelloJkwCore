@@ -7,11 +7,11 @@ namespace HelloJkwCore.Components.Hangul;
 
 public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
 {
-    private Hangul3Automata automata = new Hangul3Automata();
+    private readonly Hangul3Automata automata = new();
     /// <summary>
     /// 완성된 문자열
     /// </summary>
-    private string FinalText = string.Empty;
+    private string _finalText = string.Empty;
     /// <summary>
     /// 작성중인 문자 (한글자)
     /// </summary>
@@ -19,11 +19,129 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
 
     // 포커스/커서/선택 상태
     private bool isFocused = false;
-    private int caretIndex = 0; // FinalText 기준 커서 위치
+    private int caretIndex = 0; // _finalText 기준 커서 위치
     private int? selectionAnchorIndex = null; // Shift로 선택 시작 위치(고정)
     private bool isShiftPressed = false;
 
     DotNetObjectReference<Hangul3SingleInput>? objRef;
+
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter] public string? FontFamily { get; set; }
+    [Parameter] public string? FontSize { get; set; }
+    [Parameter] public string? FontWeight { get; set; }
+    [Parameter] public string? FontColor { get; set; }
+    [Parameter] public string? BackgroundColor { get; set; }
+    [Parameter] public string? BorderColor { get; set; }
+    [Parameter] public string? BorderWidth { get; set; }
+    [Parameter] public string? BorderRadius { get; set; }
+    [Parameter] public string? Padding { get; set; }
+    [Parameter] public string? FocusBorderColor { get; set; }
+    [Parameter] public string? FocusShadowColor { get; set; }
+    [Parameter] public string? CaretColor { get; set; }
+    [Parameter] public string? CaretWidth { get; set; }
+    [Parameter] public string? SelectionColor { get; set; }
+    [Parameter] public bool DarkMode { get; set; }
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ContainerClass
+    {
+        get
+        {
+            var classes = new List<string> { "hangul3-input" };
+            if (DarkMode)
+            {
+                classes.Add("hangul3-input--dark");
+            }
+            if (!string.IsNullOrWhiteSpace(Class))
+            {
+                classes.Add(Class);
+            }
+            return string.Join(" ", classes);
+        }
+    }
+
+    private string ContainerStyle
+    {
+        get
+        {
+            var styles = new List<string>();
+            AppendCssVariable(styles, "--hangul3-font-family", FontFamily);
+            AppendCssVariable(styles, "--hangul3-font-size", FontSize);
+            AppendCssVariable(styles, "--hangul3-font-weight", FontWeight);
+            AppendCssVariable(styles, "--hangul3-font-color", FontColor);
+            AppendCssVariable(styles, "--hangul3-background-color", BackgroundColor);
+            AppendCssVariable(styles, "--hangul3-border-color", BorderColor);
+            AppendCssVariable(styles, "--hangul3-border-width", BorderWidth);
+            AppendCssVariable(styles, "--hangul3-border-radius", BorderRadius);
+            AppendCssVariable(styles, "--hangul3-padding", Padding);
+            AppendCssVariable(styles, "--hangul3-border-focus-color", FocusBorderColor);
+            AppendCssVariable(styles, "--hangul3-focus-shadow-color", FocusShadowColor);
+            AppendCssVariable(styles, "--hangul3-caret-color", CaretColor);
+            AppendCssVariable(styles, "--hangul3-caret-width", CaretWidth);
+            AppendCssVariable(styles, "--hangul3-selection-color", SelectionColor);
+            if (!string.IsNullOrWhiteSpace(Style))
+            {
+                styles.Add(Style.Trim());
+            }
+            return string.Join(";", styles);
+        }
+    }
+
+    private static void AppendCssVariable(List<string> styles, string variableName, string? value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            styles.Add($"{variableName}:{value}");
+        }
+    }
+
+    private IReadOnlyDictionary<string, object> RootAttributes
+    {
+        get
+        {
+            var attributes = AdditionalAttributes != null
+                ? new Dictionary<string, object>(AdditionalAttributes)
+                : new Dictionary<string, object>();
+
+            attributes.TryAdd("role", "textbox");
+            attributes.TryAdd("aria-multiline", "false");
+            attributes.TryAdd("aria-live", "polite");
+
+            return attributes;
+        }
+    }
+
+    protected override void OnPageParametersSet()
+    {
+        var incoming = Value ?? string.Empty;
+        if (!string.Equals(incoming, _finalText, StringComparison.Ordinal))
+        {
+            _finalText = incoming;
+            caretIndex = Math.Clamp(caretIndex, 0, _finalText.Length);
+            ClearSelection();
+        }
+    }
+
+    private void SetFinalText(string newValue)
+    {
+        var changed = !string.Equals(_finalText, newValue, StringComparison.Ordinal);
+        _finalText = newValue;
+        if (changed)
+        {
+            NotifyFinalTextChanged();
+        }
+    }
+
+    private void NotifyFinalTextChanged()
+    {
+        if (ValueChanged.HasDelegate)
+        {
+            _ = InvokeAsync(() => ValueChanged.InvokeAsync(_finalText));
+        }
+    }
 
     protected override async Task OnPageAfterRenderAsync(bool firstRender)
     {
@@ -107,7 +225,7 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
                 return;
             case "End":
                 CommitCompositionIfAny();
-                SetCaret(FinalText.Length, isShiftPressed);
+                SetCaret(_finalText.Length, isShiftPressed);
                 StateHasChanged();
                 return;
             case "Delete":
@@ -134,17 +252,19 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
 
     private void Composed(object? sender, string text)
     {
+        var nextText = _finalText;
         // 선택이 있으면 먼저 삭제하고 삽입
         if (HasSelection())
         {
             var (start, end) = GetSelectionRange();
-            FinalText = FinalText.Remove(start, end - start);
+            nextText = nextText.Remove(start, end - start);
             caretIndex = start;
         }
 
-        FinalText = FinalText.Insert(caretIndex, text);
+        nextText = nextText.Insert(caretIndex, text);
         caretIndex += text.Length;
         ClearSelection();
+        SetFinalText(nextText);
         StateHasChanged();
     }
 
@@ -160,9 +280,10 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         if (HasSelection())
         {
             var (start, end) = GetSelectionRange();
-            FinalText = FinalText.Remove(start, end - start);
+            var nextText = _finalText.Remove(start, end - start);
             caretIndex = start;
             ClearSelection();
+            SetFinalText(nextText);
             StateHasChanged();
             return;
         }
@@ -170,8 +291,9 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         // 선택이 없으면 커서 앞 1자 삭제
         if (caretIndex > 0)
         {
-            FinalText = FinalText.Remove(caretIndex - 1, 1);
+            var nextText = _finalText.Remove(caretIndex - 1, 1);
             caretIndex--;
+            SetFinalText(nextText);
         }
         StateHasChanged();
     }
@@ -184,15 +306,17 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
             var composed = automata.Flush();
             if (!string.IsNullOrEmpty(composed))
             {
+                var nextText = _finalText;
                 if (HasSelection())
                 {
                     var (start, end) = GetSelectionRange();
-                    FinalText = FinalText.Remove(start, end - start);
+                    nextText = nextText.Remove(start, end - start);
                     caretIndex = start;
                     ClearSelection();
                 }
-                FinalText = FinalText.Insert(caretIndex, composed);
+                nextText = nextText.Insert(caretIndex, composed);
                 caretIndex += composed.Length;
+                SetFinalText(nextText);
             }
             CurrentText = string.Empty;
         }
@@ -203,26 +327,28 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         if (HasSelection())
         {
             var (start, end) = GetSelectionRange();
-            FinalText = FinalText.Remove(start, end - start);
+            var nextText = _finalText.Remove(start, end - start);
             caretIndex = start;
             ClearSelection();
+            SetFinalText(nextText);
             return;
         }
-        if (caretIndex < FinalText.Length)
+        if (caretIndex < _finalText.Length)
         {
-            FinalText = FinalText.Remove(caretIndex, 1);
+            var nextText = _finalText.Remove(caretIndex, 1);
+            SetFinalText(nextText);
         }
     }
 
     private void MoveCaretBy(int delta, bool extendSelection)
     {
-        var next = Math.Clamp(caretIndex + delta, 0, FinalText.Length);
+        var next = Math.Clamp(caretIndex + delta, 0, _finalText.Length);
         SetCaret(next, extendSelection);
     }
 
     private void SetCaret(int index, bool extendSelection)
     {
-        index = Math.Clamp(index, 0, FinalText.Length);
+        index = Math.Clamp(index, 0, _finalText.Length);
         if (extendSelection)
         {
             selectionAnchorIndex ??= caretIndex; // 최초 확장 시작점 고정
@@ -260,7 +386,7 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         var compositionIndex = hasSelection ? selectionStart : caretIndex;
 
         // 클릭으로 커서 배치할 수 있도록 1글자 단위로 span 구성
-        for (int i = 0; i <= FinalText.Length; i++)
+        for (int i = 0; i <= _finalText.Length; i++)
         {
             // i 위치에 클릭 포인트
             builder.OpenElement(0, "span");
@@ -283,9 +409,9 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
                 builder.CloseElement();
             }
 
-            if (i < FinalText.Length)
+            if (i < _finalText.Length)
             {
-                var ch = FinalText[i].ToString();
+                var ch = _finalText[i].ToString();
                 var selected = hasSelection && i >= selectionStart && i < selectionEnd;
                 builder.OpenElement(8, "span");
                 if (selected)

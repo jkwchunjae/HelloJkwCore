@@ -1,18 +1,85 @@
 ﻿@inherits JkwPageBase
 
-<div class="hangul3-input" tabindex="0" @onfocus="OnFocus" @onblur="OnBlur">
+<div class="@ContainerClass"
+     style="@ContainerStyle"
+     tabindex="0"
+     @attributes="RootAttributes"
+     @onfocus="OnFocus"
+     @onblur="OnBlur">
     <span class="text">
         @RenderSegments()
     </span>
-  </div>
+</div>
 
 <style>
-    .hangul3-input { font-size: 24px; color: black; outline: none; display: inline-block; min-width: 2ch; }
-    .text { white-space: pre-wrap; }
-    .caret { display: inline-block; width: 1px; background: black; height: 1em; vertical-align: middle; animation: blink 1s step-start 0s infinite; }
-    .selection { background: #b3d4fc; }
-    .composing { text-decoration: underline; }
-    .sr-only { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .hangul3-input {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        min-width: 2ch;
+        min-height: 1.5em;
+        padding: var(--hangul3-padding, 5px 8px);
+        border: var(--hangul3-border-width, 1px) solid var(--hangul3-border-color, #d1d5db);
+        border-radius: var(--hangul3-border-radius, 4px);
+        background-color: var(--hangul3-background-color, #ffffff);
+        color: var(--hangul3-font-color, #111827);
+        font-family: var(--hangul3-font-family, inherit);
+        font-size: var(--hangul3-font-size, 15px);
+        font-weight: var(--hangul3-font-weight, 500);
+        line-height: 1.35;
+        outline: none;
+        cursor: text;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .hangul3-input:focus,
+    .hangul3-input:focus-visible {
+        border-color: var(--hangul3-border-focus-color, #2563eb);
+        box-shadow: 0 0 0 3px var(--hangul3-focus-shadow-color, rgba(37, 99, 235, 0.2));
+    }
+
+    .hangul3-input .text {
+        white-space: pre-wrap;
+        flex: 1 1 auto;
+        min-height: 1em;
+    }
+
+    .hangul3-input .caret {
+        display: inline-block;
+        width: var(--hangul3-caret-width, 1px);
+        background: var(--hangul3-caret-color, currentColor);
+        height: 1em;
+        vertical-align: text-bottom;
+        animation: blink 1s step-start 0s infinite;
+    }
+
+    .hangul3-input .selection {
+        background: var(--hangul3-selection-color, #bfdbfe);
+    }
+
+    .hangul3-input .composing {
+        text-decoration: underline;
+    }
+
+    .hangul3-input .sr-only {
+        position: absolute;
+        left: -10000px;
+        top: auto;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    }
+
+    .hangul3-input--dark {
+        --hangul3-background-color: #1f2937;
+        --hangul3-font-color: #f9fafb;
+        --hangul3-border-color: #4b5563;
+        --hangul3-border-focus-color: #60a5fa;
+        --hangul3-focus-shadow-color: rgba(96, 165, 250, 0.35);
+        --hangul3-caret-color: #f9fafb;
+        --hangul3-selection-color: rgba(96, 165, 250, 0.35);
+    }
 
     @@keyframes blink {
         0% {

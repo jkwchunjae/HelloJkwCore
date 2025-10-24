@@ -7,10 +7,11 @@
 
 <p>최근 입력된 키: @string.Join(", ", lastKey)</p>
 
-<Hangul3SingleInput />
+<Hangul3SingleInput FontSize="15px" @bind-Value="value" />
 
 @code {
     private List<string> lastKey = new List<string>();
+    private string value = "세벌식을 입력해보세요!";
 
     DotNetObjectReference<Typing>? objRef;
 
