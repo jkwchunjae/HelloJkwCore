@@ -255,6 +255,10 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     // 화면 렌더 조각
     private RenderFragment RenderSegments() => builder =>
     {
+        var hasSelection = HasSelection();
+        var (selectionStart, selectionEnd) = GetSelectionRange();
+        var compositionIndex = hasSelection ? selectionStart : caretIndex;
+
         // 클릭으로 커서 배치할 수 있도록 1글자 단위로 span 구성
         for (int i = 0; i <= FinalText.Length; i++)
         {
@@ -262,7 +266,7 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
             builder.OpenElement(0, "span");
             builder.AddAttribute(1, "style", "display:inline-block;width:0;height:1em");
             builder.AddAttribute(2, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => SetCaret(i, false)));
-            if (isFocused && !HasSelection() && i == caretIndex)
+            if (isFocused && !hasSelection && i == caretIndex)
             {
                 builder.OpenElement(3, "span");
                 builder.AddAttribute(4, "class", "caret");
@@ -270,28 +274,28 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
             }
             builder.CloseElement();
 
+            // 조합 중인 글자는 선택이 있으면 시작 위치, 아니면 캐럿 위치에 표시
+            if (!string.IsNullOrEmpty(CurrentText) && i == compositionIndex)
+            {
+                builder.OpenElement(5, "span");
+                builder.AddAttribute(6, "class", "composing");
+                builder.AddContent(7, CurrentText);
+                builder.CloseElement();
+            }
+
             if (i < FinalText.Length)
             {
                 var ch = FinalText[i].ToString();
-                bool selected = HasSelection() && i >= GetSelectionRange().start && i < GetSelectionRange().end;
-                builder.OpenElement(5, "span");
+                var selected = hasSelection && i >= selectionStart && i < selectionEnd;
+                builder.OpenElement(8, "span");
                 if (selected)
                 {
-                    builder.AddAttribute(6, "class", "selection");
+                    builder.AddAttribute(9, "class", "selection");
                 }
-                builder.AddAttribute(7, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => SetCaret(i + 1, false)));
-                builder.AddContent(8, ch);
+                builder.AddAttribute(10, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => SetCaret(i + 1, false)));
+                builder.AddContent(11, ch);
                 builder.CloseElement();
             }
-        }
-
-        // 조합 중인 글자는 캐럿 위치에 표시
-        if (!string.IsNullOrEmpty(CurrentText))
-        {
-            builder.OpenElement(9, "span");
-            builder.AddAttribute(10, "class", "composing");
-            builder.AddContent(11, CurrentText);
-            builder.CloseElement();
         }
     };
 }
