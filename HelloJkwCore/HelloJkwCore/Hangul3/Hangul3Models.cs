@@ -1,5 +1,15 @@
 ﻿namespace HelloJkwCore.Hangul3;
 
+public enum Hangul3Type
+{
+    세벌식_390,
+    세벌식_최종_391,
+    세벌식_순아래,
+    세벌식_김국38A,
+    세벌식_3_2015,
+    세벌식_3_P3,
+    세벌식_3_D2,
+}
 internal enum JasoType { Leading, Vowel, Tailing, Util }
 internal record struct Jaso(Input3 Leading, Input3 Vowel, Input3 Tailing)
 {

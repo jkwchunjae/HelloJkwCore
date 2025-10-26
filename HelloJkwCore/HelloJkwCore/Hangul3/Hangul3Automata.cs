@@ -34,6 +34,11 @@ internal class Hangul3Automata
         TableItem.CreateTailingItem("ㅂ", "ㅅ", "ㅄ"),
     ];
 
+    static readonly IHangul3InputConverter[] inputConverters =
+    [
+        new Hangul3InputConverter_세벌식_최종_391(),
+    ];
+
     private Jaso _currentState = default;
     private List<Input3> _history = new();
 
@@ -313,9 +318,14 @@ internal class Hangul3Automata
         }
     }
     /// <summary> 일반 키보드 입력 (두벌식, 영문) 모두 세벌식으로 처리 </summary>
-    public void Handle2(string input, bool shift)
+    public void Handle2(string input, bool shift, Hangul3Type hangul3Type = Hangul3Type.세벌식_최종_391)
     {
-        var input3 = InputConverter.Input2ToInput3(new Input2(input, shift));
+        var inputConverter = inputConverters.FirstOrDefault(converter => converter.ConverterType == hangul3Type);
+        if (inputConverter == null)
+        {
+            throw new InvalidOperationException($"지원하지 않는 입력기 타입입니다: {hangul3Type}");
+        }
+        var input3 = inputConverter!.Input2ToInput3(new Input2(input, shift));
         if (input3 != default)
         {
             Handle3(input3);

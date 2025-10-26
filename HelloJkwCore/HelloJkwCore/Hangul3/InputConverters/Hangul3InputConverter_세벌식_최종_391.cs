@@ -1,8 +1,10 @@
-﻿namespace HelloJkwCore.Hangul3;
+namespace HelloJkwCore.Hangul3;
 
-internal static class InputConverter
+internal class Hangul3InputConverter_세벌식_최종_391 : IHangul3InputConverter
 {
-    public static Input3 Input2ToInput3(Input2 input2)
+    public Hangul3Type ConverterType => Hangul3Type.세벌식_최종_391;
+
+    public Input3 Input2ToInput3(Input2 input2)
     {
         return input2 switch
         {
