@@ -24,6 +24,7 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     private bool isShiftPressed = false;
     private bool isCtrlPressed = false;
     private bool isCommandPressed = false;
+    private bool isAltPressed = false;
 
     DotNetObjectReference<Hangul3SingleInput>? objRef;
 
@@ -218,18 +219,37 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
             isCommandPressed = true;
             return;
         }
+        if (key == "Alt" || key == "AltGraph" || key == "Option")
+        {
+            isAltPressed = true;
+            return;
+        }
 
         // 이동/편집 키 처리
         switch (key)
         {
             case "ArrowLeft":
                 CommitCompositionIfAny();
-                MoveCaretBy(-1, isShiftPressed);
+                if (isAltPressed)
+                {
+                    MoveCaretByWord(-1, isShiftPressed);
+                }
+                else
+                {
+                    MoveCaretBy(-1, isShiftPressed);
+                }
                 StateHasChanged();
                 return;
             case "ArrowRight":
                 CommitCompositionIfAny();
-                MoveCaretBy(1, isShiftPressed);
+                if (isAltPressed)
+                {
+                    MoveCaretByWord(1, isShiftPressed);
+                }
+                else
+                {
+                    MoveCaretBy(1, isShiftPressed);
+                }
                 StateHasChanged();
                 return;
             case "Home":
@@ -260,7 +280,7 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         }
 
         // 일반 입력은 오토마타로 처리
-        automata.Handle2(key, isShiftPressed);
+        automata.Handle2(key, false);
         StateHasChanged();
     }
 
@@ -278,6 +298,10 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         if (key == "Meta" || key == "Command")
         {
             isCommandPressed = false;
+        }
+        if (key == "Alt" || key == "AltGraph" || key == "Option")
+        {
+            isAltPressed = false;
         }
         StateHasChanged();
     }
@@ -374,7 +398,25 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
 
     private void MoveCaretBy(int delta, bool extendSelection)
     {
-        var next = Math.Clamp(caretIndex + delta, 0, _finalText.Length);
+        if (HasSelection() && !extendSelection)
+        {
+            // 선택이 있는 상태에서 확장 없이 이동하면 선택 해제 후 이동
+            var (start, end) = GetSelectionRange();
+            var next = delta < 0 ? start : end;
+            SetCaret(next, false);
+        }
+        else
+        {
+            var next = Math.Clamp(caretIndex + delta, 0, _finalText.Length);
+            SetCaret(next, extendSelection);
+        }
+    }
+
+    private void MoveCaretByWord(int direction, bool extendSelection)
+    {
+        int next = direction < 0
+            ? FindPreviousWordBoundary(caretIndex)
+            : FindNextWordBoundary(caretIndex);
         SetCaret(next, extendSelection);
     }
 
@@ -415,12 +457,72 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         isShiftPressed = false;
         isCtrlPressed = false;
         isCommandPressed = false;
+        isAltPressed = false;
     }
 
     private void SelectAll()
     {
         selectionAnchorIndex = 0;
         caretIndex = _finalText.Length;
+    }
+
+    private int FindPreviousWordBoundary(int index)
+    {
+        index = Math.Clamp(index, 0, _finalText.Length);
+        if (index == 0)
+        {
+            return 0;
+        }
+
+        int i = index;
+
+        while (i > 0 && char.IsWhiteSpace(_finalText[i - 1]))
+        {
+            i--;
+        }
+
+        if (i == 0)
+        {
+            return 0;
+        }
+
+        bool isWord = IsWordCharacter(_finalText[i - 1]);
+        while (i > 0 && IsWordCharacter(_finalText[i - 1]) == isWord && !char.IsWhiteSpace(_finalText[i - 1]))
+        {
+            i--;
+        }
+
+        return i;
+    }
+
+    private int FindNextWordBoundary(int index)
+    {
+        index = Math.Clamp(index, 0, _finalText.Length);
+        int len = _finalText.Length;
+        int i = index;
+
+        while (i < len && char.IsWhiteSpace(_finalText[i]))
+        {
+            i++;
+        }
+
+        if (i >= len)
+        {
+            return len;
+        }
+
+        bool isWord = IsWordCharacter(_finalText[i]);
+        while (i < len && IsWordCharacter(_finalText[i]) == isWord && !char.IsWhiteSpace(_finalText[i]))
+        {
+            i++;
+        }
+
+        return i;
+    }
+
+    private static bool IsWordCharacter(char ch)
+    {
+        return char.IsLetterOrDigit(ch) || ch == '_';
     }
 
     // 화면 렌더 조각
