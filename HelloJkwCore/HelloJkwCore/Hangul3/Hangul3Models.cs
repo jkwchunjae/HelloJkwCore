@@ -35,9 +35,9 @@ internal record struct Input3(string Value, JasoType Type)
     public static Input3 Tailing(string value) => new Input3(value, JasoType.Tailing);
     public static Input3 Util(string value) => new Input3(value, JasoType.Util);
 
-    public static Input3 Enter => new Input3("Enter", JasoType.Util);
-    public static Input3 Backspace => new Input3("Backspace", JasoType.Util);
-    public static Input3 Space => new Input3(" ", JasoType.Util);
+    public static Input3 Enter => new Input3(Keyboard.Enter, JasoType.Util);
+    public static Input3 Backspace => new Input3(Keyboard.Backspace, JasoType.Util);
+    public static Input3 Space => new Input3(Keyboard.Space, JasoType.Util);
 }
 internal record struct TableItem(Input3 Input1, Input3 Input2, Input3 Result)
 {

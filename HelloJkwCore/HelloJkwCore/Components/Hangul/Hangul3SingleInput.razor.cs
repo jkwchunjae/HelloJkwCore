@@ -128,6 +128,20 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         }
     }
 
+    protected override async Task OnPageAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            await Js.InvokeVoidAsync("keyListener.initialize", objRef);
+
+            automata.Composed += Composed;
+            automata.CurrentChanged += CurrentChanged;
+            automata.OnBackspace += OnBackspace;
+            caretIndex = 0;
+        }
+    }
+
     private void SetFinalText(string newValue)
     {
         var changed = !string.Equals(_finalText, newValue, StringComparison.Ordinal);
@@ -143,20 +157,6 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         if (ValueChanged.HasDelegate)
         {
             _ = InvokeAsync(() => ValueChanged.InvokeAsync(_finalText));
-        }
-    }
-
-    protected override async Task OnPageAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            objRef = DotNetObjectReference.Create(this);
-            await Js.InvokeVoidAsync("keyListener.initialize", objRef);
-
-            automata.Composed += Composed;
-            automata.CurrentChanged += CurrentChanged;
-            automata.OnBackspace += OnBackspace;
-            caretIndex = 0;
         }
     }
 
@@ -198,37 +198,25 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     [JSInvokable]
     public void OnKeyDown(string key)
     {
-        if (!isFocused)
-        {
-            return;
-        }
-
-        // 수정키 상태 추적
-        if (key == "Shift")
-        {
-            isShiftPressed = true;
-            return;
-        }
-        if (key == "Control")
-        {
-            isCtrlPressed = true;
-            return;
-        }
-        if (key == "Meta" || key == "Command")
-        {
-            isCommandPressed = true;
-            return;
-        }
-        if (key == "Alt" || key == "AltGraph" || key == "Option")
-        {
-            isAltPressed = true;
-            return;
-        }
-
         // 이동/편집 키 처리
         switch (key)
         {
-            case "ArrowLeft":
+            case Keyboard.Shift:
+                isShiftPressed = true;
+                return;
+            case Keyboard.Control:
+                isCtrlPressed = true;
+                return;
+            case Keyboard.Command:
+            case Keyboard.Meta:
+                isCommandPressed = true;
+                return;
+            case Keyboard.Alt:
+            case Keyboard.AltGraph:
+            case Keyboard.Option:
+                isAltPressed = true;
+                return;
+            case Keyboard.ArrowLeft:
                 CommitCompositionIfAny();
                 if (isAltPressed)
                 {
@@ -240,7 +228,7 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
                 }
                 StateHasChanged();
                 return;
-            case "ArrowRight":
+            case Keyboard.ArrowRight:
                 CommitCompositionIfAny();
                 if (isAltPressed)
                 {
@@ -252,17 +240,17 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
                 }
                 StateHasChanged();
                 return;
-            case "Home":
+            case Keyboard.Home:
                 CommitCompositionIfAny();
                 SetCaret(0, isShiftPressed);
                 StateHasChanged();
                 return;
-            case "End":
+            case Keyboard.End:
                 CommitCompositionIfAny();
                 SetCaret(_finalText.Length, isShiftPressed);
                 StateHasChanged();
                 return;
-            case "Delete":
+            case Keyboard.Delete:
                 CommitCompositionIfAny();
                 HandleDelete();
                 StateHasChanged();
@@ -287,23 +275,24 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     [JSInvokable]
     public void OnKeyUp(string key)
     {
-        if (key == "Shift")
+        switch (key)
         {
-            isShiftPressed = false;
+            case Keyboard.Shift:
+                isShiftPressed = false;
+                break;
+            case Keyboard.Control:
+                isCtrlPressed = false;
+                break;
+            case Keyboard.Command:
+            case Keyboard.Meta:
+                isCommandPressed = false;
+                break;
+            case Keyboard.Alt:
+            case Keyboard.AltGraph:
+            case Keyboard.Option:
+                isAltPressed = false;
+                break;
         }
-        if (key == "Control")
-        {
-            isCtrlPressed = false;
-        }
-        if (key == "Meta" || key == "Command")
-        {
-            isCommandPressed = false;
-        }
-        if (key == "Alt" || key == "AltGraph" || key == "Option")
-        {
-            isAltPressed = false;
-        }
-        StateHasChanged();
     }
 
     private void Composed(object? sender, string text)
