@@ -22,6 +22,8 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     private int caretIndex = 0; // _finalText 기준 커서 위치
     private int? selectionAnchorIndex = null; // Shift로 선택 시작 위치(고정)
     private bool isShiftPressed = false;
+    private bool isCtrlPressed = false;
+    private bool isCommandPressed = false;
 
     DotNetObjectReference<Hangul3SingleInput>? objRef;
 
@@ -160,6 +162,7 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     private async Task OnFocus()
     {
         isFocused = true;
+        ResetModifiers();
         if (objRef != null)
         {
             await Js.InvokeVoidAsync("keyListener.setActive", objRef, true);
@@ -168,6 +171,7 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     private async Task OnBlur()
     {
         isFocused = false;
+        ResetModifiers();
         if (objRef != null)
         {
             await Js.InvokeVoidAsync("keyListener.setActive", objRef, false);
@@ -204,6 +208,16 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
             isShiftPressed = true;
             return;
         }
+        if (key == "Control")
+        {
+            isCtrlPressed = true;
+            return;
+        }
+        if (key == "Meta" || key == "Command")
+        {
+            isCommandPressed = true;
+            return;
+        }
 
         // 이동/편집 키 처리
         switch (key)
@@ -233,10 +247,20 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
                 HandleDelete();
                 StateHasChanged();
                 return;
+            case "a":
+            case "A":
+                if (isCtrlPressed || isCommandPressed)
+                {
+                    CommitCompositionIfAny();
+                    SelectAll();
+                    StateHasChanged();
+                    return;
+                }
+                break;
         }
 
         // 일반 입력은 오토마타로 처리
-        automata.Handle2(key, false);
+        automata.Handle2(key, isShiftPressed);
         StateHasChanged();
     }
 
@@ -246,6 +270,14 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         if (key == "Shift")
         {
             isShiftPressed = false;
+        }
+        if (key == "Control")
+        {
+            isCtrlPressed = false;
+        }
+        if (key == "Meta" || key == "Command")
+        {
+            isCommandPressed = false;
         }
         StateHasChanged();
     }
@@ -376,6 +408,19 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     private void ClearSelection()
     {
         selectionAnchorIndex = null;
+    }
+
+    private void ResetModifiers()
+    {
+        isShiftPressed = false;
+        isCtrlPressed = false;
+        isCommandPressed = false;
+    }
+
+    private void SelectAll()
+    {
+        selectionAnchorIndex = 0;
+        caretIndex = _finalText.Length;
     }
 
     // 화면 렌더 조각
