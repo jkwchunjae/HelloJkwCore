@@ -8,6 +8,8 @@ namespace HelloJkwCore.Components.Hangul;
 public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
 {
     private readonly Hangul3Automata automata = new();
+    private static readonly Hangul3Type[] Hangul3TypeOptions = Enum.GetValues<Hangul3Type>();
+
     /// <summary>
     /// 완성된 문자열
     /// </summary>
@@ -25,9 +27,14 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     private bool isCtrlPressed = false;
     private bool isCommandPressed = false;
     private bool isAltPressed = false;
+    private bool showTypeDropdown = false;
+
+    private ElementReference containerRef;
 
     DotNetObjectReference<Hangul3SingleInput>? objRef;
 
+    [Parameter] public Hangul3Type Hangul3Type { get; set; } = Hangul3Type.세벌식_최종_391;
+    [Parameter] public EventCallback<Hangul3Type> Hangul3TypeChanged { get; set; }
     [Parameter] public string? Class { get; set; }
     [Parameter] public string? Style { get; set; }
     [Parameter] public string? FontFamily { get; set; }
@@ -99,6 +106,13 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         {
             styles.Add($"{variableName}:{value}");
         }
+    }
+
+    private string CurrentHangul3TypeDisplayName => GetHangul3TypeDisplayName(Hangul3Type);
+
+    private static string GetHangul3TypeDisplayName(Hangul3Type type)
+    {
+        return type.ToString().Replace('_', ' ');
     }
 
     private IReadOnlyDictionary<string, object> RootAttributes
@@ -173,10 +187,12 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     {
         isFocused = false;
         ResetModifiers();
+        showTypeDropdown = false;
         if (objRef != null)
         {
             await Js.InvokeVoidAsync("keyListener.setActive", objRef, false);
         }
+        StateHasChanged();
     }
 
     public async ValueTask DisposeAsync()
@@ -268,7 +284,7 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
         }
 
         // 일반 입력은 오토마타로 처리
-        automata.Handle2(key, false);
+        automata.Handle2(key, false, Hangul3Type);
         StateHasChanged();
     }
 
@@ -512,6 +528,26 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
     private static bool IsWordCharacter(char ch)
     {
         return char.IsLetterOrDigit(ch) || ch == '_';
+    }
+
+    private void ToggleTypeDropdown()
+    {
+        showTypeDropdown = !showTypeDropdown;
+    }
+
+    private async Task SelectHangul3Type(Hangul3Type type)
+    {
+        showTypeDropdown = false;
+        if (Hangul3Type != type)
+        {
+            CommitCompositionIfAny();
+            Hangul3Type = type;
+            if (Hangul3TypeChanged.HasDelegate)
+            {
+                await Hangul3TypeChanged.InvokeAsync(type);
+            }
+        }
+        await containerRef.FocusAsync();
     }
 
     // 화면 렌더 조각
