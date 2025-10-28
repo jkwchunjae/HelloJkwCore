@@ -8,7 +8,11 @@ namespace HelloJkwCore.Components.Hangul;
 public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
 {
     private readonly Hangul3Automata automata = new();
-    private static readonly Hangul3Type[] Hangul3TypeOptions = Enum.GetValues<Hangul3Type>();
+    private static readonly Hangul3Type[] Hangul3TypeOptions =
+    [
+        Hangul3Type.세벌식_390,
+        Hangul3Type.세벌식_최종_391,
+    ];
 
     /// <summary>
     /// 완성된 문자열
@@ -33,7 +37,7 @@ public partial class Hangul3SingleInput : JkwPageBase, IAsyncDisposable
 
     DotNetObjectReference<Hangul3SingleInput>? objRef;
 
-    [Parameter] public Hangul3Type Hangul3Type { get; set; } = Hangul3Type.세벌식_최종_391;
+    [Parameter] public Hangul3Type Hangul3Type { get; set; } = Hangul3Type.세벌식_390;
     [Parameter] public EventCallback<Hangul3Type> Hangul3TypeChanged { get; set; }
     [Parameter] public string? Class { get; set; }
     [Parameter] public string? Style { get; set; }

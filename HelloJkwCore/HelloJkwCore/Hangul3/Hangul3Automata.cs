@@ -36,6 +36,7 @@ internal class Hangul3Automata
 
     static readonly IHangul3InputConverter[] inputConverters =
     [
+        new Hangul3InputConverter_세벌식_390(),
         new Hangul3InputConverter_세벌식_최종_391(),
     ];
 
