@@ -17,19 +17,10 @@
     <Routes @rendermode="InteractiveServer" />
     <script src="_framework/blazor.web.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script src="js/keyListener.js"></script>
     <script>
         window.getTimezone = () => (new Date()).getTimezoneOffset();
         window.getUserAgent = () => navigator.userAgent;
-        window.keyListener = {
-            initialize: function (dotnetHelper) {
-                document.addEventListener('keydown', function (e) {
-                    dotnetHelper.invokeMethodAsync('OnKeyDown', e.key);
-                });
-                document.addEventListener('keyup', function (e) {
-                    dotnetHelper.invokeMethodAsync('OnKeyUp', e.key);
-                });
-            }
-        };
     </script>
 </body>
 

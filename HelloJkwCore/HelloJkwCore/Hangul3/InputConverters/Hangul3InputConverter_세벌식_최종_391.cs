@@ -1,0 +1,120 @@
+namespace HelloJkwCore.Hangul3;
+
+internal class Hangul3InputConverter_세벌식_최종_391 : IHangul3InputConverter
+{
+    public Hangul3Type ConverterType => Hangul3Type.세벌식_최종_391;
+
+    public Input3 Input2ToInput3(Input2 input2)
+    {
+        return input2 switch
+        {
+            { Value: "Enter" } => Input3.Enter,
+            { Value: "Backspace" } => Input3.Backspace,
+            { Value: " " } => Input3.Space,
+
+            { Value: "`" } => Input3.Util("`"),
+            { Value: "1" } => Input3.Tailing("ㅎ"),
+            { Value: "2" } => Input3.Tailing("ㅆ"),
+            { Value: "3" } => Input3.Tailing("ㅂ"),
+            { Value: "4" } => Input3.Vowel("ㅛ"),
+            { Value: "5" } => Input3.Vowel("ㅠ"),
+            { Value: "6" } => Input3.Vowel("ㅑ"),
+            { Value: "7" } => Input3.Vowel("ㅖ"),
+            { Value: "8" } => Input3.Vowel("ㅢ"),
+            { Value: "9" } => Input3.Vowel("ㅜ"),
+            { Value: "0" } => Input3.Leading("ㅋ"),
+            { Value: "-" } => Input3.Util(")"),
+            { Value: "=" } => Input3.Util(">"),
+
+            { Value: "~" } => Input3.Util("~"),
+            { Value: "!" } => Input3.Tailing("ㄲ"),
+            { Value: "@" } => Input3.Tailing("ㄺ"),
+            { Value: "#" } => Input3.Tailing("ㅈ"),
+            { Value: "$" } => Input3.Tailing("ㄿ"),
+            { Value: "%" } => Input3.Tailing("ㄾ"),
+            { Value: "^" } => Input3.Util("="),
+            { Value: "&" } => Input3.Util("\""),
+            { Value: "*" } => Input3.Util("\""),
+            { Value: "(" } => Input3.Util("'"),
+            { Value: ")" } => Input3.Util("~"),
+            { Value: "_" } => Input3.Util(";"),
+            { Value: "+" } => Input3.Util("+"),
+
+            { Value: "q" } => Input3.Tailing("ㅅ"),
+            { Value: "w" } => Input3.Tailing("ㄹ"),
+            { Value: "e" } => Input3.Vowel("ㅕ"),
+            { Value: "r" } => Input3.Vowel("ㅐ"),
+            { Value: "t" } => Input3.Vowel("ㅓ"),
+            { Value: "y" } => Input3.Leading("ㄹ"),
+            { Value: "u" } => Input3.Leading("ㄷ"),
+            { Value: "i" } => Input3.Leading("ㅁ"),
+            { Value: "o" } => Input3.Leading("ㅊ"),
+            { Value: "p" } => Input3.Leading("ㅍ"),
+            { Value: "[" } => Input3.Util("("),
+            { Value: "]" } => Input3.Util("<"),
+            { Value: "\\" } => Input3.Util(":"),
+
+            { Value: "Q" } => Input3.Tailing("ㅍ"),
+            { Value: "W" } => Input3.Tailing("ㅌ"),
+            { Value: "E" } => Input3.Tailing("ㄵ"),
+            { Value: "R" } => Input3.Tailing("ㅀ"),
+            { Value: "T" } => Input3.Tailing("ㄽ"),
+            { Value: "Y" } => Input3.Util("5"),
+            { Value: "U" } => Input3.Util("6"),
+            { Value: "I" } => Input3.Util("7"),
+            { Value: "O" } => Input3.Util("8"),
+            { Value: "P" } => Input3.Util("9"),
+            { Value: "{" } => Input3.Util("%"),
+            { Value: "}" } => Input3.Util("/"),
+            { Value: "|" } => Input3.Util("\\"),
+
+            { Value: "a" } => Input3.Tailing("ㅇ"),
+            { Value: "s" } => Input3.Tailing("ㄴ"),
+            { Value: "d" } => Input3.Vowel("ㅣ"),
+            { Value: "f" } => Input3.Vowel("ㅏ"),
+            { Value: "g" } => Input3.Vowel("ㅡ"),
+            { Value: "h" } => Input3.Leading("ㄴ"),
+            { Value: "j" } => Input3.Leading("ㅇ"),
+            { Value: "k" } => Input3.Leading("ㄱ"),
+            { Value: "l" } => Input3.Leading("ㅈ"),
+            { Value: ";" } => Input3.Leading("ㅂ"),
+            { Value: "'" } => Input3.Leading("ㅌ"),
+
+            { Value: "A" } => Input3.Tailing("ㄷ"),
+            { Value: "S" } => Input3.Tailing("ㄶ"),
+            { Value: "D" } => Input3.Tailing("ㄼ"),
+            { Value: "F" } => Input3.Tailing("ㄻ"),
+            { Value: "G" } => Input3.Vowel("ㅒ"),
+            { Value: "H" } => Input3.Util("0"),
+            { Value: "J" } => Input3.Util("1"),
+            { Value: "K" } => Input3.Util("2"),
+            { Value: "L" } => Input3.Util("3"),
+            { Value: ":" } => Input3.Util("4"),
+            { Value: "\"" } => Input3.Util("."),
+
+            { Value: "z" } => Input3.Tailing("ㅁ"),
+            { Value: "x" } => Input3.Tailing("ㄱ"),
+            { Value: "c" } => Input3.Vowel("ㅔ"),
+            { Value: "v" } => Input3.Vowel("ㅗ"),
+            { Value: "b" } => Input3.Vowel("ㅜ"),
+            { Value: "n" } => Input3.Leading("ㅅ"),
+            { Value: "m" } => Input3.Leading("ㅎ"),
+            { Value: "," } => Input3.Util(","),
+            { Value: "." } => Input3.Util("."),
+            { Value: "/" } => Input3.Vowel("ㅗ"),
+
+            { Value: "Z" } => Input3.Tailing("ㅊ"),
+            { Value: "X" } => Input3.Tailing("ㅄ"),
+            { Value: "C" } => Input3.Tailing("ㅋ"),
+            { Value: "V" } => Input3.Tailing("ㄳ"),
+            { Value: "B" } => Input3.Util("?"),
+            { Value: "N" } => Input3.Util("-"),
+            { Value: "M" } => Input3.Util("\""),
+            { Value: "<" } => Input3.Util(","),
+            { Value: ">" } => Input3.Util("."),
+            { Value: "?" } => Input3.Util("!"),
+
+            _ => default
+        };
+    }
+}

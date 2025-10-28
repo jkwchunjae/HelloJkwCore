@@ -1,8 +1,10 @@
-﻿namespace HelloJkwCore.Hangul3;
+namespace HelloJkwCore.Hangul3;
 
-internal static class InputConverter
+internal class Hangul3InputConverter_세벌식_390 : IHangul3InputConverter
 {
-    public static Input3 Input2ToInput3(Input2 input2)
+    public Hangul3Type ConverterType => Hangul3Type.세벌식_390;
+
+    public Input3 Input2ToInput3(Input2 input2)
     {
         return input2 switch
         {
@@ -25,17 +27,17 @@ internal static class InputConverter
             { Value: "=" } => Input3.Util(">"),
 
             { Value: "~" } => Input3.Util("~"),
-            { Value: "!" } => Input3.Tailing("ㄲ"),
-            { Value: "@" } => Input3.Tailing("ㄺ"),
-            { Value: "#" } => Input3.Tailing("ㅈ"),
-            { Value: "$" } => Input3.Tailing("ㄿ"),
-            { Value: "%" } => Input3.Tailing("ㄾ"),
-            { Value: "^" } => Input3.Util("="),
-            { Value: "&" } => Input3.Util("\""),
-            { Value: "*" } => Input3.Util("\""),
-            { Value: "(" } => Input3.Util("'"),
-            { Value: ")" } => Input3.Util("~"),
-            { Value: "_" } => Input3.Util(";"),
+            { Value: "!" } => Input3.Tailing("ㅈ"),
+            { Value: "@" } => Input3.Util("@"),
+            { Value: "#" } => Input3.Util("#"),
+            { Value: "$" } => Input3.Util("$"),
+            { Value: "%" } => Input3.Util("%"),
+            { Value: "^" } => Input3.Util("^"),
+            { Value: "&" } => Input3.Util("&"),
+            { Value: "*" } => Input3.Util("*"),
+            { Value: "(" } => Input3.Util("("),
+            { Value: ")" } => Input3.Util(")"),
+            { Value: "_" } => Input3.Util("-"),
             { Value: "+" } => Input3.Util("+"),
 
             { Value: "q" } => Input3.Tailing("ㅅ"),
@@ -50,21 +52,21 @@ internal static class InputConverter
             { Value: "p" } => Input3.Leading("ㅍ"),
             { Value: "[" } => Input3.Util("("),
             { Value: "]" } => Input3.Util("<"),
-            { Value: "\\" } => Input3.Util(":"),
+            { Value: "\\" } => Input3.Util("\\"),
 
             { Value: "Q" } => Input3.Tailing("ㅍ"),
             { Value: "W" } => Input3.Tailing("ㅌ"),
-            { Value: "E" } => Input3.Tailing("ㄵ"),
-            { Value: "R" } => Input3.Tailing("ㅀ"),
-            { Value: "T" } => Input3.Tailing("ㄽ"),
-            { Value: "Y" } => Input3.Util("5"),
-            { Value: "U" } => Input3.Util("6"),
-            { Value: "I" } => Input3.Util("7"),
-            { Value: "O" } => Input3.Util("8"),
-            { Value: "P" } => Input3.Util("9"),
-            { Value: "{" } => Input3.Util("%"),
-            { Value: "}" } => Input3.Util("/"),
-            { Value: "|" } => Input3.Util("\\"),
+            { Value: "E" } => Input3.Tailing("ㅋ"),
+            { Value: "R" } => Input3.Tailing("ㅒ"),
+            { Value: "T" } => Input3.Util(";"),
+            { Value: "Y" } => Input3.Util("<"),
+            { Value: "U" } => Input3.Util("7"),
+            { Value: "I" } => Input3.Util("8"),
+            { Value: "O" } => Input3.Util("9"),
+            { Value: "P" } => Input3.Util(">"),
+            { Value: "{" } => Input3.Util("{"),
+            { Value: "}" } => Input3.Util("}"),
+            { Value: "|" } => Input3.Util("|"),
 
             { Value: "a" } => Input3.Tailing("ㅇ"),
             { Value: "s" } => Input3.Tailing("ㄴ"),
@@ -80,15 +82,15 @@ internal static class InputConverter
 
             { Value: "A" } => Input3.Tailing("ㄷ"),
             { Value: "S" } => Input3.Tailing("ㄶ"),
-            { Value: "D" } => Input3.Tailing("ㄼ"),
-            { Value: "F" } => Input3.Tailing("ㄻ"),
-            { Value: "G" } => Input3.Vowel("ㅒ"),
-            { Value: "H" } => Input3.Util("0"),
-            { Value: "J" } => Input3.Util("1"),
-            { Value: "K" } => Input3.Util("2"),
-            { Value: "L" } => Input3.Util("3"),
-            { Value: ":" } => Input3.Util("4"),
-            { Value: "\"" } => Input3.Util("."),
+            { Value: "D" } => Input3.Tailing("ㄺ"),
+            { Value: "F" } => Input3.Tailing("ㄲ"),
+            { Value: "G" } => Input3.Util("/"),
+            { Value: "H" } => Input3.Util("'"),
+            { Value: "J" } => Input3.Util("4"),
+            { Value: "K" } => Input3.Util("5"),
+            { Value: "L" } => Input3.Util("6"),
+            { Value: ":" } => Input3.Util(":"),
+            { Value: "\"" } => Input3.Util("\""),
 
             { Value: "z" } => Input3.Tailing("ㅁ"),
             { Value: "x" } => Input3.Tailing("ㄱ"),
@@ -103,14 +105,14 @@ internal static class InputConverter
 
             { Value: "Z" } => Input3.Tailing("ㅊ"),
             { Value: "X" } => Input3.Tailing("ㅄ"),
-            { Value: "C" } => Input3.Tailing("ㅋ"),
-            { Value: "V" } => Input3.Tailing("ㄳ"),
-            { Value: "B" } => Input3.Util("?"),
-            { Value: "N" } => Input3.Util("-"),
-            { Value: "M" } => Input3.Util("\""),
-            { Value: "<" } => Input3.Util(","),
-            { Value: ">" } => Input3.Util("."),
-            { Value: "?" } => Input3.Util("!"),
+            { Value: "C" } => Input3.Tailing("ㄻ"),
+            { Value: "V" } => Input3.Tailing("ㅀ"),
+            { Value: "B" } => Input3.Util("!"),
+            { Value: "N" } => Input3.Util("0"),
+            { Value: "M" } => Input3.Util("1"),
+            { Value: "<" } => Input3.Util("2"),
+            { Value: ">" } => Input3.Util("3"),
+            { Value: "?" } => Input3.Util("?"),
 
             _ => default
         };

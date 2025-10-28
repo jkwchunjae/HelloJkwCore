@@ -1,5 +1,15 @@
 ﻿namespace HelloJkwCore.Hangul3;
 
+public enum Hangul3Type
+{
+    세벌식_390,
+    세벌식_최종_391,
+    세벌식_순아래,
+    세벌식_김국38A,
+    세벌식_3_2015,
+    세벌식_3_P3,
+    세벌식_3_D2,
+}
 internal enum JasoType { Leading, Vowel, Tailing, Util }
 internal record struct Jaso(Input3 Leading, Input3 Vowel, Input3 Tailing)
 {
@@ -25,9 +35,9 @@ internal record struct Input3(string Value, JasoType Type)
     public static Input3 Tailing(string value) => new Input3(value, JasoType.Tailing);
     public static Input3 Util(string value) => new Input3(value, JasoType.Util);
 
-    public static Input3 Enter => new Input3("Enter", JasoType.Util);
-    public static Input3 Backspace => new Input3("Backspace", JasoType.Util);
-    public static Input3 Space => new Input3(" ", JasoType.Util);
+    public static Input3 Enter => new Input3(Keyboard.Enter, JasoType.Util);
+    public static Input3 Backspace => new Input3(Keyboard.Backspace, JasoType.Util);
+    public static Input3 Space => new Input3(Keyboard.Space, JasoType.Util);
 }
 internal record struct TableItem(Input3 Input1, Input3 Input2, Input3 Result)
 {
