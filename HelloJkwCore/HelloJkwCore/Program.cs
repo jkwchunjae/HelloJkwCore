@@ -7,6 +7,7 @@ using HelloJkwCore.Tetration;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using MudBlazor.Services;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var culture = new CultureInfo("ko-KR");
 CultureInfo.CurrentCulture = culture;
@@ -35,6 +36,7 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddMudServices();
 builder.Services.AddTableViewer();
+builder.Services.AddHotKeys2();
 
 #region FileSystem
 
