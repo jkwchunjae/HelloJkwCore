@@ -23,7 +23,11 @@ builder.Services.AddSingleton(coreOption);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddCircuitOptions(options =>
+    {
+        options.DetailedErrors = builder.Environment.IsDevelopment();
+    });
 builder.Services.AddControllers();
 builder.Services.AddHostedService<QueuedHostedService>();
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();

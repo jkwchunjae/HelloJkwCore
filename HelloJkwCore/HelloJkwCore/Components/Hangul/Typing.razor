@@ -7,13 +7,26 @@
 
 <p>최근 입력된 키: @string.Join(", ", lastKey)</p>
 
-<Hangul3SingleInput FontSize="15px" @bind-Value="value" Hangul3Type="Hangul3Type.세벌식_390" />
+<Hangul3SingleInput @ref="hangul3Input" FontSize="15px" @bind-Value="value"
+    Hangul3Type="Hangul3Type"
+    Hangul3TypeChanged="OnHangulTypeChanged"
+    />
+
+@if (!string.IsNullOrEmpty(hangul3KeyboardImage))
+{
+    <div>
+        <MudImage Src="@hangul3KeyboardImage" Alt="세벌식 타자연습 예시" Class="my-4"/>
+    </div>
+}
 
 @code {
     private List<string> lastKey = new List<string>();
     private string value = "세벌식을 입력해보세요!";
 
+    private Hangul3SingleInput? hangul3Input;
     DotNetObjectReference<Typing>? objRef;
+    Hangul3Type Hangul3Type = Hangul3Type.세벌식_390;
+    string hangul3KeyboardImage = string.Empty;
 
     protected override async Task OnPageAfterRenderAsync(bool firstRender)
     {
@@ -21,16 +34,25 @@
         {
             objRef = DotNetObjectReference.Create(this);
             await Js.InvokeVoidAsync("keyListener.initialize", objRef);
+
+            SetKeyboardImage(Hangul3Type);
+            StateHasChanged();
         }
     }
 
     public async ValueTask DisposeAsync()
     {
+        await Js.InvokeVoidAsync("console.log", "typingPage.dispose");
         try
         {
+            if (hangul3Input != null)
+            {
+                await Js.InvokeVoidAsync("console.log", "disposing hangul3Input");
+                await hangul3Input.DisposeAsync();
+            }
             if (objRef != null)
             {
-                await Js.InvokeVoidAsync("keyListener.dispose", objRef);
+                await Js.InvokeVoidAsync("keyListener.dispose", objRef, "typingPage");
                 objRef.Dispose();
             }
         }
@@ -55,5 +77,27 @@
     {
         lastKey.Remove(key);
         StateHasChanged();
+    }
+
+    public void OnHangulTypeChanged(Hangul3Type hangul3Type)
+    {
+        Hangul3Type = hangul3Type;
+        SetKeyboardImage(hangul3Type);
+    }
+
+    public void SetKeyboardImage(Hangul3Type hangul3Type)
+    {
+        if (hangul3Type == Hangul3Type.세벌식_390)
+        {
+            hangul3KeyboardImage = "/images/hangul3/세벌식_390.webp";
+        }
+        else if (hangul3Type == Hangul3Type.세벌식_최종_391)
+        {
+            hangul3KeyboardImage = "/images/hangul3/세벌식_최종_391.webp";
+        }
+        else
+        {
+            hangul3KeyboardImage = string.Empty;
+        }
     }
 }
