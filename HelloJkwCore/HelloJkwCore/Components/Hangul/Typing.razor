@@ -2,6 +2,9 @@
 @using Hangul3
 @page "/typing"
 @implements IAsyncDisposable
+@using JkwExtensions
+@using Toolbelt.Blazor.HotKeys2
+@inject HotKeys HotKeys
 
 <PageTitle>세벌식 타자연습</PageTitle>
 
@@ -24,7 +27,7 @@
     private string value = "세벌식을 입력해보세요!";
 
     private Hangul3SingleInput? hangul3Input;
-    DotNetObjectReference<Typing>? objRef;
+    private HotKeysContext? _hotKeysContext;
     Hangul3Type Hangul3Type = Hangul3Type.세벌식_390;
     string hangul3KeyboardImage = string.Empty;
 
@@ -32,28 +35,36 @@
     {
         if (firstRender)
         {
-            objRef = DotNetObjectReference.Create(this);
-            await Js.InvokeVoidAsync("keyListener.initialize", objRef);
+            _hotKeysContext = CreateContext();
 
             SetKeyboardImage(Hangul3Type);
             StateHasChanged();
+        }
+
+        HotKeysContext CreateContext()
+        {
+            return typeof(Code)
+                .GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                .Select(p => (Code)p.GetValue(null)!)
+                .Aggregate(this.HotKeys.CreateContext(), (context, code) =>
+                {
+                    return context
+                        .Add(code, () =>
+                        {
+                            OnKeyDown(code.ToString()!);
+                            return Task.CompletedTask;
+                        });
+                });
         }
     }
 
     public async ValueTask DisposeAsync()
     {
-        await Js.InvokeVoidAsync("console.log", "typingPage.dispose");
         try
         {
-            if (hangul3Input != null)
+            if (_hotKeysContext != null)
             {
-                await Js.InvokeVoidAsync("console.log", "disposing hangul3Input");
-                await hangul3Input.DisposeAsync();
-            }
-            if (objRef != null)
-            {
-                await Js.InvokeVoidAsync("keyListener.dispose", objRef, "typingPage");
-                objRef.Dispose();
+                await _hotKeysContext.DisposeAsync();
             }
         }
         catch
