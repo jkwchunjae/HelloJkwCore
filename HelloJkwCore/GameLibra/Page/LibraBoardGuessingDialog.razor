@@ -25,13 +25,13 @@
     protected override void OnInitialized()
     {
         var useAssist = State.UseAssist;
-        var firstSet = Assistor.Sets.First();
+        var firstSet = Assistor.Sets?.FirstOrDefault();
         GuessingValues = State.CubeInfo
             .Select(x => new Cube
             {
                 Id = x.Id,
                 Name = x.Name,
-                Value = useAssist ? firstSet[x.Name] : 0,
+                Value = useAssist ? (firstSet?.TryGetValue(x.Name, out var value) ?? false ? value : 0) : 0,
             })
             .ToList();
     }
