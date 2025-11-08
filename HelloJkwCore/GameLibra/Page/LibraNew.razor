@@ -6,37 +6,37 @@
 
 @if (_moreOption)
 {
-<MudForm >
-    <MudTextField Label="게임 이름" @bind-Value="_name" AutoFocus="true"/>
-    <MudTextField Label="큐브 종류" @bind-Value="_cubeCount" InputType="InputType.Number" T="int"
+<MudForm Style="max-width: 400px;">
+    <MudTextField Label="게임 이름" @bind-Value="_name" AutoFocus="true" Class="mb-5"/>
+    <MudTextField Label="큐브 종류" @bind-Value="_cubeCount" InputType="InputType.Number" Class="mb-5"
         Validation="@(new Func<int, bool>((v) => v >= 1 && v <= 10))"
         ErrorText="1 ~ 10 사이의 숫자를 입력해주세요."
     />
-    <MudTextField Label="플레이어 수" @bind-Value="_playerCount" InputType="InputType.Number"
+    <MudTextField Label="플레이어 수" @bind-Value="_playerCount" InputType="InputType.Number" Class="mb-5"
         Validation="@(new Func<int, bool>((v) => v >= 2 && v <= 10))"
         ErrorText="2 ~ 10 사이의 숫자를 입력해주세요."
     />
-    <MudTextField Label="양팔저울 수" @bind-Value="_scaleCount" InputType="InputType.Number"
+    <MudTextField Label="양팔저울 수" @bind-Value="_scaleCount" InputType="InputType.Number" Class="mb-5"
         Validation="@(new Func<int, bool>((v) => v >= 1 && v <= 3))"
         ErrorText="1 ~ 3 사이의 숫자를 입력해주세요."
     />
-    <MudTextField Label="큐브 최소값" @bind-Value="_cubeMinValue" InputType="InputType.Number"
+    <MudTextField Label="큐브 최소값" @bind-Value="_cubeMinValue" InputType="InputType.Number" Class="mb-5"
         Validation="@(new Func<int, bool>((v) => v >= 1 && v <= 20))"
         ErrorText="1 ~ 20 사이의 숫자를 입력해주세요."
     />
-    <MudTextField Label="큐브 최대값" @bind-Value="_cubeMaxValue" InputType="InputType.Number"
+    <MudTextField Label="큐브 최대값" @bind-Value="_cubeMaxValue" InputType="InputType.Number" Class="mb-5"
         Validation="@(new Func<int, bool>((v) => v >= 1 && v <= 100 && v > _cubeMinValue))"
         ErrorText="1 ~ 100 사이의 숫자를 입력해주세요."
     />
-    <MudTextField Label="플레이어당 큐브 수" @bind-Value="_cubePerPlayer" InputType="InputType.Number"
+    <MudTextField Label="플레이어당 큐브 수" @bind-Value="_cubePerPlayer" InputType="InputType.Number" Class="mb-5"
         Validation="@(new Func<int, bool>((v) => v >= 1 && v <= 10))"
         ErrorText="1 ~ 10 사이의 숫자를 입력해주세요."
     />
-    <MudTextField Label="한 턴에 올려야 하는 큐브의 수" @bind-Value="_minimumApplyCubeCount" InputType="InputType.Number"
+    <MudTextField Label="한 턴에 올려야 하는 큐브의 수" @bind-Value="_minimumApplyCubeCount" InputType="InputType.Number" Class="mb-5"
         Validation="@(new Func<int, bool>((v) => v >= 0 && v <= 5))"
         ErrorText="0 ~ 5 사이의 숫자를 입력해주세요."
     />
-    <MudTextField Label="시간 초과 시간(초)" @bind-Value="_timeoverSeconds" InputType="InputType.Number"
+    <MudTextField Label="시간 초과 시간(초)" @bind-Value="_timeoverSeconds" InputType="InputType.Number" Class="mb-5"
         Validation="@(new Func<int, bool>((v) => v >= 10 && v <= 600))"
         ErrorText="10 ~ 600 사이의 숫자를 입력해주세요."
     />
