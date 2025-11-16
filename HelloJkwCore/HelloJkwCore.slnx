@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/Test.GameLibra/Test.GameLibra.csproj" />
+    <Project Path="Tests/Tests/Tests.csproj" />
+  </Folder>
+  <Project Path="Common/Common.csproj" />
+  <Project Path="GameLibra/GameLibra.csproj" />
+  <Project Path="HelloJkwCore/HelloJkwCore.csproj" />
+  <Project Path="ProjectBaduk/ProjectBaduk.csproj" />
+  <Project Path="ProjectDiary/ProjectDiary.csproj" />
+</Solution>
