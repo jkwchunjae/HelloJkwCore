@@ -1,5 +1,9 @@
 ﻿@page "/"
 @inherits JkwPageBase
+@using ProjectChatting
+@using ProjectChatting.Pages
+@inject ChattingService ChattingService
+@implements IAsyncDisposable
 
 <PageTitle>HelloJkw</PageTitle>
 
@@ -29,4 +33,38 @@ else
     >
         로그인
     </MudButton>
+}
+
+@if (_room != null && User != null)
+{
+    <ChattingComponent Room="_room" />
+}
+
+@code {
+    ChattingRoom? _room;
+    protected override Task OnPageInitializedAsync()
+    {
+        _room = ChattingService.CreateOrGetRoom(new RoomName($"{nameof(HelloJkwCore)}_{nameof(Home)}"));
+
+        return Task.CompletedTask;
+    }
+
+    protected override async Task OnPageAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (_room != null && User != null)
+            {
+                await _room.EnterAsync(User);
+            }
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_room != null && User != null)
+        {
+            await _room.LeaveAsync(User);
+        }
+    }
 }

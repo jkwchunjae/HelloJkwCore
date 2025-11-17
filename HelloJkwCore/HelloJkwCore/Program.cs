@@ -7,6 +7,7 @@ using HelloJkwCore.Tetration;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using MudBlazor.Services;
+using ProjectChatting;
 
 var culture = new CultureInfo("ko-KR");
 CultureInfo.CurrentCulture = culture;
@@ -98,6 +99,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddDiaryService(builder.Configuration);
 builder.Services.AddBadukService(builder.Configuration);
 builder.Services.AddGameLibra(builder.Configuration);
+builder.Services.AddChattingService(builder.Configuration);
 builder.Services.AddSingleton<TetrationGlobalService>();
 
 var app = builder.Build();
