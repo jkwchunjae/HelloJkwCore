@@ -1,8 +1,46 @@
 @using TableViewerBlazor
+@using ProjectChatting.Models
 @inherits JkwPageBase
+@using MudBlazor
 
-<h3>ChattingComponent</h3>
+<MudStack Spacing="1">
+    <MudText Typo="Typo.h6">채팅</MudText>
 
-<span> @Messages.Count </span>
+    <MudPaper Elevation="1" Class="pa-2" Style="max-height:50vh; overflow-y:auto;">
+        <div @ref="chatContainer">
+            @foreach (var msg in Messages)
+            {
+                <MudStack Row="true" Class="mb-1">
+                    <MudText Typo="Typo.caption" Class="mr-1">@msg.SentAt.LocalDateTime:HH:mm:ss</MudText>
+                    @if (msg.Sender.Id == "system")
+                    {
+                        <MudText Typo="Typo.body2" Color="Color.Info">@msg.Content</MudText>
+                    }
+                    else
+                    {
+                        <MudChip T="string" Text="@msg.Sender.Id" Color="@(User?.Id == msg.Sender ? Color.Primary : Color.Default)" Variant="Variant.Filled" Size="Size.Small" />
+                        <MudText Typo="Typo.body2" Class="ml-2">@msg.Content</MudText>
+                    }
+                </MudStack>
+            }
+        </div>
+    </MudPaper>
+
+    <MudStack Row="true" Spacing="1">
+        <MudTextField T="string" @bind-Value="newMessage" Placeholder="메세지를 입력하세요" Variant="Variant.Outlined" Lines="1" OnKeyDown="HandleKeyDown" Class="flex-grow-1" />
+        <MudButton Color="Color.Primary" Disabled="@string.IsNullOrWhiteSpace(newMessage)" OnClick="SendMessageAsync">전송</MudButton>
+    </MudStack>
+
+    <MudText Typo="Typo.caption">총 메세지: @Messages.Count</MudText>
+</MudStack>
+
+<script>
+    window.scrollToBottom = (el) => { if (el) { el.scrollTop = el.scrollHeight; } };
+</script>
+
+@code {
+    private bool IsSystem(ProjectChatting.Models.ChatMessage msg) => msg.Sender.Id == "system";
+    private bool IsMine(ProjectChatting.Models.ChatMessage msg) => User?.Id == msg.Sender;
+}
 
 
