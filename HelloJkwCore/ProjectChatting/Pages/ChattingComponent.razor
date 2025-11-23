@@ -11,14 +11,14 @@
             @foreach (var msg in Messages)
             {
                 <MudStack Row="true" Class="mb-1">
-                    <MudText Typo="Typo.caption" Class="mr-1">@msg.SentAt.LocalDateTime:HH:mm:ss</MudText>
+                    <MudText Typo="Typo.caption" Class="mr-1">@msg.SentAt.LocalDateTime</MudText>
                     @if (msg.Sender.Id == "system")
                     {
                         <MudText Typo="Typo.body2" Color="Color.Info">@msg.Content</MudText>
                     }
                     else
                     {
-                        <MudChip T="string" Text="@msg.Sender.Id" Color="@(User?.Id == msg.Sender ? Color.Primary : Color.Default)" Variant="Variant.Filled" Size="Size.Small" />
+                        <MudChip T="string" Text="@msg.SenderName" Color="@(User?.Id == msg.Sender ? Color.Primary : Color.Default)" Variant="Variant.Filled" Size="Size.Small" />
                         <MudText Typo="Typo.body2" Class="ml-2">@msg.Content</MudText>
                     }
                 </MudStack>

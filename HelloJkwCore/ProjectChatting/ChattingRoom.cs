@@ -13,13 +13,13 @@ public class ChattingRoom(RoomName name)
     public async ValueTask EnterAsync(AppUser userId)
     {
         var message = $"{userId.DisplayName}님이 입장했습니다.";
-        await SendMessageAsync(new ChatMessage(new UserId("system"), message, DateTimeOffset.Now));
+        await SendMessageAsync(new ChatMessage(new UserId("system"), "system", message, DateTimeOffset.Now));
     }
 
     public async ValueTask LeaveAsync(AppUser userId)
     {
         var message = $"{userId.DisplayName}님이 퇴장했습니다.";
-        await SendMessageAsync(new ChatMessage(new UserId("system"), message, DateTimeOffset.Now));
+        await SendMessageAsync(new ChatMessage(new UserId("system"), "system", message, DateTimeOffset.Now));
     }
 
     public (Guid id, ChannelReader<ChatMessage> reader) Subscribe(int capacity = 1024)

@@ -64,7 +64,11 @@ public partial class ChattingComponent : JkwPageBase, IAsyncDisposable
         if (User == null)
             return;
 
-        var msg = new ChatMessage(User.Id, newMessage.Trim(), DateTimeOffset.Now);
+        var msg = new ChatMessage(
+            User.Id,
+            User.DisplayName ?? User.UserName ?? User.Id.ToString(),
+            newMessage.Trim(),
+            DateTimeOffset.Now);
         await Room.SendMessageAsync(msg);
         newMessage = string.Empty;
     }
