@@ -1,19 +1,22 @@
 using ProjectChatting.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MudBlazor;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace ProjectChatting.Pages;
 
 public partial class ChattingComponent : JkwPageBase, IAsyncDisposable
 {
+    public class MessageData
+    {
+        public string Message { get; set; } = string.Empty;
+    }
     [Parameter] public ChattingRoom Room { get; set; } = default!;
 
     private Guid? subId = null;
     private List<ChatMessage> Messages { get; } = new();
 
-    private string newMessage = string.Empty;
+    private MessageData newMessage = new();
     private ElementReference chatContainer;
     private int lastMessageCount = 0;
     private DateTime lastScroll = DateTime.MinValue;
@@ -59,7 +62,8 @@ public partial class ChattingComponent : JkwPageBase, IAsyncDisposable
 
     private async Task SendMessageAsync()
     {
-        if (string.IsNullOrWhiteSpace(newMessage))
+        var message = newMessage.Message;
+        if (string.IsNullOrWhiteSpace(message))
             return;
         if (User == null)
             return;
@@ -67,26 +71,14 @@ public partial class ChattingComponent : JkwPageBase, IAsyncDisposable
         var msg = new ChatMessage(
             User.Id,
             User.DisplayName ?? User.UserName ?? User.Id.ToString(),
-            newMessage.Trim(),
+            message.Trim(),
             DateTimeOffset.Now);
         await Room.SendMessageAsync(msg);
-        newMessage = string.Empty;
-    }
-
-    private async Task HandleKeyDown(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
+        _ = InvokeAsync(() =>
         {
-            // Shift+Enter for newline
-            if (e.ShiftKey)
-            {
-                newMessage += "\n";
-            }
-            else
-            {
-                await SendMessageAsync();
-            }
-        }
+            newMessage.Message = string.Empty;
+            StateHasChanged();
+        });
     }
 
     public async ValueTask DisposeAsync()

@@ -1,38 +1,57 @@
+@using Microsoft.AspNetCore.Components.Forms
+@using MudBlazor
 @using TableViewerBlazor
 @using ProjectChatting.Models
 @inherits JkwPageBase
-@using MudBlazor
 
-<MudStack Spacing="1">
-    <MudText Typo="Typo.h6">채팅</MudText>
+<div class="chat-wrapper">
+    <div class="chat-header">
+        채팅
+        <span style="font-weight: normal; font-size: 0.8em; color: #666; margin-left: 8px;">
+            (총 메세지: @Messages.Count)
+        </span>
+    </div>
 
-    <MudPaper Elevation="1" Class="pa-2" Style="max-height:50vh; overflow-y:auto;">
-        <div @ref="chatContainer">
-            @foreach (var msg in Messages)
+    <div class="chat-messages" @ref="chatContainer">
+        @foreach (var msg in Messages)
+        {
+            @if (IsSystem(msg))
             {
-                <MudStack Row="true" Class="mb-1">
-                    <MudText Typo="Typo.caption" Class="mr-1">@msg.SentAt.Humanize()</MudText>
-                    @if (msg.Sender.Id == "system")
-                    {
-                        <MudText Typo="Typo.body2" Color="Color.Info">@msg.Content</MudText>
-                    }
-                    else
-                    {
-                        <MudChip T="string" Text="@msg.SenderName" Color="@(User?.Id == msg.Sender ? Color.Primary : Color.Default)" Variant="Variant.Filled" Size="Size.Small" />
-                        <MudText Typo="Typo.body2" Class="ml-2">@msg.Content</MudText>
-                    }
-                </MudStack>
+                <div class="message-row system">
+                    <div class="system-message">@msg.Content</div>
+                </div>
             }
-        </div>
-    </MudPaper>
+            else
+            {
+                var isMine = IsMine(msg);
+                <div class="message-row @(isMine ? "mine" : "other")">
+                    @if (!isMine)
+                    {
+                        <div class="sender-name">@msg.SenderName</div>
+                    }
+                    <div class="message-bubble">
+                        @msg.Content
+                        <div class="message-time">@msg.SentAt.Humanize()</div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
 
-    <MudStack Row="true" Spacing="1">
-        <MudTextField T="string" @bind-Value="newMessage" Placeholder="메세지를 입력하세요" Variant="Variant.Outlined" Lines="1" OnKeyDown="HandleKeyDown" Class="flex-grow-1" />
-        <MudButton Color="Color.Primary" Disabled="@string.IsNullOrWhiteSpace(newMessage)" OnClick="SendMessageAsync">전송</MudButton>
-    </MudStack>
-
-    <MudText Typo="Typo.caption">총 메세지: @Messages.Count</MudText>
-</MudStack>
+    <div class="input-area">
+        <EditForm Model="newMessage" OnSubmit="@(async () => await SendMessageAsync())">
+            <MudTextField @bind-Value="newMessage.Message" 
+                            DebounceInterval="1000"
+                          Placeholder="메세지를 입력하세요" 
+                          Class="chat-input-mud"
+                           />
+            <MudIconButton Icon="@Icons.Material.Filled.Send" Color="Color.Primary"
+                Disabled="@string.IsNullOrWhiteSpace(newMessage.Message)"
+                OnClick="@(async () => await SendMessageAsync())"
+                Class="send-mud-button" />
+        </EditForm>
+    </div>
+</div>
 
 <script>
     window.scrollToBottom = (el) => { if (el) { el.scrollTop = el.scrollHeight; } };
@@ -42,5 +61,3 @@
     private bool IsSystem(ProjectChatting.Models.ChatMessage msg) => msg.Sender.Id == "system";
     private bool IsMine(ProjectChatting.Models.ChatMessage msg) => User?.Id == msg.Sender;
 }
-
-

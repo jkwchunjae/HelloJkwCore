@@ -3,7 +3,6 @@
 @using ProjectChatting
 @using ProjectChatting.Pages
 @inject ChattingService ChattingService
-@implements IAsyncDisposable
 
 <PageTitle>HelloJkw</PageTitle>
 
@@ -47,24 +46,5 @@ else
         _room = ChattingService.CreateOrGetRoom(new RoomName($"{nameof(HelloJkwCore)}_{nameof(Home)}"));
 
         return Task.CompletedTask;
-    }
-
-    protected override async Task OnPageAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            if (_room != null && User != null)
-            {
-                await _room.EnterAsync(User);
-            }
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_room != null && User != null)
-        {
-            await _room.LeaveAsync(User);
-        }
     }
 }
