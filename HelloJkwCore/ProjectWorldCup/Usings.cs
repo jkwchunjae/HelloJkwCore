@@ -3,6 +3,7 @@ global using Common;
 global using Microsoft.AspNetCore.Components;
 global using System;
 global using System.Text.RegularExpressions;
+global using System.Text.Json.Serialization;
 global using System.Collections;
 global using System.Collections.Generic;
 global using System.Linq;
@@ -14,4 +15,6 @@ global using Microsoft.AspNetCore.Components.Routing;
 global using ProjectWorldCup.FifaLibrary;
 global using MudBlazor;
 
-namespace ProjectWorldCup;
+global using TextJsonConverter = System.Text.Json.Serialization.JsonConverterAttribute;
+global using TextJsonIgnore = System.Text.Json.Serialization.JsonIgnoreAttribute;
+global using TextJsonStringEnumConverter = System.Text.Json.Serialization.JsonStringEnumConverter;
