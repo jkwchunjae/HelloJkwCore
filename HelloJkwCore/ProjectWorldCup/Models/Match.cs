@@ -1,6 +1,6 @@
 ﻿namespace ProjectWorldCup;
 
-[TextJsonConverter(typeof(StringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum MatchStatus
 {
     Before,
@@ -8,7 +8,7 @@ public enum MatchStatus
     Done,
 }
 
-[TextJsonConverter(typeof(StringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum MatchInfoType
 {
     GroupName,

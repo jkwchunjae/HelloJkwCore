@@ -6,6 +6,7 @@ namespace ProjectWorldCup.Pages.User;
 public partial class WcUserComponent : JkwPageBase
 {
     [Inject] public ISnackbar Snackbar { get; set; }
+    [Inject] public IUserStore<AppUser> UserStore { get; set; }
     [Inject] public IBettingService BettingService { get; set; }
     [Parameter] public BettingUser TargetUser { get; set; }
     [Parameter] public bool ByManager { get; set; } = false;

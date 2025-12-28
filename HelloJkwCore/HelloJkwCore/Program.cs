@@ -98,6 +98,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddDiaryService(builder.Configuration);
 builder.Services.AddBadukService(builder.Configuration);
 builder.Services.AddGameLibra(builder.Configuration);
+builder.Services.AddWorldCupService(builder.Configuration);
 builder.Services.AddSingleton<TetrationGlobalService>();
 
 var app = builder.Build();
@@ -126,6 +127,7 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies([
         typeof(Common.JkwPageBase).Assembly,
         typeof(ProjectDiary.DiaryService).Assembly,
+        typeof(ProjectWorldCup.WorldCupService).Assembly,
         typeof(ProjectBaduk.BadukService).Assembly,
         typeof(GameLibra.LibraService).Assembly,
     ])

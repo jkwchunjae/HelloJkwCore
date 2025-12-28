@@ -45,7 +45,7 @@ public partial class Fifa : IFifa
             var res = await _httpClient.GetAsync(url);
             var text = await res.Content.ReadAsStringAsync();
             text = text.Replace("{format}", "sq").Replace("{size}", "2");
-            var root = JsonConvert.DeserializeObject<FifaDataRoot<FifaMatchData>>(text);
+            var root = _serializer.Deserialize<FifaDataRoot<FifaMatchData>>(text);
             if (root?.Results?.Any() ?? false)
             {
                 return root.Results.ToList();

@@ -11,7 +11,7 @@ public partial class Fifa : IFifa
                 var url = "https://cxm-api.fifa.com/fifaplusweb/api/sections/tournamentGroupOverview/15xDmWzQAu51lEIjP4fVfz?locale=en";
                 var res = await _httpClient.GetAsync(url);
                 var text = await res.Content.ReadAsStringAsync();
-                var dataRoot = Json.Deserialize<OverviewGroupDataRoot>(text);
+                var dataRoot = _serializer.Deserialize<OverviewGroupDataRoot>(text);
                 foreach (var group in dataRoot.Groups)
                 {
                     var placement = 0;
@@ -43,7 +43,7 @@ public partial class Fifa : IFifa
                 var res = await _httpClient.GetAsync(url);
                 var text = await res.Content.ReadAsStringAsync();
                 text = text.Replace("{format}", "sq").Replace("{size}", "2");
-                var dataRoot = Json.Deserialize<FifaDataRoot<FifaStandingData>>(text);
+                var dataRoot = _serializer.Deserialize<FifaDataRoot<FifaStandingData>>(text);
 
                 if (dataRoot?.Results?.Any() ?? false)
                 {

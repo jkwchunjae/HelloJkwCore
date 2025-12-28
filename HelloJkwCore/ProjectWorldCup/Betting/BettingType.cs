@@ -1,6 +1,6 @@
 ﻿namespace ProjectWorldCup;
 
-[TextJsonConverter(typeof(StringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum BettingType
 {
     GroupStage,

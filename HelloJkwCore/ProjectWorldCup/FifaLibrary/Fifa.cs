@@ -7,11 +7,14 @@ public partial class Fifa : IFifa
     private readonly IFileSystem _fs;
     private static HttpClient _httpClient = new();
     private MemoryCache _cache = new MemoryCache("FIFA");
+    private readonly ISerializer _serializer;
 
     public Fifa(
         IFileSystemService fsService,
+        ISerializer serializer,
         WorldCupOption option)
     {
+        _serializer = serializer;
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
     }
 

@@ -65,7 +65,7 @@ public partial class BettingService
             .Where(x => x.BettingGroup == "A")
             .Select(x => new WcBettingItem<Team>
             {
-                User = new AppUser { Id = AppUser.UserId("fake", x.Username), UserName = x.Username },
+                User = new AppUser { Id = new UserId($"fake.{x.Username}"), UserName = x.Username },
                 Picked = x.BettingList
                     .Select(e => MakeFakeTeam(e))
                     .ToList(),
@@ -92,7 +92,7 @@ public partial class BettingService
             .Where(x => x.BettingGroup == "A")
             .Select(x => new WcFinalBettingItem<Team>
             {
-                User = new AppUser { Id = AppUser.UserId("fake", x.Username), UserName = x.Username },
+                User = new AppUser { Id =  new UserId($"fake.{x.Username}"), UserName = x.Username },
                 Picked = x.BettingList
                     .Where(x => order.ContainsKey(x.Id))
                     .OrderBy(x => order[x.Id])
@@ -114,7 +114,7 @@ public partial class BettingService
         {
             Id = data.Value,
             Name = data.Value,
-            Flag = $"https://cloudinary.fifa.com/api/v1/picture/flags-sq-1/{data.Value}",
+            Flag = $"https://api.fifa.com/api/v3/picture/flags-sq-1/{data.Value}",
         };
 
         _cache2018.Add(data.Value, team, DateTimeOffset.MaxValue);

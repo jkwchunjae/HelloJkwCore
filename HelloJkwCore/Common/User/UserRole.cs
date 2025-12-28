@@ -8,4 +8,5 @@ public enum UserRole
     DiaryWriter,
     BadukCreator,
     JangTak9,
+    WcManager,
 }
