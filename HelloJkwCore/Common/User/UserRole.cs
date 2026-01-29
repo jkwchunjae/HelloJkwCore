@@ -9,4 +9,5 @@ public enum UserRole
     BadukCreator,
     JangTak9,
     WcManager,
+    SuFcAdmin,
 }
