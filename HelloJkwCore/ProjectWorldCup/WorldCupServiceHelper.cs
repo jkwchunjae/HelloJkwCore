@@ -18,5 +18,6 @@ public static class WorldCupServiceHelper
         services.AddSingleton<IBettingRound16Service, BettingRound16Service>();
         services.AddSingleton<IBettingFinalService, BettingFinalService>();
         services.AddSingleton<IFifa, Fifa>();
+        services.AddSingleton<I2022WorldCupService, BettingService2022>();
     }
 }

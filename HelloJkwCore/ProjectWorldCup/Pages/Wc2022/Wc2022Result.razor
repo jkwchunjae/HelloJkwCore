@@ -8,3 +8,26 @@
     2022 카타르 월드컵 내기 결과
 </h1>
 
+<h3 style="margin-top: 30px;">3라운드: 1,2,3,4등 맞추기</h3>
+
+<ul>
+  <li>우승팀: 32점</li>
+  <li>준우승팀: 8점</li>
+  <li>3등팀: 4점</li>
+  <li>4등팀: 2점</li>
+  <li>결승 진출팀: 각 5점</li>
+  <li>준결승 진출팀: 각 1점</li>
+</ul>
+
+<BettingFinalResultComponent BettingItems="BettingItemsFinal" Visible="true" />
+
+<h3 style="margin-top: 30px;">2라운드: 8강 진출팀 맞추기</h3>
+
+<BettingResultComponent BettingItems="BettingItemsRound16" />
+
+<h3 style="margin-top: 30px;">1라운드: 16강 진출팀 맞추기</h3>
+
+<BettingResultComponent BettingItems="BettingItemsGroupStage" />
+
+<h3 style="margin-top: 30px;">내기 최종 순위</h3>
+<BettingSummary2022Component SummaryResults="BettingSummary" />
