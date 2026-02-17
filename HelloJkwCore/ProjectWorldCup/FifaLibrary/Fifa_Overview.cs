@@ -39,7 +39,7 @@ public partial class Fifa : IFifa
             var cacheTime = DateTime.Now.ToString("yyyyMMdd.HHmm").Left(12); // 분의 앞자리만 쓴다. 10분에 한 번 캐시
             return await GetFromCacheOrAsync<List<FifaStandingData>>($"{nameof(GetStandingDataAsync)}_{cacheTime}0", async () =>
             {
-                var url = $"https://api.fifa.com/api/v3/calendar/17/255711/285063/standing?language=en";
+                var url = $"https://api.fifa.com/api/v3/calendar/17/{SeasonId}/{GroupStageId}/standing?language=ko";
                 var res = await _httpClient.GetAsync(url);
                 var text = await res.Content.ReadAsStringAsync();
                 text = text.Replace("{format}", "sq").Replace("{size}", "2");

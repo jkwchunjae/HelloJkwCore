@@ -5,6 +5,7 @@ public interface IFifa
     Task<List<OverviewGroup>> GetGroupOverview();
     Task<List<FifaMatchData>> GetGroupStageMatchesAsync();
     Task<List<FifaMatchData>> GetKnockoutStageMatchesAsync();
+    Task<List<FifaMatchData>> GetRound32MatchesAsync();
     Task<List<FifaMatchData>> GetRound16MatchesAsync();
     Task<List<FifaMatchData>> GetFinalMatchesAsync();
     Task<List<FifaStandingData>> GetStandingDataAsync();
