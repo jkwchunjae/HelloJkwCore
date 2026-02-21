@@ -1,8 +1,10 @@
-﻿namespace ProjectWorldCup;
+namespace ProjectWorldCup;
 
 public class BettingGroupStageService : IBettingGroupStageService
 {
     private readonly IFileSystem _fs;
+    private readonly string _pathKey;
+    private readonly Func<IWorldCupService, Task<List<WcGroup>>> _getGroupsFunc;
     /// <summary> for _cache </summary>
     private object _lock = new object();
     private List<WcBettingItem<GroupTeam>> _cache = null;
@@ -14,8 +16,12 @@ public class BettingGroupStageService : IBettingGroupStageService
         IFileSystemService fsService,
         IWorldCupService worldCupService,
         ICacheClearInvoker cacheClearInvoker,
-        WorldCupOption option)
+        WorldCupOption option,
+        string pathKey = "Betting2022",
+        Func<IWorldCupService, Task<List<WcGroup>>> getGroupsFunc = null)
     {
+        _pathKey = pathKey;
+        _getGroupsFunc = getGroupsFunc ?? (wcs => wcs.GetGroupsAsync());
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
         _worldCupService = worldCupService;
 
@@ -38,7 +44,7 @@ public class BettingGroupStageService : IBettingGroupStageService
         if (DateTime.Now < WorldCupConst.WorldCupStartTime)
             return;
 
-        var groups = await _worldCupService.GetGroupsAsync();
+        var groups = await _getGroupsFunc(_worldCupService);
         var team16 = groups
             .SelectMany(group => group.Stands.Take(2))
             .Select(s => s.Team)
@@ -72,7 +78,7 @@ public class BettingGroupStageService : IBettingGroupStageService
             }
         }
 
-        var bettingItems = await _fs.ReadAllBettingItemsAsync<WcBettingItem<GroupTeam>, GroupTeam>(BettingType.GroupStage);
+        var bettingItems = await _fs.ReadAllBettingItemsAsync<WcBettingItem<GroupTeam>, GroupTeam>(_pathKey, BettingType.GroupStage);
         lock (_lock)
         {
             _cache = bettingItems;
@@ -89,7 +95,7 @@ public class BettingGroupStageService : IBettingGroupStageService
                 return _cache.First(x => x.User == user.AppUser);
             }
         }
-        var bettingItem = await _fs.ReadBettingItemAsync<WcBettingItem<GroupTeam>, GroupTeam>(BettingType.GroupStage, user.AppUser);
+        var bettingItem = await _fs.ReadBettingItemAsync<WcBettingItem<GroupTeam>, GroupTeam>(_pathKey, BettingType.GroupStage, user.AppUser);
         return bettingItem;
     }
 
@@ -141,7 +147,7 @@ public class BettingGroupStageService : IBettingGroupStageService
 
     private async Task SaveBettingItemAsync(WcBettingItem<GroupTeam> item)
     {
-        await _fs.WriteBettingItemAsync(BettingType.GroupStage, item);
+        await _fs.WriteBettingItemAsync(_pathKey, BettingType.GroupStage, item);
 
         if (_cache?.Any() ?? false)
         {
@@ -176,7 +182,7 @@ public class BettingGroupStageService : IBettingGroupStageService
                 User = user.AppUser,
             };
 
-        var groups = await _worldCupService.GetGroupsAsync();
+        var groups = await _getGroupsFunc(_worldCupService);
         var pickTeam = groups
             .SelectMany(group => group.Teams.RandomShuffle().Take(2))
             .ToList();

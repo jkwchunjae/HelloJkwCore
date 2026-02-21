@@ -6,6 +6,7 @@ namespace ProjectWorldCup;
 public class BettingFinalService : IBettingFinalService
 {
     private readonly IFileSystem _fs;
+    private readonly string _pathKey;
     private object _lock = new object();
     private List<WcFinalBettingItem<Team>> _cache = null;
     private IFifa _fifa;
@@ -17,8 +18,10 @@ public class BettingFinalService : IBettingFinalService
         IFifa fifa,
         IWorldCupService worldCupService,
         ICacheClearInvoker cacheClearInvoker,
-        WorldCupOption option)
+        WorldCupOption option,
+        string pathKey = "Betting2022")
     {
+        _pathKey = pathKey;
         _fs = fsService?.GetFileSystem(option?.FileSystemSelect, option?.Path);
         _fifa = fifa;
         _worldCupService = worldCupService;
@@ -83,7 +86,7 @@ public class BettingFinalService : IBettingFinalService
                 return _cache;
             }
         }
-        var items = await _fs.ReadAllBettingItemsAsync<WcFinalBettingItem<Team>, Team>(BettingType.Final);
+        var items = await _fs.ReadAllBettingItemsAsync<WcFinalBettingItem<Team>, Team>(_pathKey, BettingType.Final);
         lock (_lock)
         {
             _cache = items;
@@ -100,12 +103,12 @@ public class BettingFinalService : IBettingFinalService
                 return _cache.First(x => x.User == user.AppUser);
             }
         }
-        var bettingItem = await _fs.ReadBettingItemAsync<WcFinalBettingItem<Team>, Team>(BettingType.Final, user.AppUser);
+        var bettingItem = await _fs.ReadBettingItemAsync<WcFinalBettingItem<Team>, Team>(_pathKey, BettingType.Final, user.AppUser);
         return bettingItem;
     }
     public async Task SaveBettingItemAsync(WcFinalBettingItem<Team> item)
     {
-        await _fs.WriteBettingItemAsync(BettingType.Final, item);
+        await _fs.WriteBettingItemAsync(_pathKey, BettingType.Final, item);
 
         if (_cache?.Any() ?? false)
         {
