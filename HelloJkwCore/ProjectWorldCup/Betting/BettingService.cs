@@ -44,7 +44,8 @@ public partial class BettingService : IBettingService
         user.JoinedBetting ??= new();
         user.JoinedBetting.Add(bettingType);
 
-        var bettingName = bettingType == BettingType.GroupStage ? "16강 진출팀 맞추기"
+        var bettingName = bettingType == BettingType.GroupStage ? "각 조 1,2위 맞추기"
+            : bettingType == BettingType.Round32 ? "16강 진출팀 맞추기"
             : bettingType == BettingType.Round16 ? "8강 진출팀 맞추기"
             : "1,2,3,4 등 맞추기";
         user.BettingHistories.Add(new BettingHistory
