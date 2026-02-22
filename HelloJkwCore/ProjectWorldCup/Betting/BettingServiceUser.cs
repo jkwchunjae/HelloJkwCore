@@ -18,7 +18,7 @@ public partial class BettingService : IBettingService
     }
     private async Task SaveUserAsync(BettingUser user)
     {
-        Func<Paths, string> userPath = path => path[WorldCupPath.Betting2022Users] + @$"/{user.AppUser.Id}.json";
+        Func<Paths, string> userPath = path => path[WorldCupPath.Betting2026Users] + @$"/{user.AppUser.Id}.json";
 
         lock (_usersCacheLock)
         {
@@ -47,7 +47,7 @@ public partial class BettingService : IBettingService
         {
             Type = HistoryType.JoinRequest,
             Comment = "참가 신청",
-            Value = 20000,
+            Value = 30000,
         });
         await SaveUserAsync(user);
 
@@ -126,7 +126,7 @@ public partial class BettingService : IBettingService
             }
         }
 
-        Func<Paths, string> userPath = path => path[WorldCupPath.Betting2022Users] + @$"/{appUser.Id}.json";
+        Func<Paths, string> userPath = path => path[WorldCupPath.Betting2026Users] + @$"/{appUser.Id}.json";
         if (await _fs.FileExistsAsync(userPath))
         {
             var bettingUser = await _fs.ReadJsonAsync<BettingUser>(userPath);
@@ -156,9 +156,9 @@ public partial class BettingService : IBettingService
             return updateAppUser ? await FillAppUsers(users) : users;
         }
 
-        var userfiles = await _fs.GetFilesAsync(path => path[WorldCupPath.Betting2022Users]);
+        var userfiles = await _fs.GetFilesAsync(path => path[WorldCupPath.Betting2026Users]);
         users = await userfiles
-            .Select(filename => _fs.ReadJsonAsync<BettingUser>(path => path[WorldCupPath.Betting2022Users] + $@"/{filename}"))
+            .Select(filename => _fs.ReadJsonAsync<BettingUser>(path => path[WorldCupPath.Betting2026Users] + $@"/{filename}"))
             .WhenAll();
         if (updateAppUser)
         {
@@ -186,14 +186,16 @@ public partial class BettingService : IBettingService
     public async Task<BettingUser> AddRewardAsync(BettingUser user, HistoryType rewardType, long reward)
     {
         var bettingName =
-              rewardType == HistoryType.Reward1 ? "16강 진출팀 맞추기"
-            : rewardType == HistoryType.Reward2 ? "8강 진출팀 맞추기"
-            : rewardType == HistoryType.Reward3 ? "우승팀 맞추기"
+              rewardType == HistoryType.Reward1 ? "각 조 1,2위 맞추기"
+            : rewardType == HistoryType.Reward2 ? "16강 진출팀 맞추기"
+            : rewardType == HistoryType.Reward3 ? "8강 진출팀 맞추기"
+            : rewardType == HistoryType.Reward4 ? "우승팀 맞추기"
             : string.Empty;
         var resultUrl =
               rewardType == HistoryType.Reward1 ? "group-stage"
-            : rewardType == HistoryType.Reward2 ? "round16"
-            : rewardType == HistoryType.Reward3 ? "final"
+            : rewardType == HistoryType.Reward2 ? "round32"
+            : rewardType == HistoryType.Reward3 ? "round16"
+            : rewardType == HistoryType.Reward4 ? "final"
             : string.Empty;
         if (user.BettingHistories.Any(x => x.Type == rewardType))
         {

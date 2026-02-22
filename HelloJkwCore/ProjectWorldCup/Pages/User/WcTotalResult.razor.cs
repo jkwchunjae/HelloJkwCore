@@ -13,7 +13,8 @@ public partial class WcTotalResult : JkwPageBase
         public long Reward1;
         public long Reward2;
         public long Reward3;
-        public long Total => Reward1 + Reward2 + Reward3;
+        public long Reward4;
+        public long Total => Reward1 + Reward2 + Reward3 + Reward4;
         public long Profit => 0 - JoinCount * 10000 + Total;
     }
     IEnumerable<UserResult> Results { get; set; } = new List<UserResult>();
@@ -43,6 +44,7 @@ public partial class WcTotalResult : JkwPageBase
                 Reward1 = GetValue(user, HistoryType.Reward1),
                 Reward2 = GetValue(user, HistoryType.Reward2),
                 Reward3 = GetValue(user, HistoryType.Reward3),
+                Reward4 = GetValue(user, HistoryType.Reward4),
             })
             .Reduce(new List<UserResult>(), (list, userResult, index, source) =>
             {

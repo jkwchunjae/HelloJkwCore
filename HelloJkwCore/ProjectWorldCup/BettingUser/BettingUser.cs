@@ -40,6 +40,7 @@ public enum HistoryType
     Reward1,
     Reward2,
     Reward3,
+    Reward4,
     ChangeNickname,
 }
 

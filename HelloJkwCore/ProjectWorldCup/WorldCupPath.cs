@@ -8,4 +8,5 @@ public static class WorldCupPath
     public readonly static string Betting2022Users = nameof(Betting2022Users);
     public readonly static string Betting2022 = nameof(Betting2022);
     public readonly static string Betting2026 = nameof(Betting2026);
+    public readonly static string Betting2026Users = nameof(Betting2026Users);
 }

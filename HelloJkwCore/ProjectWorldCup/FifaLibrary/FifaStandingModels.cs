@@ -4,10 +4,10 @@ public class FifaStandingTeam
 {
     [JsonPropertyName("IdTeam")] public string IdTeam { get; set; }
     [JsonPropertyName("IdConfederation")] public string IdConfederation { get; set; }
-    [JsonPropertyName("Type")] public int Type { get; set; }
-    [JsonPropertyName("AgeType")] public int AgeType { get; set; }
-    [JsonPropertyName("FootballType")] public int FootballType { get; set; }
-    [JsonPropertyName("Gender")] public int Gender { get; set; }
+    [JsonPropertyName("Type")] public int? Type { get; set; }
+    [JsonPropertyName("AgeType")] public int? AgeType { get; set; }
+    [JsonPropertyName("FootballType")] public int? FootballType { get; set; }
+    [JsonPropertyName("Gender")] public int? Gender { get; set; }
     [JsonPropertyName("Name")] public IList<FifaIdName> Name { get; set; }
     [JsonPropertyName("IdAssociation")] public string IdAssociation { get; set; }
     [JsonPropertyName("IdCity")] public object IdCity { get; set; }
