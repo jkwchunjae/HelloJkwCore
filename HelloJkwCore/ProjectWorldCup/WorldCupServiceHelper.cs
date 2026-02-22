@@ -15,7 +15,7 @@ public static class WorldCupServiceHelper
         services.AddSingleton<IWorldCupService, WorldCupService>();
         services.AddSingleton<IBettingService, BettingService>();
         services.AddSingleton<IFifa, Fifa>();
-        services.AddSingleton<I2022WorldCupService, BettingService2022>();
+        services.AddSingleton<IWorldCupResultService, BettingService2022>();
 
         // 2022 서비스 (기본값 pathKey="Betting2022")
         services.AddSingleton<IBettingGroupStageService, BettingGroupStageService>();

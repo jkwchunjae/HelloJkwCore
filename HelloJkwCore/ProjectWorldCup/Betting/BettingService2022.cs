@@ -15,7 +15,7 @@ public class User2022Result
     public long Profit => 0 - JoinCount * 10000 + Total;
 }
 
-public class BettingService2022 : I2022WorldCupService
+public class BettingService2022 : IWorldCupResultService
 {
     private readonly MemoryCache _cache2022 = new MemoryCache("Result2022");
     private readonly IFileSystem _fs;

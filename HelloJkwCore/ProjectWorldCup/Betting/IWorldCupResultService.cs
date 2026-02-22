@@ -1,6 +1,6 @@
 namespace ProjectWorldCup;
 
-public interface I2022WorldCupService
+public interface IWorldCupResultService
 {
     Task<List<WcBettingItem<Team>>> Get2022GroupStageBettingResultAsync();
     Task<List<WcBettingItem<Team>>> Get2022Round16BettingResultAsync();

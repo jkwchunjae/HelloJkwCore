@@ -3,7 +3,7 @@
 public partial class Wc2022Result : JkwPageBase
 {
     [Inject]
-    private I2022WorldCupService WorldCupService2022 { get; set; }
+    private IWorldCupResultService WorldCupService2022 { get; set; }
 
     private List<WcFinalBettingItem<Team>> BettingItemsFinal { get; set; } = new();
     private List<WcBettingItem<Team>> BettingItemsRound16 { get; set; } = new();
