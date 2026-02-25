@@ -8,8 +8,7 @@ public partial class Betting2026Round32 : JkwPageBase
     [Inject] public ISnackbar Snackbar { get; set; }
     [Inject] IWorldCupService WorldCupService { get; set; }
     [Inject] IBettingService BettingService { get; set; }
-    [Inject] private IServiceProvider ServiceProvider { get; set; }
-    private IBettingRound16Service BettingRound32Service => ServiceProvider.GetRequiredKeyedService<IBettingRound16Service>("2026-round32");
+    [Inject(Key = "2026-round32")] private IBettingRound16Service BettingRound32Service { get; set; }
     [Inject] private UserManager<AppUser> UserManager { get; set; }
 
     List<KnMatch> Round32Matches = new();

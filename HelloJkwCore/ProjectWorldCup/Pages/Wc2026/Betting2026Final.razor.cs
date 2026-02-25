@@ -8,8 +8,7 @@ public partial class Betting2026Final : JkwPageBase
     [Inject] public ISnackbar Snackbar { get; set; }
     [Inject] IWorldCupService WorldCupService { get; set; }
     [Inject] IBettingService BettingService { get; set; }
-    [Inject] private IServiceProvider ServiceProvider { get; set; }
-    private IBettingFinalService BettingFinalService => ServiceProvider.GetRequiredKeyedService<IBettingFinalService>("2026");
+    [Inject(Key = "2026")] private IBettingFinalService BettingFinalService { get; set; }
     [Inject] private UserManager<AppUser> UserManager { get; set; }
 
     private BettingUser BettingUser { get; set; }

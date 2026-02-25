@@ -1,31 +1,31 @@
 @inherits JkwPageBase
 
-<MudTable T="User2022Result" Items="SummaryResults" Context="userResult" Dense="true">
+<MudTable T="UserResult" Items="SummaryResults" Context="userResult" Dense="true">
     <HeaderContent>
         <MudTh>순위</MudTh>
         <MudTh>닉네임</MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<User2022Result, object>(x => x.Reward1)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward1)">
                 1라운드
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<User2022Result, object>(x => x.Reward2)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward2)">
                 2라운드
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<User2022Result, object>(x => x.Reward3)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward3)">
                 3라운드
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<User2022Result, object>(x => x.Total)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Total)">
                 총 상금
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<User2022Result, object>(x => x.Profit)" InitialDirection="SortDirection.Descending">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Profit)" InitialDirection="SortDirection.Descending">
                 손익
             </MudTableSortLabel>
         </MudTh>

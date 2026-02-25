@@ -13,6 +13,7 @@ global using System.IO;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.AspNetCore.Components.Routing;
 global using ProjectWorldCup.FifaLibrary;
+global using ProjectWorldCup.Models;
 global using MudBlazor;
 
 global using TextJsonConverter = System.Text.Json.Serialization.JsonConverterAttribute;

@@ -209,7 +209,7 @@ public partial class BettingService : IBettingService
             {
                 Type = rewardType,
                 Value = reward,
-                ResultUrl = $"/worldcup/2022/result/{resultUrl}",
+                ResultUrl = $"/worldcup/2026/result/{resultUrl}",
                 Comment = $"'{bettingName}' 내기 결과: {reward:#,#}",
             });
         }

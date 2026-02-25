@@ -2,42 +2,29 @@ using System.Runtime.Caching;
 
 namespace ProjectWorldCup;
 
-public class User2022Result
-{
-    public int Rank { get; set; }
-    public string Name { get; set; }
-    public UserId UserId { get; set; }
-    public int JoinCount { get; set; }
-    public long Reward1 { get; set; }
-    public long Reward2 { get; set; }
-    public long Reward3 { get; set; }
-    public long Total => Reward1 + Reward2 + Reward3;
-    public long Profit => 0 - JoinCount * 10000 + Total;
-}
-
-public class BettingService2022 : IWorldCupResultService
+public class BettingResultService2022 : IBettingResultService
 {
     private readonly MemoryCache _cache2022 = new MemoryCache("Result2022");
     private readonly IFileSystem _fs;
 
-    public BettingService2022(
+    public BettingResultService2022(
         IFileSystemService fsService,
         WorldCupOption option)
     {
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
     }
 
-    public async Task<List<WcBettingItem<Team>>> Get2022GroupStageBettingResultAsync()
+    public async Task<List<WcBettingItem<Team>>> GetGroupStageBettingResultAsync()
     {
-        if (_cache2022.Contains(nameof(Get2022GroupStageBettingResultAsync)))
+        if (_cache2022.Contains(nameof(GetGroupStageBettingResultAsync)))
         {
-            return (List<WcBettingItem<Team>>)_cache2022[nameof(Get2022GroupStageBettingResultAsync)];
+            return (List<WcBettingItem<Team>>)_cache2022[nameof(GetGroupStageBettingResultAsync)];
         }
 
         var result = await ReadAllBettingItemsAsync<WcBettingItem<Team>, Team>(_fs, BettingType.GroupStage);
 
         _cache2022.Add(
-            nameof(Get2022GroupStageBettingResultAsync),
+            nameof(GetGroupStageBettingResultAsync),
             result,
             DateTimeOffset.Now.AddDays(10)
         );
@@ -45,17 +32,17 @@ public class BettingService2022 : IWorldCupResultService
         return result;
     }
 
-    public async Task<List<WcBettingItem<Team>>> Get2022Round16BettingResultAsync()
+    public async Task<List<WcBettingItem<Team>>> GetRound16BettingResultAsync()
     {
-        if (_cache2022.Contains(nameof(Get2022Round16BettingResultAsync)))
+        if (_cache2022.Contains(nameof(GetRound16BettingResultAsync)))
         {
-            return (List<WcBettingItem<Team>>)_cache2022[nameof(Get2022Round16BettingResultAsync)];
+            return (List<WcBettingItem<Team>>)_cache2022[nameof(GetRound16BettingResultAsync)];
         }
 
         var result = await ReadAllBettingItemsAsync<WcBettingItem<Team>, Team>(_fs, BettingType.Round16);
 
         _cache2022.Add(
-            nameof(Get2022Round16BettingResultAsync),
+            nameof(GetRound16BettingResultAsync),
             result,
             DateTimeOffset.Now.AddDays(10)
         );
@@ -63,17 +50,17 @@ public class BettingService2022 : IWorldCupResultService
         return result;
     }
 
-    public async Task<List<WcFinalBettingItem<Team>>> Get2022FinalBettingResultAsync()
+    public async Task<List<WcFinalBettingItem<Team>>> GetFinalBettingResultAsync()
     {
-        if (_cache2022.Contains(nameof(Get2022FinalBettingResultAsync)))
+        if (_cache2022.Contains(nameof(GetFinalBettingResultAsync)))
         {
-            return (List<WcFinalBettingItem<Team>>)_cache2022[nameof(Get2022FinalBettingResultAsync)];
+            return (List<WcFinalBettingItem<Team>>)_cache2022[nameof(GetFinalBettingResultAsync)];
         }
 
         var result = await ReadAllBettingItemsAsync<WcFinalBettingItem<Team>, Team>(_fs, BettingType.Final);
 
         _cache2022.Add(
-            nameof(Get2022FinalBettingResultAsync),
+            nameof(GetFinalBettingResultAsync),
             result,
             DateTimeOffset.Now.AddDays(10)
         );
@@ -81,17 +68,17 @@ public class BettingService2022 : IWorldCupResultService
         return result;
     }
 
-    public async Task<List<User2022Result>> Get2022BettingSummaryAsync()
+    public async Task<List<UserResult>> GetBettingSummaryAsync()
     {
-        if (_cache2022.Contains(nameof(Get2022BettingSummaryAsync)))
+        if (_cache2022.Contains(nameof(GetBettingSummaryAsync)))
         {
-            return (List<User2022Result>)_cache2022[nameof(Get2022BettingSummaryAsync)];
+            return (List<UserResult>)_cache2022[nameof(GetBettingSummaryAsync)];
         }
 
         // Get all betting results for the three rounds
-        var groupStageResults = await Get2022GroupStageBettingResultAsync();
-        var round16Results = await Get2022Round16BettingResultAsync();
-        var finalResults = await Get2022FinalBettingResultAsync();
+        var groupStageResults = await GetGroupStageBettingResultAsync();
+        var round16Results = await GetRound16BettingResultAsync();
+        var finalResults = await GetFinalBettingResultAsync();
 
         // Aggregate by user
         var allResults = new List<IWcBettingItem<Team>>();
@@ -101,7 +88,7 @@ public class BettingService2022 : IWorldCupResultService
 
         var userGroups = allResults
             .GroupBy(r => r.User.Id)
-            .Select(g => new User2022Result
+            .Select(g => new UserResult
             {
                 UserId = g.Key,
                 Name = g.First().User.DisplayName,
@@ -127,7 +114,7 @@ public class BettingService2022 : IWorldCupResultService
 
         // Cache for 10 days
         _cache2022.Add(
-            nameof(Get2022BettingSummaryAsync),
+            nameof(GetBettingSummaryAsync),
             results,
             DateTimeOffset.Now.AddDays(10)
         );
@@ -158,5 +145,10 @@ public class BettingService2022 : IWorldCupResultService
         {
             return new();
         }
+    }
+
+    public Task<List<WcBettingItem<Team>>> GetRound32BettingResultAsync()
+    {
+        throw new NotImplementedException();
     }
 }

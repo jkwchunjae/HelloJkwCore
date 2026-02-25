@@ -8,8 +8,7 @@ public partial class Betting2026GroupStage : JkwPageBase
     [Inject] public ISnackbar Snackbar { get; set; }
     [Inject] private IWorldCupService WcService { get; set; }
     [Inject] private IBettingService BettingService { get; set; }
-    [Inject] private IServiceProvider ServiceProvider { get; set; }
-    private IBettingGroupStageService GroupStageService => ServiceProvider.GetRequiredKeyedService<IBettingGroupStageService>("2026");
+    [Inject(Key = "2026")] private IBettingGroupStageService GroupStageService { get; set; }
     [Inject] private UserManager<AppUser> UserManager { get; set; }
 
     private List<WcGroup> Groups { get; set; } = new();
