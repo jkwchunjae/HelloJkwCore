@@ -48,13 +48,13 @@ else
 <div>
     @foreach (var group in Groups)
     {
-        <div class="row" style="padding-bottom: 5px;">
-            <div class="col-md-1 group-name" style="font-size: 30px;">@group.Name</div>
-            <div class="col-md-11">
-                <div class="row">
+        <div class="group-row">
+            <div class="group-name">@group.Name</div>
+            <div class="group-teams">
+                <div class="teams-row">
                     @foreach (var team in group.Teams)
                     {
-<div class="team col-md-3" style="padding-bottom: 2px;">
+<div class="team">
 @if (GetButtonType(team) == TeamButtonType.Pickable)
 {
     var buttonStyle = $"{commonButtonStyle}";

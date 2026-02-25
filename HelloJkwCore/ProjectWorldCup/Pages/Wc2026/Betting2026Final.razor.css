@@ -1,0 +1,19 @@
+.match-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 4px;
+}
+
+.team {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 모바일: 세로 나열 */
+@media (max-width: 600px) {
+    .match-row {
+        flex-direction: column;
+    }
+}

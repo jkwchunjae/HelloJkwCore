@@ -51,21 +51,21 @@
         ? $"{commonButtonStyle} color: white; background: #56042C"
         : commonButtonStyle;
 
-    <div class="match16 row">
+    <div class="match-row">
       @if (TimeOver[index])
       {
-      <div class="remain-time col-md-3">
+      <div class="remain-time">
           <span>선택 시간이 끝났습니다.</span>
       </div>
       }
       else
       {
-      <div class="remain-time col-md-3">
+      <div class="remain-time">
           <span class="@remainTimeClass"></span>
           <span>남았습니다</span>
       </div>
       }
-      <div class="team col-md-3">
+      <div class="team">
         <MudButton Class="team-inner" Style="@homeButtonStyle"
             OnClick="(async () => await PickTeamAsync(index, matchData.HomeTeam))"
             Disabled="@(homeType == TeamButtonType.Disabled)"
@@ -74,7 +74,7 @@
           <span class="team-name">@matchData?.HomeTeam?.Name</span>
         </MudButton>
       </div>
-      <div class="team col-md-3">
+      <div class="team">
         <MudButton Class="team-inner" Style="@awayButtonStyle"
             OnClick="(async () => await PickTeamAsync(index, matchData.AwayTeam))"
             Disabled="@(awayType == TeamButtonType.Disabled)"
