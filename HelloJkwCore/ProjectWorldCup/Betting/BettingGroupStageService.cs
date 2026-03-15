@@ -25,7 +25,7 @@ public class BettingGroupStageService : IBettingGroupStageService
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
         _worldCupService = worldCupService;
 
-        _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
+        _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10));
         _timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
         _timer.AutoReset = true;
         _timer.Start();
