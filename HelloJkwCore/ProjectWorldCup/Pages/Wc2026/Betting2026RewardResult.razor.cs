@@ -42,7 +42,7 @@ public partial class Betting2026RewardResult : JkwPageBase
             {
                 tabs.ActivatePanel(0);
             }
-            if (DateTime.Now < WorldCupConst.Round8StartTime)
+            else if (DateTime.Now < WorldCupConst.Round8StartTime)
             {
                 tabs.ActivatePanel(1);
             }
