@@ -12,7 +12,7 @@
 
 @if (BettingItems?.Any() ?? false)
 {
-    <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
+    @* <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent> *@
 }
 
 @if (!IsAuthenticated)
@@ -21,11 +21,16 @@
     &lt;&lt; 로그인 하러 가기 &gt;&gt;
   </MudLink>
 }
-@if ((BettingUser?.JoinStatus ?? UserJoinStatus.None)== UserJoinStatus.None)
+else if ((BettingUser?.JoinStatus ?? UserJoinStatus.None)== UserJoinStatus.None)
 {
   <MudLink Href="/worldcup/2026/welcome-betting" Underline="Underline.Always">
     &lt;&lt; 참가신청 하러 가기 &gt;&gt;
   </MudLink>
+}
+else
+{
+  <MudText Typo="Typo.body1" Class="d-block">저장 버튼은 없습니다. 자동 저장 됩니다.</MudText>
+  <MudText Typo="Typo.body1" Class="d-block">잘 할 것 같은 팀을 선택하기만 하면 됩니다. 한 조에 두 팀을 고르세요.</MudText>
 }
 
 @if (TimeOver)
@@ -96,7 +101,7 @@ else
   @if (CheckRandom1 == false)
   {
     <MudButton OnClick="@(() => { CheckRandom1 = true; })" Variant="Variant.Outlined" Color="Color.Error">
-      랜덤 선택
+      랜덤 선택 (저는 운에 맞기겠어요)
     </MudButton>
   }
   else if (CheckRandom2 == false)

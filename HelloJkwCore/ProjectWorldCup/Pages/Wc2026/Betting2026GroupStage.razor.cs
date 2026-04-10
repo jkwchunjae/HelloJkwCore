@@ -82,6 +82,12 @@ public partial class Betting2026GroupStage : JkwPageBase
             {
                 BettingItem = await GroupStageService.PickTeamAsync(BettingUser, team);
                 StateHasChanged();
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+                Snackbar.Configuration.ShowTransitionDuration = 100;
+                Snackbar.Configuration.VisibleStateDuration = 3000;
+                Snackbar.Configuration.HideTransitionDuration = 100;
+                Snackbar.Configuration.MaxDisplayedSnackbars = 3;
+                Snackbar.Add($"{team.Name} 팀을 선택하였습니다. (저장되었습니다)", Severity.Success);
             }
         }
         catch (Exception ex)
@@ -112,6 +118,8 @@ public partial class Betting2026GroupStage : JkwPageBase
             {
                 BettingItem = await GroupStageService.UnpickTeamAsync(BettingUser, team);
                 StateHasChanged();
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+                Snackbar.Add($"{team.Name} 팀을 제외했습니다. (저장되었습니다)", Severity.Success);
             }
         }
         catch (Exception ex)
