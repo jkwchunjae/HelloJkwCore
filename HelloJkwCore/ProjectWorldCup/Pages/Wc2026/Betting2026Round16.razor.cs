@@ -8,7 +8,7 @@ public partial class Betting2026Round16 : JkwPageBase
     [Inject] public ISnackbar Snackbar { get; set; }
     [Inject] IWorldCupService WorldCupService { get; set; }
     [Inject] IBettingService BettingService { get; set; }
-    [Inject(Key = "2026")] private IBettingRound16Service BettingRound16Service { get; set; }
+    [Inject(Key = "2026-round16")] private IBettingRound16Service BettingRound16Service { get; set; }
     [Inject] private UserManager<AppUser> UserManager { get; set; }
 
     List<KnMatch> Round16Matches = new();

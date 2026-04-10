@@ -5,7 +5,7 @@ public partial class Betting2026RewardResult : JkwPageBase
     [Inject] IBettingService BettingService { get; set; }
     [Inject(Key = "2026")] IBettingGroupStageService BettingGroupStageService { get; set; }
     [Inject(Key = "2026-round32")] IBettingRound16Service BettingRound32Service { get; set; }
-    [Inject(Key = "2026")] IBettingRound16Service BettingRound16Service { get; set; }
+    [Inject(Key = "2026-round16")] IBettingRound16Service BettingRound16Service { get; set; }
     [Inject(Key = "2026")] IBettingFinalService BettingFinalService { get; set; }
     [Inject] IWorldCupService WorldCupService { get; set; }
 

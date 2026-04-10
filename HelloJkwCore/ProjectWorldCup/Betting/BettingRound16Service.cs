@@ -1,38 +1,36 @@
 namespace ProjectWorldCup;
 
+/// <summary>
+/// 32강과 16강을 모두 처리하는 서비스.
+/// </summary>
 public class BettingRound16Service : IBettingRound16Service
 {
-    private readonly IFileSystem _fs;
-    private readonly string _pathKey;
+    private readonly WorldcupBettingFileSystem<WcBettingItem<Team>, Team> _fs;
     private readonly BettingType _bettingType;
     private readonly Func<IWorldCupService, Task<List<KnMatch>>> _getMatchesFunc;
     private readonly DateTime _startTime;
     private readonly string _winnersStageId;
     private object _lock = new object();
     private List<WcBettingItem<Team>> _cache = null;
-    private IFifa _fifa;
     private IWorldCupService _worldCupService;
     private System.Timers.Timer _timer;
 
     public BettingRound16Service(
         IFileSystemService fsService,
-        IFifa fifa,
         IWorldCupService worldCupService,
         ICacheClearInvoker cacheClearInvoker,
         WorldCupOption option,
-        string pathKey = "Betting2022",
-        BettingType bettingType = BettingType.Round16,
-        Func<IWorldCupService, Task<List<KnMatch>>> getMatchesFunc = null,
-        DateTime? startTime = null,
-        string winnersStageId = null)
+        string pathKey,
+        BettingType bettingType,
+        Func<IWorldCupService, Task<List<KnMatch>>> getMatchesFunc,
+        DateTime startTime,
+        string winnersStageId)
     {
-        _pathKey = pathKey;
         _bettingType = bettingType;
-        _getMatchesFunc = getMatchesFunc ?? (wcs => wcs.GetRound16MatchesAsync());
-        _startTime = startTime ?? WorldCupConst.Round16Match1StartTime;
-        _winnersStageId = winnersStageId ?? Fifa.Round8StageId;
-        _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
-        _fifa = fifa;
+        _getMatchesFunc = getMatchesFunc;
+        _startTime = startTime;
+        _winnersStageId = winnersStageId;
+        _fs = new WorldcupBettingFileSystem<WcBettingItem<Team>, Team>(fsService.GetFileSystem(option.FileSystemSelect, option.Path), pathKey);
         _worldCupService = worldCupService;
 
         _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
@@ -82,7 +80,7 @@ public class BettingRound16Service : IBettingRound16Service
             }
         }
 
-        var bettingItems = await _fs.ReadAllBettingItemsAsync<WcBettingItem<Team>, Team>(_pathKey, _bettingType);
+        var bettingItems = await _fs.ReadAllBettingItemsAsync(_bettingType);
         lock (_lock)
         {
             _cache = bettingItems;
@@ -99,7 +97,7 @@ public class BettingRound16Service : IBettingRound16Service
                 return _cache.First(x => x.User == user.AppUser);
             }
         }
-        var bettingItem = await _fs.ReadBettingItemAsync<WcBettingItem<Team>, Team>(_pathKey, _bettingType, user.AppUser);
+        var bettingItem = await _fs.ReadBettingItemAsync(_bettingType, user.AppUser);
         return bettingItem;
     }
 
@@ -134,7 +132,7 @@ public class BettingRound16Service : IBettingRound16Service
             bettingItem.Picked = bettingItem.Picked
                 .Where(picked => match.HomeTeam != picked && match.AwayTeam != picked)
                 .Concat(new[] { team })
-                .OrderBy(picked => matches?.FirstOrDefault(m => m.HomeTeam == picked || m.AwayTeam == picked)?.Time ?? DateTime.Now)
+                .OrderBy(picked => matches.FirstOrDefault(m => m.HomeTeam == picked || m.AwayTeam == picked).Time)
                 .ToList();
             await SaveBettingItemAsync(bettingItem);
         }
@@ -143,7 +141,7 @@ public class BettingRound16Service : IBettingRound16Service
 
     private async Task SaveBettingItemAsync(WcBettingItem<Team> item)
     {
-        await _fs.WriteBettingItemAsync(_pathKey, _bettingType, item);
+        await _fs.WriteBettingItemAsync(_bettingType, item);
 
         if (_cache?.Any() ?? false)
         {

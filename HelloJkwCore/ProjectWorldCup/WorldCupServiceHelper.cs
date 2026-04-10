@@ -19,9 +19,9 @@ public static class WorldCupServiceHelper
         services.AddKeyedSingleton<IBettingResultService, BettingResultService2026>("2026");
 
         // 2022 서비스 (기본값 pathKey="Betting2022")
-        services.AddSingleton<IBettingGroupStageService, BettingGroupStageService>();
-        services.AddSingleton<IBettingRound16Service, BettingRound16Service>();
-        services.AddSingleton<IBettingFinalService, BettingFinalService>();
+        //services.AddSingleton<IBettingGroupStageService, BettingGroupStageService>();
+        //services.AddSingleton<IBettingRound16Service, BettingRound16Service>();
+        //services.AddSingleton<IBettingFinalService, BettingFinalService>();
 
         // 2026 서비스 (keyed, 기존 클래스 재사용)
         services.AddKeyedSingleton<IBettingGroupStageService>("2026", (sp, _) =>
@@ -36,7 +36,6 @@ public static class WorldCupServiceHelper
         services.AddKeyedSingleton<IBettingRound16Service>("2026-round32", (sp, _) =>
             new BettingRound16Service(
                 sp.GetRequiredService<IFileSystemService>(),
-                sp.GetRequiredService<IFifa>(),
                 sp.GetRequiredService<IWorldCupService>(),
                 sp.GetRequiredService<ICacheClearInvoker>(),
                 sp.GetRequiredService<WorldCupOption>(),
@@ -46,10 +45,9 @@ public static class WorldCupServiceHelper
                 startTime: WorldCupConst.Round32Match1StartTime,
                 winnersStageId: Fifa.Round16StageId));
 
-        services.AddKeyedSingleton<IBettingRound16Service>("2026", (sp, _) =>
+        services.AddKeyedSingleton<IBettingRound16Service>("2026-round16", (sp, _) =>
             new BettingRound16Service(
                 sp.GetRequiredService<IFileSystemService>(),
-                sp.GetRequiredService<IFifa>(),
                 sp.GetRequiredService<IWorldCupService>(),
                 sp.GetRequiredService<ICacheClearInvoker>(),
                 sp.GetRequiredService<WorldCupOption>(),
@@ -62,7 +60,6 @@ public static class WorldCupServiceHelper
         services.AddKeyedSingleton<IBettingFinalService>("2026", (sp, _) =>
             new BettingFinalService(
                 sp.GetRequiredService<IFileSystemService>(),
-                sp.GetRequiredService<IFifa>(),
                 sp.GetRequiredService<IWorldCupService>(),
                 sp.GetRequiredService<ICacheClearInvoker>(),
                 sp.GetRequiredService<WorldCupOption>(),
