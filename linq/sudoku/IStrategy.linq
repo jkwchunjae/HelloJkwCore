@@ -11,24 +11,25 @@ public struct StrategyResult
     public int Value { get; init; }
 }
 
-/// <summary>
-/// 값을 찾는 전략
-/// </summary>
-public interface IValueStrategy
+public interface IStrategy
 {
     string Name { get; }
     string Description { get; }
+}
+
+/// <summary>
+/// 값을 찾는 전략
+/// </summary>
+public interface IValueStrategy : IStrategy
+{
     bool TryFind(IBoard board, [NotNullWhen(true)] out StrategyResult? result);
 }
 
 /// <summary>
 /// 후보를 지우는 전략
 /// </summary>
-public interface ICandidateStrategy
+public interface ICandidateStrategy : IStrategy
 {
-    string Name { get; }
-    string Description { get; }
-    
     bool TryRemoveCandidate(IBoard board, [NotNullWhen(true)] out IEnumerable<StrategyResult>? result);
 }
 
