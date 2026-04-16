@@ -3,9 +3,7 @@
   <Namespace>System.Threading.Tasks</Namespace>
 </Query>
 
-#load ".\SudokuModel"
-#load ".\IStrategy"
-#load ".\Utils"
+#load "./*.linq"
 
 public class HiddenSubsetStrategy : ICandidateStrategy
 {
@@ -43,10 +41,9 @@ public class HiddenSubsetStrategy : ICandidateStrategy
                 if (containsCell.Count() == combo.Count())
                 {
                     result = containsCell
-                        // 이번에 뽑은 숫자(combo)가 아닌 다른 후보가 있는 셀
-                        .Where(cell => cell.Candidate.Any(c => !combo.Contains(c)))
                         // 지워야 할 셀과 후보를 추출
                         .SelectMany(cell => cell.Candidate
+                                   // 이번에 뽑은 숫자(combo)가 아닌 다른 후보가 있는 셀
                                     .Where(c => !combo.Contains(c))
                                     .Select(c => new { Cell = cell, Candidate = c }))
                         .Select(x => new StrategyResult

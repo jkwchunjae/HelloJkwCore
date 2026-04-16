@@ -3,8 +3,7 @@
   <Namespace>System.Threading.Tasks</Namespace>
 </Query>
 
-#load ".\SudokuModel"
-#load ".\IStrategy"
+#load "./*.linq"
 
 public class IntersectionRowColumnStrategy : ICandidateStrategy
 {

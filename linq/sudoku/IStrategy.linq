@@ -3,7 +3,7 @@
   <Namespace>System.Threading.Tasks</Namespace>
 </Query>
 
-#load ".\SudokuModel"
+#load "./*.linq"
 
 public struct StrategyResult
 {
