@@ -11,8 +11,12 @@ public interface IBoard
     IHouse[] Columns { get; }
     
     IHouse GetBlock(int block) => Blocks[block - 1];
+    IHouse GetBlock(int row, int column) => Blocks[((row - 1) / 3) * 3 + ((column - 1) / 3) + 1];
     IHouse GetRow(int row) => Rows[row - 1];
     IHouse GetColumn(int column) => Columns[column - 1];
+    IHouse GetBlock(ICell cell) => Blocks[cell.Block];
+    IHouse GetRow(ICell cell) => Rows[cell.Row];
+    IHouse GetColumn(ICell cell) => Columns[cell.Column];
 }
 
 public interface IHouse

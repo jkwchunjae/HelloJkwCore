@@ -33,9 +33,12 @@ public abstract class BasicFishStrategyBase : ICandidateStrategy
 
         foreach (var orientation in orientations)
         {
-            if (TryFindFish(orientation, out result))
+            for (var digit = 1; digit <= 9; digit++)
             {
-                return true;
+                if (TryFindFish(digit, orientation, out result))
+                {
+                    return true;
+                }
             }
         }
 
@@ -44,26 +47,19 @@ public abstract class BasicFishStrategyBase : ICandidateStrategy
     }
 
     private bool TryFindFish(
+        int digit,
         BasicFishOrientation orientation,
         [NotNullWhen(true)] out IEnumerable<StrategyResult>? result)
     {
-        for (int digit = 1; digit <= 9; digit++)
+        IHouse[] eligibleBaseSets = orientation.BaseSets
+            .Where(house => house.FilterByCandidate(digit).Any())
+            .ToArray();
+
+        foreach (var baseCombination in eligibleBaseSets.Combinations(Size))
         {
-            var eligibleBaseSets = orientation.BaseSets
-                .Where(house => house.FilterByCandidate(digit).Any())
-                .ToArray();
-
-            if (eligibleBaseSets.Length < Size)
+            if (TryCreateFish(digit, baseCombination, orientation.CoverSelector, out result))
             {
-                continue;
-            }
-
-            foreach (var baseCombination in eligibleBaseSets.Combinations(Size))
-            {
-                if (TryCreateFish(digit, baseCombination, orientation.CoverSelector, out result))
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
@@ -77,18 +73,11 @@ public abstract class BasicFishStrategyBase : ICandidateStrategy
         Func<ICell, IHouse> coverSelector,
         [NotNullWhen(true)] out IEnumerable<StrategyResult>? result)
     {
-        var baseCells = baseCombination
+        ICell[] baseCells = baseCombination
             .SelectMany(house => house.FilterByCandidate(digit))
-            .Distinct()
             .ToArray();
 
-        if (baseCells.Length == 0)
-        {
-            result = null;
-            return false;
-        }
-
-        var coverSets = baseCells
+        IHouse[] coverSets = baseCells
             .Select(cell => coverSelector(cell))
             .Distinct()
             .ToArray();
@@ -99,12 +88,13 @@ public abstract class BasicFishStrategyBase : ICandidateStrategy
             return false;
         }
 
-        var baseCellSet = new HashSet<ICell>(baseCells);
-
-        var eliminations = coverSets
+        ICell[] eliminationsCell = coverSets
             .SelectMany(house => house.FilterByCandidate(digit))
-            .Where(cell => !baseCellSet.Contains(cell))
+            .Where(cell => !baseCells.Contains(cell))
             .Distinct()
+            .ToArray();
+
+        var eliminations = eliminationsCell
             .Select(cell => new StrategyResult
             {
                 Target = cell,

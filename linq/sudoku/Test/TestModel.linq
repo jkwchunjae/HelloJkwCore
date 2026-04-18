@@ -174,7 +174,7 @@ public class BoardBuilder
         _numbers = arr
             .Select(line => line.Select(chr =>
             {
-                int? parsed = (chr != ' ') ? int.Parse(chr.ToString()) : null;
+                int? parsed = (chr == ' ' || chr == '.') ? null : int.Parse(chr.ToString());
                 return parsed;
             })
             .ToArray())
