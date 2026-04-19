@@ -9,9 +9,6 @@ void Main()
 {
     XWingRowExample2();
     XWingRowExample3();
-    XWingRowExample();
-    SwordfishRowExample();
-    JellyfishRowExample();
 }
 
 void XWingRowExample2()
@@ -107,48 +104,6 @@ void XWingRowExample3()
     RunStrategy("XWingRowExample3", new XWingFishStrategy(), board);
 }
 
-void XWingRowExample()
-{
-    var board = new FishBoardBuilder()
-        // base rows r2 & r5, columns c5 & c8 contain digit 5
-        .WithCandidates(2, 5, 5).WithCandidates(2, 8, 5)
-        .WithCandidates(5, 5, 5).WithCandidates(5, 8, 5)
-        // cover column candidates outside base rows -> eliminations
-        .WithCandidates(4, 5, 5).WithCandidates(1, 8, 5)
-        .Build();
-
-    RunStrategy("XWingRowExample", new XWingFishStrategy(), board);
-}
-
-void SwordfishRowExample()
-{
-    var board = new FishBoardBuilder()
-        // base rows r1, r2, r9; cover columns c1, c5, c8 for digit 2
-        .WithCandidates(1, 1, 2).WithCandidates(1, 5, 2)
-        .WithCandidates(2, 5, 2).WithCandidates(2, 8, 2)
-        .WithCandidates(9, 1, 2).WithCandidates(9, 8, 2)
-        // eliminations described in HoDoKu sample
-        .WithCandidates(7, 1, 2).WithCandidates(6, 8, 2)
-        .Build();
-
-    RunStrategy("SwordfishRowExample", new SwordfishStrategy(), board);
-}
-
-void JellyfishRowExample()
-{
-    var board = new FishBoardBuilder()
-        // base rows r3, r4, r6, r7; cover columns c1, c2, c5, c9 for digit 7
-        .WithCandidates(3, 1, 7).WithCandidates(3, 2, 7)
-        .WithCandidates(4, 5, 7).WithCandidates(4, 9, 7)
-        .WithCandidates(6, 1, 7).WithCandidates(6, 5, 7)
-        .WithCandidates(7, 2, 7).WithCandidates(7, 9, 7)
-        // extra candidates in cover columns to be removed
-        .WithCandidates(1, 1, 7).WithCandidates(8, 9, 7)
-        .Build();
-
-    RunStrategy("JellyfishRowExample", new JellyfishStrategy(), board);
-}
-
 void RunStrategy(string name, ICandidateStrategy strategy, IBoard board)
 {
     if (strategy.TryRemoveCandidate(board, out var result))
@@ -158,116 +113,5 @@ void RunStrategy(string name, ICandidateStrategy strategy, IBoard board)
     else
     {
         "nothing".Dump(name);
-    }
-}
-
-public class FishBoardBuilder
-{
-    private readonly TestCell[,] _cells;
-
-    public FishBoardBuilder()
-    {
-        _cells = new TestCell[9, 9];
-        for (int row = 1; row <= 9; row++)
-        {
-            for (int column = 1; column <= 9; column++)
-            {
-                _cells[row - 1, column - 1] = new TestCell(row, column);
-            }
-        }
-    }
-
-    public FishBoardBuilder WithCandidates(int row, int column, params int[] candidates)
-    {
-        _cells[row - 1, column - 1].AddCandidates(candidates);
-        return this;
-    }
-
-    public FishTestBoard Build()
-    {
-        return new FishTestBoard(_cells);
-    }
-}
-
-public class FishTestBoard : IBoard
-{
-    public ICell[][] Grid { get; }
-    public IHouse[] Houses { get; }
-    public IHouse[] Blocks { get; }
-    public IHouse[] Rows { get; }
-    public IHouse[] Columns { get; }
-
-    public FishTestBoard(TestCell[,] cells)
-    {
-        Grid = Enumerable.Range(0, 9)
-            .Select(r => Enumerable.Range(0, 9)
-                .Select(c => (ICell)cells[r, c])
-                .ToArray())
-            .ToArray();
-
-        Rows = Enumerable.Range(0, 9)
-            .Select(r => new TestHouse(Grid[r]))
-            .ToArray();
-
-        Columns = Enumerable.Range(0, 9)
-            .Select(c => new TestHouse(Enumerable.Range(0, 9).Select(r => Grid[r][c]).ToArray()))
-            .ToArray();
-
-        Blocks = Enumerable.Range(0, 9)
-            .Select(b => BuildBlockHouse(b, cells))
-            .ToArray();
-
-        Houses = Blocks.Concat(Rows).Concat(Columns).ToArray();
-    }
-
-    private static TestHouse BuildBlockHouse(int blockIndex, TestCell[,] cells)
-    {
-        var blockCells = new List<ICell>(9);
-        int startRow = (blockIndex / 3) * 3;
-        int startColumn = (blockIndex % 3) * 3;
-
-        for (int dr = 0; dr < 3; dr++)
-        {
-            for (int dc = 0; dc < 3; dc++)
-            {
-                blockCells.Add(cells[startRow + dr, startColumn + dc]);
-            }
-        }
-
-        return new TestHouse(blockCells.ToArray());
-    }
-}
-
-public class TestCell : ICell
-{
-    public int Row { get; }
-    public int Column { get; }
-    public int Block { get; }
-    public int? Number { get; private set; }
-    public List<int> Candidate { get; }
-
-    public TestCell(int row, int column)
-    {
-        Row = row;
-        Column = column;
-        Block = ((row - 1) / 3) * 3 + ((column - 1) / 3) + 1;
-        Candidate = new List<int>();
-    }
-
-    public void SetNumber(int value)
-    {
-        Number = value;
-        Candidate.Clear();
-    }
-
-    public void AddCandidates(params int[] candidates)
-    {
-        foreach (var digit in candidates)
-        {
-            if (!Candidate.Contains(digit))
-            {
-                Candidate.Add(digit);
-            }
-        }
     }
 }

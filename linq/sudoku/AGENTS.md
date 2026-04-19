@@ -63,5 +63,7 @@ StrategyResult 목록을 반환한다.
 - **HiddenSubsetStrategy** (HiddenSubsetStrategy.linq): 하우스에서 특정 후보들이 정확히 동일한 셀 집합에만 존재할 때, 그 셀들의 다른 후보를 제거한다.
 - **IntersectionRowColumnStrategy** (IntersectionStrategy.linq): 행 또는 열에서 특정 후보가 하나의 블록 안에만 분포할 경우, 같은 블록의 다른 하우스에서 그 후보를 제거한다.
 - **IntersectionBlockStrategy** (IntersectionStrategy.linq): 블록 내부 후보들이 단일 행/열에 집중될 때, 동일 행/열의 다른 블록 셀에서 그 후보를 제거한다.
-
-
+- **BasicFishStrategyBase / XWingFishStrategy / SwordfishStrategy / JellyfishStrategy** (BasicFishStrategy.linq): 2~4개의 행 또는 열에서 특정 후보가 정확히 같은 수의 반대 축 하우스에만 걸리는 Basic Fish 패턴을 찾고, 그 반대 축의 다른 셀에서 해당 후보를 제거한다.
+- **SkyscraperStrategy** (SkyscraperStrategy.linq): 두 개의 행 또는 열 conjugate pair 가 하나의 공통 열/행을 밑변으로 공유할 때, 나머지 두 끝점을 함께 보는 후보를 제거한다.
+- **TwoStringKiteStrategy** (TwoStringKiteStrategy.linq): 하나의 행 conjugate pair 와 하나의 열 conjugate pair 가 같은 블록 안에서 연결될 때, 두 끝점을 함께 보는 후보를 제거한다.
+- **TurbotFishStrategy** (TurbotFishStrategy.linq): 블록 conjugate pair 와 행/열 conjugate pair 를 strong-weak-strong 형태의 4개 후보 X-Chain 으로 연결해 끝점 둘을 함께 보는 후보를 제거한다.
