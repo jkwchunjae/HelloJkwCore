@@ -28,7 +28,9 @@ public interface IHouse
     
     IEnumerable<ICell> FilterByCandidate(int candidate)
     {
-        return Cells.Where(cell => cell.Candidate.Contains(candidate));
+        return Cells
+            .Where(cell => cell.Number == null)
+            .Where(cell => cell.Candidate.Contains(candidate));
     }
 }
 
@@ -39,4 +41,8 @@ public interface ICell
     int Block { get; }
     int? Number { get; }
     List<int> Candidate { get; }
+
+    void SetNumber(int number);
+    void RemoveCandidate(int number);
+    event EventHandler<int> NumberSet;
 }

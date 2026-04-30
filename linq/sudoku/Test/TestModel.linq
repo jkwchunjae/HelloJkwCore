@@ -89,6 +89,13 @@ public class Board : IBoard
             .Select(block => new TestHouse(block))
             .ToArray();
     }
+
+    public override string ToString()
+    {
+        var rows = Grid.Select(row => string.Join("", row.Select(cell => cell.Number?.ToString() ?? ".")));
+        var board = string.Join(Environment.NewLine, rows);
+        return board;
+    }
 }
 
 public class TestHouse : IHouse
@@ -102,6 +109,19 @@ public class TestHouse : IHouse
     public TestHouse(ICell[] cells)
     {
         Cells = cells;
+        
+        foreach (var cell in Cells)
+        {
+            cell.NumberSet += OnNumberSet;
+        }
+    }
+    
+    public void OnNumberSet(object changedCell, int number)
+    {
+        foreach (var cell in Cells)
+        {
+            cell.Candidate.Remove(number);
+        }
     }
 }
 
@@ -110,7 +130,7 @@ public class Cell : ICell
     public int Row { get; }
     public int Column { get; }
     public int Block => ((Row - 1) / 3) * 3 + ((Column - 1) / 3) + 1;
-    public int? Number { get; }
+    public int? Number { get; private set; }
     public List<int> Candidate { get; }
     
     public Cell(int row, int column)
@@ -137,6 +157,19 @@ public class Cell : ICell
     {
         Number = number;
         Candidate = candidate.ToList();
+    }
+
+    public event EventHandler<int> NumberSet;
+
+    public void SetNumber(int number)
+    {
+        Number = number;
+        Candidate.Clear();
+        NumberSet?.Invoke(this, number);
+    }
+    public void RemoveCandidate(int number)
+    {
+        Candidate.Remove(number);
     }
     
     public static Cell Filled(int number)
@@ -180,6 +213,8 @@ public class BoardBuilder
             .ToArray())
             .ToArray();
             
+        SetAllCandidates();
+            
         return this;
     }
     
@@ -193,6 +228,44 @@ public class BoardBuilder
     {
         setCandidates[(row, column)] = candidate;
         return this;
+    }
+
+    private BoardBuilder SetAllCandidates()
+    {
+        Enumerable.Range(1, 9)
+            .SelectMany(row => Enumerable.Range(1, 9).Select(column => (row, column)))
+            .Where(x => _numbers[x.row - 1][x.column - 1] == null)
+            .ToList()
+            .ForEach(x =>
+            {
+                var (row, column) = x;
+                
+                int[] candidate = CalcCandidate(row, column);
+                
+                SetCandidate(row, column, candidate);
+            });
+
+        return this;
+
+        int[] CalcCandidate(int row, int column)
+        {
+            // row
+            var rowUsed = Enumerable.Range(0, 9)
+                .Select(columnIndex => _numbers[row - 1][columnIndex] ?? 0);
+            var columnUsed = Enumerable.Range(0, 9)
+                .Select(rowIndex => _numbers[rowIndex][column - 1] ?? 0);
+            var blockUsed = Enumerable.Range(((row - 1) / 3) * 3, 3)
+                .SelectMany(r => Enumerable.Range(((column - 1) / 3) * 3, 3)
+                    .Select(c => _numbers[r][c] ?? 0));
+            var used = rowUsed.Union(columnUsed).Union(blockUsed)
+                .Where(x => x != 0)
+                .ToArray();
+            var candidate = Enumerable.Range(1, 9)
+                .Except(used)
+                .ToArray();
+                
+            return candidate;
+        }
     }
     
     public IBoard Build()
