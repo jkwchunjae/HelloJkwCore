@@ -68,7 +68,7 @@ jobs:
       group: hellojkwcore-production
       cancel-in-progress: false
     environment:
-      name: ${{ env.AZURE_WEBAPP_SLOT }}
+      name: Production
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
