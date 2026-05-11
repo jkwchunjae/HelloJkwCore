@@ -1,8 +1,9 @@
-﻿namespace ProjectWorldCup;
+namespace ProjectWorldCup;
 
 public class BettingGroupStageService : IBettingGroupStageService
 {
-    private readonly IFileSystem _fs;
+    private readonly WorldcupBettingFileSystem<WcBettingItem<GroupTeam>, GroupTeam> _fs;
+    private readonly Func<IWorldCupService, Task<List<WcGroup>>> _getGroupsFunc;
     /// <summary> for _cache </summary>
     private object _lock = new object();
     private List<WcBettingItem<GroupTeam>> _cache = null;
@@ -14,12 +15,15 @@ public class BettingGroupStageService : IBettingGroupStageService
         IFileSystemService fsService,
         IWorldCupService worldCupService,
         ICacheClearInvoker cacheClearInvoker,
-        WorldCupOption option)
+        WorldCupOption option,
+        string pathKey,
+        Func<IWorldCupService, Task<List<WcGroup>>> getGroupsFunc)
     {
-        _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
+        _getGroupsFunc = getGroupsFunc;
+        _fs = new WorldcupBettingFileSystem<WcBettingItem<GroupTeam>, GroupTeam>(fsService.GetFileSystem(option.FileSystemSelect, option.Path), pathKey);
         _worldCupService = worldCupService;
 
-        _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
+        _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10));
         _timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
         _timer.AutoReset = true;
         _timer.Start();
@@ -33,18 +37,23 @@ public class BettingGroupStageService : IBettingGroupStageService
         };
     }
 
+    /// <summary>
+    /// 10분마다 피파에서 데이터를 데이터를 읽어서 유저 정보를 업데이트 한다. <br/>
+    /// 순위표 까지 매번 계산한다.
+    /// </summary>
+    /// <returns></returns>
     private async Task UpdateStandingsAsync()
     {
         if (DateTime.Now < WorldCupConst.WorldCupStartTime)
             return;
 
-        var groups = await _worldCupService.GetGroupsAsync();
-        var team16 = groups
+        var groups = await _getGroupsFunc(_worldCupService);
+        var teamsTop2 = groups
             .SelectMany(group => group.Stands.Take(2))
             .Select(s => s.Team)
             .ToList();
         var bettingItems = await GetAllBettingsAsync();
-        bettingItems.ForEach(bettingItem => bettingItem.Fixed = team16);
+        bettingItems.ForEach(bettingItem => bettingItem.Fixed = teamsTop2);
 
         // 객체를 생성하면서 Reward를 계산한다.
         var result = new BettingResultTable<WcBettingItem<GroupTeam>>(bettingItems);
@@ -72,7 +81,7 @@ public class BettingGroupStageService : IBettingGroupStageService
             }
         }
 
-        var bettingItems = await _fs.ReadAllBettingItemsAsync<WcBettingItem<GroupTeam>, GroupTeam>(BettingType.GroupStage);
+        var bettingItems = await _fs.ReadAllBettingItemsAsync(BettingType.GroupStage);
         lock (_lock)
         {
             _cache = bettingItems;
@@ -89,7 +98,7 @@ public class BettingGroupStageService : IBettingGroupStageService
                 return _cache.First(x => x.User == user.AppUser);
             }
         }
-        var bettingItem = await _fs.ReadBettingItemAsync<WcBettingItem<GroupTeam>, GroupTeam>(BettingType.GroupStage, user.AppUser);
+        var bettingItem = await _fs.ReadBettingItemAsync(BettingType.GroupStage, user.AppUser);
         return bettingItem;
     }
 
@@ -176,7 +185,7 @@ public class BettingGroupStageService : IBettingGroupStageService
                 User = user.AppUser,
             };
 
-        var groups = await _worldCupService.GetGroupsAsync();
+        var groups = await _getGroupsFunc(_worldCupService);
         var pickTeam = groups
             .SelectMany(group => group.Teams.RandomShuffle().Take(2))
             .ToList();

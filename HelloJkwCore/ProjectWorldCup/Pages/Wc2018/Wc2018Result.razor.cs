@@ -2,6 +2,14 @@
 
 public partial class Wc2018Result : JkwPageBase
 {
+    class SummaryItem
+    {
+        public string Nickname { get; set; }
+        public int Reward1 { get; set; }
+        public int Reward2 { get; set; }
+        public int Reward3 { get; set; }
+        public int Total => Reward1 + Reward2 + Reward3;
+    }
     [Inject]
     private IBettingService BettingService { get; set; }
 

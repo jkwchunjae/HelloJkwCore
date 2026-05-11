@@ -2,10 +2,10 @@
 @using MudBlazor
 
 <MudText Typo="Typo.h4">참가자: @CompetitionData!.PlayerList!.Count 명</MudText>
-<MudChipSet>
+<MudChipSet T="string">
   @foreach (var player in CompetitionData!.PlayerList!.OrderBy(x => x.Class).ThenBy(x => x.Name))
   {
-    <MudChip OnClick="@(async () => await RemovePlayer(player.Name))">
+    <MudChip T="string" OnClick="@(async () => await RemovePlayer(player.Name))">
       @player.Name ( @player.Class )
     </MudChip>
   }

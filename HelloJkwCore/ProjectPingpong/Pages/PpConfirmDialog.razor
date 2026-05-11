@@ -11,7 +11,7 @@
 </MudDialog>
 
 @code {
-  [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+  [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
   [Parameter] public string Content { get; set; } = string.Empty;
   [Parameter] public string SubmitText { get; set; } = "OK";
   [Parameter] public Color SubmitColor { get; set; } = Color.Default;

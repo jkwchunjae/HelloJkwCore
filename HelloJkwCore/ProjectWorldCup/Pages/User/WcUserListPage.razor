@@ -1,4 +1,4 @@
-﻿@page "/worldcup/2022/users"
+﻿@page "/worldcup/2026/users"
 @layout WcLayout
 @inherits JkwPageBase
 
@@ -21,7 +21,7 @@
       <MudTd>@context.AppUser.NickName</MudTd>
       <MudTd>@context.LastJoinRequestTime().UtcToKst()</MudTd>
       <MudTd>
-        <MudButton OnClick="@(() => ApproveAsync(context, 20000))" Variant="Variant.Outlined">
+        <MudButton OnClick="@(() => ApproveAsync(context, 30000))" Variant="Variant.Outlined">
           승인
         </MudButton>
         <MudButton OnClick="@(() => RejectAsync(context))" Variant="Variant.Outlined">
@@ -42,6 +42,7 @@
       <MudTh>1차결과</MudTh>
       <MudTh>2차결과</MudTh>
       <MudTh>3차결과</MudTh>
+      <MudTh>4차결과</MudTh>
       <MudTh>기타</MudTh>
       <MudTh>Actions</MudTh>
     </HeaderContent>
@@ -61,6 +62,9 @@
       </MudTd>
       <MudTd>
         @GetValue(user, HistoryType.Reward3)
+      </MudTd>
+      <MudTd>
+        @GetValue(user, HistoryType.Reward4)
       </MudTd>
       <MudTd>
         @user.BettingHistories.Where(x => x.Type == HistoryType.None || x.Type == HistoryType.ChangeNickname).Sum(x => x.Value)
@@ -98,7 +102,7 @@
         <MudButton OnClick="@(() => RequestAsync(context))" Variant="Variant.Outlined">
           신청
         </MudButton>
-        <MudButton OnClick="@(() => ApproveAsync(context, 20000))" Variant="Variant.Outlined">
+        <MudButton OnClick="@(() => ApproveAsync(context, 30000))" Variant="Variant.Outlined">
           승인
         </MudButton>
       </MudTd>

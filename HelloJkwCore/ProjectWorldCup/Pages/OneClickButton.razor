@@ -1,0 +1,44 @@
+@inherits MudButton
+
+<MudButton OnClick="HandleClick"
+           Disabled="@(_internalDisabled || Disabled)"
+           ButtonType="ButtonType"
+           Href="@Href"
+           Target="@Target"
+           Ripple="@Ripple"
+           StartIcon="@StartIcon"
+           EndIcon="@EndIcon"
+           IconColor="IconColor"
+           IconClass="@IconClass"
+           Color="Color"
+           Size="Size"
+           Variant="Variant"
+           FullWidth="FullWidth"
+           Class="@Class"
+           Style="@Style"
+           Tag="Tag"
+           UserAttributes="UserAttributes">
+    @ChildContent
+</MudButton>
+
+@code {
+    [Parameter] public bool Reusable { get; set; } = false;
+
+    private bool _internalDisabled = false;
+
+    private async Task HandleClick(MouseEventArgs ev)
+    {
+        if (_internalDisabled)
+            return;
+
+        if (!Reusable)
+            _internalDisabled = true;
+
+        await OnClick.InvokeAsync(ev);
+
+        if (Reusable)
+            return;
+
+        await InvokeAsync(StateHasChanged);
+    }
+}

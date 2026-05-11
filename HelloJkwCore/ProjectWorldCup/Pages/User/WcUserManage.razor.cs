@@ -1,7 +1,10 @@
-﻿namespace ProjectWorldCup.Pages.User;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ProjectWorldCup.Pages.User;
 
 public partial class WcUserManage : JkwPageBase
 {
+    [Inject] IUserStore<AppUser> UserStore { get; set; }
     [Inject] public IBettingService BettingService { get; set; }
     [Parameter] public string UserId { get; set; }
 

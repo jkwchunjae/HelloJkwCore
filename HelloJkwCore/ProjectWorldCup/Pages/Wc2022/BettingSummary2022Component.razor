@@ -1,0 +1,58 @@
+@inherits JkwPageBase
+
+<MudTable T="UserResult" Items="SummaryResults" Context="userResult" Dense="true">
+    <HeaderContent>
+        <MudTh>순위</MudTh>
+        <MudTh>닉네임</MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward1)">
+                1라운드
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward2)">
+                2라운드
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward3)">
+                3라운드
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Total)">
+                총 상금
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Profit)" InitialDirection="SortDirection.Descending">
+                손익
+            </MudTableSortLabel>
+        </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="순위">@userResult.Rank</MudTd>
+        <MudTd DataLabel="닉네임">
+            @if (User != null && userResult.UserId == User.Id)
+            {
+                var me = "me";
+                <MudBadge Content="me" Overlap="false" Color="Color.Success">
+                    <MudText>@userResult.Name</MudText>
+                </MudBadge>
+            }
+            else
+            {
+                <MudText>@userResult.Name</MudText>
+            }
+        </MudTd>
+        <MudTd DataLabel="1라운드">@userResult.Reward1.ToString("#,#")</MudTd>
+        <MudTd DataLabel="2라운드">@userResult.Reward2.ToString("#,#")</MudTd>
+        <MudTd DataLabel="3라운드">@userResult.Reward3.ToString("#,#")</MudTd>
+        <MudTd DataLabel="총 상금">@userResult.Total.ToString("#,#")</MudTd>
+        <MudTd DataLabel="손익">
+            <MudText Color="@(userResult.Profit >= 0 ? Color.Success : Color.Error)">
+                @userResult.Profit.ToString("#,#")
+            </MudText>
+        </MudTd>
+    </RowTemplate>
+</MudTable>

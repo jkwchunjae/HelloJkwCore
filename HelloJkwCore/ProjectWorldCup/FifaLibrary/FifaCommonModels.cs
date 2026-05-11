@@ -2,15 +2,15 @@
 
 public class FifaDataRoot<T> where T : class
 {
-    [JsonProperty("ContinuationToken")] public object ContinuationToken { get; set; }
-    [JsonProperty("ContinuationHash")] public object ContinuationHash { get; set; }
-    [JsonProperty("Results")] public IEnumerable<T> Results { get; set; }
+    [JsonPropertyName("ContinuationToken")] public object ContinuationToken { get; set; }
+    [JsonPropertyName("ContinuationHash")] public object ContinuationHash { get; set; }
+    [JsonPropertyName("Results")] public IEnumerable<T> Results { get; set; }
 }
 
 public class FifaIdName
 {
-    [JsonProperty("Locale")] public string Locale { get; set; }
-    [JsonProperty("Description")] public string Description { get; set; }
+    [JsonPropertyName("Locale")] public string Locale { get; set; }
+    [JsonPropertyName("Description")] public string Description { get; set; }
 }
 
 
@@ -22,21 +22,21 @@ public enum Gender
 
 public class OverviewTeam
 {
-    [JsonProperty("placement")]
+    [JsonPropertyName("placement")]
     public string Placement { get; set; }
-    [JsonProperty("sourceId")]
+    [JsonPropertyName("sourceId")]
     public string Id { get; set; }
-    [JsonProperty("sourceCategory")]
+    [JsonPropertyName("sourceCategory")]
     public string Name { get; set; }
-    [JsonProperty("flagOrLogoUrl")]
+    [JsonPropertyName("flagOrLogoUrl")]
     public string Flag { get; set; }
 }
 
 public class OverviewGroup
 {
-    [JsonProperty("groupTitle")]
+    [JsonPropertyName("groupTitle")]
     public string GroupName { get; set; }
-    [JsonProperty("teams")]
+    [JsonPropertyName("teams")]
     public List<OverviewTeam> Teams { get; set; }
 
     [JsonIgnore]
@@ -45,18 +45,18 @@ public class OverviewGroup
 
 public class OverviewGroupDataRoot
 {
-    [JsonProperty("groups")]
+    [JsonPropertyName("groups")]
     public List<OverviewGroup> Groups { get; set; }
 }
 
 
 public class TeamFlag
 {
-    [JsonProperty("title")]
+    [JsonPropertyName("title")]
     public string Title { get; set; }
-    [JsonProperty("src")]
+    [JsonPropertyName("src")]
     public string Src { get; set; }
-    [JsonProperty("alt")]
+    [JsonPropertyName("alt")]
     public string Alt { get; set; }
 }
 

@@ -1,14 +1,15 @@
 ﻿@inherits JkwPageBase
 @layout WcLayout
+@using ProjectWorldCup
 @using ProjectWorldCup.Pages.User
-@using ProjectWorldCup.Pages.Wc2022
+@using ProjectWorldCup.Pages.Wc2026
 @page "/worldcup"
 
 @inject IBettingService Service
 
 @if (LoadCompleted)
 {
-    <Betting2022Final></Betting2022Final>
+    <WelcomeWc2026 />
 }
 
 

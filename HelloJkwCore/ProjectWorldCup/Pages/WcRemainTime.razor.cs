@@ -2,7 +2,7 @@
 
 namespace ProjectWorldCup.Pages;
 
-public partial class WcRemainTime : JkwPageBase
+public partial class WcRemainTime : JkwPageBase, IDisposable
 {
     [Parameter] public string ClassName { get; set; }
     [Parameter] public int RemainSeconds { get; set; }
@@ -32,11 +32,17 @@ public partial class WcRemainTime : JkwPageBase
         await TimeOver.InvokeAsync();
     }
 
-    protected override void OnPageDispose()
+    public void Dispose()
     {
         if (_interval != null)
         {
-            _interval.InvokeVoidAsync("dispose");
+            try
+            {
+                _interval.InvokeVoidAsync("dispose");
+            }
+            catch
+            {
+            }
         }
     }
 }

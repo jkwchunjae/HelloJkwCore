@@ -1,0 +1,41 @@
+﻿@inherits JkwPageBase
+@layout WcLayout
+@page "/worldcup/2026/reward/result"
+@using ProjectWorldCup.Pages.Betting
+
+<WcTitle>정산 페이지</WcTitle>
+
+<MudTabs @ref="tabs">
+  <MudTabPanel Text="Round.1">
+    <BettingResultComponent BettingItems="@GroupStageResult"/>
+    <MudButton OnClick="@(async () => await ApplyRewardGroupStage())"
+      Variant="Variant.Outlined"
+      >
+      @GroupStageButtonText
+    </MudButton>
+  </MudTabPanel>
+  <MudTabPanel Text="Round.2">
+    <BettingResultComponent BettingItems="@Round32Result"/>
+    <MudButton OnClick="@(async () => await ApplyRewardRound32())"
+      Variant="Variant.Outlined"
+      >
+      @Round32ButtonText
+    </MudButton>
+  </MudTabPanel>
+  <MudTabPanel Text="Round.3">
+    <BettingResultComponent BettingItems="@Round16Result"/>
+    <MudButton OnClick="@(async () => await ApplyRewardRound16())"
+      Variant="Variant.Outlined"
+      >
+      @Round16ButtonText
+    </MudButton>
+  </MudTabPanel>
+  <MudTabPanel Text="Round.4">
+    <BettingFinalResultComponent BettingItems="@FinalResult" Visible="true"/>
+    <MudButton OnClick="@(async () => await ApplyRewardFinal())"
+      Variant="Variant.Outlined"
+      >
+      @FinalButtonText
+    </MudButton>
+  </MudTabPanel>
+</MudTabs>

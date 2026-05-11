@@ -1,26 +1,23 @@
 ﻿using ProjectWorldCup.Pages;
-using static MudBlazor.CategoryTypes;
 
 namespace ProjectWorldCup;
 
 public class BettingFinalService : IBettingFinalService
 {
-    private readonly IFileSystem _fs;
+    private readonly WorldcupBettingFileSystem<WcFinalBettingItem<Team>, Team> _fs;
     private object _lock = new object();
     private List<WcFinalBettingItem<Team>> _cache = null;
-    private IFifa _fifa;
     private IWorldCupService _worldCupService;
     private System.Timers.Timer _timer;
 
     public BettingFinalService(
         IFileSystemService fsService,
-        IFifa fifa,
         IWorldCupService worldCupService,
         ICacheClearInvoker cacheClearInvoker,
-        WorldCupOption option)
+        WorldCupOption option,
+        string pathKey)
     {
-        _fs = fsService?.GetFileSystem(option?.FileSystemSelect, option?.Path);
-        _fifa = fifa;
+        _fs = new WorldcupBettingFileSystem<WcFinalBettingItem<Team>, Team>(fsService?.GetFileSystem(option?.FileSystemSelect, option?.Path), pathKey);
         _worldCupService = worldCupService;
 
         _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
@@ -83,7 +80,7 @@ public class BettingFinalService : IBettingFinalService
                 return _cache;
             }
         }
-        var items = await _fs.ReadAllBettingItemsAsync<WcFinalBettingItem<Team>, Team>(BettingType.Final);
+        var items = await _fs.ReadAllBettingItemsAsync(BettingType.Final);
         lock (_lock)
         {
             _cache = items;
@@ -100,7 +97,7 @@ public class BettingFinalService : IBettingFinalService
                 return _cache.First(x => x.User == user.AppUser);
             }
         }
-        var bettingItem = await _fs.ReadBettingItemAsync<WcFinalBettingItem<Team>, Team>(BettingType.Final, user.AppUser);
+        var bettingItem = await _fs.ReadBettingItemAsync(BettingType.Final, user.AppUser);
         return bettingItem;
     }
     public async Task SaveBettingItemAsync(WcFinalBettingItem<Team> item)

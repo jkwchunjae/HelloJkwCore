@@ -3,15 +3,16 @@
 <MudThemeProvider Theme="currentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
+<MudPopoverProvider />
 
 <MudLayout>
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudButton Href="/">
-            <MudText Typo="Typo.h5" Class="ml-3" Style="font-family: 'Kaushan Script'; color: #fed136;">WorldCup 2022</MudText>
+            <MudText Typo="Typo.h5" Class="ml-3" Style="font-family: 'Kaushan Script'; color: #fed136;">WorldCup 2026</MudText>
         </MudButton>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Filled.Brightness4" Color="Color.Inherit" Edge="Edge.End" OnClick="() => ToggleTheme()" />
+        <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" Edge="Edge.End" OnClick="() => ToggleTheme()" />
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <WcNavMenu />

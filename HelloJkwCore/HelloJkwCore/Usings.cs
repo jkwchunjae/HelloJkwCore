@@ -1,6 +1,7 @@
 ﻿global using Common;
 global using ProjectDiary;
 global using ProjectBaduk;
+global using ProjectWorldCup;
 global using GameLibra;
 global using MudBlazor;
 global using TableViewerBlazor;

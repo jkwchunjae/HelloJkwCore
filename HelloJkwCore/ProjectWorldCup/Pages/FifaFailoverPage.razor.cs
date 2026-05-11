@@ -9,6 +9,7 @@ namespace ProjectWorldCup.Pages;
 public partial class FifaFailoverPage : JkwPageBase
 {
     [Inject] IFifa Fifa { get; set; }
+    [Inject] ISerializer serializer { get; set; }
 
     IEnumerable<string> fifaFailoverTiles = new List<string>();
     Exception Error = null;
@@ -49,7 +50,7 @@ public partial class FifaFailoverPage : JkwPageBase
 
     private async Task SaveFailoverData()
     {
-        var json = Json.Serialize(Json.Deserialize<object>(UploadValue));
+        var json = serializer.Serialize(serializer.Deserialize<object>(UploadValue));
         await Fifa.SaveFailoverData(SelectedTitle, json);
         await FailoverValueChanged(SelectedTitle);
     }

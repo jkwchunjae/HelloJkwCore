@@ -54,7 +54,7 @@
       }
     </ChildContent>
     <ItemRenderer>
-      <MudChip Variant="Variant.Outlined" OnClick="@(async () => await OnPlayerClicked(context))">
+      <MudChip T="Player" Variant="Variant.Outlined" OnClick="@(async () => await OnPlayerClicked(context))">
         @context.Name ( @context.Class )
       </MudChip>
     </ItemRenderer>

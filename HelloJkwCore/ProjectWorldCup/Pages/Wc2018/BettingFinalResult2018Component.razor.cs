@@ -5,9 +5,9 @@ public partial class BettingFinalResult2018Component : JkwPageBase
     [Parameter]
     public List<WcFinalBettingItem<Team>> BettingItems { get; set; }
 
-    BettingResultTable<WcFinalBettingItem<Team>> BettingResult { get; set; }
+    private BettingResultTable<WcFinalBettingItem<Team>> BettingResult { get; set; }
 
-    WcFinalBettingItem<Team> FirstItem => BettingResult?.FirstOrDefault();
+    private WcFinalBettingItem<Team> FirstItem => BettingResult?.FirstOrDefault();
 
     public BettingFinalResult2018Component()
     {

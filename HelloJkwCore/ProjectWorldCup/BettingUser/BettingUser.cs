@@ -19,7 +19,7 @@ public class BettingUser
     }
 }
 
-[TextJsonConverter(typeof(StringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum UserJoinStatus
 {
     None,
@@ -28,7 +28,7 @@ public enum UserJoinStatus
     Rejected,
 }
 
-[TextJsonConverter(typeof(StringEnumConverter))]
+[TextJsonConverter(typeof(TextJsonStringEnumConverter))]
 public enum HistoryType
 {
     None,
@@ -40,6 +40,7 @@ public enum HistoryType
     Reward1,
     Reward2,
     Reward3,
+    Reward4,
     ChangeNickname,
 }
 

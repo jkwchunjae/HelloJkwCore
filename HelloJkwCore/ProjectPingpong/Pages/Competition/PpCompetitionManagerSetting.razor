@@ -3,10 +3,10 @@
 @using Microsoft.AspNetCore.Identity
 
 <MudText Typo="Typo.h4">관리자</MudText>
-<MudChipSet>
+<MudChipSet T="string">
   @foreach (var manager in Managers)
   {
-    <MudChip OnClick="@(async () => await RemoveManager(manager))">
+    <MudChip T="string" OnClick="@(async () => await RemoveManager(manager))">
       @manager.DisplayName
     </MudChip>
   }
@@ -16,7 +16,7 @@
                    @bind-Value="SearchedManager"
                    SearchFunc="@SearchUser"
                    ToStringFunc="@(user => user?.DisplayName)"
-                   SelectOnClick="true"
+                   SelectOnActivation="true"
                     />
   <MudButton Variant="Variant.Outlined" OnClick="@(async () => await AddManager(SearchedManager))">등록</MudButton>
 </MudForm>
@@ -101,7 +101,7 @@
   }
 
 
-  private async Task<IEnumerable<AppUser>> SearchUser(string keyword)
+  private async Task<IEnumerable<AppUser>> SearchUser(string keyword, CancellationToken cancellationToken)
   {
     if (!IsAuthenticated)
       return new List<AppUser>();

@@ -4,10 +4,10 @@
   <DialogContent>
     @Content
 
-    <MudList>
+    <MudList T="string">
       @foreach (var item in SelectItems)
       {
-        <MudListItem OnClick="@(() => Submit(item.Value))">
+        <MudListItem T="string" OnClick="@(() => Submit(item.Value))">
           <MudButton OnClick="@(() => Submit(item.Value))" Variant="Variant.Outlined" FullWidth="true">
               @item.Text
           </MudButton>
@@ -21,7 +21,7 @@
 </MudDialog>
 
 @code {
-  [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+  [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
   [Parameter] public string Content { get; set; } = string.Empty;
   [Parameter] public IEnumerable<(string Value, string Text)>? SelectItems { get; set; }
 

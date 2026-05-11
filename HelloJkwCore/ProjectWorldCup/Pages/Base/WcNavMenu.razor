@@ -1,7 +1,7 @@
 ﻿@inherits JkwPageBase
 
 <MudNavMenu Class="mud-nav-menu-custom">
-  <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+  <MudNavLink Href="worldcup" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
     Home
   </MudNavLink>
   <AuthorizeView>
@@ -16,44 +16,47 @@
       </MudNavLink>
     </Authorized>
   </AuthorizeView>
-  <MudNavLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Icon="@Icons.Filled.EditNote" Target="_blank">
+  <MudNavLink Href="https://hellojkw.tistory.com/entry/2022-worldcup-betting-rule" Icon="@Icons.Material.Filled.EditNote" Target="_blank">
     규칙 설명
   </MudNavLink>
-  <MudNavLink Href="worldcup/2022/welcome-betting" Icon="@Icons.Filled.ScubaDiving">
+  <MudNavLink Href="worldcup/2026/welcome-betting" Icon="@Icons.Material.Filled.ScubaDiving">
     참가 신청
   </MudNavLink>
-  <MudNavLink Href="worldcup/2018/result" Icon="@Icons.Outlined.AccessTime">
+  <MudNavLink Href="worldcup/2018/result" Icon="@Icons.Material.Outlined.AccessTime">
     2018 내기 결과
   </MudNavLink>
-  <MudNavLink Href="worldcup/2022/betting/group-stage" Icon="@Icons.Outlined.AlignHorizontalLeft">
-    2022 Round.1
+  <MudNavLink Href="worldcup/2022/result-new" Icon="@Icons.Material.Outlined.AccessTime">
+    2022 내기 결과
   </MudNavLink>
-  <MudNavLink Href="worldcup/2022/betting/round16" Icon="@Icons.Outlined.AltRoute">
-    2022 Round.2
+  <MudNavLink Href="worldcup/2026/betting/group-stage" Icon="@Icons.Material.Outlined.AlignHorizontalLeft">
+    2026 Round.1
   </MudNavLink>
-  <MudNavLink Href="worldcup/2022/betting/final" Icon="@Icons.Outlined.AutoAwesome">
-    2022 Round.3
+  <MudNavLink Href="worldcup/2026/betting/round32" Icon="@Icons.Material.Outlined.AltRoute">
+    2026 Round.2
   </MudNavLink>
-  <MudNavLink Href="worldcup/2022/result" Icon="@Icons.Filled.Sort">
-    2022 내기 최종 결과
+  <MudNavLink Href="worldcup/2026/betting/round16" Icon="@Icons.Material.Outlined.AutoAwesome">
+    2026 Round.3
+  </MudNavLink>
+  <MudNavLink Href="worldcup/2026/betting/final" Icon="@Icons.Material.Outlined.EmojiEvents">
+    2026 Round.4
   </MudNavLink>
   <AuthorizeView Roles="Admin">
     <Authorized>
-      <MudNavLink Href="worldcup/2022/reward/result" Icon="@Icons.Material.Filled.Money">
+      <MudNavLink Href="worldcup/2026/reward/result" Icon="@Icons.Material.Filled.Money">
         정산
       </MudNavLink>
     </Authorized>
   </AuthorizeView>
   <AuthorizeView Roles="WcManager">
     <Authorized>
-      <MudNavLink Href="worldcup/2022/users" Icon="@Icons.Outlined.PeopleOutline">
+      <MudNavLink Href="worldcup/2026/users" Icon="@Icons.Material.Outlined.PeopleOutline">
         월드컵 관리
       </MudNavLink>
     </Authorized>
   </AuthorizeView>
   <AuthorizeView Roles="Admin">
     <Authorized>
-      <MudNavLink Href="users" Icon="@Icons.Material.Filled.People">
+      <MudNavLink Href="admin/users" Icon="@Icons.Material.Filled.People">
         유저 관리
       </MudNavLink>
     </Authorized>
