@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-HelloJkwCore is a modular ASP.NET Core Blazor Server application built on .NET 9.0. It's a multi-tenant web platform hosting several educational games and personal productivity tools, with a strong focus on Korean language features.
+HelloJkwCore is a modular ASP.NET Core Blazor Server application built on .NET 10.0. It's a multi-tenant web platform hosting several educational games and personal productivity tools, with a strong focus on Korean language features.
 
 ## Build & Development Commands
 
@@ -116,7 +116,7 @@ This prevents blocking HTTP requests and is configured in `Program.cs` with `Que
 
 ## Key Technologies
 
-- **Framework**: ASP.NET Core 9.0, Blazor Server (Interactive Server render mode)
+- **Framework**: ASP.NET Core 10.0, Blazor Server (Interactive Server render mode)
 - **UI**: MudBlazor 8.13.0, TableViewer.MudBlazor 0.4.1
 - **Authentication**: Google OAuth, KakaoTalk OAuth, ASP.NET Core Identity
 - **Storage**: Azure Blob Storage, Dropbox API, local file system
