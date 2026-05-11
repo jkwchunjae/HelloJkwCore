@@ -166,7 +166,7 @@ result.Should().Be(expected);
 
 To add a new module:
 
-1. Create a new Razor Class Library project targeting `net9.0`
+1. Create a new Razor Class Library project targeting `net10.0`
 2. Add project reference to `Common`
 3. Create a service class and extension method for dependency injection (e.g., `AddMyService()`)
 4. Configure service in `appsettings.json` with file system paths

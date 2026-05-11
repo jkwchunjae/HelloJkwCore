@@ -5,6 +5,7 @@ namespace Tests.WorldCup;
 public class FinalBettings
 {
     IFileSystemService _fsService;
+    ISerializer _serializer;
     WorldCupOption _option;
 
     public FinalBettings()
@@ -18,7 +19,8 @@ public class FinalBettings
             },
         };
 
-        _fsService = new FileSystemService(fsOption, null, null);
+        _serializer = new Json([]);
+        _fsService = new FileSystemService(fsOption, [new InMemoryFileSystemBuilder(_serializer)], new BackgroundTaskQueue());
 
         _option = new WorldCupOption
         {
@@ -51,7 +53,7 @@ public class FinalBettings
     [Fact]
     public void EvaluateUserBetting_유저가고른것이없을경우()
     {
-        var service = new BettingFinalService(_fsService, null, null, null, _option);
+        var service = new BettingFinalService(_fsService, null, null, _option, "Betting2026");
 
         var quarters = new List<KnMatch>
         {
@@ -73,7 +75,7 @@ public class FinalBettings
     [Fact]
     public void EvaluateUserBetting_유저의선택이있는경우_4강()
     {
-        var service = new BettingFinalService(_fsService, null, null, null, _option);
+        var service = new BettingFinalService(_fsService, null, null, _option, "Betting2026");
 
         var quarters = new List<KnMatch>
         {
@@ -108,7 +110,7 @@ public class FinalBettings
     [Fact]
     public void EvaluateUserBetting_유저의선택이있는경우_34위전()
     {
-        var service = new BettingFinalService(_fsService, null, null, null, _option);
+        var service = new BettingFinalService(_fsService, null, null, _option, "Betting2026");
 
         var quarters = new List<KnMatch>
         {
@@ -141,7 +143,7 @@ public class FinalBettings
     [Fact]
     public void EvaluateUserBetting_유저의선택이있는경우_결승()
     {
-        var service = new BettingFinalService(_fsService, null, null, null, _option);
+        var service = new BettingFinalService(_fsService, null, null, _option, "Betting2026");
 
         var quarters = new List<KnMatch>
         {

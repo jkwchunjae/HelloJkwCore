@@ -7,10 +7,10 @@
   return;
 }
 
-<MudList>
+<MudList T="MatchData">
   @foreach (var match in League.MatchList)
   {
-    <MudListItem>
+    <MudListItem T="MatchData">
       <PpMatchView1 Match="@match" League="@League"/>
     </MudListItem>
   }

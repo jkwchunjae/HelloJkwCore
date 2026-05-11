@@ -3,7 +3,7 @@
 @using MudBlazor
 @using ProjectPingpong.Utils
 
-<MudList>
+<MudList T="string">
     @foreach (var competitionName in CompetitionNameList)
   {
     var link = PpNaviHelper.CompetitionPage(competitionName);

@@ -2,13 +2,13 @@
 @using MudBlazor
 
 <MudPaper onclick="@(() => GotoMatchCenter())" Style="cursor: pointer; text-align: center;">
-    <MudChip Color="@LeftColor">@LeftName</MudChip>
+    <MudChip T="string" Color="@LeftColor">@LeftName</MudChip>
     <div class="d-inline-block">
         <span>@Match.LeftSetScore</span>
         <span>:</span>
         <span>@Match.RightSetScore</span>
     </div>
-    <MudChip Color="@RightColor">@RightName</MudChip>
+    <MudChip T="string" Color="@RightColor">@RightName</MudChip>
 </MudPaper>
 
 @code {

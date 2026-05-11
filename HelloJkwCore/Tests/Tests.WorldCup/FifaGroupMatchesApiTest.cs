@@ -5,6 +5,7 @@ namespace Tests.WorldCup;
 public class FifaGroupMatchesApiTest
 {
     IFileSystemService _fsService;
+    ISerializer _serializer;
     WorldCupOption _option;
     public FifaGroupMatchesApiTest()
     {
@@ -17,7 +18,8 @@ public class FifaGroupMatchesApiTest
             },
         };
 
-        _fsService = new FileSystemService(fsOption, null, null);
+        _serializer = new Json([]);
+        _fsService = new FileSystemService(fsOption, [new InMemoryFileSystemBuilder(_serializer)], new BackgroundTaskQueue());
 
         _option = new WorldCupOption
         {
@@ -39,7 +41,7 @@ public class FifaGroupMatchesApiTest
     [Fact]
     public async Task 조별리그가_잘_불러와져야함()
     {
-        IFifa fifa = new Fifa(_fsService, _option);
+        IFifa fifa = new Fifa(_fsService, _serializer, _option);
         var groups = await fifa.GetGroupOverview();
 
         Assert.Equal(8, groups.Count);
@@ -49,7 +51,7 @@ public class FifaGroupMatchesApiTest
     [Fact]
     public async Task FifaGroupStageMatches_should_return_48_matches()
     {
-        IFifa fifa = new Fifa(_fsService, _option);
+        IFifa fifa = new Fifa(_fsService, _serializer, _option);
 
         var matches = await fifa.GetGroupStageMatchesAsync();
 
@@ -59,7 +61,7 @@ public class FifaGroupMatchesApiTest
     [Fact]
     public async Task FifaKnockoutStageMatches_should_return_16_matches()
     {
-        IFifa fifa = new Fifa(_fsService, _option);
+        IFifa fifa = new Fifa(_fsService, _serializer, _option);
 
         var matches = await fifa.GetKnockoutStageMatchesAsync();
 
@@ -69,7 +71,7 @@ public class FifaGroupMatchesApiTest
     [Fact(Skip = "API가 바뀌었음.")]
     public async Task 조별리그_순위_불러오기()
     {
-        IFifa fifa = new Fifa(_fsService, _option);
+        IFifa fifa = new Fifa(_fsService, _serializer, _option);
 
         var standings = await fifa.GetStandingDataAsync();
 
