@@ -6,16 +6,22 @@ public class BettingResultService2022 : IBettingResultService
 {
     private readonly MemoryCache _cache2022 = new MemoryCache("Result2022");
     private readonly IFileSystem _fs;
+    private readonly ILogger<BettingResultService2022> _logger;
 
     public BettingResultService2022(
         IFileSystemService fsService,
-        WorldCupOption option)
+        WorldCupOption option,
+        ILogger<BettingResultService2022> logger)
     {
+        _logger = logger;
+        _logger.LogInformation("{Service}.{Method} started.", nameof(BettingResultService2022), nameof(BettingResultService2022));
         _fs = fsService.GetFileSystem(option.FileSystemSelect, option.Path);
     }
 
     public async Task<List<WcBettingItem<Team>>> GetGroupStageBettingResultAsync()
     {
+        _logger.LogInformation("{Service}.{Method} started.", nameof(BettingResultService2022), nameof(GetGroupStageBettingResultAsync));
+
         if (_cache2022.Contains(nameof(GetGroupStageBettingResultAsync)))
         {
             return (List<WcBettingItem<Team>>)_cache2022[nameof(GetGroupStageBettingResultAsync)];
@@ -23,6 +29,7 @@ public class BettingResultService2022 : IBettingResultService
 
         var result = await ReadAllBettingItemsAsync<WcBettingItem<Team>, Team>(_fs, BettingType.GroupStage);
 
+        _logger.LogInformation("{Service}.{Method} result length before cache: {ResultLength}", nameof(BettingResultService2022), nameof(GetGroupStageBettingResultAsync), result.Count);
         _cache2022.Add(
             nameof(GetGroupStageBettingResultAsync),
             result,
@@ -34,6 +41,8 @@ public class BettingResultService2022 : IBettingResultService
 
     public async Task<List<WcBettingItem<Team>>> GetRound16BettingResultAsync()
     {
+        _logger.LogInformation("{Service}.{Method} started.", nameof(BettingResultService2022), nameof(GetRound16BettingResultAsync));
+
         if (_cache2022.Contains(nameof(GetRound16BettingResultAsync)))
         {
             return (List<WcBettingItem<Team>>)_cache2022[nameof(GetRound16BettingResultAsync)];
@@ -41,6 +50,7 @@ public class BettingResultService2022 : IBettingResultService
 
         var result = await ReadAllBettingItemsAsync<WcBettingItem<Team>, Team>(_fs, BettingType.Round16);
 
+        _logger.LogInformation("{Service}.{Method} result length before cache: {ResultLength}", nameof(BettingResultService2022), nameof(GetRound16BettingResultAsync), result.Count);
         _cache2022.Add(
             nameof(GetRound16BettingResultAsync),
             result,
@@ -52,6 +62,8 @@ public class BettingResultService2022 : IBettingResultService
 
     public async Task<List<WcFinalBettingItem<Team>>> GetFinalBettingResultAsync()
     {
+        _logger.LogInformation("{Service}.{Method} started.", nameof(BettingResultService2022), nameof(GetFinalBettingResultAsync));
+
         if (_cache2022.Contains(nameof(GetFinalBettingResultAsync)))
         {
             return (List<WcFinalBettingItem<Team>>)_cache2022[nameof(GetFinalBettingResultAsync)];
@@ -59,6 +71,7 @@ public class BettingResultService2022 : IBettingResultService
 
         var result = await ReadAllBettingItemsAsync<WcFinalBettingItem<Team>, Team>(_fs, BettingType.Final);
 
+        _logger.LogInformation("{Service}.{Method} result length before cache: {ResultLength}", nameof(BettingResultService2022), nameof(GetFinalBettingResultAsync), result.Count);
         _cache2022.Add(
             nameof(GetFinalBettingResultAsync),
             result,
@@ -70,6 +83,8 @@ public class BettingResultService2022 : IBettingResultService
 
     public async Task<List<UserResult>> GetBettingSummaryAsync()
     {
+        _logger.LogInformation("{Service}.{Method} started.", nameof(BettingResultService2022), nameof(GetBettingSummaryAsync));
+
         if (_cache2022.Contains(nameof(GetBettingSummaryAsync)))
         {
             return (List<UserResult>)_cache2022[nameof(GetBettingSummaryAsync)];
@@ -113,6 +128,7 @@ public class BettingResultService2022 : IBettingResultService
             .ToList();
 
         // Cache for 10 days
+        _logger.LogInformation("{Service}.{Method} result length before cache: {ResultLength}", nameof(BettingResultService2022), nameof(GetBettingSummaryAsync), results.Count);
         _cache2022.Add(
             nameof(GetBettingSummaryAsync),
             results,
@@ -122,16 +138,20 @@ public class BettingResultService2022 : IBettingResultService
         return results;
     }
 
-    private static Func<Paths, string> BettingItemDirectoryPath(BettingType bettingType)
+    private Func<Paths, string> BettingItemDirectoryPath(BettingType bettingType)
     {
+        _logger.LogInformation("{Service}.{Method} started. BettingType: {BettingType}", nameof(BettingResultService2022), nameof(BettingItemDirectoryPath), bettingType);
+
         Func<Paths, string> itemPathFunc
             = path => path[WorldCupPath.Betting2022] + $"/{bettingType}";
         return itemPathFunc;
     }
-    private static async Task<List<TWcBettingItem>> ReadAllBettingItemsAsync<TWcBettingItem, TTeam>(IFileSystem fs, BettingType bettingType)
+    private async Task<List<TWcBettingItem>> ReadAllBettingItemsAsync<TWcBettingItem, TTeam>(IFileSystem fs, BettingType bettingType)
         where TWcBettingItem : IWcBettingItem<TTeam>, new()
         where TTeam : Team
     {
+        _logger.LogInformation("{Service}.{Method} started. BettingType: {BettingType}", nameof(BettingResultService2022), nameof(ReadAllBettingItemsAsync), bettingType);
+
         var directoryPath = BettingItemDirectoryPath(bettingType);
         if (await fs.DirExistsAsync(directoryPath))
         {
@@ -149,6 +169,8 @@ public class BettingResultService2022 : IBettingResultService
 
     public Task<List<WcBettingItem<Team>>> GetRound32BettingResultAsync()
     {
+        _logger.LogInformation("{Service}.{Method} started.", nameof(BettingResultService2022), nameof(GetRound32BettingResultAsync));
+
         throw new NotImplementedException();
     }
 }
