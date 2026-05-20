@@ -48,7 +48,6 @@ The application uses a **pluggable module system** where feature modules are imp
 - **ProjectDiary**: Personal diary/journal with search, encryption, and image support
 - **ProjectBaduk**: Go (Baduk) game tracking and diary
 - **GameLibra**: Educational "Balance Scale" puzzle game (양팔저울)
-- **ProjectPingpong**: Ping-pong tournament and match tracking
 - **ProjectWorldCup**: FIFA World Cup prediction and betting simulation
 
 ### Dynamic Module Loading
@@ -136,7 +135,7 @@ The application uses a layered configuration system:
 Required configuration sections:
 - `HelloJkw.AuthOptions`: OAuth provider credentials (Google, KakaoTalk)
 - `FileSystem`: Storage backend credentials (Azure connection strings, Dropbox tokens)
-- Service-specific options: `DiaryService`, `BadukService`, `PingpongService`
+- Service-specific options: `DiaryService`, `BadukService`
 
 ## Korean Language Features
 
