@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
+using MudBlazor.Extensions;
 
 namespace ProjectDiary.Pages;
 
@@ -17,7 +18,7 @@ public partial class DiaryText : JkwPageBase
 
     private async Task OnBlur(FocusEventArgs args)
     {
-        var text = _textField.Value;
+        var text = _textField.GetState(x => x.Value);
         await OnTextChanged(text);
     }
 

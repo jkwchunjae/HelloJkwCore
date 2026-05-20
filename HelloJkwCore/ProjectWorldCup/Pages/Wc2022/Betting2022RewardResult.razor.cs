@@ -20,7 +20,7 @@ public partial class Betting2022RewardResult : JkwPageBase
     string Round16ButtonText = "정산";
     string FinalButtonText = "정산";
 
-    MudTabs tabs;
+    int _activePanelIndex;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -47,24 +47,18 @@ public partial class Betting2022RewardResult : JkwPageBase
             knockoutMatches.First(m => m.StageId == Fifa.ThirdStageId).Winner.Team,
             knockoutMatches.First(m => m.StageId == Fifa.ThirdStageId).Looser.Team,
         };
-    }
 
-    protected override void OnPageAfterRender(bool firstRender)
-    {
-        if (firstRender)
+        if (DateTime.Now < WorldCupConst.Round8StartTime)
         {
-            if (DateTime.Now < WorldCupConst.Round8StartTime)
-            {
-                tabs.ActivatePanel(0);
-            }
-            else if (DateTime.Now < WorldCupConst.FinalStartTime)
-            {
-                tabs.ActivatePanel(1);
-            }
-            else
-            {
-                tabs.ActivatePanel(2);
-            }
+            _activePanelIndex = 0;
+        }
+        else if (DateTime.Now < WorldCupConst.FinalStartTime)
+        {
+            _activePanelIndex = 1;
+        }
+        else
+        {
+            _activePanelIndex = 2;
         }
     }
 

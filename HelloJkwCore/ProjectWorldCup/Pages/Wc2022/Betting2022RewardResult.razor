@@ -5,7 +5,7 @@
 
 <WcTitle>정산 페이지</WcTitle>
 
-<MudTabs @ref="tabs">
+<MudTabs @bind-ActivePanelIndex="_activePanelIndex">
   <MudTabPanel Text="Round.1">
     <BettingResultComponent BettingItems="@GroupStageResult"/>
     <MudButton OnClick="@(async () => await ApplyRewardGroupStage())"

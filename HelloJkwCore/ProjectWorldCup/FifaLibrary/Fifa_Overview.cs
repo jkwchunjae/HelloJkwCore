@@ -58,7 +58,7 @@ public partial class Fifa : IFifa
                 }
             });
         }
-        catch (Exception ex)
+        catch
         {
             return await GetFailoverData<List<FifaStandingData>>("StandingData.json");
         }

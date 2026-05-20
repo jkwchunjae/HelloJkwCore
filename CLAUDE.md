@@ -116,7 +116,7 @@ This prevents blocking HTTP requests and is configured in `Program.cs` with `Que
 ## Key Technologies
 
 - **Framework**: ASP.NET Core 10.0, Blazor Server (Interactive Server render mode)
-- **UI**: MudBlazor 8.13.0, TableViewer.MudBlazor 0.4.1
+- **UI**: MudBlazor 9.4.0, TableViewer.MudBlazor 0.4.1
 - **Authentication**: Google OAuth, KakaoTalk OAuth, ASP.NET Core Identity
 - **Storage**: Azure Blob Storage, Dropbox API, local file system
 - **Image Processing**: SixLabors.ImageSharp 3.1.11

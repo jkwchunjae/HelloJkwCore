@@ -17,7 +17,7 @@ public partial class ExternalLogin : ComponentBase
     [Inject] ILogger<ExternalLogin> Logger { get; set; } = null!;
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
     [SupplyParameterFromQuery] private string? RemoteError { get; set; }
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
     [SupplyParameterFromQuery] private string? Action { get; set; }
@@ -26,6 +26,7 @@ public partial class ExternalLogin : ComponentBase
     private string? message;
     private ExternalLoginInfo externalLoginInfo = default!;
 
+    private InputModel FormInput => Input ??= new();
     private string? ProviderDisplayName => externalLoginInfo.ProviderDisplayName;
 
 
@@ -83,7 +84,7 @@ public partial class ExternalLogin : ComponentBase
         // If the user does not have an account, then ask the user to create an account.
         if (externalLoginInfo.Principal.HasClaim(c => c.Type == ClaimTypes.Name))
         {
-            Input.Name = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+            FormInput.Name = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
         }
 
         await OnValidSubmitAsync();
@@ -93,7 +94,7 @@ public partial class ExternalLogin : ComponentBase
     {
         var user = CreateUser();
 
-        await UserStore.SetUserNameAsync(user, Input.Name, CancellationToken.None);
+        await UserStore.SetUserNameAsync(user, FormInput.Name, CancellationToken.None);
 
         var result = await UserManager.CreateAsync(user);
         if (result.Succeeded)

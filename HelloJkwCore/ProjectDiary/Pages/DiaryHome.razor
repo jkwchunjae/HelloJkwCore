@@ -101,13 +101,14 @@ else if (HasDiaryContent)
         @if (DiaryInfo.CanWrite(User.Id) && DiaryInfo.AllowPicture)
         {
             <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadImages" Accept=".jpg,.jpeg,.png,.gif" MaximumFileCount="3" Class="d-inline-block">
-                <ActivatorContent>
-                    <MudButton Variant="Variant.Outlined" Size="Size.Small"
+                <CustomContent Context="fileUpload">
+                    <MudButton OnClick="@(() => fileUpload.OpenFilePickerAsync())"
+                            Variant="Variant.Outlined" Size="Size.Small"
                             Color="Color.Primary"
                             StartIcon="@Icons.Material.Filled.CloudUpload">
                         사진
                     </MudButton>
-                </ActivatorContent>
+                </CustomContent>
             </MudFileUpload>
         }
 

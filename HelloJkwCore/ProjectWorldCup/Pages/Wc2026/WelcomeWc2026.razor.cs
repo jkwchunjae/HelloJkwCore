@@ -6,8 +6,6 @@ public partial class WelcomeWc2026 : JkwPageBase
     [Inject] ISnackbar Snackbar { get; set; }
 
     BettingUser BettingUser;
-    bool ReadBlog = false;
-
     protected override async Task OnPageInitializedAsync()
     {
         if (IsAuthenticated)
@@ -40,8 +38,4 @@ public partial class WelcomeWc2026 : JkwPageBase
         }
     }
 
-    private void OnClickBlogLink()
-    {
-        ReadBlog = true;
-    }
 }

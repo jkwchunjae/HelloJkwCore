@@ -19,7 +19,7 @@ public partial class Betting2026RewardResult : JkwPageBase
     string Round16ButtonText = "정산";
     string FinalButtonText = "정산";
 
-    MudTabs tabs;
+    int _activePanelIndex;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -32,28 +32,22 @@ public partial class Betting2026RewardResult : JkwPageBase
         Round32Result = await BettingRound32Service.GetAllBettingsAsync();
         Round16Result = await BettingRound16Service.GetAllBettingsAsync();
         FinalResult = await BettingFinalService.GetAllBettingsAsync();
-    }
 
-    protected override void OnPageAfterRender(bool firstRender)
-    {
-        if (firstRender)
+        if (DateTime.Now < WorldCupConst.Round16Match1StartTime)
         {
-            if (DateTime.Now < WorldCupConst.Round16Match1StartTime)
-            {
-                tabs.ActivatePanel(0);
-            }
-            else if (DateTime.Now < WorldCupConst.Round8StartTime)
-            {
-                tabs.ActivatePanel(1);
-            }
-            else if (DateTime.Now < WorldCupConst.FinalStartTime)
-            {
-                tabs.ActivatePanel(2);
-            }
-            else
-            {
-                tabs.ActivatePanel(3);
-            }
+            _activePanelIndex = 0;
+        }
+        else if (DateTime.Now < WorldCupConst.Round8StartTime)
+        {
+            _activePanelIndex = 1;
+        }
+        else if (DateTime.Now < WorldCupConst.FinalStartTime)
+        {
+            _activePanelIndex = 2;
+        }
+        else
+        {
+            _activePanelIndex = 3;
         }
     }
 
