@@ -7,6 +7,7 @@
   <Project Path="GameLibra/GameLibra.csproj" />
   <Project Path="HelloJkwCore/HelloJkwCore.csproj" />
   <Project Path="ProjectBaduk/ProjectBaduk.csproj" />
+  <Project Path="ProjectBob/ProjectBob.csproj" />
   <Project Path="ProjectDiary/ProjectDiary.csproj" />
   <Project Path="ProjectWorldCup/ProjectWorldCup.csproj" />
 </Solution>

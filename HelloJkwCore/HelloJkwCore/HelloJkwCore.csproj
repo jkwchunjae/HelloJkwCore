@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\ProjectBaduk\ProjectBaduk.csproj" />
+    <ProjectReference Include="..\ProjectBob\ProjectBob.csproj" />
     <ProjectReference Include="..\ProjectDiary\ProjectDiary.csproj" />
     <ProjectReference Include="..\GameLibra\GameLibra.csproj" />
     <ProjectReference Include="..\ProjectWorldCup\ProjectWorldCup.csproj" />

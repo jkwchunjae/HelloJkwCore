@@ -7,6 +7,7 @@ using HelloJkwCore.Tetration;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using MudBlazor.Services;
+using ProjectBob;
 
 var culture = new CultureInfo("ko-KR");
 CultureInfo.CurrentCulture = culture;
@@ -97,6 +98,7 @@ builder.Services.AddSingleton<JsonConverter>(new StringIdTextJsonConverter<UserI
 builder.Services.AddAuthorization();
 builder.Services.AddDiaryService(builder.Configuration);
 builder.Services.AddBadukService(builder.Configuration);
+builder.Services.AddBobService(builder.Configuration);
 builder.Services.AddGameLibra(builder.Configuration);
 builder.Services.AddWorldCupService(builder.Configuration);
 builder.Services.AddSingleton<TetrationGlobalService>();
@@ -129,6 +131,7 @@ app.MapRazorComponents<App>()
         typeof(ProjectDiary.DiaryService).Assembly,
         typeof(ProjectWorldCup.WorldCupService).Assembly,
         typeof(ProjectBaduk.BadukService).Assembly,
+        typeof(ProjectBob.BobService).Assembly,
         typeof(GameLibra.LibraService).Assembly,
     ])
     .AddInteractiveServerRenderMode();
