@@ -14,6 +14,7 @@ global using Xunit;
 global using FluentAssertions;
 global using Moq;
 global using ProjectBaduk;
+global using ProjectBob;
 global using ProjectDiary;
 
 namespace Tests;
