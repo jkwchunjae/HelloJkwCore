@@ -1,0 +1,108 @@
+@if (_loading)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudStack Spacing="3">
+        <MudPaper Class="pa-4" Elevation="0" Outlined="true">
+            <MudStack Spacing="2">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                    <MudText Typo="Typo.h6">냉장고 기반 메뉴</MudText>
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Refresh" OnClick="RefreshAvailabilityAsync">
+                        새로고침
+                    </MudButton>
+                </MudStack>
+
+                <MudTable Items="_availability" Dense="true" Hover="true">
+                    <HeaderContent>
+                        <MudTh>메뉴</MudTh>
+                        <MudTh>상태</MudTh>
+                        <MudTh>부족 재료</MudTh>
+                        <MudTh>최근 기록</MudTh>
+                    </HeaderContent>
+                    <RowTemplate Context="item">
+                        <MudTd DataLabel="메뉴">@item.Menu.Name</MudTd>
+                        <MudTd DataLabel="상태">
+                            <MudChip T="string" Size="Size.Small" Color="@GetAvailabilityColor(item)">@GetAvailabilityText(item)</MudChip>
+                        </MudTd>
+                        <MudTd DataLabel="부족 재료">@FormatMissingIngredients(item)</MudTd>
+                        <MudTd DataLabel="최근 기록">@FormatLastServed(item.LastServedDate)</MudTd>
+                    </RowTemplate>
+                    <NoRecordsContent>
+                        <MudText Typo="Typo.body2">등록된 메뉴 없음</MudText>
+                    </NoRecordsContent>
+                </MudTable>
+            </MudStack>
+        </MudPaper>
+
+        <MudPaper Class="pa-4" Elevation="0" Outlined="true">
+            <MudStack Spacing="3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                    <MudText Typo="Typo.h6">주간 식단</MudText>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudDatePicker @bind-Date="_weekStartDate" Label="주 시작일" />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AutoAwesome" OnClick="CreateWeeklyPlanAsync">
+                            추천 생성
+                        </MudButton>
+                    </MudStack>
+                </MudStack>
+
+                @if (_weeklyPlan != null)
+                {
+                    <MudTable Items="_weeklyPlan.Meals" Dense="true" Hover="true">
+                        <HeaderContent>
+                            <MudTh>날짜</MudTh>
+                            <MudTh>끼니</MudTh>
+                            <MudTh>추천 메뉴</MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="meal">
+                            <MudTd DataLabel="날짜">@meal.Date.ToString("MM.dd ddd")</MudTd>
+                            <MudTd DataLabel="끼니">@meal.MealType.Label()</MudTd>
+                            <MudTd DataLabel="추천 메뉴">@meal.MenuNames</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+
+                    <MudDivider />
+                    <MudText Typo="Typo.subtitle1">장보기 목록</MudText>
+                    <MudTable Items="_weeklyPlan.ShoppingItems" Dense="true" Hover="true">
+                        <HeaderContent>
+                            <MudTh>분류</MudTh>
+                            <MudTh>재료</MudTh>
+                            <MudTh>필요량</MudTh>
+                            <MudTh>구매량</MudTh>
+                            <MudTh>예상 잔여</MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="item">
+                            <MudTd DataLabel="분류">@item.Category.Label()</MudTd>
+                            <MudTd DataLabel="재료">@item.IngredientName</MudTd>
+                            <MudTd DataLabel="필요량">@item.RequiredQuantity @item.Unit</MudTd>
+                            <MudTd DataLabel="구매량">
+                                <MudNumericField T="decimal" @bind-Value="item.RecommendedQuantity" Margin="Margin.Dense" />
+                            </MudTd>
+                            <MudTd DataLabel="예상 잔여">@item.RemainingQuantity @item.Unit</MudTd>
+                        </RowTemplate>
+                        <NoRecordsContent>
+                            <MudText Typo="Typo.body2">구매할 재료 없음</MudText>
+                        </NoRecordsContent>
+                    </MudTable>
+
+                    <MudDivider />
+                    <MudText Typo="Typo.subtitle1">잔여 재료 후보</MudText>
+                    <MudStack Row="true" Spacing="1" Class="flex-wrap">
+                        @foreach (var candidate in _weeklyPlan.ExtraMenuCandidates)
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Info">@candidate.Menu.Name</MudChip>
+                        }
+                    </MudStack>
+
+                    <MudStack Row="true" Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.EventAvailable" OnClick="ConfirmWeeklyPlanAsync">
+                            캘린더 반영
+                        </MudButton>
+                    </MudStack>
+                }
+            </MudStack>
+        </MudPaper>
+    </MudStack>
+}

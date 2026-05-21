@@ -1,0 +1,82 @@
+@if (_loading)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudGrid>
+        <MudItem xs="12" lg="5">
+            <MudPaper Class="pa-4" Elevation="0" Outlined="true">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.h6">식단 기록</MudText>
+
+                    <MudDatePicker @bind-Date="_selectedDate" Label="날짜" />
+                    <MudSelect T="BobMealType" @bind-Value="_selectedMealType" Label="끼니">
+                        @foreach (var mealType in Enum.GetValues<BobMealType>())
+                        {
+                            <MudSelectItem T="BobMealType" Value="@mealType">@mealType.Label()</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Search" OnClick="LoadSelectedEntry">
+                        불러오기
+                    </MudButton>
+
+                    <MudDivider />
+                    <MudText Typo="Typo.subtitle1">메뉴</MudText>
+
+                    <MudStack Spacing="1">
+                        @foreach (var menu in _menus)
+                        {
+                            <MudCheckBox T="bool"
+                                         Value="@IsMenuSelected(menu.Id)"
+                                         ValueChanged="@((bool selected) => ToggleMenu(menu.Id, selected))"
+                                         Label="@menu.Name" />
+                        }
+                    </MudStack>
+
+                    <MudTextField @bind-Value="_memo" Label="메모" Lines="3" />
+
+                    <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" Disabled="@(_editingEntryId == Guid.Empty)" OnClick="DeleteEntryAsync">
+                            삭제
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveEntryAsync">
+                            저장
+                        </MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" lg="7">
+            <MudPaper Class="pa-4" Elevation="0" Outlined="true">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.h6">최근 기록</MudText>
+
+                    <MudTable Items="_recentEntries" Dense="true" Hover="true">
+                        <HeaderContent>
+                            <MudTh>날짜</MudTh>
+                            <MudTh>끼니</MudTh>
+                            <MudTh>메뉴</MudTh>
+                            <MudTh>메모</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="entry">
+                            <MudTd DataLabel="날짜">@entry.Date.ToString("yyyy.MM.dd")</MudTd>
+                            <MudTd DataLabel="끼니">@entry.MealType.Label()</MudTd>
+                            <MudTd DataLabel="메뉴">@FormatEntryMenus(entry)</MudTd>
+                            <MudTd DataLabel="메모">@entry.Memo</MudTd>
+                            <MudTd>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="@(() => EditEntry(entry))" />
+                            </MudTd>
+                        </RowTemplate>
+                        <NoRecordsContent>
+                            <MudText Typo="Typo.body2">등록된 기록 없음</MudText>
+                        </NoRecordsContent>
+                    </MudTable>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}

@@ -1,0 +1,123 @@
+@if (_loading)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudGrid>
+        <MudItem xs="12" lg="6">
+            <MudPaper Class="pa-4" Elevation="0" Outlined="true">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.h6">냉장고 재료</MudText>
+
+                    <MudGrid>
+                        <MudItem xs="12" sm="4">
+                            <MudTextField @bind-Value="_newFridgeItem.Name" Label="재료명" Immediate="true" />
+                        </MudItem>
+                        <MudItem xs="6" sm="3">
+                            <MudNumericField T="decimal" @bind-Value="_newFridgeItem.Quantity" Label="수량" />
+                        </MudItem>
+                        <MudItem xs="6" sm="2">
+                            <MudTextField @bind-Value="_newFridgeItem.Unit" Label="단위" Immediate="true" />
+                        </MudItem>
+                        <MudItem xs="12" sm="3">
+                            <MudButton FullWidth="true" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AddFridgeItem">
+                                추가
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+
+                    <MudTable Items="_fridgeItems" Dense="true" Hover="true">
+                        <HeaderContent>
+                            <MudTh>재료</MudTh>
+                            <MudTh>수량</MudTh>
+                            <MudTh>단위</MudTh>
+                            <MudTh>분류</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="item">
+                            <MudTd DataLabel="재료">
+                                <MudTextField @bind-Value="item.Name" Margin="Margin.Dense" />
+                            </MudTd>
+                            <MudTd DataLabel="수량">
+                                <MudNumericField T="decimal" @bind-Value="item.Quantity" Margin="Margin.Dense" />
+                            </MudTd>
+                            <MudTd DataLabel="단위">
+                                <MudTextField @bind-Value="item.Unit" Margin="Margin.Dense" />
+                            </MudTd>
+                            <MudTd DataLabel="분류">@item.Category.Label()</MudTd>
+                            <MudTd>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(() => RemoveFridgeItem(item.Id))" />
+                            </MudTd>
+                        </RowTemplate>
+                        <NoRecordsContent>
+                            <MudText Typo="Typo.body2">등록된 냉장고 재료 없음</MudText>
+                        </NoRecordsContent>
+                    </MudTable>
+
+                    <MudStack Row="true" Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveFridgeAsync">
+                            냉장고 저장
+                        </MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" lg="6">
+            <MudPaper Class="pa-4" Elevation="0" Outlined="true">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.h6">최소 구매 단위</MudText>
+
+                    <MudGrid>
+                        <MudItem xs="12" sm="4">
+                            <MudTextField @bind-Value="_editingPurchaseUnit.IngredientName" Label="재료명" Immediate="true" />
+                        </MudItem>
+                        <MudItem xs="6" sm="3">
+                            <MudNumericField T="decimal" @bind-Value="_editingPurchaseUnit.MinimumQuantity" Label="최소 수량" />
+                        </MudItem>
+                        <MudItem xs="6" sm="2">
+                            <MudTextField @bind-Value="_editingPurchaseUnit.Unit" Label="단위" Immediate="true" />
+                        </MudItem>
+                        <MudItem xs="12" sm="3">
+                            <MudSelect T="BobIngredientCategory" @bind-Value="_editingPurchaseUnit.Category" Label="분류">
+                                @foreach (var category in Enum.GetValues<BobIngredientCategory>())
+                                {
+                                    <MudSelectItem T="BobIngredientCategory" Value="@category">@category.Label()</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    </MudGrid>
+
+                    <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+                        <MudButton Variant="Variant.Outlined" OnClick="ResetPurchaseUnit">초기화</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" OnClick="SavePurchaseUnitAsync">
+                            저장
+                        </MudButton>
+                    </MudStack>
+
+                    <MudTable Items="_purchaseUnits" Dense="true" Hover="true">
+                        <HeaderContent>
+                            <MudTh>재료</MudTh>
+                            <MudTh>최소 구매</MudTh>
+                            <MudTh>분류</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="unit">
+                            <MudTd DataLabel="재료">@unit.IngredientName</MudTd>
+                            <MudTd DataLabel="최소 구매">@unit.MinimumQuantity @unit.Unit</MudTd>
+                            <MudTd DataLabel="분류">@unit.Category.Label()</MudTd>
+                            <MudTd>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="@(() => EditPurchaseUnit(unit))" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(() => DeletePurchaseUnitAsync(unit.Id))" />
+                            </MudTd>
+                        </RowTemplate>
+                        <NoRecordsContent>
+                            <MudText Typo="Typo.body2">등록된 최소 구매 단위 없음</MudText>
+                        </NoRecordsContent>
+                    </MudTable>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}

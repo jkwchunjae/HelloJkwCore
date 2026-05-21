@@ -1,0 +1,33 @@
+@if (_loading)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudPaper Class="pa-4" Elevation="0" Outlined="true">
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.h6">아이 제한 정보</MudText>
+
+            <MudGrid>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="_allergyText" Label="알레르기 재료" Lines="2" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="_blockedText" Label="아직 먹이면 안 되는 재료" Lines="2" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="_dislikedText" Label="싫어하는 재료" Lines="2" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="_favoriteMenuText" Label="잘 먹는 메뉴" Lines="2" />
+                </MudItem>
+            </MudGrid>
+
+            <MudStack Row="true" Justify="Justify.FlexEnd">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveAsync">
+                    저장
+                </MudButton>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
+}

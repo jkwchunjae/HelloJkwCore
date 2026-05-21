@@ -1,0 +1,26 @@
+@page "/bob"
+@inherits JkwPageBase
+
+<PageTitle>ProjectBob</PageTitle>
+
+<MudStack Spacing="2">
+    <MudText Typo="Typo.h4">ProjectBob</MudText>
+
+    <MudTabs Elevation="0" Rounded="true">
+        <MudTabPanel Text="메뉴" Icon="@Icons.Material.Filled.RestaurantMenu">
+            <BobMenuManager />
+        </MudTabPanel>
+        <MudTabPanel Text="냉장고" Icon="@Icons.Material.Filled.Kitchen">
+            <BobFridgePanel />
+        </MudTabPanel>
+        <MudTabPanel Text="추천" Icon="@Icons.Material.Filled.AutoAwesome">
+            <BobRecommendationPanel />
+        </MudTabPanel>
+        <MudTabPanel Text="캘린더" Icon="@Icons.Material.Filled.CalendarMonth">
+            <BobCalendarPanel />
+        </MudTabPanel>
+        <MudTabPanel Text="아이정보" Icon="@Icons.Material.Filled.ChildCare">
+            <BobChildProfilePanel />
+        </MudTabPanel>
+    </MudTabs>
+</MudStack>

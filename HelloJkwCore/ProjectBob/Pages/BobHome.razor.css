@@ -1,0 +1,12 @@
+.bob-panel {
+    border: 1px solid var(--mud-palette-lines-default);
+    border-radius: 8px;
+}
+
+.bob-table-wrap {
+    overflow-x: auto;
+}
+
+.bob-nowrap {
+    white-space: nowrap;
+}

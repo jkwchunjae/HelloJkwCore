@@ -1,0 +1,136 @@
+@if (_loading)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudGrid>
+        <MudItem xs="12" lg="5">
+            <MudPaper Class="pa-4" Elevation="0" Outlined="true">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.h6">@(_editingMenu.Id == Guid.Empty ? "메뉴 등록" : "메뉴 수정")</MudText>
+
+                    <MudTextField @bind-Value="_editingMenu.Name" Label="이름" Immediate="true" />
+
+                    <MudGrid>
+                        <MudItem xs="12" sm="6">
+                            <MudSelect T="BobMenuType" @bind-Value="_editingMenu.Type" Label="유형">
+                                @foreach (var type in Enum.GetValues<BobMenuType>())
+                                {
+                                    <MudSelectItem T="BobMenuType" Value="@type">@type.Label()</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudSelect T="BobTasteLevel" @bind-Value="_editingMenu.TasteLevel" Label="잘 먹는 정도">
+                                @foreach (var level in Enum.GetValues<BobTasteLevel>())
+                                {
+                                    <MudSelectItem T="BobTasteLevel" Value="@level">@level.Label()</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudSelect T="BobCookingDifficulty" @bind-Value="_editingMenu.Difficulty" Label="난이도">
+                                @foreach (var difficulty in Enum.GetValues<BobCookingDifficulty>())
+                                {
+                                    <MudSelectItem T="BobCookingDifficulty" Value="@difficulty">@difficulty.Label()</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudNumericField T="int" @bind-Value="_editingMenu.CookingMinutes" Label="조리 시간(분)" />
+                        </MudItem>
+                    </MudGrid>
+
+                    <MudStack Row="true" Spacing="2">
+                        <MudCheckBox T="bool" @bind-Value="_editingMenu.IsGoodForBreakfast" Label="아침 추천" />
+                        <MudCheckBox T="bool" @bind-Value="_editingMenu.CanMakeAhead" Label="미리 만들기" />
+                    </MudStack>
+
+                    <MudTextField @bind-Value="_editingMenu.Memo" Label="메모" Lines="3" />
+
+                    <MudDivider />
+                    <MudText Typo="Typo.subtitle1">재료</MudText>
+
+                    <MudGrid>
+                        <MudItem xs="12" sm="4">
+                            <MudTextField @bind-Value="_newIngredient.Name" Label="재료명" Immediate="true" />
+                        </MudItem>
+                        <MudItem xs="6" sm="2">
+                            <MudNumericField T="decimal" @bind-Value="_newIngredient.Quantity" Label="수량" />
+                        </MudItem>
+                        <MudItem xs="6" sm="2">
+                            <MudTextField @bind-Value="_newIngredient.Unit" Label="단위" Immediate="true" />
+                        </MudItem>
+                        <MudItem xs="12" sm="4">
+                            <MudTextField @bind-Value="_newSubstitutes" Label="대체 재료" Immediate="true" />
+                        </MudItem>
+                    </MudGrid>
+                    <MudStack Row="true" Spacing="2">
+                        <MudCheckBox T="bool" @bind-Value="_newIngredient.IsRequired" Label="필수" />
+                        <MudCheckBox T="bool" @bind-Value="_newIngredient.IsBasic" Label="기본 재료" />
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AddIngredient">
+                            추가
+                        </MudButton>
+                    </MudStack>
+
+                    <MudTable Items="_editingMenu.Ingredients" Dense="true" Hover="true">
+                        <HeaderContent>
+                            <MudTh>재료</MudTh>
+                            <MudTh>수량</MudTh>
+                            <MudTh>단위</MudTh>
+                            <MudTh>옵션</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="ingredient">
+                            <MudTd DataLabel="재료">@ingredient.Name</MudTd>
+                            <MudTd DataLabel="수량">@ingredient.Quantity</MudTd>
+                            <MudTd DataLabel="단위">@ingredient.Unit</MudTd>
+                            <MudTd DataLabel="옵션">@FormatIngredientFlags(ingredient)</MudTd>
+                            <MudTd>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(() => RemoveIngredient(ingredient.Id))" />
+                            </MudTd>
+                        </RowTemplate>
+                        <NoRecordsContent>
+                            <MudText Typo="Typo.body2">등록된 재료 없음</MudText>
+                        </NoRecordsContent>
+                    </MudTable>
+
+                    <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+                        <MudButton Variant="Variant.Outlined" OnClick="ResetEditor">초기화</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveMenuAsync">
+                            저장
+                        </MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" lg="7">
+            <MudPaper Class="pa-4" Elevation="0" Outlined="true">
+                <MudTable Items="_menus" Dense="true" Hover="true">
+                    <HeaderContent>
+                        <MudTh>이름</MudTh>
+                        <MudTh>유형</MudTh>
+                        <MudTh>선호</MudTh>
+                        <MudTh>재료</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate Context="menu">
+                        <MudTd DataLabel="이름">@menu.Name</MudTd>
+                        <MudTd DataLabel="유형">@menu.Type.Label()</MudTd>
+                        <MudTd DataLabel="선호">@menu.TasteLevel.Label()</MudTd>
+                        <MudTd DataLabel="재료">@string.Join(", ", menu.Ingredients.Select(x => x.Name))</MudTd>
+                        <MudTd>
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="@(() => EditMenu(menu))" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="@(() => DeleteMenuAsync(menu.Id))" />
+                        </MudTd>
+                    </RowTemplate>
+                    <NoRecordsContent>
+                        <MudText Typo="Typo.body2">등록된 메뉴 없음</MudText>
+                    </NoRecordsContent>
+                </MudTable>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
