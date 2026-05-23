@@ -21,6 +21,11 @@
   <ItemGroup>
     <TypeScriptFiles Include="ProjectWorldCup/*.ts" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\Wc2026\HelpMeAI_prompt.txt" />
+  </ItemGroup>
+
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Copy SourceFiles="@(TypeScriptFiles)" DestinationFolder="wwwroot" />
   </Target>

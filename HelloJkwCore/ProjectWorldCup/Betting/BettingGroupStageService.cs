@@ -130,6 +130,56 @@ public class BettingGroupStageService : IBettingGroupStageService
         return bettingItem;
     }
 
+    public async Task<WcBettingItem<GroupTeam>> PickTeamsAsync(BettingUser user, IEnumerable<GroupTeam> teams)
+    {
+        if (user.JoinStatus != UserJoinStatus.Joined)
+        {
+            throw new NotJoinedException();
+        }
+        if (!(user.JoinedBetting?.Contains(BettingType.GroupStage) ?? false))
+        {
+            throw new NotJoinedException();
+        }
+
+        var picks = teams?.ToList() ?? new List<GroupTeam>();
+        var groups = await _getGroupsFunc(_worldCupService);
+        var allTeams = groups
+            .SelectMany(group => group.Teams)
+            .ToList();
+
+        if (picks.Count != 24)
+        {
+            throw new InvalidOperationException("조별리그는 총 24팀을 선택해야 합니다.");
+        }
+        if (picks.Distinct().Count() != picks.Count)
+        {
+            throw new InvalidOperationException("중복 선택된 팀이 있습니다.");
+        }
+        if (picks.Any(pick => allTeams.Empty(team => team == pick)))
+        {
+            throw new InvalidOperationException("조별리그에 없는 팀이 포함되어 있습니다.");
+        }
+        if (groups.Any(group => group.Teams.Count(team => picks.Any(pick => pick == team)) != 2))
+        {
+            throw new InvalidOperationException("각 조에서 정확히 2팀씩 선택해야 합니다.");
+        }
+
+        var bettingItem = await GetBettingAsync(user)
+            ?? new WcBettingItem<GroupTeam>
+            {
+                User = user.AppUser,
+            };
+
+        bettingItem.IsRandom = false;
+        bettingItem.Picked = picks
+            .OrderBy(x => x.GroupName)
+            .ThenBy(x => x.Placement)
+            .ToList();
+
+        await SaveBettingItemAsync(bettingItem);
+        return bettingItem;
+    }
+
     public async Task<WcBettingItem<GroupTeam>> UnpickTeamAsync(BettingUser user, GroupTeam team)
     {
         var bettingItem = await GetBettingAsync(user);

@@ -6,6 +6,7 @@ public interface IBettingGroupStageService
     ValueTask<List<WcBettingItem<GroupTeam>>> GetAllBettingsAsync();
     Task<WcBettingItem<GroupTeam>> GetBettingAsync(BettingUser user);
     Task<WcBettingItem<GroupTeam>> PickTeamAsync(BettingUser user, GroupTeam team);
+    Task<WcBettingItem<GroupTeam>> PickTeamsAsync(BettingUser user, IEnumerable<GroupTeam> teams);
     Task<WcBettingItem<GroupTeam>> UnpickTeamAsync(BettingUser user, GroupTeam team);
     Task<WcBettingItem<GroupTeam>> PickRandomAsync(BettingUser user);
 }
