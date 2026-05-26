@@ -7,10 +7,7 @@
 <div class="description">
 @if (IsAuthenticated)
 {
-  @if (BettingUser?.JoinStatus == UserJoinStatus.Joined)
-  {
-  }
-  else if (BettingUser?.JoinStatus == UserJoinStatus.None)
+  @if (BettingUser?.JoinStatus == UserJoinStatus.Joined || BettingUser?.JoinStatus == UserJoinStatus.None)
   {
     <div>
         <span>환영합니다!</span>
