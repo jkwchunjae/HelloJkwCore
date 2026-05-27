@@ -33,11 +33,14 @@
         </span>
     </div>
 
+    @if (BettingUser?.JoinStatus == UserJoinStatus.None)
+    {
     <div>
         <OneClickButton OnClick="@(() => JoinAsync())" Variant="Variant.Filled" Color="Color.Success" >
             승인 요청 (위에 QR코드로 입금을 해주세요.)
         </OneClickButton>
     </div>
+    }
   }
   else if (BettingUser?.JoinStatus == UserJoinStatus.Requested)
   {
