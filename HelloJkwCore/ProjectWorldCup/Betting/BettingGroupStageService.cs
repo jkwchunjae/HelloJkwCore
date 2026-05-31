@@ -123,7 +123,7 @@ public class BettingGroupStageService : IBettingGroupStageService
             bettingItem.Picked = bettingItem.Picked
                 .Append(team)
                 .OrderBy(x => x.GroupName)
-                .ThenBy(x => x.Placement)
+                .ThenBy(x => x.Name)
                 .ToList();
             await SaveBettingItemAsync(bettingItem);
         }
@@ -178,7 +178,7 @@ public class BettingGroupStageService : IBettingGroupStageService
         bettingItem.IsRandom = false;
         bettingItem.Picked = picks
             .OrderBy(x => x.GroupName)
-            .ThenBy(x => x.Placement)
+            .ThenBy(x => x.Name)
             .ToList();
 
         await SaveBettingItemAsync(bettingItem);
@@ -196,7 +196,7 @@ public class BettingGroupStageService : IBettingGroupStageService
             bettingItem.Picked = bettingItem.Picked
                 .Where(picked => picked != team)
                 .OrderBy(x => x.GroupName)
-                .ThenBy(x => x.Placement)
+                .ThenBy(x => x.Name)
                 .ToList();
             await SaveBettingItemAsync(bettingItem);
         }
@@ -248,7 +248,7 @@ public class BettingGroupStageService : IBettingGroupStageService
         bettingItem.IsRandom = true;
         bettingItem.Picked = pickTeam
           .OrderBy(x => x.GroupName)
-          .ThenBy(x => x.Placement)
+          .ThenBy(x => x.Name)
           .ToList();
         await SaveBettingItemAsync(bettingItem);
         return bettingItem;
@@ -263,13 +263,11 @@ public class BettingGroupStageService : IBettingGroupStageService
         {
             team.GroupName = groupTeams.FirstOrDefault(team => team.Name == team.Name)?.GroupName
                 ?? throw new InvalidOperationException($"없는 팀!! {team.Name}");
-            team.Placement = groupTeams.FirstOrDefault(team => team.Name == team.Name)?.Placement
-                ?? throw new InvalidOperationException($"없는 팀!! {team.Name}");
         }
 
         bettingItem.Picked = bettingItem.Picked
             .OrderBy(x => x.GroupName)
-            .ThenBy(x => x.Placement)
+            .ThenBy(x => x.Name)
             .ToList();
 
         var after = bettingItem.Picked.Select(x => x.Name).StringJoin(", ");
