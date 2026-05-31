@@ -261,7 +261,7 @@ public class BettingGroupStageService : IBettingGroupStageService
 
         foreach (var team in bettingItem.Picked)
         {
-            team.GroupName = groupTeams.FirstOrDefault(team => team.Name == team.Name)?.GroupName
+            team.GroupName = groupTeams.FirstOrDefault(gteam => gteam.Name == team.Name)?.GroupName
                 ?? throw new InvalidOperationException($"없는 팀!! {team.Name}");
         }
 
