@@ -253,4 +253,30 @@ public class BettingGroupStageService : IBettingGroupStageService
         await SaveBettingItemAsync(bettingItem);
         return bettingItem;
     }
+
+    public async Task UpdateTeamOrderAsync(List<WcGroup> groups, WcBettingItem<GroupTeam> bettingItem)
+    {
+        var groupTeams = groups.SelectMany(x => x.Teams).ToArray();
+        var before = bettingItem.Picked.Select(x => x.Name).StringJoin(",");
+
+        foreach (var team in bettingItem.Picked)
+        {
+            team.GroupName = groupTeams.FirstOrDefault(team => team.Name == team.Name)?.GroupName
+                ?? throw new InvalidOperationException($"없는 팀!! {team.Name}");
+            team.Placement = groupTeams.FirstOrDefault(team => team.Name == team.Name)?.Placement
+                ?? throw new InvalidOperationException($"없는 팀!! {team.Name}");
+        }
+
+        bettingItem.Picked = bettingItem.Picked
+            .OrderBy(x => x.GroupName)
+            .ThenBy(x => x.Placement)
+            .ToList();
+
+        var after = bettingItem.Picked.Select(x => x.Name).StringJoin(", ");
+
+        if (before != after)
+        {
+            await SaveBettingItemAsync(bettingItem);
+        }
+    }
 }

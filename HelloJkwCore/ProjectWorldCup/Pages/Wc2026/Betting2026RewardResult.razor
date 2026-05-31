@@ -13,6 +13,11 @@
       >
       @GroupStageButtonText
     </MudButton>
+    <MudButton OnClick="@(async () => await ReorderGroupStageTeam())"
+        Variant="Variant.Outlined"
+    >
+      팀 순서 갱신
+    </MudButton>
   </MudTabPanel>
   <MudTabPanel Text="Round.2">
     <BettingResultComponent BettingItems="@Round32Result"/>

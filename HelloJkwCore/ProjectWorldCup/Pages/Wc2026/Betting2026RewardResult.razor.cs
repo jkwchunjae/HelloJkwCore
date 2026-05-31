@@ -9,6 +9,7 @@ public partial class Betting2026RewardResult : JkwPageBase
     [Inject(Key = "2026")] IBettingFinalService BettingFinalService { get; set; }
     [Inject] IWorldCupService WorldCupService { get; set; }
 
+
     List<WcBettingItem<GroupTeam>> GroupStageResult;
     List<WcBettingItem<Team>> Round32Result;
     List<WcBettingItem<Team>> Round16Result;
@@ -115,5 +116,20 @@ public partial class Betting2026RewardResult : JkwPageBase
             rewardType: HistoryType.Reward4,
             buttonTextAction: (text) => FinalButtonText = text
         );
+    }
+
+    private async Task ReorderGroupStageTeam()
+    {
+        var groups = await WorldCupService.GetGroupsFromStandingAsync();
+
+        var results = await BettingGroupStageService.GetAllBettingsAsync();
+
+        foreach (var bettingItem in results)
+        {
+            if (BettingGroupStageService is BettingGroupStageService service)
+            {
+                await service.UpdateTeamOrderAsync(groups, bettingItem);
+            }
+        }
     }
 }
