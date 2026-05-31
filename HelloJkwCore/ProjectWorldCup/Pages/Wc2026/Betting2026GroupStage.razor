@@ -10,11 +10,6 @@
     string commonButtonStyle = "padding: 6px; border-radius: 6px; box-shadow: var(--mud-elevation-1); display: block; text-align: start; width: 100%; text-transform: initial;";
 }
 
-@if (BettingItems?.Any() ?? false)
-{
-    @* <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent> *@
-}
-
 @if (!IsAuthenticated)
 {
   <MudLink Href="/login?ReturnUrl=/worldcup/2026/betting/group-stage" Underline="Underline.Always">
@@ -99,6 +94,11 @@ else
 @if (TimeOver)
 {
     <div>선택 시간이 끝났습니다.</div>
+
+    @if (BettingItems?.Any() ?? false)
+    {
+        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
+    }
 }
 else
 {
@@ -111,7 +111,6 @@ else
     <span class="group-stage-remain-time"></span>
     <span>남았습니다.</span>
 </div>
-}
 
 <div>
     @foreach (var group in Groups)
@@ -153,6 +152,7 @@ else
         </div>
     }
 </div>
+}
 
 @if (!TimeOver)
 {
