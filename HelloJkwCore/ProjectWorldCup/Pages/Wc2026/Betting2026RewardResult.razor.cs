@@ -124,12 +124,11 @@ public partial class Betting2026RewardResult : JkwPageBase
 
         var results = await BettingGroupStageService.GetAllBettingsAsync();
 
-        foreach (var bettingItem in results)
+        if (BettingGroupStageService is BettingGroupStageService service)
         {
-            if (BettingGroupStageService is BettingGroupStageService service)
-            {
-                await service.UpdateTeamOrderAsync(groups, bettingItem);
-            }
+            await results
+                .Select(bettingItem => service.UpdateTeamOrderAsync(groups, bettingItem))
+                .WhenAll();
         }
     }
 }
