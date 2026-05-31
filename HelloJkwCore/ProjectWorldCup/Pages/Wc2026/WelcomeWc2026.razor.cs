@@ -14,7 +14,7 @@ public partial class WelcomeWc2026 : JkwPageBase
 
             if (BettingUser?.JoinStatus == UserJoinStatus.Joined)
             {
-                // Navi.NavigateTo("/worldcup/2026/betting");
+                Navi.NavigateTo("/worldcup/2026/betting");
             }
         }
     }
