@@ -288,6 +288,12 @@ public partial class Betting2026GroupStage : JkwPageBase
             return;
         }
 
+        if (BettingItem?.IsRandom ?? false)
+        {
+            SetAiSubmitMessage("랜덤 선택 이후에는 다시 선택 할 수 없습니다.", Severity.Error);
+            return;
+        }
+
         IsSubmittingAiResult = true;
         try
         {

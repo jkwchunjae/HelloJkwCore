@@ -121,7 +121,7 @@ public class BettingGroupStageService : IBettingGroupStageService
         if (bettingItem.Picked.Empty(picked => picked == team))
         {
             bettingItem.Picked = bettingItem.Picked
-                .Concat(new[] { team })
+                .Append(team)
                 .OrderBy(x => x.GroupName)
                 .ThenBy(x => x.Placement)
                 .ToList();
@@ -169,6 +169,11 @@ public class BettingGroupStageService : IBettingGroupStageService
             {
                 User = user.AppUser,
             };
+
+        if (bettingItem.IsRandom)
+        {
+            throw new InvalidOperationException("랜덤 선택 이후에는 다시 선택 할 수 없습니다.");
+        }
 
         bettingItem.IsRandom = false;
         bettingItem.Picked = picks
