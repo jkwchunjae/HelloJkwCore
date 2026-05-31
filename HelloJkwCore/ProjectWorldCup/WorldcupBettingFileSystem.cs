@@ -13,7 +13,7 @@ internal class WorldcupBettingFileSystem<TWcBettingItem, TTeam>(IFileSystem fs, 
     private Func<Paths, string> BettingItemDirectoryPath(BettingType bettingType)
         => path => path[_pathKey] + $"/{bettingType}";
 
-    public async Task WriteBettingItemAsync(BettingType bettingType, IWcBettingItem<Team> bettingItem)
+    public async Task WriteBettingItemAsync(BettingType bettingType, IWcBettingItem<TTeam> bettingItem)
     {
         await _fs.WriteJsonAsync(BettingItemPath(bettingType, bettingItem.User.Id), bettingItem);
     }

@@ -69,13 +69,16 @@ public class WcGroup : League<GroupMatch, GroupTeam>
             .Select(team =>
             {
                 var fifaStanding = fifaStandings.FirstOrDefault(s => s.Team.IdCountry == team.Id);
-                var standing = new TeamStanding<GroupTeam> { Team = team };
-                standing.Rank = fifaStanding?.Position ?? default;
-                standing.Won = fifaStanding?.Won ?? default;
-                standing.Drawn = fifaStanding?.Drawn ?? default;
-                standing.Lost = fifaStanding?.Lost ?? default;
-                standing.Gf = fifaStanding?.For ?? default;
-                standing.Ga = fifaStanding?.Against ?? default;
+                var standing = new TeamStanding<GroupTeam>
+                {
+                    Team = team,
+                    Rank = fifaStanding?.Position ?? default,
+                    Won = fifaStanding?.Won ?? default,
+                    Drawn = fifaStanding?.Drawn ?? default,
+                    Lost = fifaStanding?.Lost ?? default,
+                    Gf = fifaStanding?.For ?? default,
+                    Ga = fifaStanding?.Against ?? default
+                };
                 return standing;
             })
             .OrderBy(s => s.Rank)
