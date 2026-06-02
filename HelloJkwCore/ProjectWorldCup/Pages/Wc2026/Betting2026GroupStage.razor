@@ -22,7 +22,7 @@ else if ((BettingUser?.JoinStatus ?? UserJoinStatus.None)== UserJoinStatus.None)
     &lt;&lt; 참가신청 하러 가기 &gt;&gt;
   </MudLink>
 }
-else
+else if (!TimeOver)
 {
   <MudText Typo="Typo.body1" Class="d-block">저장 버튼은 없습니다. 자동 저장 됩니다.</MudText>
   <MudText Typo="Typo.body1" Class="d-block">잘 할 것 같은 팀을 선택하기만 하면 됩니다. 한 조에 두 팀을 고르세요.</MudText>
@@ -93,8 +93,6 @@ else
 
 @if (TimeOver)
 {
-    <div>선택 시간이 끝났습니다.</div>
-
     @if (BettingItems?.Any() ?? false)
     {
         <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
