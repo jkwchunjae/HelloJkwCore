@@ -74,6 +74,16 @@ public partial class UserPage : JkwPageBase
             RedirectManager.RedirectToCurrentPageWithStatus("Error: Could not load external login info.", HttpContext!);
         }
 
+        var existingUser = await UserManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+        if (existingUser is not null && existingUser != User)
+        {
+            var deleteResult = await UserManager.DeleteAsync(existingUser);
+            if (!deleteResult.Succeeded)
+            {
+                RedirectManager.RedirectToCurrentPageWithStatus("Error: The existing account could not be deleted.", HttpContext!);
+            }
+        }
+
         var result = await UserManager.AddLoginAsync(User, info);
         if (!result.Succeeded)
         {
