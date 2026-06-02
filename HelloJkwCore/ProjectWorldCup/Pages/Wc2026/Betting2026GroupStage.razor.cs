@@ -298,7 +298,7 @@ public partial class Betting2026GroupStage : JkwPageBase
         try
         {
             var bettingUser = await EnsureGroupStageBettingJoinedAsync();
-            BettingItem = await GroupStageService.PickTeamsAsync(bettingUser, pickedTeams);
+            BettingItem = await GroupStageService.PickTeamsWithAiAsync(bettingUser, pickedTeams);
 
             ShowAiHelperDialog = false;
             AiResultInput = "";

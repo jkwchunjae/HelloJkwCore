@@ -28,6 +28,11 @@
             badges.Add("랜덤");
             badgeColor = Color.Info;
           }
+          if (context.IsAi)
+          {
+            badges.Add("AI");
+            badgeColor = Color.Error;
+          }
         }
         @if (badges.Any())
         {

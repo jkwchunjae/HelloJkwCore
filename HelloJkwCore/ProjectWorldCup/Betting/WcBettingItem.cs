@@ -8,6 +8,7 @@ public interface IWcBettingItem<out TTeam> : IBettingResultItem where TTeam : IT
     IEnumerable<TTeam> Success { get; }
     IEnumerable<TTeam> Fail { get; }
     bool IsRandom { get; }
+    bool IsAi { get; }
 }
 
 public class WcBettingItem<TTeam> : IWcBettingItem<TTeam> where TTeam : ITeam
@@ -15,6 +16,7 @@ public class WcBettingItem<TTeam> : IWcBettingItem<TTeam> where TTeam : ITeam
     public AppUser User { get; set; }
     public int Reward { get; set; }
     public bool IsRandom { get; set; }
+    public bool IsAi { get; set; }
     public int Rank { get; set; }
 
     [JsonIgnore]

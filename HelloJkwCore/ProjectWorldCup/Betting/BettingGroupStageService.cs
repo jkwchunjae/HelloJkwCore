@@ -125,12 +125,13 @@ public class BettingGroupStageService : IBettingGroupStageService
                 .OrderBy(x => x.GroupName)
                 .ThenBy(x => x.Name)
                 .ToList();
+            bettingItem.IsAi = false;
             await SaveBettingItemAsync(bettingItem);
         }
         return bettingItem;
     }
 
-    public async Task<WcBettingItem<GroupTeam>> PickTeamsAsync(BettingUser user, IEnumerable<GroupTeam> teams)
+    public async Task<WcBettingItem<GroupTeam>> PickTeamsWithAiAsync(BettingUser user, IEnumerable<GroupTeam> teams)
     {
         if (user.JoinStatus != UserJoinStatus.Joined)
         {
@@ -176,6 +177,7 @@ public class BettingGroupStageService : IBettingGroupStageService
         }
 
         bettingItem.IsRandom = false;
+        bettingItem.IsAi = true;
         bettingItem.Picked = picks
             .OrderBy(x => x.GroupName)
             .ThenBy(x => x.Name)
@@ -198,6 +200,7 @@ public class BettingGroupStageService : IBettingGroupStageService
                 .OrderBy(x => x.GroupName)
                 .ThenBy(x => x.Name)
                 .ToList();
+            bettingItem.IsAi = false;
             await SaveBettingItemAsync(bettingItem);
         }
         return bettingItem;
@@ -246,6 +249,7 @@ public class BettingGroupStageService : IBettingGroupStageService
             .ToList();
 
         bettingItem.IsRandom = true;
+        bettingItem.IsAi = false;
         bettingItem.Picked = pickTeam
           .OrderBy(x => x.GroupName)
           .ThenBy(x => x.Name)
