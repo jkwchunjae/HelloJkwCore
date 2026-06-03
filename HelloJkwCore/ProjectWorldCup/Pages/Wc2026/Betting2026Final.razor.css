@@ -11,9 +11,52 @@
     min-width: 0;
 }
 
+.ai-helper-actions {
+    margin-bottom: 12px;
+}
+
+.ai-helper-description {
+    margin-bottom: 12px;
+}
+
+.ai-helper-label {
+    margin: 14px 0 6px;
+}
+
+.ai-helper-textarea textarea {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.ai-helper-copy-button {
+    margin-top: 8px;
+}
+
+.ai-helper-alert {
+    margin-top: 12px;
+}
+
+.ai-helper-dialog-content {
+    padding-top: 8px;
+}
+
+.ai-helper-dialog-actions {
+    gap: 8px;
+}
+
 /* 모바일: 세로 나열 */
 @media (max-width: 600px) {
     .match-row {
         flex-direction: column;
+    }
+
+    .ai-helper-dialog-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .ai-helper-dialog-actions .mud-button-root {
+        width: 100%;
     }
 }
