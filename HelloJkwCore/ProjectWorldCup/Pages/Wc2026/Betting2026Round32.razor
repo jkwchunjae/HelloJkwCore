@@ -31,6 +31,85 @@
 
 <WcTitle>2라운드: 16강 진출팀 맞추기</WcTitle>
 
+@if (IsAuthenticated && TimeOver.All(timeOver => timeOver == false) && !(BettingItem?.IsRandom ?? false))
+{
+  <div class="ai-helper-actions">
+    <MudButton OnClick="@OpenAiHelperDialog"
+               Variant="Variant.Outlined"
+               Color="Color.Error"
+               Disabled="@(!CanUseAiHelper || IsSubmittingAiResult)"
+               StartIcon="@Icons.Material.Filled.AutoAwesome">
+      @if (AllMatchesAreSetted)
+      {
+        <span>AI야 도와줘!</span>
+      }
+      else
+      {
+        <span>AI야 도와줘: 32강 진출팀이 모두 확정 된 후에 사용가능 합니다.&nbsp;</span>
+        <span class="remain-random-time"></span><span>남았습니다.</span>
+      }
+    </MudButton>
+  </div>
+}
+
+@if (ShowAiHelperDialog)
+{
+  <MudDialog @bind-Visible="@ShowAiHelperDialog" Options="@AiHelperDialogOptions" ContentClass="ai-helper-dialog-content" ActionsClass="ai-helper-dialog-actions">
+    <TitleContent>
+      <MudText Typo="Typo.h6">
+        <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Class="mr-2" />
+        AI야 도와줘!
+      </MudText>
+    </TitleContent>
+    <DialogContent>
+      <MudText Typo="Typo.body2" Class="ai-helper-description">
+        아래 프롬프트를 복사해서 AI에게 물어보세요. 그리고 결과를 그대로 복사해서 아래 결과 제출란에 제출하세요.
+      </MudText>
+
+      <MudText Typo="Typo.subtitle2" Class="ai-helper-label">프롬프트</MudText>
+      <MudTextField T="string"
+                    Value="@AiHelpPrompt"
+                    ReadOnly="true"
+                    Lines="12"
+                    Variant="Variant.Outlined"
+                    FullWidth="true"
+                    Class="ai-helper-textarea" />
+      <MudButton OnClick="@CopyAiPromptAsync"
+                 Variant="Variant.Outlined"
+                 Color="Color.Primary"
+                 StartIcon="@Icons.Material.Filled.ContentCopy"
+                 Disabled="@IsSubmittingAiResult"
+                 Class="ai-helper-copy-button">
+        프롬프트 복사
+      </MudButton>
+
+      <MudText Typo="Typo.subtitle2" Class="ai-helper-label">결과 제출란</MudText>
+      <MudTextField T="string"
+                    @bind-Value="@AiResultInput"
+                    Placeholder="{ &quot;1경기&quot;: &quot;국가1&quot;, &quot;2경기&quot;: &quot;국가2&quot;, ... }"
+                    Lines="12"
+                    Variant="Variant.Outlined"
+                    FullWidth="true"
+                    Class="ai-helper-textarea" />
+
+      @if (!string.IsNullOrWhiteSpace(AiSubmitMessage))
+      {
+        <MudAlert Severity="@AiSubmitSeverity" Class="ai-helper-alert">
+          @AiSubmitMessage
+        </MudAlert>
+      }
+    </DialogContent>
+    <DialogActions>
+      <MudButton OnClick="@CloseAiHelperDialog" Variant="Variant.Text" Disabled="@IsSubmittingAiResult">
+        닫기
+      </MudButton>
+      <MudButton OnClick="@SubmitAiResultAsync" Variant="Variant.Filled" Color="Color.Primary" Disabled="@IsSubmittingAiResult">
+        @(IsSubmittingAiResult ? "저장 중..." : "결과 제출")
+      </MudButton>
+    </DialogActions>
+  </MudDialog>
+}
+
 @if (TimeOver.All(x => x))
 {
     <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>

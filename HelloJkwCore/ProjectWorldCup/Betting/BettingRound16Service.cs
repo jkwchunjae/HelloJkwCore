@@ -134,8 +134,76 @@ public class BettingRound16Service : IBettingRound16Service
                 .Concat(new[] { team })
                 .OrderBy(picked => matches.FirstOrDefault(m => m.HomeTeam == picked || m.AwayTeam == picked).Time)
                 .ToList();
+            bettingItem.IsAi = false;
             await SaveBettingItemAsync(bettingItem);
         }
+        return bettingItem;
+    }
+
+    public async Task<WcBettingItem<Team>> PickTeamsWithAiAsync(BettingUser user, IEnumerable<Team> teams)
+    {
+        if (user.JoinStatus != UserJoinStatus.Joined)
+        {
+            throw new NotJoinedException();
+        }
+        if (!(user.JoinedBetting?.Contains(_bettingType) ?? false))
+        {
+            throw new NotJoinedException();
+        }
+
+        var picks = teams?.ToList() ?? new List<Team>();
+        var matches = await _getMatchesFunc(_worldCupService) ?? new List<KnMatch>();
+
+        if (!matches.Any())
+        {
+            throw new InvalidOperationException("매치 정보를 불러오지 못했습니다.");
+        }
+        if (picks.Any(pick => pick == null))
+        {
+            throw new InvalidOperationException("선택된 팀 목록에 빈 팀이 있습니다.");
+        }
+        if (picks.Any(pick => string.IsNullOrWhiteSpace(pick.Id)))
+        {
+            throw new InvalidOperationException("선택된 팀 목록에 확정되지 않은 팀이 있습니다.");
+        }
+        if (picks.Count != matches.Count)
+        {
+            throw new InvalidOperationException($"총 {matches.Count}팀을 선택해야 합니다.");
+        }
+        if (matches.Any(match =>
+            match.HomeTeam == null || match.AwayTeam == null
+            || string.IsNullOrWhiteSpace(match.HomeTeam.Id)
+            || string.IsNullOrWhiteSpace(match.AwayTeam.Id)))
+        {
+            throw new InvalidOperationException("아직 모든 매치의 팀이 확정되지 않았습니다.");
+        }
+        if (picks.Distinct().Count() != picks.Count)
+        {
+            throw new InvalidOperationException("중복 선택된 팀이 있습니다.");
+        }
+        if (matches.Any(match => picks.Count(pick => match.HomeTeam == pick || match.AwayTeam == pick) != 1))
+        {
+            throw new InvalidOperationException("각 경기에서 정확히 1팀씩 선택해야 합니다.");
+        }
+
+        var bettingItem = await GetBettingAsync(user)
+            ?? new WcBettingItem<Team>
+            {
+                User = user.AppUser,
+            };
+
+        if (bettingItem.IsRandom)
+        {
+            throw new InvalidOperationException("랜덤 선택 이후에는 다시 선택 할 수 없습니다.");
+        }
+
+        bettingItem.IsRandom = false;
+        bettingItem.IsAi = true;
+        bettingItem.Picked = picks
+            .OrderBy(picked => matches.FindIndex(match => match.HomeTeam == picked || match.AwayTeam == picked))
+            .ToList();
+
+        await SaveBettingItemAsync(bettingItem);
         return bettingItem;
     }
 
@@ -178,6 +246,7 @@ public class BettingRound16Service : IBettingRound16Service
             .ToList();
 
         bettingItem.IsRandom = true;
+        bettingItem.IsAi = false;
         bettingItem.Picked = pickTeam;
         await SaveBettingItemAsync(bettingItem);
         return bettingItem;
