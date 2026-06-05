@@ -55,10 +55,10 @@
       <MudTd>@user.AppUser.UserName</MudTd>
       <MudTd>@user.AppUser.NickName</MudTd>
       <MudTd>
-        @GetValue(user, HistoryType.Reward1)
+        @GetValue(user, HistoryType.Reward1, BettingType.GroupStage)
       </MudTd>
       <MudTd>
-        @GetValue(user, HistoryType.Reward2)
+        @GetValue(user, HistoryType.Reward2, BettingType.Round32)
       </MudTd>
       <MudTd>
         @GetValue(user, HistoryType.Reward3)

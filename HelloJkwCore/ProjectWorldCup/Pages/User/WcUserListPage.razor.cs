@@ -76,6 +76,32 @@ public partial class WcUserListPage : JkwPageBase
         return value?.ToString("#,0") ?? "-";
     }
 
+    private string GetValue(BettingUser user, HistoryType historyType, BettingType bettingType)
+    {
+        var value = user.BettingHistories
+            ?.FirstOrDefault(x => x.Type == historyType)
+            ?.Value;
+
+        if (value.HasValue)
+        {
+            return value.Value.ToString("#,0");
+        }
+
+        if (HasAnyJoinedUserBetting(bettingType) && !(user.JoinedBetting?.Contains(bettingType) ?? false))
+        {
+            return "불참";
+        }
+
+        return "-";
+    }
+
+    private bool HasAnyJoinedUserBetting(BettingType bettingType)
+    {
+        return Users
+            .Where(user => user.JoinStatus == UserJoinStatus.Joined)
+            .Any(user => user.JoinedBetting?.Contains(bettingType) ?? false);
+    }
+
     private void ClearCache()
     {
         if (User?.HasRole(UserRole.Admin) ?? false)
