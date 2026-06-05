@@ -7,7 +7,7 @@
 <div class="wc-users">
 @if (Users.Any(user => user.JoinStatus == UserJoinStatus.Requested))
 {
-  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Requested)">
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Requested)" Dense="true">
     <HeaderContent>
       <MudTh>ID</MudTh>
       <MudTh>이름</MudTh>
@@ -20,11 +20,11 @@
       <MudTd>@context.AppUser.UserName</MudTd>
       <MudTd>@context.AppUser.NickName</MudTd>
       <MudTd>@context.LastJoinRequestTime().UtcToKst()</MudTd>
-      <MudTd>
-        <MudButton OnClick="@(() => ApproveAsync(context, 30000))" Variant="Variant.Outlined">
+      <MudTd Class="wc-action-cell">
+        <MudButton OnClick="@(() => ApproveAsync(context, 30000))" Variant="Variant.Outlined" Size="Size.Small" Class="wc-action-button">
           승인
         </MudButton>
-        <MudButton OnClick="@(() => RejectAsync(context))" Variant="Variant.Outlined">
+        <MudButton OnClick="@(() => RejectAsync(context))" Variant="Variant.Outlined" Size="Size.Small" Class="wc-action-button">
           거절
         </MudButton>
       </MudTd>
@@ -34,8 +34,9 @@
 
 @if (Users.Any())
 {
-  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Joined)" Context="user">
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Joined)" Context="user" Dense="true">
     <HeaderContent>
+      <MudTh>No.</MudTh>
       <MudTh>ID</MudTh>
       <MudTh>이름</MudTh>
       <MudTh>닉네임</MudTh>
@@ -47,6 +48,7 @@
       <MudTh>Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
+      <MudTd>@GetUserNo(user)</MudTd>
       <MudTd>
         <MudLink Href="@($"/worldcup/user/{user.AppUser.Id}".Replace(".", "_"))" Underline="Underline.Always">
           @user.AppUser.Id
@@ -69,11 +71,11 @@
       <MudTd>
         @user.BettingHistories.Where(x => x.Type == HistoryType.None || x.Type == HistoryType.ChangeNickname).Sum(x => x.Value)
       </MudTd>
-      <MudTd>
-        <MudButton OnClick="@(() => RequestAsync(user))" Variant="Variant.Outlined">
+      <MudTd Class="wc-action-cell">
+        <MudButton OnClick="@(() => RequestAsync(user))" Variant="Variant.Outlined" Size="Size.Small" Class="wc-action-button">
           신청
         </MudButton>
-        <MudButton OnClick="@(() => RejectAsync(user))" Variant="Variant.Outlined">
+        <MudButton OnClick="@(() => RejectAsync(user))" Variant="Variant.Outlined" Size="Size.Small" Class="wc-action-button">
           거절
         </MudButton>
       </MudTd>
@@ -83,7 +85,7 @@
 
 @if (Users.Any(user => user.JoinStatus == UserJoinStatus.Rejected || user.JoinStatus == UserJoinStatus.None))
 {
-  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Rejected || user.JoinStatus == UserJoinStatus.None)">
+  <MudTable T="BettingUser" Items="Users.Where(user => user.JoinStatus == UserJoinStatus.Rejected || user.JoinStatus == UserJoinStatus.None)" Dense="true">
     <HeaderContent>
       <MudTh>ID</MudTh>
       <MudTh>이름</MudTh>
@@ -98,11 +100,11 @@
       <MudTd>@context.AppUser.NickName</MudTd>
       <MudTd>@context.JoinStatus.ToString()</MudTd>
       <MudTd>@context.LastJoinRequestTime()</MudTd>
-      <MudTd>
-        <MudButton OnClick="@(() => RequestAsync(context))" Variant="Variant.Outlined">
+      <MudTd Class="wc-action-cell">
+        <MudButton OnClick="@(() => RequestAsync(context))" Variant="Variant.Outlined" Size="Size.Small" Class="wc-action-button">
           신청
         </MudButton>
-        <MudButton OnClick="@(() => ApproveAsync(context, 30000))" Variant="Variant.Outlined">
+        <MudButton OnClick="@(() => ApproveAsync(context, 30000))" Variant="Variant.Outlined" Size="Size.Small" Class="wc-action-button">
           승인
         </MudButton>
       </MudTd>
@@ -122,5 +124,18 @@
 <style>
   div.wc-users div.mud-table {
       margin-bottom: 20px;
+  }
+
+  div.wc-users td.wc-action-cell {
+      padding-top: 0;
+      padding-bottom: 0;
+      white-space: nowrap;
+  }
+
+  div.wc-users .wc-action-button {
+      min-width: 46px;
+      height: 28px;
+      margin: 0 2px;
+      padding: 0 8px;
   }
 </style>

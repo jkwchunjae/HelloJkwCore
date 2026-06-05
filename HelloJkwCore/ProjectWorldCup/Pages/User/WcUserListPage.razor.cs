@@ -76,6 +76,21 @@ public partial class WcUserListPage : JkwPageBase
         return value?.ToString("#,0") ?? "-";
     }
 
+    private int GetUserNo(BettingUser targetUser)
+    {
+        var no = 0;
+        foreach (var user in Users.Where(user => user.JoinStatus == UserJoinStatus.Joined))
+        {
+            no++;
+            if (Equals(user.AppUser?.Id, targetUser.AppUser?.Id))
+            {
+                return no;
+            }
+        }
+
+        return 0;
+    }
+
     private string GetValue(BettingUser user, HistoryType historyType, BettingType bettingType)
     {
         var value = user.BettingHistories
