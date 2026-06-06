@@ -1,0 +1,70 @@
+.fifa-api-alert {
+    margin-bottom: 12px;
+}
+
+.fifa-api-tab-panel {
+    padding-top: 12px;
+}
+
+.fifa-api-count {
+    margin-bottom: 8px;
+    color: var(--mud-palette-text-secondary);
+    font-size: 14px;
+}
+
+.fifa-api-table {
+    width: 100%;
+}
+
+::deep .fifa-api-table .mud-table-container {
+    border: 1px solid var(--mud-palette-lines-default);
+    border-radius: 4px;
+}
+
+::deep .fifa-api-table thead th {
+    background-color: var(--mud-palette-surface);
+    z-index: 2;
+}
+
+.fifa-api-team {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    font-weight: 600;
+}
+
+.fifa-api-team img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    flex: 0 0 auto;
+}
+
+.fifa-api-team.placeholder {
+    color: var(--mud-palette-text-secondary);
+    font-weight: 500;
+}
+
+.fifa-api-result {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 76px;
+    font-weight: 700;
+}
+
+.fifa-api-result.scheduled {
+    color: var(--mud-palette-text-secondary);
+    font-weight: 500;
+}
+
+@media (max-width: 600px) {
+    .fifa-api-team {
+        justify-content: flex-end;
+    }
+
+    .fifa-api-result {
+        justify-content: flex-end;
+    }
+}

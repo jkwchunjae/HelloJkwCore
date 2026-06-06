@@ -49,23 +49,23 @@ public class FifaGroupMatchesApiTest
     }
 
     [Fact]
-    public async Task FifaGroupStageMatches_should_return_48_matches()
+    public async Task FifaGroupStageMatches_should_return_72_matches()
     {
         IFifa fifa = new Fifa(_fsService, _serializer, _option);
 
         var matches = await fifa.GetGroupStageMatchesAsync();
 
-        Assert.Equal(48, matches.Count());
+        Assert.Equal(72, matches.Count());
     }
 
     [Fact]
-    public async Task FifaKnockoutStageMatches_should_return_16_matches()
+    public async Task FifaKnockoutStageMatches_should_return_32_matches()
     {
         IFifa fifa = new Fifa(_fsService, _serializer, _option);
 
         var matches = await fifa.GetKnockoutStageMatchesAsync();
 
-        Assert.Equal(16, matches.Count());
+        Assert.Equal(32, matches.Count());
     }
 
     [Fact(Skip = "API가 바뀌었음.")]

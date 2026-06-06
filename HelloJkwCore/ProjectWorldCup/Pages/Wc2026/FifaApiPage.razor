@@ -1,0 +1,67 @@
+@inherits JkwPageBase
+@layout WcLayout
+@page "/worldcup/2026/fifa-api"
+
+<WcTitle>FIFA API</WcTitle>
+
+@if (Error != null)
+{
+  <MudAlert Severity="Severity.Error" Class="fifa-api-alert">
+    FIFA API 데이터를 불러오지 못했습니다. @Error.Message
+  </MudAlert>
+}
+else
+{
+  <MudTabs Rounded="true" @bind-ActivePanelIndex="ActivePanelIndex">
+    @foreach (var stage in Stages)
+    {
+      <MudTabPanel Text="@stage.Title">
+        <div class="fifa-api-tab-panel">
+          <div class="fifa-api-count">@stage.Rows.Count 경기</div>
+          <MudTable T="FifaApiMatchRow"
+                    Items="@stage.Rows"
+                    Dense="true"
+                    Hover="true"
+                    FixedHeader="true"
+                    Height="calc(100vh - 285px)"
+                    Class="fifa-api-table">
+            <HeaderContent>
+              <MudTh>No.</MudTh>
+              <MudTh>시간 (KST)</MudTh>
+              <MudTh>단계/조</MudTh>
+              <MudTh>홈</MudTh>
+              <MudTh>결과</MudTh>
+              <MudTh>원정</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+              <MudTd DataLabel="No.">@context.Number</MudTd>
+              <MudTd DataLabel="시간 (KST)">@context.KickoffKst.ToString("yyyy-MM-dd HH:mm")</MudTd>
+              <MudTd DataLabel="단계/조">@context.StageGroupText</MudTd>
+              <MudTd DataLabel="홈">
+                <div class="fifa-api-team @(context.HomeIsPlaceholder ? "placeholder" : "")">
+                  @if (!string.IsNullOrWhiteSpace(context.HomeFlag))
+                  {
+                    <img src="@context.HomeFlag" alt="" />
+                  }
+                  <span>@context.HomeName</span>
+                </div>
+              </MudTd>
+              <MudTd DataLabel="결과">
+                <span class="fifa-api-result @(context.ResultText == "예정" ? "scheduled" : "")">@context.ResultText</span>
+              </MudTd>
+              <MudTd DataLabel="원정">
+                <div class="fifa-api-team @(context.AwayIsPlaceholder ? "placeholder" : "")">
+                  @if (!string.IsNullOrWhiteSpace(context.AwayFlag))
+                  {
+                    <img src="@context.AwayFlag" alt="" />
+                  }
+                  <span>@context.AwayName</span>
+                </div>
+              </MudTd>
+            </RowTemplate>
+          </MudTable>
+        </div>
+      </MudTabPanel>
+    }
+  </MudTabs>
+}

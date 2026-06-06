@@ -36,7 +36,7 @@ public partial class Fifa : IFifa
 
         return await GetFromCacheOrAsync<List<FifaMatchData>>(cacheKey, async () =>
         {
-            var url = $"https://api.fifa.com/api/v3/calendar/matches?idcompetition=17&idSeason={SeasonId}&idStage={stageId}&language=ko";
+            var url = $"https://api.fifa.com/api/v3/calendar/matches?idcompetition=17&idSeason={SeasonId}&idStage={stageId}&language=ko&count=100";
             var res = await _httpClient.GetAsync(url);
             var text = await res.Content.ReadAsStringAsync();
             text = text.Replace("{format}", "sq").Replace("{size}", "2");
