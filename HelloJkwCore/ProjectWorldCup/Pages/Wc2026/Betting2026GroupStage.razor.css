@@ -62,22 +62,56 @@
     gap: 8px;
 }
 
-/* 모바일: 세로 나열 */
 @media (max-width: 600px) {
     .group-row {
-        flex-direction: column;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+        padding-bottom: 6px;
     }
 
     .group-name {
-        justify-content: flex-start;
+        min-width: 34px;
+        font-size: 18px;
+        justify-content: center;
     }
 
     .group-teams {
-        width: 100%;
+        flex: 1;
+        min-width: 0;
     }
 
     .teams-row {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 4px;
+    }
+
+    .team {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    ::deep .team-inner {
+        min-width: 0;
+        height: 42px;
+        padding: 4px !important;
+        text-align: center !important;
+    }
+
+    ::deep .team-inner .mud-button-label {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .team-img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+    }
+
+    .team-name {
+        display: none;
     }
 
     .ai-helper-dialog-actions {
