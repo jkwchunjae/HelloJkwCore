@@ -23,21 +23,22 @@ else
                     Dense="true"
                     Hover="true"
                     FixedHeader="true"
+                    Breakpoint="Breakpoint.None"
                     Height="calc(100vh - 285px)"
                     Class="fifa-api-table">
             <HeaderContent>
-              <MudTh>No.</MudTh>
-              <MudTh>시간 (KST)</MudTh>
-              <MudTh>단계/조</MudTh>
-              <MudTh>홈</MudTh>
-              <MudTh>결과</MudTh>
-              <MudTh>원정</MudTh>
+              <MudTh Class="fifa-api-number-cell">No.</MudTh>
+              <MudTh Class="fifa-api-time-cell">시간 (KST)</MudTh>
+              <MudTh Class="fifa-api-stage-cell">단계/조</MudTh>
+              <MudTh Class="fifa-api-team-cell">홈</MudTh>
+              <MudTh Class="fifa-api-result-cell">결과</MudTh>
+              <MudTh Class="fifa-api-team-cell">원정</MudTh>
             </HeaderContent>
             <RowTemplate>
-              <MudTd DataLabel="No.">@context.Number</MudTd>
-              <MudTd DataLabel="시간 (KST)">@context.KickoffKst.ToString("yyyy-MM-dd HH:mm")</MudTd>
-              <MudTd DataLabel="단계/조">@context.StageGroupText</MudTd>
-              <MudTd DataLabel="홈">
+              <MudTd DataLabel="No." Class="fifa-api-number-cell">@context.Number</MudTd>
+              <MudTd DataLabel="시간 (KST)" Class="fifa-api-time-cell">@context.KickoffKst.ToString("yyyy-MM-dd HH:mm")</MudTd>
+              <MudTd DataLabel="단계/조" Class="fifa-api-stage-cell">@context.StageGroupText</MudTd>
+              <MudTd DataLabel="홈" Class="fifa-api-team-cell">
                 <div class="fifa-api-team @(context.HomeIsPlaceholder ? "placeholder" : "")">
                   @if (!string.IsNullOrWhiteSpace(context.HomeFlag))
                   {
@@ -46,10 +47,10 @@ else
                   <span>@context.HomeName</span>
                 </div>
               </MudTd>
-              <MudTd DataLabel="결과">
+              <MudTd DataLabel="결과" Class="fifa-api-result-cell">
                 <span class="fifa-api-result @(context.ResultText == "예정" ? "scheduled" : "")">@context.ResultText</span>
               </MudTd>
-              <MudTd DataLabel="원정">
+              <MudTd DataLabel="원정" Class="fifa-api-team-cell">
                 <div class="fifa-api-team @(context.AwayIsPlaceholder ? "placeholder" : "")">
                   @if (!string.IsNullOrWhiteSpace(context.AwayFlag))
                   {
