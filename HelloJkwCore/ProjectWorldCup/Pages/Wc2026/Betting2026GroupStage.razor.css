@@ -94,7 +94,7 @@
 
     ::deep .team-inner {
         min-width: 0;
-        height: 42px;
+        min-height: 42px;
         padding: 4px !important;
         text-align: center !important;
     }
@@ -102,12 +102,6 @@
     ::deep .team-inner .mud-button-label {
         justify-content: center;
         width: 100%;
-    }
-
-    .team-img {
-        width: 28px;
-        height: 28px;
-        object-fit: contain;
     }
 
     .team-name {
