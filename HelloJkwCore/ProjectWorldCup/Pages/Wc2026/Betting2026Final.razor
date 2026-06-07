@@ -136,13 +136,25 @@
 
             <div class="match-row">
                 <div class="team">
-                    <MudButton Class="team-inner" Style="@homeButtonStyle" OnClick="(async () => await PickTeamAsync(stageId, matchId, matchData?.HomeTeam))" Disabled="@(homeType == TeamButtonType.Disabled)">
+                    <MudButton Class="@($"team-inner{(homeType == TeamButtonType.Picked ? " team-picked" : "")}")" Style="@homeButtonStyle" OnClick="(async () => await PickTeamAsync(stageId, matchId, matchData?.HomeTeam))" Disabled="@(homeType == TeamButtonType.Disabled)">
+                        @if (homeType == TeamButtonType.Picked)
+                        {
+                            <span class="team-picked-badge" aria-hidden="true">
+                                <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" />
+                            </span>
+                        }
                         <img class="team-img" src="@matchData?.HomeTeam?.Flag" />
                         <span class="team-name">@matchData?.HomeTeam?.Name</span>
                     </MudButton>
                 </div>
                 <div class="team">
-                    <MudButton Class="team-inner" Style="@awayButtonStyle" OnClick="(async () => await PickTeamAsync(stageId, matchId, matchData?.AwayTeam))" Disabled="@(awayType == TeamButtonType.Disabled)">
+                    <MudButton Class="@($"team-inner{(awayType == TeamButtonType.Picked ? " team-picked" : "")}")" Style="@awayButtonStyle" OnClick="(async () => await PickTeamAsync(stageId, matchId, matchData?.AwayTeam))" Disabled="@(awayType == TeamButtonType.Disabled)">
+                        @if (awayType == TeamButtonType.Picked)
+                        {
+                            <span class="team-picked-badge" aria-hidden="true">
+                                <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" />
+                            </span>
+                        }
                         <img class="team-img" src="@matchData?.AwayTeam?.Flag" />
                         <span class="team-name">@matchData?.AwayTeam?.Name</span>
                     </MudButton>

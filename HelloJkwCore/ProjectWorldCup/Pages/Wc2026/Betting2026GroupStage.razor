@@ -131,7 +131,10 @@ else
 else if (GetButtonType(team) == TeamButtonType.Picked)
 {
     var buttonStyle = $"{commonButtonStyle} color: white; background: #56042C";
-    <MudButton Class="team-inner" Style="@buttonStyle" OnClick="(async () => await UnpickTeam(team))">
+    <MudButton Class="team-inner team-picked" Style="@buttonStyle" OnClick="(async () => await UnpickTeam(team))">
+        <span class="team-picked-badge" aria-hidden="true">
+            <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" />
+        </span>
         <img class="team-img" src="@team?.Flag"/>
         <span class="team-name">@team?.Name</span>
     </MudButton>

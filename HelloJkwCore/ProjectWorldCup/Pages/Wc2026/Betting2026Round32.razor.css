@@ -26,6 +26,33 @@
     min-width: 0;
 }
 
+::deep .team-picked {
+    position: relative;
+    overflow: visible;
+}
+
+::deep .team-picked-badge {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: #16a34a;
+    color: #fff;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+}
+
+::deep .team-picked-badge .mud-icon-root {
+    font-size: 18px;
+}
+
 .ai-helper-actions {
     margin-bottom: 12px;
 }
@@ -87,6 +114,17 @@
         min-height: 42px;
         padding: 4px !important;
         text-align: center !important;
+    }
+
+    ::deep .team-picked-badge {
+        top: -7px;
+        left: -7px;
+        width: 22px;
+        height: 22px;
+    }
+
+    ::deep .team-picked-badge .mud-icon-root {
+        font-size: 16px;
     }
 
     ::deep .team-inner .mud-button-label {
