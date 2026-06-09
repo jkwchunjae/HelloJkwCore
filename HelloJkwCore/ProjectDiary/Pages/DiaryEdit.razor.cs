@@ -20,6 +20,7 @@ public partial class DiaryEdit : JkwPageBase, IDisposable
 
     private bool ContentHasError { get; set; }
     private bool HasError { get; set; }
+    private readonly Dictionary<int, DiaryText> _diaryTexts = new();
 
     public void Dispose()
     {
@@ -121,6 +122,8 @@ public partial class DiaryEdit : JkwPageBase, IDisposable
         if (!IsAuthenticated)
             return;
 
+        await FlushDiaryTextsAsync();
+
         if (DiaryInfo == null)
             return;
 
@@ -157,5 +160,19 @@ public partial class DiaryEdit : JkwPageBase, IDisposable
     void OnContentErrorStateChanged(bool error)
     {
         ContentHasError = error;
+    }
+
+    private async Task FlushDiaryTextsAsync()
+    {
+        if (!(View?.DiaryContents?.Any() ?? false))
+            return;
+
+        foreach (var content in View.DiaryContents)
+        {
+            if (_diaryTexts.TryGetValue(content.Index, out var diaryText) && diaryText != null)
+            {
+                await diaryText.FlushAsync();
+            }
+        }
     }
 }

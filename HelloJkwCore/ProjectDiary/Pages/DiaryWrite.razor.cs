@@ -14,6 +14,7 @@ public partial class DiaryWrite : JkwPageBase
     private string Content { get; set; }
     private bool ContentHasError { get; set; }
     private bool HasError { get; set; }
+    private DiaryText _diaryText;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -60,6 +61,11 @@ public partial class DiaryWrite : JkwPageBase
     {
         if (!IsAuthenticated)
             return;
+
+        if (_diaryText != null)
+        {
+            await _diaryText.FlushAsync();
+        }
 
         if (DiaryInfo == null)
             return;

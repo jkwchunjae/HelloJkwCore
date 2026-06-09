@@ -13,12 +13,35 @@ public partial class DiaryText : JkwPageBase
 
     private bool WarningTooLongWord { get; set; }
     private string LongWord { get; set; }
+    private string _currentText = string.Empty;
+    private bool _hasCurrentText;
 
     MudTextField<string> _textField;
 
     private async Task OnBlur(FocusEventArgs args)
     {
-        var text = _textField.GetState(x => x.Value);
+        await FlushAsync();
+    }
+
+    private void OnInternalInputChanged()
+    {
+        _currentText = _textField.GetState(x => x.Text)
+                       ?? _textField.GetState(x => x.Value)
+                       ?? string.Empty;
+        _hasCurrentText = true;
+    }
+
+    public async Task FlushAsync()
+    {
+        var text = _hasCurrentText ? _currentText : null;
+
+        if (text == null)
+        {
+            text = _textField.GetState(x => x.Text)
+                   ?? _textField.GetState(x => x.Value)
+                   ?? string.Empty;
+        }
+
         await OnTextChanged(text);
     }
 
@@ -26,6 +49,8 @@ public partial class DiaryText : JkwPageBase
     {
         text ??= string.Empty;
         Text = text;
+        _currentText = text;
+        _hasCurrentText = true;
 
         await TextChanged.InvokeAsync(text);
 

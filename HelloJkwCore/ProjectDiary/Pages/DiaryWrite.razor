@@ -16,7 +16,7 @@
                 {
                     <MudAlert Severity="Severity.Error">뭔가 에러가 발생했습니다.</MudAlert>
                 }
-                <DiaryText Text="@Content" TextChanged="OnContentChanged" AutoFocus="true" ErrorStateChanged="OnContentErrorStateChanged"/>
+                <DiaryText @ref="_diaryText" Text="@Content" TextChanged="OnContentChanged" AutoFocus="true" ErrorStateChanged="OnContentErrorStateChanged"/>
             </MudItem>
             <MudItem xs="12" sm="12" md="12" lg="12">
                 <OneClickButton OnClick="(async () => await WriteDiaryAsync())"

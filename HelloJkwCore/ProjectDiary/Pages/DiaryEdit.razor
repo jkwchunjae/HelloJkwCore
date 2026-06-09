@@ -20,7 +20,7 @@
         @foreach (var content in View.DiaryContents)
         {
         <MudItem Style="width: 100%">
-            <DiaryText @bind-Text="@content.Text" AutoFocus="true" ErrorStateChanged="OnContentErrorStateChanged" />
+            <DiaryText @ref="_diaryTexts[content.Index]" @bind-Text="@content.Text" AutoFocus="true" ErrorStateChanged="OnContentErrorStateChanged" />
         </MudItem>
         }
     </MudGrid>
