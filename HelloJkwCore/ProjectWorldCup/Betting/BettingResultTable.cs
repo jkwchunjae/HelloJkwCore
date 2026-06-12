@@ -34,7 +34,10 @@ public class BettingResultTable<T> : IBettingResultTable<T>
             item.Rank = list.Count(x => x.Reward > item.Reward) + 1;
         }
 
-        _items = list.OrderByDescending(x => x.Reward).ToList();
+        _items = list
+            .OrderByDescending(x => x.Score)
+            .ThenByDescending(x => x.Reward)
+            .ToList();
     }
 
     public IEnumerator<T> GetEnumerator()
