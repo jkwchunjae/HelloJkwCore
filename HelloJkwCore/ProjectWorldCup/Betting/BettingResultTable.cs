@@ -31,7 +31,7 @@ public class BettingResultTable<T> : IBettingResultTable<T>
         }
         foreach (var item in list)
         {
-            item.Rank = list.Count(x => x.Reward > item.Reward) + 1;
+            item.Rank = list.Count(x => x.Score > item.Score) + 1;
         }
 
         _items = list
