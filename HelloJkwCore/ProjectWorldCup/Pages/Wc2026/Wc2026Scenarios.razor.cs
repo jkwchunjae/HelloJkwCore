@@ -12,10 +12,12 @@ public partial class Wc2026Scenarios : JkwPageBase
     private List<Wc2026ScenarioGroup> Groups { get; set; } = new();
     private List<WcBettingItem<GroupTeam>> BettingItems { get; set; } = new();
     private List<IWcBettingItem<ITeam>> SimulatedBettingRows { get; set; } = new();
+    private Wc2026Round32SimulationResult Round32Simulation { get; set; } = Wc2026Round32SimulationResult.Blocked("");
     private Exception Error { get; set; }
     private Exception SaveError { get; set; }
     private Exception SimulationError { get; set; }
     private bool SimulationPanelOpen { get; set; } = true;
+    private bool Round32SimulationPanelOpen { get; set; }
     private bool SimulationLoaded { get; set; }
 
     protected override async Task OnPageInitializedAsync()
@@ -79,6 +81,7 @@ public partial class Wc2026Scenarios : JkwPageBase
             SimulationError = ex;
             BettingItems = new();
             SimulatedBettingRows = new();
+            RefreshRound32Simulation();
         }
         finally
         {
@@ -103,11 +106,30 @@ public partial class Wc2026Scenarios : JkwPageBase
     {
         var simulationItems = Wc2026ScenarioBettingSimulator.CreateSimulationItems(BettingItems, Groups);
         SimulatedBettingRows = new BettingResultTable<IWcBettingItem<ITeam>>(simulationItems).ToList();
+        RefreshRound32Simulation();
+    }
+
+    private void RefreshRound32Simulation()
+    {
+        Round32Simulation = Wc2026ScenarioRound32Simulator.CreateSimulation(Groups);
     }
 
     private void ToggleSimulationPanel()
     {
         SimulationPanelOpen = !SimulationPanelOpen;
+        if (SimulationPanelOpen)
+        {
+            Round32SimulationPanelOpen = false;
+        }
+    }
+
+    private void ToggleRound32SimulationPanel()
+    {
+        Round32SimulationPanelOpen = !Round32SimulationPanelOpen;
+        if (Round32SimulationPanelOpen)
+        {
+            SimulationPanelOpen = false;
+        }
     }
 
     private async Task SaveScenarioAsync()

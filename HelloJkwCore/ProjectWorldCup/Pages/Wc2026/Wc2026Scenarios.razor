@@ -43,6 +43,13 @@ else
                      aria-label="1라운드 내기 시뮬레이션 열기/닫기"
                      OnClick="@ToggleSimulationPanel" />
     </MudTooltip>
+    <MudTooltip Text="32강 토너먼트 시뮬레이션 열기/닫기">
+      <MudIconButton Icon="@(Round32SimulationPanelOpen ? Icons.Material.Filled.Close : Icons.Material.Filled.AccountTree)"
+                     Color="Color.Secondary"
+                     Variant="Variant.Filled"
+                     aria-label="32강 토너먼트 시뮬레이션 열기/닫기"
+                     OnClick="@ToggleRound32SimulationPanel" />
+    </MudTooltip>
   </div>
 
   @if (SimulationPanelOpen)
@@ -126,6 +133,83 @@ else
             </MudTd>
             <MudTd DataLabel="점수" Class="scenario-sim-score-cell">@context.Score</MudTd>
             <MudTd DataLabel="상금" Class="scenario-sim-reward-cell">@context.Reward</MudTd>
+          </RowTemplate>
+        </MudTable>
+      }
+    </aside>
+  }
+
+  @if (Round32SimulationPanelOpen)
+  {
+    <aside class="scenario-simulation-panel scenario-round32-panel" aria-label="32강 토너먼트 시뮬레이션">
+      <div class="scenario-simulation-header">
+        <div>
+          <div class="scenario-simulation-title">32강 토너먼트 시뮬레이션</div>
+          <div class="scenario-simulation-subtitle">
+            @if (Round32Simulation.CanSimulate)
+            {
+              <span>3위팀 조합 #@Round32Simulation.CombinationNumber · 현재 경우의 수 기준</span>
+            }
+            else
+            {
+              <span>현재 경우의 수 기준</span>
+            }
+          </div>
+        </div>
+        <MudIconButton Icon="@Icons.Material.Filled.Close"
+                       Size="Size.Small"
+                       aria-label="32강 시뮬레이션 접기"
+                       OnClick="@ToggleRound32SimulationPanel" />
+      </div>
+
+      @if (!Round32Simulation.CanSimulate)
+      {
+        <MudAlert Severity="Severity.Info" Dense="true">
+          @Round32Simulation.BlockReason
+        </MudAlert>
+      }
+      else
+      {
+        <div class="scenario-round32-meta">
+          <span>3위 진출 조</span>
+          <strong>@string.Join(", ", Round32Simulation.ThirdPlaceGroups)</strong>
+        </div>
+        <MudTable T="Wc2026Round32SimulationMatch"
+                  Items="@Round32Simulation.Matches"
+                  Dense="true"
+                  Hover="true"
+                  Breakpoint="Breakpoint.None"
+                  Elevation="0"
+                  Class="scenario-table scenario-round32-table">
+          <HeaderContent>
+            <MudTh Class="scenario-round32-match-cell">경기</MudTh>
+            <MudTh>홈</MudTh>
+            <MudTh Class="scenario-round32-vs-cell"></MudTh>
+            <MudTh>원정</MudTh>
+          </HeaderContent>
+          <RowTemplate>
+            <MudTd DataLabel="경기" Class="scenario-round32-match-cell">@context.MatchNumber</MudTd>
+            <MudTd DataLabel="홈">
+              <div class="scenario-team scenario-round32-team">
+                <span class="scenario-round32-slot">@context.HomeSlot</span>
+                @if (!string.IsNullOrWhiteSpace(context.HomeTeam?.Flag))
+                {
+                  <img src="@context.HomeTeam.Flag" alt="" />
+                }
+                <span>@context.HomeTeam?.Name</span>
+              </div>
+            </MudTd>
+            <MudTd Class="scenario-round32-vs-cell">vs</MudTd>
+            <MudTd DataLabel="원정">
+              <div class="scenario-team scenario-round32-team">
+                <span class="scenario-round32-slot">@context.AwaySlot</span>
+                @if (!string.IsNullOrWhiteSpace(context.AwayTeam?.Flag))
+                {
+                  <img src="@context.AwayTeam.Flag" alt="" />
+                }
+                <span>@context.AwayTeam?.Name</span>
+              </div>
+            </MudTd>
           </RowTemplate>
         </MudTable>
       }

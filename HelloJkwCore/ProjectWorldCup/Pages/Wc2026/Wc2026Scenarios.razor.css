@@ -14,6 +14,8 @@
     top: 96px;
     right: 16px;
     z-index: 1300;
+    display: flex;
+    gap: 8px;
     box-shadow: var(--mud-elevation-6);
 }
 
@@ -59,9 +61,58 @@
     min-height: 0;
 }
 
-::deep .scenario-simulation-table .mud-table-container {
+::deep .scenario-simulation-table .mud-table-container,
+::deep .scenario-round32-table .mud-table-container {
     max-height: calc(100vh - 260px);
     overflow: auto;
+}
+
+.scenario-round32-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--mud-palette-text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.scenario-round32-meta strong {
+    color: var(--mud-palette-text-primary);
+    font-weight: 900;
+}
+
+.scenario-round32-match-cell {
+    width: 44px;
+    min-width: 44px;
+    text-align: center;
+    font-weight: 800;
+}
+
+.scenario-round32-vs-cell {
+    width: 34px;
+    min-width: 34px;
+    text-align: center;
+    color: var(--mud-palette-text-secondary);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.scenario-round32-team {
+    gap: 5px;
+}
+
+.scenario-round32-slot {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 20px;
+    border: 1px solid var(--mud-palette-lines-inputs);
+    border-radius: 4px;
+    color: var(--mud-palette-text-secondary);
+    font-size: 11px;
+    font-weight: 900;
 }
 
 .scenario-sim-rank-cell {
@@ -309,6 +360,10 @@
         max-height: calc(62vh - 94px);
     }
 
+    ::deep .scenario-round32-table .mud-table-container {
+        max-height: calc(62vh - 124px);
+    }
+
     .scenario-group {
         padding-bottom: 12px;
     }
@@ -338,6 +393,13 @@
 
     .scenario-team span {
         display: none;
+    }
+
+    .scenario-round32-slot {
+        display: inline-flex !important;
+        min-width: 28px;
+        height: 18px;
+        font-size: 10px;
     }
 
     .scenario-score-header,
