@@ -16,6 +16,11 @@
     width: 100%;
 }
 
+::deep .fifa-api-table .fifa-api-mobile-stage-cell,
+::deep .fifa-api-table .fifa-api-mobile-time-cell {
+    display: none;
+}
+
 ::deep .fifa-api-table .mud-table-container {
     border: 1px solid var(--mud-palette-lines-default);
     border-radius: 4px;
@@ -71,19 +76,28 @@
         vertical-align: middle;
     }
 
-    ::deep .fifa-api-table .fifa-api-time-cell {
+    ::deep .fifa-api-table .fifa-api-number-cell,
+    ::deep .fifa-api-table .fifa-api-time-cell,
+    ::deep .fifa-api-table .fifa-api-stage-cell {
         display: none;
     }
 
-    ::deep .fifa-api-table .fifa-api-number-cell {
-        width: 34px;
-        min-width: 34px;
-        text-align: center;
+    ::deep .fifa-api-table .fifa-api-mobile-stage-cell,
+    ::deep .fifa-api-table .fifa-api-mobile-time-cell {
+        display: table-cell;
     }
 
-    ::deep .fifa-api-table .fifa-api-stage-cell {
-        width: 64px;
-        min-width: 54px;
+    ::deep .fifa-api-table .fifa-api-mobile-stage-cell {
+        width: 38px;
+        min-width: 38px;
+        font-weight: 700;
+    }
+
+    ::deep .fifa-api-table .fifa-api-mobile-time-cell {
+        width: 70px;
+        min-width: 70px;
+        color: var(--mud-palette-text-secondary);
+        font-size: 13px;
     }
 
     ::deep .fifa-api-table .fifa-api-team-cell {

@@ -28,7 +28,9 @@ else
                     Class="fifa-api-table">
             <HeaderContent>
               <MudTh Class="fifa-api-number-cell">No.</MudTh>
+              <MudTh Class="fifa-api-mobile-stage-cell">조</MudTh>
               <MudTh Class="fifa-api-time-cell">시간 (KST)</MudTh>
+              <MudTh Class="fifa-api-mobile-time-cell">시간</MudTh>
               <MudTh Class="fifa-api-stage-cell">단계/조</MudTh>
               <MudTh Class="fifa-api-team-cell">홈</MudTh>
               <MudTh Class="fifa-api-result-cell">결과</MudTh>
@@ -36,7 +38,9 @@ else
             </HeaderContent>
             <RowTemplate>
               <MudTd DataLabel="No." Class="fifa-api-number-cell">@context.Number</MudTd>
+              <MudTd DataLabel="조" Class="fifa-api-mobile-stage-cell">@context.StageGroupText</MudTd>
               <MudTd DataLabel="시간 (KST)" Class="fifa-api-time-cell">@context.KickoffKst.ToString("yyyy-MM-dd HH:mm")</MudTd>
+              <MudTd DataLabel="시간" Class="fifa-api-mobile-time-cell">@context.ShortKickoffText</MudTd>
               <MudTd DataLabel="단계/조" Class="fifa-api-stage-cell">@context.StageGroupText</MudTd>
               <MudTd DataLabel="홈" Class="fifa-api-team-cell">
                 <div class="fifa-api-team @(context.HomeIsPlaceholder ? "placeholder" : "")">

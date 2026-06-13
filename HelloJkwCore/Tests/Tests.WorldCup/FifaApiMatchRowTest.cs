@@ -25,6 +25,7 @@ public class FifaApiMatchRowTest
         Assert.Equal("예정", row.ResultText);
         Assert.Equal("A조", row.StageGroupText);
         Assert.Equal(new DateTime(2026, 6, 12, 4, 0, 0, DateTimeKind.Utc), row.KickoffKst);
+        Assert.Equal("12일 4시", row.ShortKickoffText);
     }
 
     [Fact]

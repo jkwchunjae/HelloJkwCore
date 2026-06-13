@@ -5,6 +5,7 @@ public class FifaApiMatchRow
     public int Number { get; private set; }
     public int? FifaMatchNumber { get; init; }
     public DateTime KickoffKst { get; init; }
+    public string ShortKickoffText => KickoffKst.ToString("d일 H시");
     public string StageGroupText { get; init; } = string.Empty;
     public string HomeName { get; init; } = string.Empty;
     public string HomeFlag { get; init; }
