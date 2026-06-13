@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectWorldCup.Pages.Wc2026;
 
 namespace ProjectWorldCup;
 
@@ -15,6 +16,7 @@ public static class WorldCupServiceHelper
         services.AddSingleton<IWorldCupService, WorldCupService>();
         services.AddSingleton<IBettingService, BettingService>();
         services.AddSingleton<IFifa, Fifa>();
+        services.AddSingleton<IWc2026ScenarioStorage, Wc2026ScenarioStorage>();
         services.AddKeyedSingleton<IBettingResultService, BettingResultService2022>("2022");
         services.AddKeyedSingleton<IBettingResultService, BettingResultService2026>("2026");
 

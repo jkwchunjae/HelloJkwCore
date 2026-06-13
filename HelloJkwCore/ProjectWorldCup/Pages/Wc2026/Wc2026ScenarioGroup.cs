@@ -20,6 +20,29 @@ public class Wc2026ScenarioGroup
             .ToList();
     }
 
+    public static void ApplySavedScenario(
+        IEnumerable<Wc2026ScenarioGroup> groups,
+        Wc2026ScenarioSaveData savedScenario)
+    {
+        if (groups == null || savedScenario == null)
+        {
+            return;
+        }
+
+        var savedMatches = savedScenario.Matches ?? new List<Wc2026ScenarioSavedMatch>();
+        foreach (var match in groups.SelectMany(group => group.RemainingMatches))
+        {
+            var savedMatch = FindSavedMatch(savedMatches, match);
+            if (savedMatch == null)
+            {
+                continue;
+            }
+
+            match.SetHomeScore(savedMatch.HomeScore);
+            match.SetAwayScore(savedMatch.AwayScore);
+        }
+    }
+
     private static Wc2026ScenarioGroup CreateGroup(IGrouping<string, FifaMatchData> groupMatches)
     {
         var matches = groupMatches
@@ -38,7 +61,7 @@ public class Wc2026ScenarioGroup
         }
 
         var scenarioMatches = matches
-            .Select(match => CreateScenarioMatch(match, teams))
+            .Select(match => CreateScenarioMatch(match, teams, name))
             .Where(match => match != null)
             .OrderBy(match => match.MatchNumber ?? int.MaxValue)
             .ThenBy(match => match.KickoffKst)
@@ -60,6 +83,7 @@ public class Wc2026ScenarioGroup
                 teams[key] = new Wc2026ScenarioTeam
                 {
                     Id = key,
+                    Code = GetTeamCode(team),
                     Name = GetTeamName(team),
                     Flag = team.PictureUrl,
                 };
@@ -69,7 +93,8 @@ public class Wc2026ScenarioGroup
 
     private static Wc2026ScenarioMatch CreateScenarioMatch(
         FifaMatchData match,
-        IReadOnlyDictionary<string, Wc2026ScenarioTeam> teams)
+        IReadOnlyDictionary<string, Wc2026ScenarioTeam> teams,
+        string groupName)
     {
         var homeScore = GetHomeScore(match);
         var awayScore = GetAwayScore(match);
@@ -77,6 +102,7 @@ public class Wc2026ScenarioGroup
         return new Wc2026ScenarioMatch
         {
             Id = match.IdMatch ?? match.MatchNumber?.ToString() ?? Guid.NewGuid().ToString(),
+            Group = GetGroupCode(groupName),
             MatchNumber = match.MatchNumber,
             KickoffKst = ToKst(match.Date),
             HomeTeam = teams[GetTeamKey(match.Home)],
@@ -224,6 +250,12 @@ public class Wc2026ScenarioGroup
         return letter == null ? 99 : letter.Value - 'A';
     }
 
+    private static string GetGroupCode(string groupName)
+    {
+        var letter = GetGroupLetter(groupName);
+        return letter?.ToString() ?? groupName;
+    }
+
     private static char? GetGroupLetter(string groupName)
     {
         if (string.IsNullOrWhiteSpace(groupName))
@@ -263,6 +295,27 @@ public class Wc2026ScenarioGroup
             ?? "TBD";
     }
 
+    private static string GetTeamCode(FifaMatchTeam team)
+    {
+        return team.Abbreviation
+            ?? team.IdCountry
+            ?? team.IdTeam
+            ?? GetTeamName(team);
+    }
+
+    private static Wc2026ScenarioSavedMatch FindSavedMatch(
+        IEnumerable<Wc2026ScenarioSavedMatch> savedMatches,
+        Wc2026ScenarioMatch match)
+    {
+        return savedMatches.FirstOrDefault(savedMatch =>
+                savedMatch.MatchNumber != null
+                && savedMatch.MatchNumber == match.MatchNumber)
+            ?? savedMatches.FirstOrDefault(savedMatch =>
+                string.Equals(savedMatch.Group, match.Group, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(savedMatch.HomeTeam, match.HomeTeam.Code, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(savedMatch.AwayTeam, match.AwayTeam.Code, StringComparison.OrdinalIgnoreCase));
+    }
+
     private static string GetName(IList<FifaIdName> names)
     {
         return names?
@@ -284,6 +337,7 @@ public class Wc2026ScenarioGroup
 public class Wc2026ScenarioTeam
 {
     public string Id { get; init; } = "";
+    public string Code { get; init; } = "";
     public string Name { get; init; } = "";
     public string Flag { get; init; }
 }
@@ -291,6 +345,7 @@ public class Wc2026ScenarioTeam
 public class Wc2026ScenarioMatch
 {
     public string Id { get; init; } = "";
+    public string Group { get; init; } = "";
     public int? MatchNumber { get; init; }
     public DateTime KickoffKst { get; init; }
     public Wc2026ScenarioTeam HomeTeam { get; init; }

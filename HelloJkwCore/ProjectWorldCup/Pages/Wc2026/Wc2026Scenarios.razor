@@ -16,6 +16,25 @@ else if (!Groups.Any())
 }
 else
 {
+  @if (SaveError != null)
+  {
+    <MudAlert Severity="Severity.Warning" Class="scenario-alert">
+      입력한 점수를 저장하지 못했습니다. @SaveError.Message
+    </MudAlert>
+  }
+
+  <MudAlert Severity="Severity.Info" Class="scenario-alert">
+    @if (IsAuthenticated)
+    {
+      <span>자동으로 저장됩니다.</span>
+    }
+    else
+    {
+      <span>로그인을 하면 점수가 저장됩니다.</span>
+      <MudLink Href="/login?ReturnUrl=/worldcup/2026/scenario" Underline="Underline.Always">로그인</MudLink>
+    }
+  </MudAlert>
+
   <div class="scenario-page">
     @foreach (var group in Groups)
     {
@@ -49,25 +68,28 @@ else
                   </div>
                 </MudTd>
                 <MudTd Class="scenario-score-cell">
-                  <input class="scenario-score-input"
-                         type="text"
-                         inputmode="numeric"
-                         pattern="[0-9]"
-                         maxlength="1"
-                         value="@context.HomeScore"
-                         aria-label="@($"{context.HomeTeam.Name} 득점")"
-                         @oninput="(e => OnScoreInput(context, true, e.Value?.ToString()))" />
+                  <button type="button"
+                          class="scenario-score-touch-button"
+                          aria-label="@($"{context.HomeTeam.Name} 득점 올리기")"
+                          @onclick="(() => OnScoreIncrement(context, true))">
+                    @context.HomeScore
+                  </button>
                 </MudTd>
-                <MudTd Class="scenario-score-divider">:</MudTd>
+                <MudTd Class="scenario-score-divider">
+                  <button type="button"
+                          class="scenario-score-reset-button"
+                          aria-label="점수 초기화"
+                          @onclick="(() => ResetScore(context))">
+                    reset
+                  </button>
+                </MudTd>
                 <MudTd Class="scenario-score-cell">
-                  <input class="scenario-score-input"
-                         type="text"
-                         inputmode="numeric"
-                         pattern="[0-9]"
-                         maxlength="1"
-                         value="@context.AwayScore"
-                         aria-label="@($"{context.AwayTeam.Name} 득점")"
-                         @oninput="(e => OnScoreInput(context, false, e.Value?.ToString()))" />
+                  <button type="button"
+                          class="scenario-score-touch-button"
+                          aria-label="@($"{context.AwayTeam.Name} 득점 올리기")"
+                          @onclick="(() => OnScoreIncrement(context, false))">
+                    @context.AwayScore
+                  </button>
                 </MudTd>
                 <MudTd DataLabel="원정" Class="scenario-team-cell">
                   <div class="scenario-team">

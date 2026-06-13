@@ -95,36 +95,44 @@
 
 .scenario-score-header,
 .scenario-score-cell {
-    width: 34px;
-    min-width: 34px;
+    width: 36px;
+    min-width: 36px;
     text-align: center;
 }
 
 .scenario-score-divider {
-    width: 10px;
-    min-width: 10px;
+    width: 50px;
+    min-width: 50px;
     padding-left: 0 !important;
     padding-right: 0 !important;
     text-align: center;
-    color: var(--mud-palette-text-secondary);
-    font-weight: 800;
 }
 
-.scenario-score-input {
-    width: 28px;
-    height: 28px;
+.scenario-score-touch-button,
+.scenario-score-reset-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid var(--mud-palette-lines-inputs);
     border-radius: 4px;
     background: var(--mud-palette-background);
     color: var(--mud-palette-text-primary);
     font: inherit;
     font-weight: 800;
-    text-align: center;
+    line-height: 1;
+    touch-action: manipulation;
 }
 
-.scenario-score-input:focus {
-    outline: 2px solid var(--mud-palette-primary);
-    outline-offset: 1px;
+.scenario-score-touch-button {
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+}
+
+.scenario-score-reset-button {
+    width: 46px;
+    height: 26px;
+    font-size: 11px;
 }
 
 .scenario-rank-cell {
@@ -171,11 +179,12 @@
     }
 
     .scenario-match-table .scenario-team-cell {
-        width: 38%;
+        width: 28%;
     }
 
     .scenario-team {
-        gap: 4px;
+        justify-content: center;
+        gap: 0;
     }
 
     .scenario-team img {
@@ -184,18 +193,22 @@
     }
 
     .scenario-team span {
-        font-size: 13px;
+        display: none;
     }
 
     .scenario-score-header,
     .scenario-score-cell {
-        width: 30px;
-        min-width: 30px;
+        width: 34px;
+        min-width: 34px;
     }
 
-    .scenario-score-input {
-        width: 26px;
-        height: 26px;
+    .scenario-score-divider {
+        width: 48px;
+        min-width: 48px;
+    }
+
+    .scenario-score-reset-button {
+        width: 44px;
     }
 
     .scenario-rank-cell {
