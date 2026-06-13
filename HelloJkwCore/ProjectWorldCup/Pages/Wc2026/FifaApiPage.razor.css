@@ -88,14 +88,14 @@
     }
 
     ::deep .fifa-api-table .fifa-api-mobile-stage-cell {
-        width: 38px;
-        min-width: 38px;
+        width: 32px;
+        min-width: 32px;
         font-weight: 700;
     }
 
     ::deep .fifa-api-table .fifa-api-mobile-time-cell {
-        width: 70px;
-        min-width: 70px;
+        width: 60px;
+        min-width: 60px;
         color: var(--mud-palette-text-secondary);
         font-size: 13px;
     }
