@@ -1,13 +1,22 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace ProjectWorldCup.Pages.Wc2026;
 
 public partial class Wc2026Scenarios : JkwPageBase
 {
     [Inject] private IFifa Fifa { get; set; }
     [Inject] private IWc2026ScenarioStorage ScenarioStorage { get; set; }
+    [Inject(Key = "2026")] private IBettingGroupStageService GroupStageService { get; set; }
+    [Inject] private UserManager<AppUser> UserManager { get; set; }
 
     private List<Wc2026ScenarioGroup> Groups { get; set; } = new();
+    private List<WcBettingItem<GroupTeam>> BettingItems { get; set; } = new();
+    private List<IWcBettingItem<ITeam>> SimulatedBettingRows { get; set; } = new();
     private Exception Error { get; set; }
     private Exception SaveError { get; set; }
+    private Exception SimulationError { get; set; }
+    private bool SimulationPanelOpen { get; set; } = true;
+    private bool SimulationLoaded { get; set; }
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -21,6 +30,8 @@ public partial class Wc2026Scenarios : JkwPageBase
                 var savedScenario = await ScenarioStorage.LoadAsync(User);
                 Wc2026ScenarioGroup.ApplySavedScenario(Groups, savedScenario);
             }
+
+            await LoadBettingSimulationAsync();
         }
         catch (Exception ex)
         {
@@ -39,6 +50,7 @@ public partial class Wc2026Scenarios : JkwPageBase
             match.SetAwayScore(match.AwayScore + 1);
         }
 
+        RefreshSimulation();
         await SaveScenarioAsync();
     }
 
@@ -47,7 +59,55 @@ public partial class Wc2026Scenarios : JkwPageBase
         match.SetHomeScore(0);
         match.SetAwayScore(0);
 
+        RefreshSimulation();
         await SaveScenarioAsync();
+    }
+
+    private async Task LoadBettingSimulationAsync()
+    {
+        try
+        {
+            SimulationLoaded = false;
+            SimulationError = null;
+
+            BettingItems = await GroupStageService.GetAllBettingsAsync();
+            await FillBettingUsersAsync(BettingItems);
+            RefreshSimulation();
+        }
+        catch (Exception ex)
+        {
+            SimulationError = ex;
+            BettingItems = new();
+            SimulatedBettingRows = new();
+        }
+        finally
+        {
+            SimulationLoaded = true;
+        }
+    }
+
+    private async Task FillBettingUsersAsync(IEnumerable<WcBettingItem<GroupTeam>> bettingItems)
+    {
+        var users = (await UserManager.GetUsersInRoleAsync("all"))
+            .ToDictionary(user => user.Id);
+
+        foreach (var item in bettingItems.Where(item =>
+            item?.User != null
+            && users.ContainsKey(item.User.Id)))
+        {
+            item.User = users[item.User.Id];
+        }
+    }
+
+    private void RefreshSimulation()
+    {
+        var simulationItems = Wc2026ScenarioBettingSimulator.CreateSimulationItems(BettingItems, Groups);
+        SimulatedBettingRows = new BettingResultTable<IWcBettingItem<ITeam>>(simulationItems).ToList();
+    }
+
+    private void ToggleSimulationPanel()
+    {
+        SimulationPanelOpen = !SimulationPanelOpen;
     }
 
     private async Task SaveScenarioAsync()

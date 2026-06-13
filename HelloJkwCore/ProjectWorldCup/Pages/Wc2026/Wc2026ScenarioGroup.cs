@@ -83,6 +83,7 @@ public class Wc2026ScenarioGroup
                 teams[key] = new Wc2026ScenarioTeam
                 {
                     Id = key,
+                    BettingTeamId = GetBettingTeamId(team),
                     Code = GetTeamCode(team),
                     Name = GetTeamName(team),
                     Flag = team.PictureUrl,
@@ -287,6 +288,14 @@ public class Wc2026ScenarioGroup
             ?? GetTeamName(team);
     }
 
+    private static string GetBettingTeamId(FifaMatchTeam team)
+    {
+        return team.IdCountry
+            ?? team.Abbreviation
+            ?? team.IdTeam
+            ?? GetTeamName(team);
+    }
+
     private static string GetTeamName(FifaMatchTeam team)
     {
         return GetName(team.TeamName)
@@ -337,6 +346,7 @@ public class Wc2026ScenarioGroup
 public class Wc2026ScenarioTeam
 {
     public string Id { get; init; } = "";
+    public string BettingTeamId { get; init; } = "";
     public string Code { get; init; } = "";
     public string Name { get; init; } = "";
     public string Flag { get; init; }

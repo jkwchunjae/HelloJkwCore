@@ -35,6 +35,103 @@ else
     }
   </MudAlert>
 
+  <div class="scenario-simulation-toggle">
+    <MudTooltip Text="1라운드 내기 시뮬레이션 열기/닫기">
+      <MudIconButton Icon="@(SimulationPanelOpen ? Icons.Material.Filled.Close : Icons.Material.Filled.Leaderboard)"
+                     Color="Color.Primary"
+                     Variant="Variant.Filled"
+                     aria-label="1라운드 내기 시뮬레이션 열기/닫기"
+                     OnClick="@ToggleSimulationPanel" />
+    </MudTooltip>
+  </div>
+
+  @if (SimulationPanelOpen)
+  {
+    <aside class="scenario-simulation-panel" aria-label="1라운드 내기 시뮬레이션">
+      <div class="scenario-simulation-header">
+        <div>
+          <div class="scenario-simulation-title">1라운드 내기 시뮬레이션</div>
+          <div class="scenario-simulation-subtitle">현재 경우의 수 기준, 저장되지 않음</div>
+        </div>
+        <MudIconButton Icon="@Icons.Material.Filled.Close"
+                       Size="Size.Small"
+                       aria-label="시뮬레이션 접기"
+                       OnClick="@ToggleSimulationPanel" />
+      </div>
+
+      @if (!SimulationLoaded)
+      {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+      }
+      else if (SimulationError != null)
+      {
+        <MudAlert Severity="Severity.Warning" Dense="true">
+          내기 데이터를 불러오지 못했습니다. @SimulationError.Message
+        </MudAlert>
+      }
+      else if (!SimulatedBettingRows.Any())
+      {
+        <MudText Typo="Typo.body2" Color="Color.Secondary">
+          아직 표시할 1라운드 내기 데이터가 없습니다.
+        </MudText>
+      }
+      else
+      {
+        <MudTable T="IWcBettingItem<ITeam>"
+                  Items="@SimulatedBettingRows"
+                  Dense="true"
+                  Hover="true"
+                  Breakpoint="Breakpoint.None"
+                  Elevation="0"
+                  Class="scenario-table scenario-simulation-table">
+          <HeaderContent>
+            <MudTh Class="scenario-sim-rank-cell">#</MudTh>
+            <MudTh>닉네임</MudTh>
+            <MudTh Class="scenario-sim-success-cell">성공/실패</MudTh>
+            <MudTh Class="scenario-sim-score-cell">점수</MudTh>
+            <MudTh Class="scenario-sim-reward-cell">상금</MudTh>
+          </HeaderContent>
+          <RowTemplate>
+            <MudTd DataLabel="#" Class="scenario-sim-rank-cell">@context.Rank</MudTd>
+            <MudTd DataLabel="닉네임">
+              <div class="scenario-sim-user">
+                <span>@context.User.DisplayName</span>
+                @if (context.User == User)
+                {
+                  <span class="scenario-sim-badge">나</span>
+                }
+                @if (context.IsRandom)
+                {
+                  <span class="scenario-sim-badge">랜덤</span>
+                }
+                @if (context.IsAi)
+                {
+                  <span class="scenario-sim-badge">AI</span>
+                }
+              </div>
+            </MudTd>
+            <MudTd DataLabel="성공/실패" Class="scenario-sim-success-cell">
+              <div class="scenario-sim-teams scenario-sim-teams-success">
+                @foreach (var team in context.Success)
+                {
+                  <img src="@team.Flag?.Replace("sq-2", "sq-1")" alt="@team.Name" title="@team.Name" />
+                }
+              </div>
+              <div class="scenario-sim-teams scenario-sim-teams-fail">
+                @foreach (var team in context.Fail)
+                {
+                  <img src="@team.Flag?.Replace("sq-2", "sq-1")" alt="@team.Name" title="@team.Name" />
+                }
+              </div>
+            </MudTd>
+            <MudTd DataLabel="점수" Class="scenario-sim-score-cell">@context.Score</MudTd>
+            <MudTd DataLabel="상금" Class="scenario-sim-reward-cell">@context.Reward</MudTd>
+          </RowTemplate>
+        </MudTable>
+      }
+    </aside>
+  }
+
   <div class="scenario-page">
     @foreach (var group in Groups)
     {

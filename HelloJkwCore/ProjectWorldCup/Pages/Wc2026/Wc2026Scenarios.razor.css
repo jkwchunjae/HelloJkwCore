@@ -9,6 +9,132 @@
     gap: 14px;
 }
 
+.scenario-simulation-toggle {
+    position: fixed;
+    top: 96px;
+    right: 16px;
+    z-index: 1300;
+    box-shadow: var(--mud-elevation-6);
+}
+
+.scenario-simulation-panel {
+    position: fixed;
+    top: 148px;
+    right: 16px;
+    z-index: 1290;
+    width: min(1040px, calc(100vw - 32px));
+    max-height: calc(100vh - 172px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--mud-palette-lines-default);
+    border-radius: 8px;
+    background: var(--mud-palette-background);
+    box-shadow: var(--mud-elevation-8);
+    overflow: hidden;
+}
+
+.scenario-simulation-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    border-bottom: 1px solid var(--mud-palette-lines-default);
+    padding-bottom: 8px;
+}
+
+.scenario-simulation-title {
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.scenario-simulation-subtitle {
+    color: var(--mud-palette-text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.scenario-simulation-table {
+    min-height: 0;
+}
+
+::deep .scenario-simulation-table .mud-table-container {
+    max-height: calc(100vh - 260px);
+    overflow: auto;
+}
+
+.scenario-sim-rank-cell {
+    width: 34px;
+    min-width: 34px;
+    text-align: center;
+    font-weight: 800;
+}
+
+.scenario-sim-success-cell {
+    width: 180px;
+    min-width: 180px;
+}
+
+.scenario-sim-score-cell {
+    width: 44px;
+    min-width: 44px;
+    text-align: center;
+    font-weight: 800;
+}
+
+.scenario-sim-reward-cell {
+    width: 72px;
+    min-width: 72px;
+    text-align: right;
+    font-weight: 800;
+}
+
+.scenario-sim-user {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 4px;
+}
+
+.scenario-sim-user > span:first-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 800;
+}
+
+.scenario-sim-badge {
+    flex: 0 0 auto;
+    border: 1px solid var(--mud-palette-lines-inputs);
+    border-radius: 999px;
+    padding: 1px 5px;
+    color: var(--mud-palette-text-secondary);
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.scenario-sim-teams {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    min-height: 18px;
+}
+
+.scenario-sim-teams-fail {
+    margin-top: 3px;
+    opacity: 0.35;
+    filter: grayscale(0.75);
+}
+
+.scenario-sim-teams img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
 .scenario-group {
     border-bottom: 1px solid var(--mud-palette-lines-default);
     padding-bottom: 14px;
@@ -165,6 +291,24 @@
 }
 
 @media (max-width: 600px) {
+    .scenario-simulation-toggle {
+        top: auto;
+        right: 12px;
+        bottom: 16px;
+    }
+
+    .scenario-simulation-panel {
+        top: auto;
+        right: 8px;
+        bottom: 72px;
+        width: calc(100vw - 16px);
+        max-height: 62vh;
+    }
+
+    ::deep .scenario-simulation-table .mud-table-container {
+        max-height: calc(62vh - 94px);
+    }
+
     .scenario-group {
         padding-bottom: 12px;
     }
