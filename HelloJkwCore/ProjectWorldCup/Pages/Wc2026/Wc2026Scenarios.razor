@@ -1,0 +1,129 @@
+@inherits JkwPageBase
+@layout WcLayout
+@page "/worldcup/2026/scenario"
+
+<WcTitle>경우의 수</WcTitle>
+
+@if (Error != null)
+{
+  <MudAlert Severity="Severity.Error" Class="scenario-alert">
+    경기 데이터를 불러오지 못했습니다. @Error.Message
+  </MudAlert>
+}
+else if (!Groups.Any())
+{
+  <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="scenario-loading" />
+}
+else
+{
+  <div class="scenario-page">
+    @foreach (var group in Groups)
+    {
+      <section class="scenario-group">
+        <div class="scenario-group-title">@group.Name</div>
+        <div class="scenario-group-grid">
+          <div class="scenario-matches">
+            <div class="scenario-panel-title">남은 경기</div>
+            <MudTable T="Wc2026ScenarioMatch"
+                      Items="@group.RemainingMatches"
+                      Dense="true"
+                      Hover="true"
+                      Breakpoint="Breakpoint.None"
+                      Elevation="0"
+                      Class="scenario-table scenario-match-table">
+              <HeaderContent>
+                <MudTh Class="scenario-team-header">홈</MudTh>
+                <MudTh Class="scenario-score-header"></MudTh>
+                <MudTh Class="scenario-score-divider"></MudTh>
+                <MudTh Class="scenario-score-header"></MudTh>
+                <MudTh Class="scenario-team-header">원정</MudTh>
+              </HeaderContent>
+              <RowTemplate>
+                <MudTd DataLabel="홈" Class="scenario-team-cell">
+                  <div class="scenario-team scenario-team-home">
+                    @if (!string.IsNullOrWhiteSpace(context.HomeTeam.Flag))
+                    {
+                      <img src="@context.HomeTeam.Flag" alt="" />
+                    }
+                    <span>@context.HomeTeam.Name</span>
+                  </div>
+                </MudTd>
+                <MudTd Class="scenario-score-cell">
+                  <input class="scenario-score-input"
+                         type="text"
+                         inputmode="numeric"
+                         pattern="[0-9]"
+                         maxlength="1"
+                         value="@context.HomeScore"
+                         aria-label="@($"{context.HomeTeam.Name} 득점")"
+                         @oninput="(e => OnScoreInput(context, true, e.Value?.ToString()))" />
+                </MudTd>
+                <MudTd Class="scenario-score-divider">:</MudTd>
+                <MudTd Class="scenario-score-cell">
+                  <input class="scenario-score-input"
+                         type="text"
+                         inputmode="numeric"
+                         pattern="[0-9]"
+                         maxlength="1"
+                         value="@context.AwayScore"
+                         aria-label="@($"{context.AwayTeam.Name} 득점")"
+                         @oninput="(e => OnScoreInput(context, false, e.Value?.ToString()))" />
+                </MudTd>
+                <MudTd DataLabel="원정" Class="scenario-team-cell">
+                  <div class="scenario-team">
+                    @if (!string.IsNullOrWhiteSpace(context.AwayTeam.Flag))
+                    {
+                      <img src="@context.AwayTeam.Flag" alt="" />
+                    }
+                    <span>@context.AwayTeam.Name</span>
+                  </div>
+                </MudTd>
+              </RowTemplate>
+              <NoRecordsContent>
+                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="scenario-empty">남은 경기가 없습니다.</MudText>
+              </NoRecordsContent>
+            </MudTable>
+          </div>
+
+          <div class="scenario-standings">
+            <div class="scenario-panel-title">순위표</div>
+            <MudTable T="Wc2026ScenarioStanding"
+                      Items="@group.Standings"
+                      Dense="true"
+                      Hover="true"
+                      Breakpoint="Breakpoint.None"
+                      Elevation="0"
+                      Class="scenario-table scenario-standing-table">
+              <HeaderContent>
+                <MudTh Class="scenario-rank-cell">#</MudTh>
+                <MudTh>국가</MudTh>
+                <MudTh Class="scenario-record-cell">승 / 무 / 패</MudTh>
+                <MudTh Class="scenario-stat-cell">승점</MudTh>
+                <MudTh Class="scenario-stat-cell">골득실</MudTh>
+                <MudTh Class="scenario-stat-cell">득점</MudTh>
+                <MudTh Class="scenario-stat-cell">실점</MudTh>
+              </HeaderContent>
+              <RowTemplate>
+                <MudTd DataLabel="#" Class="scenario-rank-cell">@context.Rank</MudTd>
+                <MudTd DataLabel="국가" Class="scenario-team-cell">
+                  <div class="scenario-team">
+                    @if (!string.IsNullOrWhiteSpace(context.Team.Flag))
+                    {
+                      <img src="@context.Team.Flag" alt="" />
+                    }
+                    <span>@context.Team.Name</span>
+                  </div>
+                </MudTd>
+                <MudTd DataLabel="승 / 무 / 패" Class="scenario-record-cell">@context.RecordText</MudTd>
+                <MudTd DataLabel="승점" Class="scenario-stat-cell">@context.Points</MudTd>
+                <MudTd DataLabel="골득실" Class="scenario-stat-cell">@context.GoalDifference</MudTd>
+                <MudTd DataLabel="득점" Class="scenario-stat-cell">@context.GoalsFor</MudTd>
+                <MudTd DataLabel="실점" Class="scenario-stat-cell">@context.GoalsAgainst</MudTd>
+              </RowTemplate>
+            </MudTable>
+          </div>
+        </div>
+      </section>
+    }
+  </div>
+}
