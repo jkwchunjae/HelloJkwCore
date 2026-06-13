@@ -37,6 +37,51 @@ public class FifaApiTabSelectorTest
         Assert.Equal(3, activeIndex);
     }
 
+    [Fact]
+    public void Initial_scroll_target_selects_first_match_today()
+    {
+        var stages = new List<IReadOnlyList<FifaApiMatchRow>>
+        {
+            new List<FifaApiMatchRow>
+            {
+                Row(new DateTime(2026, 6, 14, 23, 0, 0)),
+                Row(new DateTime(2026, 6, 15, 7, 0, 0)),
+                Row(new DateTime(2026, 6, 15, 11, 0, 0)),
+                Row(new DateTime(2026, 6, 16, 4, 0, 0)),
+            },
+        };
+
+        var target = FifaApiTabSelector.GetInitialScrollTarget(stages, new DateTime(2026, 6, 15, 20, 0, 0));
+
+        Assert.True(target.HasValue);
+        var actual = target.GetValueOrDefault();
+        Assert.Equal(0, actual.StageIndex);
+        Assert.Equal(1, actual.RowIndex);
+    }
+
+    [Fact]
+    public void Initial_scroll_target_falls_back_to_next_match_when_today_has_no_matches()
+    {
+        var stages = new List<IReadOnlyList<FifaApiMatchRow>>
+        {
+            new List<FifaApiMatchRow>
+            {
+                Row(new DateTime(2026, 6, 14, 23, 0, 0)),
+            },
+            new List<FifaApiMatchRow>
+            {
+                Row(new DateTime(2026, 6, 16, 4, 0, 0)),
+            },
+        };
+
+        var target = FifaApiTabSelector.GetInitialScrollTarget(stages, new DateTime(2026, 6, 15, 20, 0, 0));
+
+        Assert.True(target.HasValue);
+        var actual = target.GetValueOrDefault();
+        Assert.Equal(1, actual.StageIndex);
+        Assert.Equal(0, actual.RowIndex);
+    }
+
     private static IReadOnlyList<IReadOnlyList<FifaApiMatchRow>> CreateStages()
     {
         return new List<IReadOnlyList<FifaApiMatchRow>>
@@ -52,10 +97,15 @@ public class FifaApiTabSelectorTest
     {
         return new List<FifaApiMatchRow>
         {
-            new FifaApiMatchRow
-            {
-                KickoffKst = firstKickoffKst,
-            },
+            Row(firstKickoffKst),
+        };
+    }
+
+    private static FifaApiMatchRow Row(DateTime kickoffKst)
+    {
+        return new FifaApiMatchRow
+        {
+            KickoffKst = kickoffKst,
         };
     }
 }
