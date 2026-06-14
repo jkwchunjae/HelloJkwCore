@@ -16,8 +16,8 @@ public partial class Wc2026Scenarios : JkwPageBase
     private Exception Error { get; set; }
     private Exception SaveError { get; set; }
     private Exception SimulationError { get; set; }
-    private bool SimulationPanelOpen { get; set; } = true;
-    private bool Round32SimulationPanelOpen { get; set; }
+    private bool SimulationPanelOpen { get; set; } = false;
+    private bool Round32SimulationPanelOpen { get; set; } = false;
     private bool SimulationLoaded { get; set; }
 
     protected override async Task OnPageInitializedAsync()
