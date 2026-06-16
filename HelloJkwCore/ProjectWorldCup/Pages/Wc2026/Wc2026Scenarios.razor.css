@@ -327,9 +327,14 @@
 }
 
 .scenario-score-touch-button {
+    position: relative;
     width: 30px;
     height: 30px;
     font-size: 15px;
+}
+
+.scenario-home-score-button {
+    left: -6px;
 }
 
 .scenario-score-reset-button {
