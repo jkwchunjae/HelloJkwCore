@@ -270,6 +270,32 @@
     max-width: 0;
 }
 
+::deep .scenario-match-table th,
+::deep .scenario-match-table td {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+::deep .scenario-match-table .scenario-team-cell {
+    width: 42%;
+    max-width: 0;
+}
+
+::deep .scenario-match-table .scenario-score-header,
+::deep .scenario-match-table .scenario-score-cell {
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+}
+
+::deep .scenario-match-table .scenario-score-divider {
+    width: 48px;
+    min-width: 48px;
+    max-width: 48px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
 .scenario-score-header,
 .scenario-score-cell {
     width: 36px;
