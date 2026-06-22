@@ -258,36 +258,42 @@
     flex: 0 0 auto;
 }
 
-.scenario-picked-marker,
-.scenario-picked-marker-placeholder {
-    flex: 0 0 22px;
-    width: 22px;
-    height: 22px;
-}
-
-.scenario-picked-marker {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: #00875a;
-    color: white;
-}
-
-.scenario-picked-marker-placeholder {
-    display: inline-block;
-    visibility: hidden;
-}
-
-::deep .scenario-picked-marker .mud-icon-root {
-    font-size: 18px;
-}
-
 .scenario-team span {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: 700;
+}
+
+.scenario-standing-team {
+    position: relative;
+}
+
+.scenario-standing-team-with-marker {
+    padding-left: 34px;
+}
+
+.scenario-standing-picked-badge {
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #fff;
+    border-radius: 999px;
+    background: #16a34a;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+::deep .scenario-standing-picked-badge .mud-icon-root {
+    font-size: 18px;
 }
 
 .scenario-match-table .scenario-team-cell {
@@ -442,17 +448,28 @@
         gap: 0;
     }
 
-    .scenario-team .scenario-picked-marker,
-    .scenario-team .scenario-picked-marker-placeholder {
-        display: inline-flex;
-        flex-basis: 20px;
+    .scenario-team img {
         width: 20px;
         height: 20px;
     }
 
-    .scenario-team img {
-        width: 20px;
-        height: 20px;
+    .scenario-standing-team {
+        justify-content: flex-start;
+    }
+
+    .scenario-standing-team-with-marker {
+        padding-left: 30px;
+    }
+
+    .scenario-standing-picked-badge {
+        left: 2px;
+        display: inline-flex;
+        width: 22px;
+        height: 22px;
+    }
+
+    ::deep .scenario-standing-picked-badge .mud-icon-root {
+        font-size: 16px;
     }
 
     .scenario-team span {
