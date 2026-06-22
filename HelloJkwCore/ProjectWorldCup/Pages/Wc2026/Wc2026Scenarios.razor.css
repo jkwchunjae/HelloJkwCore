@@ -258,6 +258,31 @@
     flex: 0 0 auto;
 }
 
+.scenario-picked-marker,
+.scenario-picked-marker-placeholder {
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+}
+
+.scenario-picked-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #00875a;
+    color: white;
+}
+
+.scenario-picked-marker-placeholder {
+    display: inline-block;
+    visibility: hidden;
+}
+
+::deep .scenario-picked-marker .mud-icon-root {
+    font-size: 18px;
+}
+
 .scenario-team span {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -415,6 +440,14 @@
     .scenario-team {
         justify-content: center;
         gap: 0;
+    }
+
+    .scenario-team .scenario-picked-marker,
+    .scenario-team .scenario-picked-marker-placeholder {
+        display: inline-flex;
+        flex-basis: 20px;
+        width: 20px;
+        height: 20px;
     }
 
     .scenario-team img {

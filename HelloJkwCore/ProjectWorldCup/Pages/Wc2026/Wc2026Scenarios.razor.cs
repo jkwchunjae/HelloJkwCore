@@ -11,6 +11,7 @@ public partial class Wc2026Scenarios : JkwPageBase
 
     private List<Wc2026ScenarioGroup> Groups { get; set; } = new();
     private List<WcBettingItem<GroupTeam>> BettingItems { get; set; } = new();
+    private WcBettingItem<GroupTeam> MyGroupStageBetting { get; set; }
     private List<IWcBettingItem<ITeam>> SimulatedBettingRows { get; set; } = new();
     private Wc2026Round32SimulationResult Round32Simulation { get; set; } = Wc2026Round32SimulationResult.Blocked("");
     private Exception Error { get; set; }
@@ -74,12 +75,14 @@ public partial class Wc2026Scenarios : JkwPageBase
 
             BettingItems = await GroupStageService.GetAllBettingsAsync();
             await FillBettingUsersAsync(BettingItems);
+            MyGroupStageBetting = GetMyGroupStageBetting(BettingItems);
             RefreshSimulation();
         }
         catch (Exception ex)
         {
             SimulationError = ex;
             BettingItems = new();
+            MyGroupStageBetting = null;
             SimulatedBettingRows = new();
             RefreshRound32Simulation();
         }
@@ -112,6 +115,53 @@ public partial class Wc2026Scenarios : JkwPageBase
     private void RefreshRound32Simulation()
     {
         Round32Simulation = Wc2026ScenarioRound32Simulator.CreateSimulation(Groups);
+    }
+
+    private WcBettingItem<GroupTeam> GetMyGroupStageBetting(IEnumerable<WcBettingItem<GroupTeam>> bettingItems)
+    {
+        if (!IsAuthenticated || User == null)
+        {
+            return null;
+        }
+
+        return bettingItems?.FirstOrDefault(item => item?.User == User);
+    }
+
+    private bool ShouldShowMyPickedTeamMarker()
+    {
+        return IsAuthenticated
+            && (MyGroupStageBetting?.Picked?.Any() ?? false);
+    }
+
+    private bool IsMyPickedTeam(Wc2026ScenarioTeam team)
+    {
+        if (!ShouldShowMyPickedTeamMarker())
+        {
+            return false;
+        }
+
+        return MyGroupStageBetting.Picked.Any(pickedTeam => IsSameTeam(pickedTeam, team));
+    }
+
+    private static bool IsSameTeam(GroupTeam pickedTeam, Wc2026ScenarioTeam scenarioTeam)
+    {
+        if (pickedTeam == null || scenarioTeam == null)
+        {
+            return false;
+        }
+
+        return IsSameTeamValue(pickedTeam.Id, scenarioTeam.BettingTeamId)
+            || IsSameTeamValue(pickedTeam.Id, scenarioTeam.Id)
+            || IsSameTeamValue(pickedTeam.Id, scenarioTeam.Code)
+            || IsSameTeamValue(pickedTeam.FifaTeamId, scenarioTeam.Id)
+            || IsSameTeamValue(pickedTeam.Name, scenarioTeam.Name);
+    }
+
+    private static bool IsSameTeamValue(string left, string right)
+    {
+        return !string.IsNullOrWhiteSpace(left)
+            && !string.IsNullOrWhiteSpace(right)
+            && string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
     }
 
     private void ToggleSimulationPanel()

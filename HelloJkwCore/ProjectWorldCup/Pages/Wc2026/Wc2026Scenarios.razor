@@ -310,6 +310,19 @@ else
                 <MudTd DataLabel="#" Class="scenario-rank-cell">@context.Rank</MudTd>
                 <MudTd DataLabel="국가" Class="scenario-team-cell">
                   <div class="scenario-team">
+                    @if (ShouldShowMyPickedTeamMarker())
+                    {
+                      @if (IsMyPickedTeam(context.Team))
+                      {
+                        <span class="scenario-picked-marker" title="내가 고른 팀" aria-label="내가 고른 팀">
+                          <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" />
+                        </span>
+                      }
+                      else
+                      {
+                        <span class="scenario-picked-marker-placeholder" aria-hidden="true"></span>
+                      }
+                    }
                     @if (!string.IsNullOrWhiteSpace(context.Team.Flag))
                     {
                       <img src="@context.Team.Flag" alt="" />
