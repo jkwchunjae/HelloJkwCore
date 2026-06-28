@@ -223,7 +223,7 @@
 {
     @if (User?.HasRole(UserRole.Admin) ?? false)
     {
-        <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
+        <BettingResultComponent BettingItems="BettingItems" TeamOrder="Round32Matches.SelectMany(m => new[] { m.HomeTeam, m.AwayTeam })"></BettingResultComponent>
     }
     else
     {
