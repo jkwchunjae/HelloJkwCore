@@ -37,6 +37,7 @@ public partial class Betting2026Final : JkwPageBase
 
     private bool ShowAiHelperDialog { get; set; }
     private bool IsSubmittingAiResult { get; set; }
+    private MudDialog AiHelperDialog { get; set; }
     private string AiHelpPrompt => BuildAiHelpPrompt();
     private string AiResultInput { get; set; } = "";
     private string AiSubmitMessage { get; set; } = "";
@@ -247,13 +248,41 @@ public partial class Betting2026Final : JkwPageBase
         ShowAiHelperDialog = true;
     }
 
-    private void CloseAiHelperDialog()
+    private Task OnAiHelperDialogVisibleChanged(bool visible)
+    {
+        ShowAiHelperDialog = visible;
+        if (!visible)
+        {
+            AiSubmitMessage = "";
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task CloseAiHelperDialog()
     {
         if (IsSubmittingAiResult)
-            return;
+            return Task.CompletedTask;
 
+        return HideAiHelperDialogAsync(clearInput: false);
+    }
+
+    private async Task HideAiHelperDialogAsync(bool clearInput)
+    {
+        var dialog = AiHelperDialog;
         ShowAiHelperDialog = false;
         AiSubmitMessage = "";
+        if (clearInput)
+        {
+            AiResultInput = "";
+        }
+
+        if (dialog is not null)
+        {
+            await dialog.CloseAsync(DialogResult.Cancel());
+        }
+
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task CopyAiPromptAsync()
@@ -320,11 +349,7 @@ public partial class Betting2026Final : JkwPageBase
             await BettingFinalService.SaveBettingItemAsync(BettingItem);
             BettingItems = await BettingFinalService.GetAllBettingsAsync();
 
-            ShowAiHelperDialog = false;
-            AiResultInput = "";
-            AiSubmitMessage = "";
-
-            StateHasChanged();
+            await HideAiHelperDialogAsync(clearInput: true);
             Snackbar.Clear();
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
             Snackbar.Add("AI 결과로 1~4위 팀을 선택했습니다. (저장되었습니다)", Severity.Success);
