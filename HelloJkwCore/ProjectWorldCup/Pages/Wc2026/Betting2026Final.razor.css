@@ -104,12 +104,27 @@
     }
 
     ::deep .team-inner .mud-button-label {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        align-items: center;
         justify-content: center;
         width: 100%;
     }
 
+    .team-img {
+        display: block;
+        margin-right: 0;
+    }
+
     .team-name {
-        display: none;
+        display: block;
+        max-width: 100%;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+        white-space: normal;
     }
 
     .ai-helper-dialog-actions {
