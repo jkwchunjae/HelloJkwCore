@@ -29,7 +29,7 @@
 />
 
 
-<WcTitle>2라운드: 16강 진출팀 맞추기</WcTitle>
+<WcTitle>2라운드: 32강 진출팀 맞추기</WcTitle>
 
 @if (IsAuthenticated && TimeOver.All(timeOver => timeOver == false) && !(BettingItem?.IsRandom ?? false))
 {
@@ -112,7 +112,7 @@
 
 @if (TimeOver.All(x => x))
 {
-    <BettingResultComponent BettingItems="BettingItems"></BettingResultComponent>
+    <BettingResultComponent BettingItems="BettingItems" TeamOrder="Round32Matches.SelectMany(m => new[] { m.HomeTeam, m.AwayTeam })"></BettingResultComponent>
 }
 
 <div class="matches">

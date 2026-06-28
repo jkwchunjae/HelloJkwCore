@@ -48,7 +48,7 @@
         </MudTd>
         <MudTd DataLabel="성공">
             <div>
-            @foreach (var s in context.Success)
+            @foreach (var s in OrderedTeams(context.Success))
             {
                 <img class="team-img success" src="@s.Flag?.Replace("sq-2", "sq-1")"/>
             }
@@ -56,7 +56,7 @@
         </MudTd>
         <MudTd DataLabel="실패">
             <div>
-            @foreach (var s in context.Fail)
+            @foreach (var s in OrderedTeams(context.Fail))
             {
                 <img class="team-img fail" src="@s.Flag?.Replace("sq-2", "sq-1")"/>
             }
