@@ -108,6 +108,11 @@ public partial class Betting2026Final : JkwPageBase
             return;
         if (team?.Id == null)
             return;
+        if (!IsAuthenticated)
+        {
+            ShowLoginRequireMessage();
+            return;
+        }
 
         try
         {

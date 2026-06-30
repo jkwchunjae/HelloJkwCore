@@ -80,6 +80,12 @@ public partial class Betting2026Round16 : JkwPageBase
         if (team?.Id == null)
             return;
 
+        if (!IsAuthenticated)
+        {
+            ShowLoginRequireMessage();
+            return;
+        }
+
         try
         {
             var bettingUser = await BettingService.GetBettingUserAsync(User);
