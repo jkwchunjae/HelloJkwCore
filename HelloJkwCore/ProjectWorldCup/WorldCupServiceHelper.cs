@@ -45,6 +45,7 @@ public static class WorldCupServiceHelper
                 bettingType: BettingType.Round32,
                 getMatchesFunc: wcs => wcs.GetRound32MatchesAsync(),
                 startTime: WorldCupConst.Round32Match1StartTime,
+                currentStageId: Fifa.Round32StageId,
                 winnersStageId: Fifa.Round16StageId));
 
         services.AddKeyedSingleton<IBettingRound16Service>("2026-round16", (sp, _) =>
@@ -57,6 +58,7 @@ public static class WorldCupServiceHelper
                 bettingType: BettingType.Round16,
                 getMatchesFunc: wcs => wcs.GetRound16MatchesAsync(),
                 startTime: WorldCupConst.Round16Match1StartTime,
+                currentStageId: Fifa.Round16StageId,
                 winnersStageId: Fifa.Round8StageId));
 
         services.AddKeyedSingleton<IBettingFinalService>("2026", (sp, _) =>

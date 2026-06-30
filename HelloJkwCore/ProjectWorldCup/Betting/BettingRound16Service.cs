@@ -9,6 +9,7 @@ public class BettingRound16Service : IBettingRound16Service
     private readonly BettingType _bettingType;
     private readonly Func<IWorldCupService, Task<List<KnMatch>>> _getMatchesFunc;
     private readonly DateTime _startTime;
+    private readonly string _currentStageId;
     private readonly string _winnersStageId;
     private object _lock = new object();
     private List<WcBettingItem<Team>> _cache = null;
@@ -24,11 +25,13 @@ public class BettingRound16Service : IBettingRound16Service
         BettingType bettingType,
         Func<IWorldCupService, Task<List<KnMatch>>> getMatchesFunc,
         DateTime startTime,
+        string currentStageId,
         string winnersStageId)
     {
         _bettingType = bettingType;
         _getMatchesFunc = getMatchesFunc;
         _startTime = startTime;
+        _currentStageId = currentStageId;
         _winnersStageId = winnersStageId;
         _fs = new WorldcupBettingFileSystem<WcBettingItem<Team>, Team>(fsService.GetFileSystem(option.FileSystemSelect, option.Path), pathKey);
         _worldCupService = worldCupService;
@@ -58,8 +61,18 @@ public class BettingRound16Service : IBettingRound16Service
             .SelectMany(match => match.Teams)
             .Where(team => team != null)
             .ToList();
+        var losers = matches
+            .Where(match => match.StageId == _currentStageId)
+            .Where(match => winners.Any(w => w.Id == match.HomeTeam.Id || w.Id == match.AwayTeam.Id))
+            .SelectMany(match => match.Teams)
+            .Where(team => winners.All(w => w.Id != team.Id))
+            .ToList();
         var bettingItems = await GetAllBettingsAsync();
-        bettingItems.ForEach(bettingItem => bettingItem.Fixed = winners);
+        bettingItems.ForEach(bettingItem =>
+        {
+            bettingItem.Fixed = winners;
+            bettingItem.Failed = losers;
+        });
         var result = new BettingResultTable<WcBettingItem<Team>>(bettingItems);
 
         await result

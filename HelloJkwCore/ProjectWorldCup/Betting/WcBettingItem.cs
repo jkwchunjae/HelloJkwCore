@@ -7,6 +7,7 @@ public interface IWcBettingItem<out TTeam> : IBettingResultItem where TTeam : IT
     IEnumerable<TTeam> Fixed { get; }
     IEnumerable<TTeam> Success { get; }
     IEnumerable<TTeam> Fail { get; }
+    IEnumerable<TTeam> UpComing { get; }
     bool IsRandom { get; }
     bool IsAi { get; }
 }
@@ -32,8 +33,13 @@ public class WcBettingItem<TTeam> : IWcBettingItem<TTeam> where TTeam : ITeam
     }
     public IEnumerable<TTeam> Picked { get; set; } = new List<TTeam>();
     public IEnumerable<TTeam> Fixed { get; set; } = new List<TTeam>();
+    public IEnumerable<TTeam> Failed { get; set; } = new List<TTeam>();
     [JsonIgnore]
     public IEnumerable<TTeam> Success => Picked.Where(s => Fixed.Contains(s)).ToList();
     [JsonIgnore]
-    public IEnumerable<TTeam> Fail => Picked.Where(s => !Fixed.Contains(s)).ToList();
+    public IEnumerable<TTeam> Fail => Failed.Any()
+        ? Picked.Where(s => Failed.Contains(s)).ToList()
+        : Picked.Where(s => !Fixed.Contains(s)).ToList();
+    [JsonIgnore]
+    public IEnumerable<TTeam> UpComing => Picked.Where(s => !Fixed.Contains(s) && !Failed.Contains(s)).ToList();
 }
