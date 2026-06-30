@@ -130,13 +130,6 @@ public partial class Betting2026Round16 : JkwPageBase
     private void OnTimeOver(int index)
     {
         TimeOver[index] = true;
-        if (index == 2)
-        {
-            for (var i = 2; i < 8; i++)
-            {
-                TimeOver[i] = true;
-            }
-        }
     }
 
     private async Task SelectFullRandom()

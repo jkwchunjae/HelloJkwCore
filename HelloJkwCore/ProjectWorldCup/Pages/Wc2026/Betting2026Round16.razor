@@ -23,6 +23,31 @@
     TimeOver="@(() => OnTimeOver(2))"
 />
 <WcRemainTime
+    ClassName="remain4"
+    RemainSeconds="@((int)(WorldCupConst.Round16Match4StartTime - DateTime.Now).TotalSeconds)"
+    TimeOver="@(() => OnTimeOver(3))"
+/>
+<WcRemainTime
+    ClassName="remain5"
+    RemainSeconds="@((int)(WorldCupConst.Round16Match5StartTime - DateTime.Now).TotalSeconds)"
+    TimeOver="@(() => OnTimeOver(4))"
+/>
+<WcRemainTime
+    ClassName="remain6"
+    RemainSeconds="@((int)(WorldCupConst.Round16Match6StartTime - DateTime.Now).TotalSeconds)"
+    TimeOver="@(() => OnTimeOver(5))"
+/>
+<WcRemainTime
+    ClassName="remain7"
+    RemainSeconds="@((int)(WorldCupConst.Round16Match7StartTime - DateTime.Now).TotalSeconds)"
+    TimeOver="@(() => OnTimeOver(6))"
+/>
+<WcRemainTime
+    ClassName="remain8"
+    RemainSeconds="@((int)(WorldCupConst.Round16Match8StartTime - DateTime.Now).TotalSeconds)"
+    TimeOver="@(() => OnTimeOver(7))"
+/>
+<WcRemainTime
     ClassName="remain-random-time"
     RemainSeconds="@((int)(WorldCupConst.Round32LastTime + TimeSpan.FromHours(2) - DateTime.Now).TotalSeconds)"
     TimeOver="@(() => {})"
@@ -120,7 +145,7 @@
   {
     var index = match.Index;
     var matchData = match.MatchData;
-    var remainTimeClass = $"remain{(index < 2 ? index + 1 : 3)}";
+    var remainTimeClass = $"remain{index + 1}";
     var homeType = GetButtonType(matchData.HomeTeam);
     var awayType = GetButtonType(matchData.AwayTeam);
     var homeButtonStyle = homeType == TeamButtonType.Picked

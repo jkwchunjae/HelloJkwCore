@@ -16,6 +16,11 @@ internal static class WorldCupConst
     public static readonly DateTime Round16Match1StartTime = DateTime.Parse("2026-07-05T02:00:00+09:00");
     public static readonly DateTime Round16Match2StartTime = DateTime.Parse("2026-07-05T06:00:00+09:00");
     public static readonly DateTime Round16Match3StartTime = DateTime.Parse("2026-07-06T05:00:00+09:00");
+    public static readonly DateTime Round16Match4StartTime = DateTime.Parse("2026-07-06T09:00:00+09:00");
+    public static readonly DateTime Round16Match5StartTime = DateTime.Parse("2026-07-07T04:00:00+09:00");
+    public static readonly DateTime Round16Match6StartTime = DateTime.Parse("2026-07-07T09:00:00+09:00");
+    public static readonly DateTime Round16Match7StartTime = DateTime.Parse("2026-07-08T01:00:00+09:00");
+    public static readonly DateTime Round16Match8StartTime = DateTime.Parse("2026-07-08T05:00:00+09:00");
     public static readonly DateTime Round8StartTime = DateTime.Parse("2026-07-10T05:00:00+09:00");
     public static readonly DateTime Round4StartTime = DateTime.Parse("2026-07-15T04:00:00+09:00");
     public static readonly DateTime FinalStartTime = DateTime.Parse("2026-07-20T04:00:00+09:00");
