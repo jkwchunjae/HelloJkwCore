@@ -135,10 +135,8 @@
   </MudDialog>
 }
 
-@if (TimeOver.All(x => x))
-{
-    <BettingResultComponent BettingItems="BettingItems" TeamOrder="Round16Matches.SelectMany(m => new[] { m.HomeTeam, m.AwayTeam })"></BettingResultComponent>
-}
+
+<BettingResultComponent BettingItems="BettingItems" TeamOrder="Round16Matches.SelectMany(m => new[] { m.HomeTeam, m.AwayTeam })"></BettingResultComponent>
 
 <div class="matches">
   @foreach (var match in Round16Matches.Select((x, i) => new { Index = i, MatchData = x }))
@@ -244,14 +242,3 @@
   }
 }
 
-@if (!TimeOver.All(x => x) && (BettingItems?.Any() ?? false))
-{
-    @if (User?.HasRole(UserRole.Admin) ?? false)
-    {
-        <BettingResultComponent BettingItems="BettingItems" TeamOrder="Round16Matches.SelectMany(m => new[] { m.HomeTeam, m.AwayTeam })"></BettingResultComponent>
-    }
-    else
-    {
-        <BettingTableComponent BettingItems="BettingItems" Visible="@TimeOver.All(x => x)"></BettingTableComponent>
-    }
-}
