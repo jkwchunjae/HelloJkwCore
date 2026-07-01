@@ -43,10 +43,12 @@ public partial class BettingResultComponent : JkwPageBase
     {
         if (TeamOrder != null)
         {
-            Dictionary<string, int> teamOrderDict = TeamOrder.Select((team, index) => new { team.Name, Index = index })
-                .ToDictionary(x => x.Name, x => x.Index);
+            Dictionary<string, int> teamOrderDict = TeamOrder
+                .Where(team => team?.Id != null)
+                .Select((team, index) => new { team.Id, Index = index })
+                .ToDictionary(x => x.Id, x => x.Index);
             return teams
-                .OrderBy(team => teamOrderDict.ContainsKey(team.Name) ? teamOrderDict[team.Name] : int.MaxValue);
+                .OrderBy(team => teamOrderDict.ContainsKey(team.Id) ? teamOrderDict[team.Id] : int.MaxValue);
         }
         else
         {
