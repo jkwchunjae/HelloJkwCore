@@ -136,7 +136,11 @@
 }
 
 
-<BettingResultComponent BettingItems="BettingItems" TeamOrder="Round16Matches.SelectMany(m => new[] { m.HomeTeam, m.AwayTeam })"></BettingResultComponent>
+<BettingResultComponent
+  BettingItems="BettingItems"
+  TableType="ResultTableType.예정"
+  TeamOrder="Round16Matches.SelectMany(m => new[] { m.HomeTeam, m.AwayTeam })"
+/>
 
 <div class="matches">
   @foreach (var match in Round16Matches.Select((x, i) => new { Index = i, MatchData = x }))

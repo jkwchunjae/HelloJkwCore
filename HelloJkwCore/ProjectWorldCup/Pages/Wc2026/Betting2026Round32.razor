@@ -112,7 +112,11 @@
 
 @if (TimeOver.All(x => x))
 {
-    <BettingResultComponent BettingItems="BettingItems" TeamOrder="Round32Matches.SelectMany(m => new[] { m.HomeTeam, m.AwayTeam })"></BettingResultComponent>
+    <BettingResultComponent
+      BettingItems="BettingItems"
+      TableType="ResultTableType.진행중"
+      TeamOrder="Round32Matches.SelectMany(m => new[] { m.HomeTeam, m.AwayTeam })"
+    />
 }
 
 <div class="matches">

@@ -3,6 +3,13 @@ using Microsoft.JSInterop;
 
 namespace ProjectWorldCup.Pages.Betting;
 
+public enum ResultTableType
+{
+    끝났음,
+    진행중,
+    예정,
+}
+
 public partial class BettingResultComponent : JkwPageBase
 {
     [Inject]
@@ -13,6 +20,9 @@ public partial class BettingResultComponent : JkwPageBase
 
     [Parameter]
     public IEnumerable<ITeam> TeamOrder { get; set; }
+
+    [Parameter]
+    public ResultTableType TableType { get; set; } = ResultTableType.끝났음;
 
     IBettingResultTable<IWcBettingItem<ITeam>> BettingResult { get; set; }
 
