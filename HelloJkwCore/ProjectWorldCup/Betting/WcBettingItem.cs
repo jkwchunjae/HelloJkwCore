@@ -5,8 +5,12 @@ public interface IWcBettingItem<out TTeam> : IBettingResultItem where TTeam : IT
     AppUser User { get; set; }
     IEnumerable<TTeam> Picked { get; }
     IEnumerable<TTeam> Fixed { get; }
+    IEnumerable<TTeam> Failed { get; }
+    [JsonIgnore]
     IEnumerable<TTeam> Success { get; }
+    [JsonIgnore]
     IEnumerable<TTeam> Fail { get; }
+    [JsonIgnore]
     IEnumerable<TTeam> UpComing { get; }
     bool IsRandom { get; }
     bool IsAi { get; }
