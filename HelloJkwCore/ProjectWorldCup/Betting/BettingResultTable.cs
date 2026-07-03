@@ -21,12 +21,14 @@ public class BettingResultTable<T> : IBettingResultTable<T>
             if (totalScore == 0)
             {
                 item.Reward = 10000;
+                item.DetailReward = 10000;
             }
             else
             {
                 var ratio = item.Score / totalScore;
                 var reward = (int)(totalMoney * ratio);
                 item.Reward = bettingTableOption?.RewardForUser?.Invoke(reward) ?? RewardForUser(reward);
+                item.DetailReward = reward;
             }
         }
         foreach (var item in list)

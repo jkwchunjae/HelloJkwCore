@@ -24,6 +24,9 @@ public partial class BettingResultComponent : JkwPageBase
     [Parameter]
     public ResultTableType TableType { get; set; } = ResultTableType.끝났음;
 
+    [Parameter]
+    public bool DetailReward { get; set; } = false;
+
     IBettingResultTable<IWcBettingItem<ITeam>> BettingResult { get; set; }
 
     public BettingResultComponent()

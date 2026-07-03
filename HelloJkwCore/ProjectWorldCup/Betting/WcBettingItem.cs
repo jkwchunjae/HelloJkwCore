@@ -20,6 +20,7 @@ public class WcBettingItem<TTeam> : IWcBettingItem<TTeam> where TTeam : ITeam
 {
     public AppUser User { get; set; }
     public int Reward { get; set; }
+    public int DetailReward { get; set; }
     public bool IsRandom { get; set; }
     public bool IsAi { get; set; }
     public int Rank { get; set; }

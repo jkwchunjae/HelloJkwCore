@@ -7,7 +7,7 @@
 
 <MudTabs @bind-ActivePanelIndex="_activePanelIndex">
   <MudTabPanel Text="Round.1">
-    <BettingResultComponent BettingItems="@GroupStageResult"/>
+    <BettingResultComponent BettingItems="@GroupStageResult" DetailReward="true"/>
     <MudButton OnClick="@(async () => await ApplyRewardGroupStage())"
       Variant="Variant.Outlined"
       >
@@ -20,7 +20,7 @@
     </MudButton>
   </MudTabPanel>
   <MudTabPanel Text="Round.2">
-    <BettingResultComponent BettingItems="@Round32Result"/>
+    <BettingResultComponent BettingItems="@Round32Result" DetailReward="true"/>
     <MudButton OnClick="@(async () => await ApplyRewardRound32())"
       Variant="Variant.Outlined"
       >
@@ -28,7 +28,7 @@
     </MudButton>
   </MudTabPanel>
   <MudTabPanel Text="Round.3">
-    <BettingResultComponent BettingItems="@Round16Result"/>
+    <BettingResultComponent BettingItems="@Round16Result" DetailReward="true"/>
     <MudButton OnClick="@(async () => await ApplyRewardRound16())"
       Variant="Variant.Outlined"
       >
@@ -36,7 +36,7 @@
     </MudButton>
   </MudTabPanel>
   <MudTabPanel Text="Round.4">
-    <BettingFinalResultComponent BettingItems="@FinalResult" Visible="true"/>
+    <BettingFinalResultComponent BettingItems="@FinalResult" Visible="true" DetailReward="true"/>
     <MudButton OnClick="@(async () => await ApplyRewardFinal())"
       Variant="Variant.Outlined"
       >

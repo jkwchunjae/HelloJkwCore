@@ -5,6 +5,7 @@ public interface IBettingResultItem
     string Id { get; set; }
     int Score { get; set; }
     int Reward { get; set; }
+    int DetailReward { get; set; }
     int Rank { get; set; }
 }
 
@@ -13,6 +14,7 @@ public class BettingResultItem : IBettingResultItem
     public string Id { get; set; }
     public int Score { get; set; }
     public int Reward { get; set; }
+    public int DetailReward { get; set; }
     public int Rank { get; set; }
 
     public BettingResultItem() { }
