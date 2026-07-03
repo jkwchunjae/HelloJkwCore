@@ -29,6 +29,12 @@ public partial class Betting2026RewardResult : JkwPageBase
             Navi.NavigateTo("/worldcup");
             return;
         }
+
+        if (!User.HasRole(UserRole.WcManager))
+        {
+            Navi.NavigateTo("/worldcup");
+            return;
+        }
         GroupStageResult = await BettingGroupStageService.GetAllBettingsAsync();
         Round32Result = await BettingRound32Service.GetAllBettingsAsync();
         Round16Result = await BettingRound16Service.GetAllBettingsAsync();
