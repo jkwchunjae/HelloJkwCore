@@ -100,5 +100,17 @@
         }
         <MudTd DataLabel="상금">@context.Reward</MudTd>
     </RowTemplate>
+    <FooterContent>
+    @if (DetailReward)
+    {
+        <MudTd colspan="@(ResultTableColumnCount - 1)" Style="text-align:right">
+            <span>@BettingResult.Sum(x => x.DetailReward).ToString("#,#")</span>
+        </MudTd>
+        <MudTd Style="text-align:right">
+            <span>@BettingResult.Sum(x => x.Reward).ToString("#,#")</span>
+        </MudTd>
+    }
+    </FooterContent>
 </MudTable>
+
 }

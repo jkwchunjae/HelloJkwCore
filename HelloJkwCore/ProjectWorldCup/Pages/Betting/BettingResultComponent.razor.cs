@@ -28,6 +28,16 @@ public partial class BettingResultComponent : JkwPageBase
     public bool DetailReward { get; set; } = false;
 
     IBettingResultTable<IWcBettingItem<ITeam>> BettingResult { get; set; }
+    private int ResultTableColumnCount =>
+        4
+        + (TableType switch
+        {
+            ResultTableType.끝났음 => 2,
+            ResultTableType.진행중 => 3,
+            ResultTableType.예정 => 1,
+            _ => 0,
+        })
+        + (DetailReward ? 1 : 0);
 
     public BettingResultComponent()
     {
