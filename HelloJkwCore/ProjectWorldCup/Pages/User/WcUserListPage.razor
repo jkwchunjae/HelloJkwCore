@@ -63,10 +63,10 @@
         @GetValue(user, HistoryType.Reward2, BettingType.Round32)
       </MudTd>
       <MudTd>
-        @GetValue(user, HistoryType.Reward3)
+        @GetValue(user, HistoryType.Reward3, BettingType.Round16)
       </MudTd>
       <MudTd>
-        @GetValue(user, HistoryType.Reward4)
+        @GetValue(user, HistoryType.Reward4, BettingType.Final)
       </MudTd>
       <MudTd>
         @user.BettingHistories.Where(x => x.Type == HistoryType.None || x.Type == HistoryType.ChangeNickname).Sum(x => x.Value)
