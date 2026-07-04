@@ -42,9 +42,26 @@ public class WcBettingItem<TTeam> : IWcBettingItem<TTeam> where TTeam : ITeam
     [JsonIgnore]
     public IEnumerable<TTeam> Success => Picked.Where(s => Fixed.Contains(s)).ToList();
     [JsonIgnore]
-    public IEnumerable<TTeam> Fail => Failed.Any()
-        ? Picked.Where(s => Failed.Contains(s)).ToList()
-        : Picked.Where(s => !Fixed.Contains(s)).ToList();
+    public IEnumerable<TTeam> Fail
+    {
+        get
+        {
+            var failList = Failed.Any()
+                ? Picked.Where(s => Failed.Contains(s)).ToList()
+                : Picked.Where(s => !Fixed.Contains(s)).ToList();
+
+            var isSameFailAndUpComing = failList.Count() == UpComing.Count() && !failList.Except(UpComing).Any();
+
+            if (isSameFailAndUpComing)
+            {
+                return new List<TTeam>();
+            }
+            else
+            {
+                return failList;
+            }
+        }
+    }
     [JsonIgnore]
     public IEnumerable<TTeam> UpComing => Picked.Where(s => !Fixed.Contains(s) && !Failed.Contains(s)).ToList();
 }
