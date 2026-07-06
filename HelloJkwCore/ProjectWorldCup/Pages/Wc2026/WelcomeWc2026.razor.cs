@@ -8,15 +8,16 @@ public partial class WelcomeWc2026 : JkwPageBase
     BettingUser BettingUser;
     protected override async Task OnPageInitializedAsync()
     {
-        if (IsAuthenticated)
-        {
-            BettingUser = await Service.GetBettingUserAsync(User);
+        Navi.NavigateTo("/worldcup/2026/betting");
+        // if (IsAuthenticated)
+        // {
+        //     BettingUser = await Service.GetBettingUserAsync(User);
 
-            if (BettingUser?.JoinStatus == UserJoinStatus.Joined)
-            {
-                Navi.NavigateTo("/worldcup/2026/betting");
-            }
-        }
+        //     if (BettingUser?.JoinStatus == UserJoinStatus.Joined)
+        //     {
+        //         Navi.NavigateTo("/worldcup/2026/betting");
+        //     }
+        // }
     }
 
     private async Task JoinAsync()
