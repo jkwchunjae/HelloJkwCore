@@ -203,4 +203,7 @@
     }
 }
 
-<BettingFinalResultComponent BettingItems="BettingItems" Visible="true"></BettingFinalResultComponent>
+@if (BettingItems?.Any() ?? false)
+{
+    <BettingFinalResultComponent BettingItems="BettingItems" Visible="true"></BettingFinalResultComponent>
+}
