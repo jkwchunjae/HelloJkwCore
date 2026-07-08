@@ -9,10 +9,22 @@
       @if (FirstItem != null)
       {
         <div>
-          <img class="team-img success" src="@FirstItem.Fix0?.Flag" />
-          <img class="team-img success" src="@FirstItem.Fix1?.Flag" />
-          <img class="team-img success" src="@FirstItem.Fix2?.Flag" />
-          <img class="team-img success" src="@FirstItem.Fix3?.Flag" />
+          @if (FirstItem.Fix0 != null)
+          {
+            <img class="team-img success" src="@FirstItem.Fix0?.Flag" />
+          }
+          @if (FirstItem.Fix1 != null)
+          {
+            <img class="team-img success" src="@FirstItem.Fix1?.Flag" />
+          }
+          @if (FirstItem.Fix2 != null)
+          {
+            <img class="team-img success" src="@FirstItem.Fix2?.Flag" />
+          }
+          @if (FirstItem.Fix3 != null)
+          {
+            <img class="team-img success" src="@FirstItem.Fix3?.Flag" />
+          }
         </div>
       }
     </MudTh>

@@ -203,24 +203,4 @@
     }
 }
 
-@if (BettingItem?.Picked?.Count(x => x != null) == 4)
-{
-    <div>
-        @foreach (var team in BettingItem.Picked)
-        {
-            <img class="team-img" src="@team.Flag" />
-        }
-    </div>
-}
-
-@if (!TimeOver && (BettingItems?.Any() ?? false))
-{
-    @if (User?.HasRole(UserRole.Admin) ?? false)
-    {
-        <BettingFinalResultComponent BettingItems="BettingItems" Visible="true"></BettingFinalResultComponent>
-    }
-    else
-    {
-        <BettingFinalResultComponent BettingItems="BettingItems" Visible="@TimeOver"></BettingFinalResultComponent>
-    }
-}
+<BettingFinalResultComponent BettingItems="BettingItems" Visible="true"></BettingFinalResultComponent>
