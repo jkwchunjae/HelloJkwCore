@@ -42,7 +42,7 @@ else
               <MudTd DataLabel="조" Class="fifa-api-mobile-stage-cell px-2">@context.StageGroupText</MudTd>
               <MudTd DataLabel="시간 (KST)" Class="fifa-api-time-cell">@context.KickoffKst.ToString("yyyy-MM-dd HH:mm")</MudTd>
               <MudTd DataLabel="시간" Class="fifa-api-mobile-time-cell px-1">@context.ShortKickoffText</MudTd>
-              <MudTd DataLabel="단계/조" Class="fifa-api-stage-cell">@context.StageGroupText</MudTd>
+              <MudTd DataLabel="단계/조" Class="fifa-api-stage-cell">@context.StageGroupText.Replace(" 플레이오프", "")</MudTd>
               <MudTd DataLabel="홈" Class="fifa-api-team-cell">
                 <div class="fifa-api-team @(context.HomeIsPlaceholder ? "placeholder" : "")">
                   @if (!string.IsNullOrWhiteSpace(context.HomeFlag))
