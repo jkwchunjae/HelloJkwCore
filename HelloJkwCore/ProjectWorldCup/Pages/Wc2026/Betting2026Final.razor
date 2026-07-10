@@ -203,7 +203,7 @@
     }
 }
 
-@if (BettingItems?.Any() ?? false)
+@if (BettingItems?.Any() ?? false && TimeOver == false)
 {
     <BettingFinalResultComponent BettingItems="BettingItems" Visible="true"></BettingFinalResultComponent>
 }
