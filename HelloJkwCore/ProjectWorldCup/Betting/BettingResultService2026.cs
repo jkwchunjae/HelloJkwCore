@@ -32,6 +32,24 @@ public class BettingResultService2026 : IBettingResultService
         return result;
     }
 
+    public async Task<List<WcBettingItem<Team>>> GetRound32BettingResultAsync()
+    {
+        if (_cache2026.Contains(nameof(GetRound32BettingResultAsync)))
+        {
+            return (List<WcBettingItem<Team>>)_cache2026[nameof(GetRound32BettingResultAsync)];
+        }
+
+        var result = await ReadAllBettingItemsAsync<WcBettingItem<Team>, Team>(_fs, BettingType.Round32);
+
+        _cache2026.Add(
+            nameof(GetRound32BettingResultAsync),
+            result,
+            DateTimeOffset.Now.AddDays(10)
+        );
+
+        return result;
+    }
+
     public async Task<List<WcBettingItem<Team>>> GetRound16BettingResultAsync()
     {
         if (_cache2026.Contains(nameof(GetRound16BettingResultAsync)))
@@ -62,7 +80,7 @@ public class BettingResultService2026 : IBettingResultService
         _cache2026.Add(
             nameof(GetFinalBettingResultAsync),
             result,
-            DateTimeOffset.Now.AddDays(10)
+            DateTimeOffset.Now.AddHours(1)
         );
 
         return result;
@@ -76,13 +94,24 @@ public class BettingResultService2026 : IBettingResultService
         }
 
         // Get all betting results for the three rounds
-        var groupStageResults = await GetGroupStageBettingResultAsync();
-        var round16Results = await GetRound16BettingResultAsync();
-        var finalResults = await GetFinalBettingResultAsync();
+        var tasks = new List<Task>
+        {
+            GetGroupStageBettingResultAsync(),
+            GetRound32BettingResultAsync(),
+            GetRound16BettingResultAsync(),
+            GetFinalBettingResultAsync(),
+        };
+        await Task.WhenAll(tasks);
+
+        var groupStageResults = ((Task<List<WcBettingItem<Team>>>)tasks[0]).Result;
+        var round32Results = ((Task<List<WcBettingItem<Team>>>)tasks[1]).Result;
+        var round16Results = ((Task<List<WcBettingItem<Team>>>)tasks[2]).Result;
+        var finalResults = ((Task<List<WcFinalBettingItem<Team>>>)tasks[3]).Result;
 
         // Aggregate by user
         var allResults = new List<IWcBettingItem<Team>>();
         allResults.AddRange(groupStageResults);
+        allResults.AddRange(round32Results);
         allResults.AddRange(round16Results);
         allResults.AddRange(finalResults);
 
@@ -94,11 +123,13 @@ public class BettingResultService2026 : IBettingResultService
                 Name = g.First().User.DisplayName,
                 JoinCount = g.Count(),
                 Reward1 = groupStageResults
-                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward ?? 0,
-                Reward2 = round16Results
-                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward ?? 0,
-                Reward3 = finalResults
-                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward ?? 0,
+                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward,
+                Reward2 = round32Results
+                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward,
+                Reward3 = round16Results
+                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward,
+                Reward4 = finalResults
+                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward,
             })
             .ToList();
 
@@ -116,7 +147,7 @@ public class BettingResultService2026 : IBettingResultService
         _cache2026.Add(
             nameof(GetBettingSummaryAsync),
             results,
-            DateTimeOffset.Now.AddDays(10)
+            DateTimeOffset.Now.AddHours(1)
         );
 
         return results;
@@ -145,10 +176,5 @@ public class BettingResultService2026 : IBettingResultService
         {
             return new();
         }
-    }
-
-    public Task<List<WcBettingItem<Team>>> GetRound32BettingResultAsync()
-    {
-        throw new NotImplementedException();
     }
 }
