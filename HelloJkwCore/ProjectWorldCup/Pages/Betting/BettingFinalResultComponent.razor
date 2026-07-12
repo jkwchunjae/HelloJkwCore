@@ -103,4 +103,15 @@
       @context.Reward.ToString("#,#")
     </MudTd>
   </RowTemplate>
+  <FooterContent>
+  @if (DetailReward)
+  {
+      <MudTd colspan="@(9)" Style="text-align:right">
+          <span>@BettingResult.Sum(x => x.DetailReward).ToString("#,#")</span>
+      </MudTd>
+      <MudTd Style="text-align:right">
+          <span>@BettingResult.Sum(x => x.Reward).ToString("#,#")</span>
+      </MudTd>
+  }
+  </FooterContent>
 </MudTable>
