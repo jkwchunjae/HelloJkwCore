@@ -3,10 +3,10 @@
 @using ProjectWorldCup.Pages.Betting;
 @page "/worldcup/2026/result";
 
-<h1>
-    <img id="logo" src="/images/worldcup/logo.png" />
-    2026 북중미 월드컵 내기 결과
-</h1>
+<WcTitle>2026 북중미 월드컵 내기 결과</WcTitle>
+
+<h3 style="margin-top: 30px;">내기 최종 순위</h3>
+<BettingSummary2026Component SummaryResults="BettingSummary" />
 
 <h3 style="margin-top: 30px;">4라운드: 1,2,3,4등 맞추기</h3>
 
@@ -32,6 +32,3 @@
 <h3 style="margin-top: 30px;">1라운드: 각 조 1, 2위 맞추기</h3>
 
 <BettingResultComponent BettingItems="BettingItemsGroupStage" />
-
-<h3 style="margin-top: 30px;">내기 최종 순위</h3>
-<BettingSummary2026Component SummaryResults="BettingSummary" />
