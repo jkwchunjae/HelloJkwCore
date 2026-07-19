@@ -5,22 +5,22 @@
         <MudTh>순위</MudTh>
         <MudTh>닉네임</MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward1)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward1?.Value ?? 0)">
                 1라운드
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward2)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward2?.Value ?? 0)">
                 2라운드
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward3)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward3?.Value ?? 0)">
                 3라운드
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward4)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward4?.Value ?? 0)">
                 4라운드
             </MudTableSortLabel>
         </MudTh>
