@@ -5,22 +5,22 @@
         <MudTh>순위</MudTh>
         <MudTh>닉네임</MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward1)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward1?.Value ?? 0)">
                 1라운드
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward2)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward2?.Value ?? 0)">
                 2라운드
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward3)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward3?.Value ?? 0)">
                 3라운드
             </MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward4)">
+            <MudTableSortLabel SortBy="new Func<UserResult, object>(x => x.Reward4?.Value ?? 0)">
                 4라운드
             </MudTableSortLabel>
         </MudTh>
@@ -50,10 +50,10 @@
                 <MudText>@userResult.Name</MudText>
             }
         </MudTd>
-        <MudTd DataLabel="1라운드">@(userResult.Reward1?.ToString("#,#") ?? "불참")</MudTd>
-        <MudTd DataLabel="2라운드">@(userResult.Reward2?.ToString("#,#") ?? "불참")</MudTd>
-        <MudTd DataLabel="3라운드">@(userResult.Reward3?.ToString("#,#") ?? "불참")</MudTd>
-        <MudTd DataLabel="4라운드">@(userResult.Reward4?.ToString("#,#") ?? "불참")</MudTd>
+        <MudTd DataLabel="1라운드"><RewardInfoComponent Reward="userResult.Reward1" /></MudTd>
+        <MudTd DataLabel="2라운드"><RewardInfoComponent Reward="userResult.Reward2" /></MudTd>
+        <MudTd DataLabel="3라운드"><RewardInfoComponent Reward="userResult.Reward3" /></MudTd>
+        <MudTd DataLabel="4라운드"><RewardInfoComponent Reward="userResult.Reward4" /></MudTd>
         <MudTd DataLabel="총 상금">@userResult.Total.ToString("#,#")</MudTd>
         <MudTd DataLabel="손익">
             <MudText Color="@(userResult.Profit >= 0 ? Color.Success : Color.Error)">

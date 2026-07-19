@@ -115,6 +115,21 @@ public class BettingResultService2026 : IBettingResultService
         allResults.AddRange(round16Results);
         allResults.AddRange(finalResults);
 
+        Func<IEnumerable<IWcBettingItem<Team>>, string, RewardInfo?> rewardSelector = (results, userId) =>
+        {
+            var result = results.FirstOrDefault(r => r.User.Id == userId);
+
+            if (result == null)
+                return null;
+
+            return new RewardInfo
+            {
+                Value = result.Reward,
+                IsRandom = result.IsRandom,
+                IsAi = result.IsAi,
+            };
+        };
+
         var userGroups = allResults
             .GroupBy(r => r.User.Id)
             .Select(g => new UserResult
@@ -122,14 +137,10 @@ public class BettingResultService2026 : IBettingResultService
                 UserId = g.Key,
                 Name = g.First().User.DisplayName,
                 JoinCount = g.Count(),
-                Reward1 = groupStageResults
-                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward,
-                Reward2 = round32Results
-                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward,
-                Reward3 = round16Results
-                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward,
-                Reward4 = finalResults
-                    .FirstOrDefault(r => r.User.Id == g.Key)?.Reward,
+                Reward1 = rewardSelector(groupStageResults, g.Key),
+                Reward2 = rewardSelector(round32Results, g.Key),
+                Reward3 = rewardSelector(round16Results, g.Key),
+                Reward4 = rewardSelector(finalResults, g.Key),
             })
             .ToList();
 
