@@ -1,0 +1,32 @@
+@if (Reward == null)
+{
+    <span>불참</span>
+}
+else
+{
+    @if (Reward.Value.IsAi)
+    {
+        var ai = "AI";
+        <MudBadge Content="ai" Color="Color.Error" Overlap="true">
+            @(Reward.Value.Value.ToString("#,0"))
+        </MudBadge>
+    }
+    else if (Reward.Value.IsRandom)
+    {
+        var random = "랜덤";
+        <MudBadge Content="random" Color="Color.Info" Overlap="true">
+            @(Reward.Value.Value.ToString("#,0"))
+        </MudBadge>
+    }
+    else
+    {
+        <span>
+            @(Reward.Value.Value.ToString("#,0"))
+        </span>
+    }
+}
+
+@code {
+    [Parameter]
+    public RewardInfo? Reward { get; set; }
+}
