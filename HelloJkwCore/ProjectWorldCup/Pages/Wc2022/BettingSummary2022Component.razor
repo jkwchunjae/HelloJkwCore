@@ -45,9 +45,9 @@
                 <MudText>@userResult.Name</MudText>
             }
         </MudTd>
-        <MudTd DataLabel="1라운드">@(userResult.Reward1?.ToString("#,#") ?? "불참")</MudTd>
-        <MudTd DataLabel="2라운드">@(userResult.Reward2?.ToString("#,#") ?? "불참")</MudTd>
-        <MudTd DataLabel="3라운드">@(userResult.Reward3?.ToString("#,#") ?? "불참")</MudTd>
+        <MudTd DataLabel="1라운드">@(userResult.Reward1?.Value.ToString("#,#") ?? "불참")</MudTd>
+        <MudTd DataLabel="2라운드">@(userResult.Reward2?.Value.ToString("#,#") ?? "불참")</MudTd>
+        <MudTd DataLabel="3라운드">@(userResult.Reward3?.Value.ToString("#,#") ?? "불참")</MudTd>
         <MudTd DataLabel="총 상금">@userResult.Total.ToString("#,#")</MudTd>
         <MudTd DataLabel="손익">
             <MudText Color="@(userResult.Profit >= 0 ? Color.Success : Color.Error)">
