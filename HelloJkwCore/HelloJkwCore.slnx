@@ -8,5 +8,6 @@
   <Project Path="HelloJkwCore/HelloJkwCore.csproj" />
   <Project Path="ProjectBaduk/ProjectBaduk.csproj" />
   <Project Path="ProjectDiary/ProjectDiary.csproj" />
+  <Project Path="ProjectKidsnote/ProjectKidsnote.csproj" />
   <Project Path="ProjectWorldCup/ProjectWorldCup.csproj" />
 </Solution>

@@ -1,0 +1,127 @@
+@page "/kidsnote"
+@inherits JkwPageBase
+
+<PageTitle>키즈노트</PageTitle>
+
+<h1>키즈노트</h1>
+
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4">
+        @_errorMessage
+    </MudAlert>
+}
+
+@if (_isBusy)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+}
+else if (!KidsnoteClient.IsLoggedIn)
+{
+    <MudPaper Class="pa-4 kidsnote-login" Elevation="1">
+        <MudText Typo="Typo.h6">키즈노트 로그인</MudText>
+        <MudTextField
+            @bind-Value="_userId"
+            Label="아이디"
+            Variant="Variant.Outlined"
+            Class="mt-3" />
+        <MudTextField
+            @bind-Value="_password"
+            Label="비밀번호"
+            InputType="InputType.Password"
+            Variant="Variant.Outlined"
+            Class="mt-3" />
+        <MudButton
+            OnClick="LoginAsync"
+            Variant="Variant.Filled"
+            Color="Color.Primary"
+            Disabled="@(!CanLogin)"
+            Class="mt-3">
+            로그인
+        </MudButton>
+        @if (Options.HasCredentials)
+        {
+            <MudButton
+                OnClick="LoginWithConfiguredAccountAsync"
+                Variant="Variant.Text"
+                Color="Color.Secondary"
+                Class="mt-3 ml-2">
+                설정된 계정으로 로그인
+            </MudButton>
+        }
+    </MudPaper>
+}
+else if (_myInfo is not null && _selectedChild is not null && _reports is not null)
+{
+    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-4">
+        <div>
+            <MudText Typo="Typo.h6">@_selectedChild.Name 리포트</MudText>
+            <MudText Typo="Typo.body2">전체 @(_reports.Count)개</MudText>
+        </div>
+        @if (_myInfo.Children.Count > 1)
+        {
+            <MudMenu Label="자녀 선택" Variant="Variant.Outlined" Size="Size.Small">
+                @foreach (var child in _myInfo.Children)
+                {
+                    <MudMenuItem OnClick="@(() => SelectChildAsync(child.Id))">
+                        @child.Name
+                    </MudMenuItem>
+                }
+            </MudMenu>
+        }
+    </MudStack>
+
+    @if (_reports.Results.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info">등록된 리포트가 없습니다.</MudAlert>
+    }
+
+    @foreach (var report in _reports.Results)
+    {
+        <MudPaper Class="pa-4 mb-4 kidsnote-report" Elevation="1">
+            <MudText Typo="Typo.subtitle1">
+                @report.DateWritten · @report.AuthorName
+            </MudText>
+            <p class="kidsnote-content">@report.Content</p>
+
+            @if (report.AttachedImages.Count > 0)
+            {
+                <div class="kidsnote-images">
+                    @foreach (var image in report.AttachedImages)
+                    {
+                        <a href="@image.Original" target="_blank" rel="noopener noreferrer">
+                            <img
+                                src="@image.LargeResize"
+                                alt="@image.OriginalFileName"
+                                loading="lazy" />
+                        </a>
+                    }
+                </div>
+            }
+        </MudPaper>
+    }
+
+    <MudStack Row="true" Justify="Justify.Center" Spacing="2">
+        <MudButton
+            OnClick="@(() => LoadPageAsync(_reports.Previous))"
+            Variant="Variant.Outlined"
+            Disabled="@string.IsNullOrWhiteSpace(_reports.Previous)">
+            이전
+        </MudButton>
+        <MudButton
+            OnClick="@(() => LoadPageAsync(_reports.Next))"
+            Variant="Variant.Outlined"
+            Disabled="@string.IsNullOrWhiteSpace(_reports.Next)">
+            다음
+        </MudButton>
+    </MudStack>
+}
+else
+{
+    <MudButton
+        OnClick="LoadInitialDataAsync"
+        Variant="Variant.Filled"
+        Color="Color.Primary">
+        다시 불러오기
+    </MudButton>
+}

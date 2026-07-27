@@ -1,6 +1,8 @@
 ﻿global using Common;
 global using ProjectDiary;
 global using ProjectBaduk;
+global using ProjectKidsnote.Client;
+global using ProjectKidsnote.Services;
 global using ProjectWorldCup;
 global using GameLibra;
 global using MudBlazor;
