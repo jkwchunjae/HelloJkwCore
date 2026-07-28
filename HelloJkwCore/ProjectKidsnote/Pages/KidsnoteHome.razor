@@ -3,8 +3,6 @@
 
 <PageTitle>키즈노트</PageTitle>
 
-<h1>키즈노트</h1>
-
 @if (!string.IsNullOrWhiteSpace(_errorMessage))
 {
     <MudAlert Severity="Severity.Error" Class="mb-4">
@@ -56,7 +54,6 @@ else if (_myInfo is not null && _selectedChild is not null && _reports is not nu
     <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-4">
         <div>
             <MudText Typo="Typo.h6">@_selectedChild.Name 리포트</MudText>
-            <MudText Typo="Typo.body2">전체 @(_reports.Count)개</MudText>
         </div>
         @if (_myInfo.Children.Count > 1)
         {
@@ -79,7 +76,7 @@ else if (_myInfo is not null && _selectedChild is not null && _reports is not nu
     @foreach (var report in _reports.Results)
     {
         <MudPaper Class="pa-4 mb-4 kidsnote-report" Elevation="1">
-            <MudText Typo="Typo.subtitle1">
+            <MudText Typo="Typo.body1">
                 @report.DateWritten · @report.AuthorName
             </MudText>
             <p class="kidsnote-content">@report.Content</p>
@@ -91,7 +88,7 @@ else if (_myInfo is not null && _selectedChild is not null && _reports is not nu
                     {
                         <a href="@image.Original" target="_blank" rel="noopener noreferrer">
                             <img
-                                src="@image.LargeResize"
+                                src="@image.Small"
                                 alt="@image.OriginalFileName"
                                 loading="lazy" />
                         </a>

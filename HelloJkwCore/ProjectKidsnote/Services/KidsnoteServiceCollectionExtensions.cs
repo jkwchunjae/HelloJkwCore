@@ -11,11 +11,10 @@ public static class KidsnoteServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var options = new KidsnoteOptions();
-        configuration.GetSection(KidsnoteOptions.SectionName).Bind(options);
+        var options = configuration.GetSection(KidsnoteOptions.SectionName).Get<KidsnoteOptions>();
 
-        services.AddSingleton(options);
-        services.AddScoped<IKidsnoteClient, KidsnoteClient>();
+        services.AddSingleton(options!);
+        services.AddSingleton<IKidsnoteClient, KidsnoteClient>();
 
         return services;
     }
