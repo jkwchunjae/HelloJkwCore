@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using ProjectKidsnote.Configuration;
 using ProjectKidsnote.Models.Account;
+using ProjectKidsnote.Models.Authentication;
 using ProjectKidsnote.Models.Reports;
 
 namespace ProjectKidsnote.Client;
@@ -13,7 +14,10 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
     private readonly KidsnoteOptions _options;
+    private readonly SemaphoreSlim _reauthenticationLock = new(1, 1);
+    private KidsnoteLoginRequest? _lastSuccessfulLogin;
     private UserInfo? _myInfo;
+    private long _authenticationGeneration;
 
     public KidsnoteClient(KidsnoteOptions options)
     {
@@ -55,30 +59,8 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(userId);
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
 
-        var payload = new
-        {
-            username = userId,
-            password,
-            remember_me = true,
-        };
-
-        using var request = new HttpRequestMessage(HttpMethod.Post, "web/login/")
-        {
-            Content = JsonContent.Create(payload, options: _jsonOptions),
-        };
-        using var response = await _httpClient.SendAsync(request, cancellationToken);
-        var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
-
-        EnsureSuccess(response, responseBody, "키즈노트 로그인");
-
-        if (_cookieContainer.GetCookies(_httpClient.BaseAddress!).Count == 0)
-        {
-            throw new InvalidOperationException(
-                "로그인은 성공했지만 응답에 세션 쿠키가 없습니다.");
-        }
-
-        _myInfo = null;
-        IsLoggedIn = true;
+        await LoginCoreAsync(userId, password, cancellationToken);
+        _lastSuccessfulLogin = new KidsnoteLoginRequest(userId, password);
     }
 
     public async Task<UserInfo> GetMyInfoAsync(
@@ -86,8 +68,8 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
     {
         EnsureLoggedIn();
 
-        using var response = await _httpClient.GetAsync(
-            "v1/me/info/",
+        using var response = await SendWithAutomaticReauthenticationAsync(
+            token => _httpClient.GetAsync("v1/me/info/", token),
             cancellationToken);
         var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
@@ -154,14 +136,52 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
         var path =
             $"v1_2/children/{childId}/reports/?{string.Join("&", query)}";
 
-        using var response = await _httpClient.GetAsync(path, cancellationToken);
+        using var response = await SendWithAutomaticReauthenticationAsync(
+            token => _httpClient.GetAsync(path, token),
+            cancellationToken);
         var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
         EnsureSuccess(response, responseBody, "리포트 조회");
         return Deserialize<ReportsResponse>(responseBody, "리포트");
     }
 
-    public void Dispose() => _httpClient.Dispose();
+    public void Dispose()
+    {
+        _reauthenticationLock.Dispose();
+        _httpClient.Dispose();
+    }
+
+    private async Task LoginCoreAsync(
+        string userId,
+        string password,
+        CancellationToken cancellationToken)
+    {
+        var payload = new
+        {
+            username = userId,
+            password,
+            remember_me = true,
+        };
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, "web/login/")
+        {
+            Content = JsonContent.Create(payload, options: _jsonOptions),
+        };
+        using var response = await _httpClient.SendAsync(request, cancellationToken);
+        var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        EnsureSuccess(response, responseBody, "키즈노트 로그인");
+
+        if (_cookieContainer.GetCookies(_httpClient.BaseAddress!).Count == 0)
+        {
+            throw new InvalidOperationException(
+                "로그인은 성공했지만 응답에 세션 쿠키가 없습니다.");
+        }
+
+        _myInfo = null;
+        IsLoggedIn = true;
+        _authenticationGeneration++;
+    }
 
     private static Uri CreateBaseAddress(string baseAddress)
     {
@@ -214,6 +234,70 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
                 exception);
         }
     }
+
+    private async Task<HttpResponseMessage> SendWithAutomaticReauthenticationAsync(
+        Func<CancellationToken, Task<HttpResponseMessage>> sendAsync,
+        CancellationToken cancellationToken)
+    {
+        var authenticationGeneration = _authenticationGeneration;
+        var response = await sendAsync(cancellationToken);
+
+        if (!IsSessionExpired(response.StatusCode))
+        {
+            return response;
+        }
+
+        response.Dispose();
+        await ReauthenticateAsync(authenticationGeneration, cancellationToken);
+        return await sendAsync(cancellationToken);
+    }
+
+    private async Task ReauthenticateAsync(
+        long expiredAuthenticationGeneration,
+        CancellationToken cancellationToken)
+    {
+        await _reauthenticationLock.WaitAsync(cancellationToken);
+
+        try
+        {
+            if (IsLoggedIn &&
+                _authenticationGeneration != expiredAuthenticationGeneration)
+            {
+                return;
+            }
+
+            IsLoggedIn = false;
+            _myInfo = null;
+
+            var login = GetSavedLogin();
+            if (login is null)
+            {
+                throw new InvalidOperationException(
+                    "키즈노트 로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+            }
+
+            await LoginCoreAsync(login.UserId, login.Password, cancellationToken);
+        }
+        finally
+        {
+            _reauthenticationLock.Release();
+        }
+    }
+
+    private KidsnoteLoginRequest? GetSavedLogin()
+    {
+        if (_lastSuccessfulLogin is not null)
+        {
+            return _lastSuccessfulLogin;
+        }
+
+        return _options.HasCredentials
+            ? new KidsnoteLoginRequest(_options.UserId!, _options.Password!)
+            : null;
+    }
+
+    private static bool IsSessionExpired(HttpStatusCode statusCode) =>
+        statusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden;
 
     private void EnsureLoggedIn()
     {
