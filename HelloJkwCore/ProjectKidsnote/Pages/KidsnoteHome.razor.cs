@@ -29,6 +29,12 @@ public partial class KidsnoteHome : JkwPageBase
             return;
         }
 
+        if (User!.HasRole(UserRole.Kidsnote) is false)
+        {
+            Navi.NavigateTo("/account/login");
+            return;
+        }
+
         if (KidsnoteClient.IsLoggedIn)
         {
             await LoadInitialDataAsync();

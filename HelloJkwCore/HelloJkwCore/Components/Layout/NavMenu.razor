@@ -19,9 +19,13 @@
     <MudNavLink Href="diary" Icon="@Icons.Material.Filled.MenuBook">
         일기장
     </MudNavLink>
-    <MudNavLink Href="kidsnote" Icon="@Icons.Material.Filled.ChildCare">
-        키즈노트
-    </MudNavLink>
+    <AuthorizeView Roles="Kidsnote">
+        <Authorized>
+            <MudNavLink Href="kidsnote" Icon="@Icons.Material.Filled.ChildCare">
+                키즈노트
+            </MudNavLink>
+        </Authorized>
+    </AuthorizeView>
     <AuthorizeView Roles="Admin">
         <Authorized>
             <MudNavLink Href="diary/admintool" Icon="@Icons.Material.Filled.MenuBook">
