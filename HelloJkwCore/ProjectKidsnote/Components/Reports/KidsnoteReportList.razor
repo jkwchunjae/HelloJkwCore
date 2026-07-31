@@ -1,0 +1,47 @@
+<MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-4">
+    <MudText Typo="Typo.h6" Class="kidsnote-heading">@SelectedChild.Name 리포트</MudText>
+    @if (MyInfo.Children.Count > 1)
+    {
+        <MudMenu Label="자녀 선택" Variant="Variant.Outlined" Size="Size.Small">
+            @foreach (var child in MyInfo.Children)
+            {
+                <MudMenuItem OnClick="@(() => OnChildSelected.InvokeAsync(child.Id))">
+                    @child.Name
+                </MudMenuItem>
+            }
+        </MudMenu>
+    }
+</MudStack>
+
+@if (Reports.Results.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">등록된 리포트가 없습니다.</MudAlert>
+}
+
+@foreach (var report in Reports.Results)
+{
+    <KidsnoteReportCard Report="report" />
+}
+
+<MudStack Row="true" Justify="Justify.Center" Spacing="2">
+    <MudButton
+        OnClick="@(() => OnPageRequested.InvokeAsync(Reports.Previous))"
+        Variant="Variant.Outlined"
+        Disabled="@string.IsNullOrWhiteSpace(Reports.Previous)">
+        이전
+    </MudButton>
+    <MudButton
+        OnClick="@(() => OnPageRequested.InvokeAsync(Reports.Next))"
+        Variant="Variant.Outlined"
+        Disabled="@string.IsNullOrWhiteSpace(Reports.Next)">
+        다음
+    </MudButton>
+</MudStack>
+
+@code {
+    [Parameter, EditorRequired] public UserInfo MyInfo { get; set; } = null!;
+    [Parameter, EditorRequired] public Child SelectedChild { get; set; } = null!;
+    [Parameter, EditorRequired] public ReportsResponse Reports { get; set; } = null!;
+    [Parameter, EditorRequired] public EventCallback<long> OnChildSelected { get; set; }
+    [Parameter, EditorRequired] public EventCallback<string?> OnPageRequested { get; set; }
+}

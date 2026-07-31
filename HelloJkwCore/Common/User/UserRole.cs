@@ -10,4 +10,5 @@ public enum UserRole
     JangTak9,
     WcManager,
     SuFcAdmin,
+    Kidsnote,
 }

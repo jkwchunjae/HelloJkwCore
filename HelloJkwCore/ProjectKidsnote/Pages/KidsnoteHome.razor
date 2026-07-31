@@ -1,0 +1,42 @@
+@page "/kidsnote"
+@inherits JkwPageBase
+
+<PageTitle>키즈노트</PageTitle>
+
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4 kidsnote-alert">
+        @_errorMessage
+    </MudAlert>
+}
+
+@if (_isBusy)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+}
+else if (!KidsnoteClient.IsLoggedIn)
+{
+    <KidsnoteLoginForm
+        HasConfiguredAccount="@Options.HasCredentials"
+        IsBusy="_isBusy"
+        OnLogin="LoginAsync"
+        OnLoginWithConfiguredAccount="LoginWithConfiguredAccountAsync" />
+}
+else if (_myInfo is not null && _selectedChild is not null && _reports is not null)
+{
+    <KidsnoteReportList
+        MyInfo="_myInfo"
+        SelectedChild="_selectedChild"
+        Reports="_reports"
+        OnChildSelected="SelectChildAsync"
+        OnPageRequested="LoadPageAsync" />
+}
+else
+{
+    <MudButton
+        OnClick="LoadInitialDataAsync"
+        Variant="Variant.Filled"
+        Color="Color.Primary">
+        다시 불러오기
+    </MudButton>
+}

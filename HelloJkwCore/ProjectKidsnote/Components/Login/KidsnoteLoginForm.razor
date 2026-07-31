@@ -1,0 +1,58 @@
+<MudPaper Class="pa-4 kidsnote-login" Elevation="1">
+    <MudText Typo="Typo.h6" Class="kidsnote-heading">키즈노트 로그인</MudText>
+    <MudTextField
+        @bind-Value="_userId"
+        Label="아이디"
+        Variant="Variant.Outlined"
+        Class="mt-3" />
+    <MudTextField
+        @bind-Value="_password"
+        Label="비밀번호"
+        InputType="InputType.Password"
+        Variant="Variant.Outlined"
+        Class="mt-3" />
+    <MudButton
+        OnClick="LoginAsync"
+        Variant="Variant.Filled"
+        Color="Color.Primary"
+        Disabled="@(!CanLogin)"
+        Class="mt-3">
+        로그인
+    </MudButton>
+    @if (HasConfiguredAccount)
+    {
+        <MudButton
+            OnClick="OnLoginWithConfiguredAccount"
+            Variant="Variant.Text"
+            Color="Color.Secondary"
+            Class="mt-3 ml-2">
+            설정된 계정으로 로그인
+        </MudButton>
+    }
+</MudPaper>
+
+@code {
+    private string _userId = string.Empty;
+    private string _password = string.Empty;
+
+    [Parameter, EditorRequired] public EventCallback<KidsnoteLoginRequest> OnLogin { get; set; }
+    [Parameter] public EventCallback OnLoginWithConfiguredAccount { get; set; }
+    [Parameter] public bool HasConfiguredAccount { get; set; }
+    [Parameter] public bool IsBusy { get; set; }
+
+    private bool CanLogin =>
+        !IsBusy &&
+        !string.IsNullOrWhiteSpace(_userId) &&
+        !string.IsNullOrWhiteSpace(_password);
+
+    private async Task LoginAsync()
+    {
+        if (!CanLogin)
+        {
+            return;
+        }
+
+        await OnLogin.InvokeAsync(new KidsnoteLoginRequest(_userId, _password));
+        _password = string.Empty;
+    }
+}

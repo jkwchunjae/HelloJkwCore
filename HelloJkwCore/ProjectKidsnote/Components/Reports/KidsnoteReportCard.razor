@@ -1,0 +1,25 @@
+<MudPaper Class="pa-4 mb-4 kidsnote-report" Elevation="1">
+    <MudText Typo="Typo.body1" Class="kidsnote-report-meta">
+        @Report.DateWritten · @Report.AuthorName
+    </MudText>
+    <p class="kidsnote-content">@Report.Content</p>
+
+    @if (Report.AttachedImages.Count > 0)
+    {
+        <div class="kidsnote-images">
+            @foreach (var image in Report.AttachedImages)
+            {
+                <a href="@image.Original" target="_blank" rel="noopener noreferrer">
+                    <img
+                        src="@image.Small"
+                        alt="@image.OriginalFileName"
+                        loading="lazy" />
+                </a>
+            }
+        </div>
+    }
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public SingleReport Report { get; set; } = null!;
+}

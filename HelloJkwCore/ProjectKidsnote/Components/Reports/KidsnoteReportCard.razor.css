@@ -1,0 +1,27 @@
+.kidsnote-report-meta {
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+.kidsnote-content {
+    margin: 1.25rem 0 0;
+    font-size: 1.4rem;
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+.kidsnote-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.kidsnote-images img {
+    display: block;
+    width: 100%;
+    max-height: 28rem;
+    object-fit: contain;
+    border-radius: 0.25rem;
+}

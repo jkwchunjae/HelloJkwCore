@@ -97,6 +97,7 @@ builder.Services.AddSingleton<JsonConverter>(new StringIdTextJsonConverter<UserI
 builder.Services.AddAuthorization();
 builder.Services.AddDiaryService(builder.Configuration);
 builder.Services.AddBadukService(builder.Configuration);
+builder.Services.AddKidsnoteService(builder.Configuration);
 builder.Services.AddGameLibra(builder.Configuration);
 builder.Services.AddWorldCupService(builder.Configuration);
 builder.Services.AddSingleton<TetrationGlobalService>();
@@ -129,6 +130,7 @@ app.MapRazorComponents<App>()
         typeof(ProjectDiary.DiaryService).Assembly,
         typeof(ProjectWorldCup.WorldCupService).Assembly,
         typeof(ProjectBaduk.BadukService).Assembly,
+        typeof(KidsnoteClient).Assembly,
         typeof(GameLibra.LibraService).Assembly,
     ])
     .AddInteractiveServerRenderMode();
