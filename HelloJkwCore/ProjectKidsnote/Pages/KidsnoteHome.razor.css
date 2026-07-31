@@ -1,23 +1,4 @@
-.kidsnote-login {
-    max-width: 32rem;
-}
-
-.kidsnote-content {
-    margin: 1rem 0 0;
-    white-space: pre-wrap;
-}
-
-.kidsnote-images {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-    gap: 0.75rem;
-    margin-top: 1rem;
-}
-
-.kidsnote-images img {
-    display: block;
-    width: 100%;
-    max-height: 28rem;
-    object-fit: contain;
-    border-radius: 0.25rem;
+::deep .mud-alert-message {
+    font-size: 1.15rem;
+    line-height: 1.6;
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using ProjectKidsnote.Client;
 using ProjectKidsnote.Configuration;
 using ProjectKidsnote.Models.Account;
+using ProjectKidsnote.Models.Authentication;
 using ProjectKidsnote.Models.Reports;
 
 namespace ProjectKidsnote.Pages;
@@ -14,18 +15,11 @@ public partial class KidsnoteHome : JkwPageBase
     [Inject] private IKidsnoteClient KidsnoteClient { get; set; } = null!;
     [Inject] private KidsnoteOptions Options { get; set; } = null!;
 
-    private string _userId = string.Empty;
-    private string _password = string.Empty;
     private string? _errorMessage;
     private UserInfo? _myInfo;
     private Child? _selectedChild;
     private ReportsResponse? _reports;
     private bool _isBusy;
-
-    private bool CanLogin =>
-        !_isBusy &&
-        !string.IsNullOrWhiteSpace(_userId) &&
-        !string.IsNullOrWhiteSpace(_password);
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -47,7 +41,8 @@ public partial class KidsnoteHome : JkwPageBase
         }
     }
 
-    private Task LoginAsync() => ExecuteLoginAsync(_userId, _password);
+    private Task LoginAsync(KidsnoteLoginRequest request) =>
+        ExecuteLoginAsync(request.UserId, request.Password);
 
     private Task LoginWithConfiguredAccountAsync()
     {
@@ -67,7 +62,6 @@ public partial class KidsnoteHome : JkwPageBase
         try
         {
             await KidsnoteClient.LoginAsync(userId, password);
-            _password = string.Empty;
             await LoadInitialDataAsync();
         }
         catch (Exception exception) when (IsExpectedException(exception))

@@ -1,0 +1,22 @@
+.kidsnote-login {
+    max-width: 36rem;
+}
+
+.kidsnote-heading {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+::deep .mud-input {
+    font-size: 1.25rem;
+}
+
+::deep .mud-input-label {
+    font-size: 1.1rem;
+}
+
+::deep .mud-button {
+    min-height: 3rem;
+    font-size: 1.15rem;
+}

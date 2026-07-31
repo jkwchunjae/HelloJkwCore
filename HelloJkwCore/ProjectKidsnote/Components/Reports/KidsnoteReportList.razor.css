@@ -1,0 +1,16 @@
+.kidsnote-heading {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+::deep .mud-button,
+::deep .mud-menu-item {
+    min-height: 3rem;
+    font-size: 1.15rem;
+}
+
+::deep .mud-alert-message {
+    font-size: 1.15rem;
+    line-height: 1.6;
+}
