@@ -18,14 +18,19 @@
             </MudButton>
         </Authorized>
     </AuthorizeView>
-
-    <MudButton
-        Href="worldcup"
-        StartIcon="@Icons.Material.Filled.SportsSoccer"
-        Variant="Variant.Outlined"
-    >
-        월드컵 내기
-    </MudButton>
+    
+    <AuthorizeView Roles="Kidsnote">
+        <Authorized>
+            <MudButton
+                Href="kidsnote"
+                StartIcon="@Icons.Material.Filled.MenuBook"
+                Variant="Variant.Outlined"
+                Color="Color.Dark"
+            >
+                하정이 키즈노트
+            </MudButton>
+        </Authorized>
+    </AuthorizeView>
 }
 else
 {
