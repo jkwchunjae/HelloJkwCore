@@ -7,12 +7,14 @@ using ProjectKidsnote.Configuration;
 using ProjectKidsnote.Models.Account;
 using ProjectKidsnote.Models.Authentication;
 using ProjectKidsnote.Models.Reports;
+using ProjectKidsnote.Services;
 
 namespace ProjectKidsnote.Pages;
 
 public partial class KidsnoteHome : JkwPageBase
 {
     [Inject] private IKidsnoteClient KidsnoteClient { get; set; } = null!;
+    [Inject] private IKidsnoteService KidsnoteService { get; set; } = null!;
     [Inject] private KidsnoteOptions Options { get; set; } = null!;
 
     [Parameter] public long? ReportId { get; set; }
@@ -161,7 +163,6 @@ public partial class KidsnoteHome : JkwPageBase
             {
                 var firstReport = _reports.Results.FirstOrDefault();
                 _selectedReport = firstReport;
-                _appliedReportId = firstReport?.Id;
 
                 if (firstReport is not null)
                 {
@@ -176,21 +177,15 @@ public partial class KidsnoteHome : JkwPageBase
                 throw new ArgumentException("올바르지 않은 알림장 번호입니다.");
             }
 
-            var report = _reports.Results.FirstOrDefault(
-                item => item.Id == requestedReportId.Value);
+            var enrollment = _selectedChild.Enrollment.FirstOrDefault()
+                ?? throw new InvalidOperationException(
+                    $"{_selectedChild.Name} 자녀의 소속 반 정보가 없습니다.");
 
-            if (report is null)
-            {
-                var enrollment = _selectedChild.Enrollment.FirstOrDefault()
-                    ?? throw new InvalidOperationException(
-                        $"{_selectedChild.Name} 자녀의 소속 반 정보가 없습니다.");
-
-                report = await KidsnoteClient.GetSingleReportAsync(
-                    requestedReportId.Value,
-                    enrollment.BelongToClass,
-                    _selectedChild.Id,
-                    enrollment.CenterId);
-            }
+            var report = await KidsnoteService.GetSingleReportAsync(
+                requestedReportId.Value,
+                enrollment.BelongToClass,
+                _selectedChild.Id,
+                enrollment.CenterId);
 
             if (loadVersion != _reportLoadVersion ||
                 requestedReportId != ReportId)
@@ -272,7 +267,6 @@ public partial class KidsnoteHome : JkwPageBase
                 : _reports.Results.FirstOrDefault();
 
             _selectedReport = report;
-            _appliedReportId = report?.Id;
 
             if (report is not null)
             {

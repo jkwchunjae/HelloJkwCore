@@ -1,3 +1,4 @@
+using Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectKidsnote.Client;
@@ -15,6 +16,17 @@ public static class KidsnoteServiceCollectionExtensions
 
         services.AddSingleton(options!);
         services.AddSingleton<IKidsnoteClient, KidsnoteClient>();
+        services.AddSingleton<IKidsnoteService, KidsnoteService>();
+        services.AddKeyedSingleton<IFileSystem>(
+            nameof(KidsnoteService),
+            (provider, _) =>
+            {
+                var kidsnoteOptions = provider.GetRequiredService<KidsnoteOptions>();
+                var fileSystemService = provider.GetRequiredService<IFileSystemService>();
+                return fileSystemService.GetFileSystem(
+                    kidsnoteOptions.FileSystemSelect,
+                    kidsnoteOptions.Path);
+            });
 
         return services;
     }
