@@ -29,4 +29,15 @@ public interface IKidsnoteClient
         long centerId,
         string? next = null,
         CancellationToken cancellationToken = default);
+
+    Task<SingleReport> GetSingleReportAsync(
+        long reportId,
+        CancellationToken cancellationToken = default);
+
+    Task<SingleReport> GetSingleReportAsync(
+        long reportId,
+        long classId,
+        long childId,
+        long centerId,
+        CancellationToken cancellationToken = default);
 }

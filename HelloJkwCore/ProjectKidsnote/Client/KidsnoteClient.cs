@@ -307,4 +307,48 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
                 "키즈노트에 먼저 로그인해야 합니다.");
         }
     }
+
+    public async Task<SingleReport> GetSingleReportAsync(long reportId, CancellationToken cancellationToken = default)
+    {
+        var myInfo = _myInfo ?? await GetMyInfoAsync(cancellationToken);
+        var child = myInfo.Children.FirstOrDefault()
+            ?? throw new InvalidOperationException(
+                "키즈노트 계정에 등록된 자녀가 없습니다.");
+
+        var enrollment = child.Enrollment.FirstOrDefault()
+            ?? throw new InvalidOperationException(
+                $"{child.Name} 자녀의 소속 반 정보가 없습니다.");
+
+        var report = await GetSingleReportAsync(
+            reportId,
+            enrollment.BelongToClass,
+            child.Id,
+            enrollment.CenterId,
+            cancellationToken);
+
+        return report;
+    }
+
+    public async Task<SingleReport> GetSingleReportAsync(long reportId, long classId, long childId, long centerId, CancellationToken cancellationToken = default)
+    {
+        var path =
+            $"v1_2/reports/{reportId}/" +
+            $"?cls={classId}" +
+            $"&child={childId}" +
+            $"&tz={Uri.EscapeDataString("Asia/Seoul")}" +
+            $"&center_id={centerId}";
+
+        using var response = await _httpClient.GetAsync(path);
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException(
+                $"리포트 조회 실패: HTTP {(int)response.StatusCode} - {responseBody}");
+        }
+
+        var res = JsonSerializer.Deserialize<SingleReport>(responseBody, _jsonOptions);
+
+        return res!;
+    }
 }
