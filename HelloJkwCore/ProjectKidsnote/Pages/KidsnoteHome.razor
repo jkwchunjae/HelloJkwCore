@@ -1,4 +1,5 @@
 @page "/kidsnote"
+@page "/kidsnote/{ReportId:long}"
 @inherits JkwPageBase
 
 <PageTitle>키즈노트</PageTitle>
@@ -24,12 +25,22 @@ else if (!KidsnoteClient.IsLoggedIn)
 }
 else if (_myInfo is not null && _selectedChild is not null && _reports is not null)
 {
-    <KidsnoteReportList
-        MyInfo="_myInfo"
-        SelectedChild="_selectedChild"
-        Reports="_reports"
-        OnChildSelected="SelectChildAsync"
-        OnPageRequested="LoadPageAsync" />
+    @if (_selectedReport is not null)
+    {
+        <KidsnoteReportList
+            MyInfo="_myInfo"
+            SelectedChild="_selectedChild"
+            Report="_selectedReport"
+            CanNavigatePrevious="CanNavigatePrevious"
+            CanNavigateNext="CanNavigateNext"
+            OnChildSelected="SelectChildAsync"
+            OnPreviousRequested="ShowPreviousReportAsync"
+            OnNextRequested="ShowNextReportAsync" />
+    }
+    else if (string.IsNullOrWhiteSpace(_errorMessage))
+    {
+        <MudAlert Severity="Severity.Info">등록된 알림장이 없습니다.</MudAlert>
+    }
 }
 else
 {

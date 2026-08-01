@@ -15,11 +15,29 @@ public partial class KidsnoteHome : JkwPageBase
     [Inject] private IKidsnoteClient KidsnoteClient { get; set; } = null!;
     [Inject] private KidsnoteOptions Options { get; set; } = null!;
 
+    [Parameter] public long? ReportId { get; set; }
+
     private string? _errorMessage;
     private UserInfo? _myInfo;
     private Child? _selectedChild;
     private ReportsResponse? _reports;
+    private SingleReport? _selectedReport;
+    private long? _appliedReportId;
+    private int _reportLoadVersion;
+    private bool _initialDataLoaded;
     private bool _isBusy;
+
+    private int SelectedReportIndex =>
+        _reports?.Results.FindIndex(report => report.Id == _selectedReport?.Id) ?? -1;
+
+    private bool CanNavigatePrevious =>
+        SelectedReportIndex > 0 ||
+        (SelectedReportIndex == 0 && !string.IsNullOrWhiteSpace(_reports?.Previous));
+
+    private bool CanNavigateNext =>
+        SelectedReportIndex >= 0 &&
+        (SelectedReportIndex < _reports!.Results.Count - 1 ||
+         !string.IsNullOrWhiteSpace(_reports.Next));
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -44,6 +62,14 @@ public partial class KidsnoteHome : JkwPageBase
         if (Options.HasCredentials)
         {
             await LoginWithConfiguredAccountAsync();
+        }
+    }
+
+    protected override async Task OnPageParametersSetAsync()
+    {
+        if (_initialDataLoaded && _appliedReportId != ReportId)
+        {
+            await LoadReportFromRouteAsync();
         }
     }
 
@@ -92,6 +118,8 @@ public partial class KidsnoteHome : JkwPageBase
                 ?? throw new InvalidOperationException(
                     "키즈노트 계정에 등록된 자녀가 없습니다.");
             _reports = await KidsnoteClient.GetReportsAsync(_selectedChild);
+            _initialDataLoaded = true;
+            await LoadReportFromRouteAsync();
         }
         catch (Exception exception) when (IsExpectedException(exception))
         {
@@ -112,10 +140,120 @@ public partial class KidsnoteHome : JkwPageBase
         }
 
         _selectedChild = child;
-        await LoadPageAsync();
+        await LoadPageAndSelectAsync();
     }
 
-    private async Task LoadPageAsync(string? page = null)
+    private async Task LoadReportFromRouteAsync()
+    {
+        if (_selectedChild is null || _reports is null)
+        {
+            return;
+        }
+
+        _isBusy = true;
+        _errorMessage = null;
+        var requestedReportId = ReportId;
+        var loadVersion = ++_reportLoadVersion;
+
+        try
+        {
+            if (requestedReportId is null)
+            {
+                var firstReport = _reports.Results.FirstOrDefault();
+                _selectedReport = firstReport;
+                _appliedReportId = firstReport?.Id;
+
+                if (firstReport is not null)
+                {
+                    NavigateToReport(firstReport.Id, replaceHistoryEntry: true);
+                }
+
+                return;
+            }
+
+            if (requestedReportId <= 0)
+            {
+                throw new ArgumentException("올바르지 않은 알림장 번호입니다.");
+            }
+
+            var report = _reports.Results.FirstOrDefault(
+                item => item.Id == requestedReportId.Value);
+
+            if (report is null)
+            {
+                var enrollment = _selectedChild.Enrollment.FirstOrDefault()
+                    ?? throw new InvalidOperationException(
+                        $"{_selectedChild.Name} 자녀의 소속 반 정보가 없습니다.");
+
+                report = await KidsnoteClient.GetSingleReportAsync(
+                    requestedReportId.Value,
+                    enrollment.BelongToClass,
+                    _selectedChild.Id,
+                    enrollment.CenterId);
+            }
+
+            if (loadVersion != _reportLoadVersion ||
+                requestedReportId != ReportId)
+            {
+                return;
+            }
+
+            _selectedReport = report;
+            _appliedReportId = requestedReportId;
+        }
+        catch (Exception exception) when (IsExpectedException(exception))
+        {
+            if (loadVersion != _reportLoadVersion ||
+                requestedReportId != ReportId)
+            {
+                return;
+            }
+
+            _selectedReport = null;
+            _appliedReportId = requestedReportId;
+            _errorMessage = exception.Message;
+        }
+        finally
+        {
+            if (loadVersion == _reportLoadVersion)
+            {
+                _isBusy = false;
+            }
+        }
+    }
+
+    private Task ShowPreviousReportAsync() => ShowAdjacentReportAsync(-1);
+
+    private Task ShowNextReportAsync() => ShowAdjacentReportAsync(1);
+
+    private async Task ShowAdjacentReportAsync(int offset)
+    {
+        if (_reports is null)
+        {
+            return;
+        }
+
+        var currentIndex = SelectedReportIndex;
+        var adjacentIndex = currentIndex + offset;
+
+        if (currentIndex >= 0 &&
+            adjacentIndex >= 0 &&
+            adjacentIndex < _reports.Results.Count)
+        {
+            NavigateToReport(_reports.Results[adjacentIndex].Id);
+            return;
+        }
+
+        var page = offset < 0 ? _reports.Previous : _reports.Next;
+        if (!string.IsNullOrWhiteSpace(page))
+        {
+            await LoadPageAndSelectAsync(page, selectLast: offset < 0);
+        }
+    }
+
+    private async Task LoadPageAndSelectAsync(
+        string? page = null,
+        bool selectLast = false)
     {
         if (_selectedChild is null)
         {
@@ -124,10 +262,22 @@ public partial class KidsnoteHome : JkwPageBase
 
         _isBusy = true;
         _errorMessage = null;
+        _reportLoadVersion++;
 
         try
         {
             _reports = await KidsnoteClient.GetReportsAsync(_selectedChild, page);
+            var report = selectLast
+                ? _reports.Results.LastOrDefault()
+                : _reports.Results.FirstOrDefault();
+
+            _selectedReport = report;
+            _appliedReportId = report?.Id;
+
+            if (report is not null)
+            {
+                NavigateToReport(report.Id);
+            }
         }
         catch (Exception exception) when (IsExpectedException(exception))
         {
@@ -137,6 +287,14 @@ public partial class KidsnoteHome : JkwPageBase
         {
             _isBusy = false;
         }
+    }
+
+    private void NavigateToReport(long reportId, bool replaceHistoryEntry = false)
+    {
+        Navi.NavigateTo(
+            $"/kidsnote/{reportId}",
+            forceLoad: false,
+            replace: replaceHistoryEntry);
     }
 
     private static bool IsExpectedException(Exception exception) =>

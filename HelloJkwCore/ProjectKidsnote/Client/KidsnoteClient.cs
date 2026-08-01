@@ -308,8 +308,12 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
         }
     }
 
-    public async Task<SingleReport> GetSingleReportAsync(long reportId, CancellationToken cancellationToken = default)
+    public async Task<SingleReport> GetSingleReportAsync(
+        long reportId,
+        CancellationToken cancellationToken = default)
     {
+        EnsureLoggedIn();
+
         var myInfo = _myInfo ?? await GetMyInfoAsync(cancellationToken);
         var child = myInfo.Children.FirstOrDefault()
             ?? throw new InvalidOperationException(
@@ -329,26 +333,35 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
         return report;
     }
 
-    public async Task<SingleReport> GetSingleReportAsync(long reportId, long classId, long childId, long centerId, CancellationToken cancellationToken = default)
+    public async Task<SingleReport> GetSingleReportAsync(
+        long reportId,
+        long classId,
+        long childId,
+        long centerId,
+        CancellationToken cancellationToken = default)
     {
+        EnsureLoggedIn();
+
+        if (reportId <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(reportId),
+                "알림장 번호는 0보다 커야 합니다.");
+        }
+
         var path =
             $"v1_2/reports/{reportId}/" +
             $"?cls={classId}" +
             $"&child={childId}" +
-            $"&tz={Uri.EscapeDataString("Asia/Seoul")}" +
+            $"&tz={Uri.EscapeDataString(_options.TimeZoneId)}" +
             $"&center_id={centerId}";
 
-        using var response = await _httpClient.GetAsync(path);
-        var responseBody = await response.Content.ReadAsStringAsync();
+        using var response = await SendWithAutomaticReauthenticationAsync(
+            token => _httpClient.GetAsync(path, token),
+            cancellationToken);
+        var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new HttpRequestException(
-                $"리포트 조회 실패: HTTP {(int)response.StatusCode} - {responseBody}");
-        }
-
-        var res = JsonSerializer.Deserialize<SingleReport>(responseBody, _jsonOptions);
-
-        return res!;
+        EnsureSuccess(response, responseBody, "알림장 조회");
+        return Deserialize<SingleReport>(responseBody, "알림장");
     }
 }
