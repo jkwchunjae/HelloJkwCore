@@ -1,45 +1,46 @@
-@using ProjectKidsnote.Services
-@inject IKidsnoteService KidsnoteService
-
-<MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-4">
-    <MudText Typo="Typo.h6" Class="kidsnote-heading">@SelectedChild.Name 알림장</MudText>
-    @if (MyInfo.Children.Count > 1)
-    {
-        <MudMenu Label="자녀 선택" Variant="Variant.Outlined" Size="Size.Small">
-            @foreach (var child in MyInfo.Children)
-            {
-                <MudMenuItem OnClick="@(() => OnChildSelected.InvokeAsync(child.Id))">
-                    @child.Name
-                </MudMenuItem>
-            }
-        </MudMenu>
-    }
-</MudStack>
-
-<MudStack Row="true" Justify="Justify.Center" Spacing="2" Class="mb-4">
-    <MudButton
-        OnClick="OnPreviousRequested"
-        Variant="Variant.Outlined"
-        Disabled="@(!CanNavigatePrevious)">
-        이전
-    </MudButton>
-    <MudButton
-        OnClick="OnNextRequested"
-        Variant="Variant.Outlined"
-        Disabled="@(!CanNavigateNext)">
-        다음
-    </MudButton>
-    <MudButton
-        OnClick="ToggleCalendar"
-        Variant="@(_isCalendarOpen ? Variant.Filled : Variant.Outlined)"
-        Color="Color.Primary"
-        StartIcon="@Icons.Material.Filled.CalendarMonth"
-        aria-expanded="@_isCalendarOpen">
-        달력
-    </MudButton>
-    <MudButton OnClick="LoadAllReports">전체불러오기</MudButton>
-    <MudText>@processedDate</MudText>
-</MudStack>
+<div
+    class="mb-4"
+    style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; column-gap: 1rem;">
+    <MudText Typo="Typo.h6" Class="kidsnote-heading" Style="white-space: nowrap;">
+        @SelectedChild.Name 알림장
+    </MudText>
+    <MudStack Row="true" Justify="Justify.Center" Spacing="2">
+        <MudButton
+            OnClick="OnPreviousRequested"
+            Variant="Variant.Outlined"
+            Disabled="@(!CanNavigatePrevious)">
+            이전
+        </MudButton>
+        <MudButton
+            OnClick="OnNextRequested"
+            Variant="Variant.Outlined"
+            Disabled="@(!CanNavigateNext)">
+            다음
+        </MudButton>
+        <MudButton
+            OnClick="ToggleCalendar"
+            Variant="@(_isCalendarOpen ? Variant.Filled : Variant.Outlined)"
+            Color="Color.Primary"
+            StartIcon="@Icons.Material.Filled.CalendarMonth"
+            aria-expanded="@_isCalendarOpen">
+            달력
+        </MudButton>
+    </MudStack>
+    <MudStack Row="true" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center" Spacing="2">
+        @if (MyInfo.Children.Count > 1)
+        {
+            <MudMenu Label="자녀 선택" Variant="Variant.Outlined" Size="Size.Small">
+                @foreach (var child in MyInfo.Children)
+                {
+                    <MudMenuItem OnClick="@(() => OnChildSelected.InvokeAsync(child.Id))">
+                        @child.Name
+                    </MudMenuItem>
+                }
+            </MudMenu>
+        }
+        @HeaderActions
+    </MudStack>
+</div>
 
 <MudCollapse Expanded="_isCalendarOpen">
     <KidsnoteReportCalendar
@@ -76,25 +77,12 @@
     [Parameter, EditorRequired] public EventCallback<long> OnReportSelected { get; set; }
     [Parameter, EditorRequired] public EventCallback OnPreviousRequested { get; set; }
     [Parameter, EditorRequired] public EventCallback OnNextRequested { get; set; }
+    [Parameter] public RenderFragment? HeaderActions { get; set; }
 
     private bool _isCalendarOpen;
-
-    private string processedDate = "여기에 표시";
 
     private void ToggleCalendar()
     {
         _isCalendarOpen = !_isCalendarOpen;
-    }
-
-    private async Task LoadAllReports()
-    {
-        await foreach (var report in KidsnoteService.GetAllReportsAsync(SelectedChild.Id))
-        {
-            _ = InvokeAsync(() =>
-            {
-                processedDate = report.DateWritten;
-                StateHasChanged();
-            });
-        }
     }
 }

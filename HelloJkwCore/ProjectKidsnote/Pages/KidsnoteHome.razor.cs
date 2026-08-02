@@ -29,18 +29,25 @@ public partial class KidsnoteHome : JkwPageBase
     private int _reportLoadVersion;
     private bool _initialDataLoaded;
     private bool _isBusy;
+    private bool _isLoadingAllReports;
+    private bool _hasLoadedAllReports;
+    private int _loadingReportsCount;
+
+    private string LoadAllReportsButtonText => _isLoadingAllReports
+        ? $"불러오는 중 ({_loadingReportsCount})"
+        : _hasLoadedAllReports
+            ? $"불러오기 완료 ({_loadingReportsCount})"
+            : "전체불러오기";
 
     private int SelectedReportIndex =>
-        _reports?.Results.FindIndex(report => report.Id == _selectedReport?.Id) ?? -1;
+        _reportIndex.Reports.FindIndex(report =>
+            report.ReportId == _selectedReport?.Id);
 
-    private bool CanNavigatePrevious =>
-        SelectedReportIndex > 0 ||
-        (SelectedReportIndex == 0 && !string.IsNullOrWhiteSpace(_reports?.Previous));
+    private bool CanNavigatePrevious => SelectedReportIndex > 0;
 
     private bool CanNavigateNext =>
         SelectedReportIndex >= 0 &&
-        (SelectedReportIndex < _reports!.Results.Count - 1 ||
-         !string.IsNullOrWhiteSpace(_reports.Next));
+        SelectedReportIndex < _reportIndex.Reports.Count - 1;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -120,6 +127,7 @@ public partial class KidsnoteHome : JkwPageBase
             _selectedChild = _myInfo.Children.FirstOrDefault()
                 ?? throw new InvalidOperationException(
                     "키즈노트 계정에 등록된 자녀가 없습니다.");
+            _hasLoadedAllReports = false;
             _reports = await KidsnoteClient.GetReportsAsync(_selectedChild.Id);
             _initialDataLoaded = true;
             await LoadReportFromRouteAsync();
@@ -143,6 +151,7 @@ public partial class KidsnoteHome : JkwPageBase
         }
 
         _selectedChild = child;
+        _hasLoadedAllReports = false;
         await LoadPageAndSelectAsync();
     }
 
@@ -223,34 +232,64 @@ public partial class KidsnoteHome : JkwPageBase
 
     private Task ShowNextReportAsync() => ShowAdjacentReportAsync(1);
 
-    private async Task ShowAdjacentReportAsync(int offset)
+    private async Task LoadAllReportsAsync()
     {
-        if (_reports is null)
+        if (_selectedChild is null || _isLoadingAllReports)
         {
             return;
         }
 
+        var childId = _selectedChild.Id;
+        _isLoadingAllReports = true;
+        _hasLoadedAllReports = false;
+        _errorMessage = null;
+
+        try
+        {
+            int count = 0;
+            await foreach (var report in KidsnoteService.GetAllReportsAsync(childId))
+            {
+                count++;
+                _ = InvokeAsync(() =>
+                {
+                    _loadingReportsCount = count;
+                    StateHasChanged();
+                });
+            }
+
+            var reportIndex = await KidsnoteService.GetReportIndexAsync(childId);
+            if (_selectedChild?.Id == childId)
+            {
+                _reportIndex = reportIndex;
+                _hasLoadedAllReports = true;
+            }
+        }
+        catch (Exception exception) when (IsExpectedException(exception))
+        {
+            _errorMessage = exception.Message;
+        }
+        finally
+        {
+            _isLoadingAllReports = false;
+        }
+    }
+
+    private Task ShowAdjacentReportAsync(int offset)
+    {
         var currentIndex = SelectedReportIndex;
         var adjacentIndex = currentIndex + offset;
 
         if (currentIndex >= 0 &&
             adjacentIndex >= 0 &&
-            adjacentIndex < _reports.Results.Count)
+            adjacentIndex < _reportIndex.Reports.Count)
         {
-            NavigateToReport(_reports.Results[adjacentIndex].Id);
-            return;
+            NavigateToReport(_reportIndex.Reports[adjacentIndex].ReportId);
         }
 
-        var page = offset < 0 ? _reports.Previous : _reports.Next;
-        if (!string.IsNullOrWhiteSpace(page))
-        {
-            await LoadPageAndSelectAsync(page, selectLast: offset < 0);
-        }
+        return Task.CompletedTask;
     }
 
-    private async Task LoadPageAndSelectAsync(
-        string? page = null,
-        bool selectLast = false)
+    private async Task LoadPageAndSelectAsync()
     {
         if (_selectedChild is null)
         {
@@ -263,10 +302,8 @@ public partial class KidsnoteHome : JkwPageBase
 
         try
         {
-            _reports = await KidsnoteClient.GetReportsAsync(_selectedChild.Id, page);
-            var report = selectLast
-                ? _reports.Results.LastOrDefault()
-                : _reports.Results.FirstOrDefault();
+            _reports = await KidsnoteClient.GetReportsAsync(_selectedChild.Id);
+            var report = _reports.Results.FirstOrDefault();
 
             _selectedReport = report;
 
@@ -300,6 +337,7 @@ public partial class KidsnoteHome : JkwPageBase
 
     private static bool IsExpectedException(Exception exception) =>
         exception is HttpRequestException or
+            IOException or
             InvalidOperationException or
             InvalidDataException or
             JsonException or

@@ -37,7 +37,16 @@ else if (_myInfo is not null && _selectedChild is not null && _reports is not nu
             OnChildSelected="SelectChildAsync"
             OnReportSelected="SelectReportFromCalendar"
             OnPreviousRequested="ShowPreviousReportAsync"
-            OnNextRequested="ShowNextReportAsync" />
+            OnNextRequested="ShowNextReportAsync">
+            <HeaderActions>
+                <MudButton
+                    OnClick="LoadAllReportsAsync"
+                    Variant="Variant.Outlined"
+                    Disabled="@_isLoadingAllReports">
+                    @LoadAllReportsButtonText
+                </MudButton>
+            </HeaderActions>
+        </KidsnoteReportList>
     }
     else if (string.IsNullOrWhiteSpace(_errorMessage))
     {
