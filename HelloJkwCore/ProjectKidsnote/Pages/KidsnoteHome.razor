@@ -39,12 +39,28 @@ else if (_myInfo is not null && _selectedChild is not null && _reports is not nu
             OnPreviousRequested="ShowPreviousReportAsync"
             OnNextRequested="ShowNextReportAsync">
             <HeaderActions>
-                <MudButton
-                    OnClick="LoadAllReportsAsync"
-                    Variant="Variant.Outlined"
-                    Disabled="@_isLoadingAllReports">
-                    @LoadAllReportsButtonText
-                </MudButton>
+                <div class="kidsnote-load-all-actions">
+                    <MudButton
+                        Class="kidsnote-load-all-desktop"
+                        OnClick="LoadAllReportsAsync"
+                        Variant="Variant.Outlined"
+                        Disabled="@_isLoadingAllReports">
+                        @LoadAllReportsButtonText
+                    </MudButton>
+                    <MudTooltip Text="@LoadAllReportsButtonText">
+                        <MudIconButton
+                            Class="kidsnote-load-all-mobile"
+                            Icon="@(_isLoadingAllReports
+                                ? Icons.Material.Filled.HourglassTop
+                                : _hasLoadedAllReports
+                                    ? Icons.Material.Filled.CheckCircle
+                                    : Icons.Material.Filled.Download)"
+                            OnClick="LoadAllReportsAsync"
+                            Disabled="@_isLoadingAllReports"
+                            Size="Size.Small"
+                            aria-label="@LoadAllReportsButtonText" />
+                    </MudTooltip>
+                </div>
             </HeaderActions>
         </KidsnoteReportList>
     }

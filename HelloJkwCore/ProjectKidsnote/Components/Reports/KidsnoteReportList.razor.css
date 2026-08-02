@@ -4,6 +4,17 @@
     line-height: 1.4;
 }
 
+.kidsnote-report-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 1rem;
+}
+
+.kidsnote-report-header-title {
+    white-space: nowrap;
+}
+
 ::deep .mud-button,
 ::deep .mud-menu-item {
     min-height: 3rem;
@@ -13,4 +24,34 @@
 ::deep .mud-alert-message {
     font-size: 1.15rem;
     line-height: 1.6;
+}
+
+@media (max-width: 599.98px) {
+    .kidsnote-report-header {
+        display: flex;
+        flex-wrap: wrap;
+        row-gap: 0.75rem;
+        column-gap: 0.5rem;
+    }
+
+    .kidsnote-report-header-title {
+        flex-basis: 100%;
+    }
+
+    .kidsnote-report-header-navigation,
+    .kidsnote-report-header-actions {
+        flex: 0 0 auto;
+    }
+
+    .kidsnote-report-header-navigation {
+        gap: 0.5rem;
+    }
+
+    .kidsnote-report-header-actions {
+        gap: 0;
+    }
+
+    .kidsnote-report-header-actions ::deep .kidsnote-load-all-actions {
+        order: -1;
+    }
 }

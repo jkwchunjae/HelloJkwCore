@@ -1,10 +1,13 @@
 <div
-    class="mb-4"
-    style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; column-gap: 1rem;">
-    <MudText Typo="Typo.h6" Class="kidsnote-heading" Style="white-space: nowrap;">
+    class="kidsnote-report-header mb-4">
+    <MudText Typo="Typo.h6" Class="kidsnote-heading kidsnote-report-header-title">
         @SelectedChild.Name 알림장
     </MudText>
-    <MudStack Row="true" Justify="Justify.Center" Spacing="2">
+    <MudStack
+        Row="true"
+        Justify="Justify.Center"
+        Spacing="2"
+        Class="kidsnote-report-header-navigation">
         <MudButton
             OnClick="OnPreviousRequested"
             Variant="Variant.Outlined"
@@ -26,7 +29,12 @@
             달력
         </MudButton>
     </MudStack>
-    <MudStack Row="true" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center" Spacing="2">
+    <MudStack
+        Row="true"
+        Justify="Justify.FlexEnd"
+        AlignItems="AlignItems.Center"
+        Spacing="2"
+        Class="kidsnote-report-header-actions">
         @if (MyInfo.Children.Count > 1)
         {
             <MudMenu Label="자녀 선택" Variant="Variant.Outlined" Size="Size.Small">

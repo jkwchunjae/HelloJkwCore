@@ -2,3 +2,21 @@
     font-size: 1.15rem;
     line-height: 1.6;
 }
+.kidsnote-load-all-actions {
+    display: flex;
+    align-items: center;
+}
+
+.kidsnote-load-all-actions ::deep .kidsnote-load-all-mobile {
+    display: none;
+}
+
+@media (max-width: 599.98px) {
+    .kidsnote-load-all-actions ::deep .kidsnote-load-all-desktop {
+        display: none;
+    }
+
+    .kidsnote-load-all-actions ::deep .kidsnote-load-all-mobile {
+        display: inline-flex;
+    }
+}
