@@ -26,7 +26,22 @@
         Disabled="@(!CanNavigateNext)">
         다음
     </MudButton>
+    <MudButton
+        OnClick="ToggleCalendar"
+        Variant="@(_isCalendarOpen ? Variant.Filled : Variant.Outlined)"
+        Color="Color.Primary"
+        StartIcon="@Icons.Material.Filled.CalendarMonth"
+        aria-expanded="@_isCalendarOpen">
+        달력
+    </MudButton>
 </MudStack>
+
+<MudCollapse Expanded="_isCalendarOpen">
+    <KidsnoteReportCalendar
+        ReportIndex="ReportIndex"
+        SelectedReportId="Report.Id"
+        OnReportSelected="OnReportSelected" />
+</MudCollapse>
 
 <KidsnoteReportCard Report="Report" />
 
@@ -49,9 +64,18 @@
     [Parameter, EditorRequired] public UserInfo MyInfo { get; set; } = null!;
     [Parameter, EditorRequired] public Child SelectedChild { get; set; } = null!;
     [Parameter, EditorRequired] public SingleReport Report { get; set; } = null!;
+    [Parameter, EditorRequired] public KidsnoteReportIndex ReportIndex { get; set; } = null!;
     [Parameter] public bool CanNavigatePrevious { get; set; }
     [Parameter] public bool CanNavigateNext { get; set; }
     [Parameter, EditorRequired] public EventCallback<long> OnChildSelected { get; set; }
+    [Parameter, EditorRequired] public EventCallback<long> OnReportSelected { get; set; }
     [Parameter, EditorRequired] public EventCallback OnPreviousRequested { get; set; }
     [Parameter, EditorRequired] public EventCallback OnNextRequested { get; set; }
+
+    private bool _isCalendarOpen;
+
+    private void ToggleCalendar()
+    {
+        _isCalendarOpen = !_isCalendarOpen;
+    }
 }

@@ -58,8 +58,7 @@ public sealed class KidsnoteServiceTest
         savedReport.Content.Should().Be(report.Content);
         savedReport.AttachedImages.Should().ContainSingle();
 
-        var index = await _fileSystem.ReadJsonAsync<KidsnoteReportIndex>(
-            paths => paths.KidsReportRootFile(ChildId));
+        var index = await _service.GetReportIndexAsync(ChildId);
         index.Reports.Should().ContainSingle().Which.Should().BeEquivalentTo(
             new KidsnoteReportIndexItem
             {
@@ -70,6 +69,14 @@ public sealed class KidsnoteServiceTest
         var files = await _fileSystem.GetFilesAsync(
             paths => paths.KidsReportFolder(ChildId));
         files.Should().BeEquivalentTo($"{ReportId}.json", "_index.json");
+    }
+
+    [Fact]
+    public async Task GetReportIndexAsync_ReturnsEmptyIndex_WhenFileIsMissing()
+    {
+        var index = await _service.GetReportIndexAsync(ChildId);
+
+        index.Reports.Should().BeEmpty();
     }
 
     [Fact]

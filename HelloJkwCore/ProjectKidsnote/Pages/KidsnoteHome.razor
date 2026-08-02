@@ -31,9 +31,11 @@ else if (_myInfo is not null && _selectedChild is not null && _reports is not nu
             MyInfo="_myInfo"
             SelectedChild="_selectedChild"
             Report="_selectedReport"
+            ReportIndex="_reportIndex"
             CanNavigatePrevious="CanNavigatePrevious"
             CanNavigateNext="CanNavigateNext"
             OnChildSelected="SelectChildAsync"
+            OnReportSelected="SelectReportFromCalendar"
             OnPreviousRequested="ShowPreviousReportAsync"
             OnNextRequested="ShowNextReportAsync" />
     }

@@ -7,6 +7,10 @@ namespace ProjectKidsnote.Services;
 
 public interface IKidsnoteService
 {
+    Task<KidsnoteReportIndex> GetReportIndexAsync(
+        long childId,
+        CancellationToken cancellationToken = default);
+
     Task<SingleReport> GetSingleReportAsync(
         long reportId,
         long classId,
@@ -79,6 +83,22 @@ public sealed class KidsnoteService : IKidsnoteService, IDisposable
         return report;
     }
 
+    public async Task<KidsnoteReportIndex> GetReportIndexAsync(
+        long childId,
+        CancellationToken cancellationToken = default)
+    {
+        await _indexLock.WaitAsync(cancellationToken);
+
+        try
+        {
+            return await ReadIndexAsync(childId, cancellationToken);
+        }
+        finally
+        {
+            _indexLock.Release();
+        }
+    }
+
     public void Dispose()
     {
         _indexLock.Dispose();
@@ -93,15 +113,7 @@ public sealed class KidsnoteService : IKidsnoteService, IDisposable
 
         try
         {
-            Func<Paths, string> indexPath =
-                paths => paths.KidsReportRootFile(childId);
-            var index = await _fileSystem.FileExistsAsync(
-                indexPath,
-                cancellationToken)
-                ? await _fileSystem.ReadJsonAsync<KidsnoteReportIndex>(
-                    indexPath,
-                    cancellationToken)
-                : new KidsnoteReportIndex();
+            var index = await ReadIndexAsync(childId, cancellationToken);
 
             var savedItem = index.Reports.FirstOrDefault(
                 item => item.ReportId == report.Id);
@@ -126,7 +138,7 @@ public sealed class KidsnoteService : IKidsnoteService, IDisposable
             }
 
             var saved = await _fileSystem.WriteJsonAsync(
-                indexPath,
+                paths => paths.KidsReportRootFile(childId),
                 index,
                 cancellationToken);
             if (!saved)
@@ -138,5 +150,19 @@ public sealed class KidsnoteService : IKidsnoteService, IDisposable
         {
             _indexLock.Release();
         }
+    }
+
+    private async Task<KidsnoteReportIndex> ReadIndexAsync(
+        long childId,
+        CancellationToken cancellationToken)
+    {
+        Func<Paths, string> indexPath =
+            paths => paths.KidsReportRootFile(childId);
+
+        return await _fileSystem.FileExistsAsync(indexPath, cancellationToken)
+            ? await _fileSystem.ReadJsonAsync<KidsnoteReportIndex>(
+                indexPath,
+                cancellationToken)
+            : new KidsnoteReportIndex();
     }
 }

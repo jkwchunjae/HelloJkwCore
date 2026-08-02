@@ -23,6 +23,7 @@ public partial class KidsnoteHome : JkwPageBase
     private UserInfo? _myInfo;
     private Child? _selectedChild;
     private ReportsResponse? _reports;
+    private KidsnoteReportIndex _reportIndex = new();
     private SingleReport? _selectedReport;
     private long? _appliedReportId;
     private int _reportLoadVersion;
@@ -186,6 +187,8 @@ public partial class KidsnoteHome : JkwPageBase
                 enrollment.BelongToClass,
                 _selectedChild.Id,
                 enrollment.CenterId);
+            var reportIndex = await KidsnoteService.GetReportIndexAsync(
+                _selectedChild.Id);
 
             if (loadVersion != _reportLoadVersion ||
                 requestedReportId != ReportId)
@@ -194,6 +197,7 @@ public partial class KidsnoteHome : JkwPageBase
             }
 
             _selectedReport = report;
+            _reportIndex = reportIndex;
             _appliedReportId = requestedReportId;
         }
         catch (Exception exception) when (IsExpectedException(exception))
@@ -281,6 +285,11 @@ public partial class KidsnoteHome : JkwPageBase
         {
             _isBusy = false;
         }
+    }
+
+    private void SelectReportFromCalendar(long reportId)
+    {
+        NavigateToReport(reportId);
     }
 
     private void NavigateToReport(long reportId, bool replaceHistoryEntry = false)
