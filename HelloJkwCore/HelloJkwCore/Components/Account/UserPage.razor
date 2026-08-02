@@ -16,6 +16,13 @@
 
         @if (User != null && tvOptionsLogins != null)
         {
+            var logout = "logout";
+            <MudButton
+                OnClick="(() => Js.InvokeVoidAsync(logout))"
+                Variant="Variant.Outlined"
+            >
+                로그아웃
+            </MudButton>
             <TableViewer Data="User" Options="@tvOptionsLogins"/>
         }
 
