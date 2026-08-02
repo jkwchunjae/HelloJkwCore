@@ -1,0 +1,98 @@
+@using System.Globalization
+
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <MudStack AlignItems="AlignItems.Center">
+        <MudDatePicker
+            PickerVariant="PickerVariant.Static"
+            Date="_selectedDate"
+            DateChanged="OnDateSelectedAsync"
+            IsDateDisabledFunc="IsDateDisabled"
+            DateFormat="yyyy-MM-dd"
+            TitleDateFormat="yyyy년 M월 d일 dddd"
+            FirstDayOfWeek="DayOfWeek.Sunday"
+            ShowToolbar="false" />
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired]
+    public KidsnoteReportIndex ReportIndex { get; set; } = null!;
+
+    [Parameter]
+    public long SelectedReportId { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<long> OnReportSelected { get; set; }
+
+    private Dictionary<DateOnly, List<KidsnoteReportIndexItem>> _reportsByDate = [];
+    private DateTime? _selectedDate;
+    private long _appliedSelectedReportId;
+
+    protected override void OnParametersSet()
+    {
+        _reportsByDate = ReportIndex.Reports
+            .Select(item => (Item: item, Date: ParseDate(item.DateWritten)))
+            .Where(item => item.Date is not null)
+            .GroupBy(item => item.Date!.Value)
+            .ToDictionary(
+                group => group.Key,
+                group => group.Select(item => item.Item).ToList());
+
+        if (_appliedSelectedReportId == SelectedReportId)
+        {
+            return;
+        }
+
+        _appliedSelectedReportId = SelectedReportId;
+        var selectedReport = ReportIndex.Reports.FirstOrDefault(
+            item => item.ReportId == SelectedReportId);
+        var selectedDate = selectedReport is null
+            ? null
+            : ParseDate(selectedReport.DateWritten);
+        _selectedDate = selectedDate?.ToDateTime(TimeOnly.MinValue);
+    }
+
+    private bool IsDateDisabled(DateTime date)
+    {
+        return !_reportsByDate.ContainsKey(DateOnly.FromDateTime(date));
+    }
+
+    private async Task OnDateSelectedAsync(DateTime? date)
+    {
+        _selectedDate = date;
+        if (date is null ||
+            !_reportsByDate.TryGetValue(
+                DateOnly.FromDateTime(date.Value),
+                out var reports))
+        {
+            return;
+        }
+
+        var report = reports.MaxBy(item => item.ReportId);
+        if (report is not null)
+        {
+            await OnReportSelected.InvokeAsync(report.ReportId);
+        }
+    }
+
+    private static DateOnly? ParseDate(string value)
+    {
+        if (DateOnly.TryParseExact(
+                value,
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var exactDate))
+        {
+            return exactDate;
+        }
+
+        return DateOnly.TryParse(
+            value,
+            CultureInfo.GetCultureInfo("ko-KR"),
+            DateTimeStyles.AllowWhiteSpaces,
+            out var date)
+            ? date
+            : null;
+    }
+}

@@ -15,18 +15,11 @@ public interface IKidsnoteClient
     Task<UserInfo> GetMyInfoAsync(CancellationToken cancellationToken = default);
 
     Task<ReportsResponse> GetReportsAsync(
-        string? next = null,
-        CancellationToken cancellationToken = default);
-
-    Task<ReportsResponse> GetReportsAsync(
-        Child child,
-        string? next = null,
-        CancellationToken cancellationToken = default);
-
-    Task<ReportsResponse> GetReportsAsync(
-        long classId,
         long childId,
-        long centerId,
         string? next = null,
+        CancellationToken cancellationToken = default);
+
+    Task<SingleReport> GetSingleReportAsync(
+        long reportId,
         CancellationToken cancellationToken = default);
 }
