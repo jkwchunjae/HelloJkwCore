@@ -1,7 +1,9 @@
 using Common;
+using JkwExtensions;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectKidsnote.Client;
 using ProjectKidsnote.Models.Reports;
+using System.Runtime.CompilerServices;
 
 namespace ProjectKidsnote.Services;
 
@@ -161,5 +163,25 @@ public sealed class KidsnoteService : IKidsnoteService, IDisposable
                 indexPath,
                 cancellationToken)
             : new KidsnoteReportIndex();
+    }
+
+    public async IAsyncEnumerable<SingleReport> GetAllReportsAsync(long childId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var client = _kidsnoteClient;
+        string? next = null;
+        do
+        {
+            var reportsResponse = await client.GetReportsAsync(childId, next, cancellationToken: cancellationToken);
+
+            var reports = await reportsResponse.Results
+                .Select(x => GetSingleReportAsync(x.Id, childId, cancellationToken))
+                .WhenAll();
+
+            foreach (var report in reports)
+            {
+                yield return report;
+            }
+            next = reportsResponse.Next;
+        } while (next != null);
     }
 }

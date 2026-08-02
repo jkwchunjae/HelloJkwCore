@@ -1,3 +1,6 @@
+@using ProjectKidsnote.Services
+@inject IKidsnoteService KidsnoteService
+
 <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-4">
     <MudText Typo="Typo.h6" Class="kidsnote-heading">@SelectedChild.Name 알림장</MudText>
     @if (MyInfo.Children.Count > 1)
@@ -34,6 +37,8 @@
         aria-expanded="@_isCalendarOpen">
         달력
     </MudButton>
+    <MudButton OnClick="LoadAllReports">전체불러오기</MudButton>
+    <MudText>@processedDate</MudText>
 </MudStack>
 
 <MudCollapse Expanded="_isCalendarOpen">
@@ -60,7 +65,7 @@
     </MudButton>
 </MudStack>
 
-@code {
+    @code {
     [Parameter, EditorRequired] public UserInfo MyInfo { get; set; } = null!;
     [Parameter, EditorRequired] public Child SelectedChild { get; set; } = null!;
     [Parameter, EditorRequired] public SingleReport Report { get; set; } = null!;
@@ -74,8 +79,22 @@
 
     private bool _isCalendarOpen;
 
+    private string processedDate = "여기에 표시";
+
     private void ToggleCalendar()
     {
         _isCalendarOpen = !_isCalendarOpen;
+    }
+
+    private async Task LoadAllReports()
+    {
+        await foreach (var report in KidsnoteService.GetAllReportsAsync(SelectedChild.Id))
+        {
+            _ = InvokeAsync(() =>
+            {
+                processedDate = report.DateWritten;
+                StateHasChanged();
+            });
+        }
     }
 }
