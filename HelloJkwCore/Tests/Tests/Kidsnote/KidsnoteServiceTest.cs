@@ -39,17 +39,12 @@ public sealed class KidsnoteServiceTest
         _kidsnoteClient
             .Setup(client => client.GetSingleReportAsync(
                 ReportId,
-                ClassId,
-                ChildId,
-                CenterId,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(report);
 
         var result = await _service.GetSingleReportAsync(
             ReportId,
-            ClassId,
-            ChildId,
-            CenterId);
+            ChildId);
 
         result.Should().BeSameAs(report);
         var savedReport = await _fileSystem.ReadJsonAsync<SingleReport>(
@@ -89,17 +84,12 @@ public sealed class KidsnoteServiceTest
 
         var result = await _service.GetSingleReportAsync(
             ReportId,
-            ClassId,
-            ChildId,
-            CenterId);
+            ChildId);
 
         result.Id.Should().Be(savedReport.Id);
         result.Content.Should().Be(savedReport.Content);
         _kidsnoteClient.Verify(
             client => client.GetSingleReportAsync(
-                It.IsAny<long>(),
-                It.IsAny<long>(),
-                It.IsAny<long>(),
                 It.IsAny<long>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);

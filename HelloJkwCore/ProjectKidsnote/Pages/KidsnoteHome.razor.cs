@@ -120,7 +120,7 @@ public partial class KidsnoteHome : JkwPageBase
             _selectedChild = _myInfo.Children.FirstOrDefault()
                 ?? throw new InvalidOperationException(
                     "키즈노트 계정에 등록된 자녀가 없습니다.");
-            _reports = await KidsnoteClient.GetReportsAsync(_selectedChild);
+            _reports = await KidsnoteClient.GetReportsAsync(_selectedChild.Id);
             _initialDataLoaded = true;
             await LoadReportFromRouteAsync();
         }
@@ -184,9 +184,7 @@ public partial class KidsnoteHome : JkwPageBase
 
             var report = await KidsnoteService.GetSingleReportAsync(
                 requestedReportId.Value,
-                enrollment.BelongToClass,
-                _selectedChild.Id,
-                enrollment.CenterId);
+                _selectedChild.Id);
             var reportIndex = await KidsnoteService.GetReportIndexAsync(
                 _selectedChild.Id);
 
@@ -265,7 +263,7 @@ public partial class KidsnoteHome : JkwPageBase
 
         try
         {
-            _reports = await KidsnoteClient.GetReportsAsync(_selectedChild, page);
+            _reports = await KidsnoteClient.GetReportsAsync(_selectedChild.Id, page);
             var report = selectLast
                 ? _reports.Results.LastOrDefault()
                 : _reports.Results.FirstOrDefault();

@@ -13,9 +13,11 @@ public interface IKidsnoteService
 
     Task<SingleReport> GetSingleReportAsync(
         long reportId,
-        long classId,
         long childId,
-        long centerId,
+        CancellationToken cancellationToken = default);
+
+    IAsyncEnumerable<SingleReport> GetAllReportsAsync(
+        long childId,
         CancellationToken cancellationToken = default);
 }
 
@@ -35,9 +37,7 @@ public sealed class KidsnoteService : IKidsnoteService, IDisposable
 
     public async Task<SingleReport> GetSingleReportAsync(
         long reportId,
-        long classId,
         long childId,
-        long centerId,
         CancellationToken cancellationToken = default)
     {
         if (reportId <= 0)
@@ -61,9 +61,6 @@ public sealed class KidsnoteService : IKidsnoteService, IDisposable
 
         var report = await _kidsnoteClient.GetSingleReportAsync(
             reportId,
-            classId,
-            childId,
-            centerId,
             cancellationToken);
 
         await _fileSystem.CreateDirectoryAsync(

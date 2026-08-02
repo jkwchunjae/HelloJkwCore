@@ -80,40 +80,7 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
     }
 
     public async Task<ReportsResponse> GetReportsAsync(
-        string? next = null,
-        CancellationToken cancellationToken = default)
-    {
-        var myInfo = _myInfo ?? await GetMyInfoAsync(cancellationToken);
-        var child = myInfo.Children.FirstOrDefault()
-            ?? throw new InvalidOperationException(
-                "키즈노트 계정에 등록된 자녀가 없습니다.");
-
-        return await GetReportsAsync(child, next, cancellationToken);
-    }
-
-    public Task<ReportsResponse> GetReportsAsync(
-        Child child,
-        string? next = null,
-        CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(child);
-
-        var enrollment = child.Enrollment.FirstOrDefault()
-            ?? throw new InvalidOperationException(
-                $"{child.Name} 자녀의 소속 반 정보가 없습니다.");
-
-        return GetReportsAsync(
-            enrollment.BelongToClass,
-            child.Id,
-            enrollment.CenterId,
-            next,
-            cancellationToken);
-    }
-
-    public async Task<ReportsResponse> GetReportsAsync(
-        long classId,
         long childId,
-        long centerId,
         string? next = null,
         CancellationToken cancellationToken = default)
     {
@@ -121,17 +88,13 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
 
         var query = new List<string>
         {
-            $"cls={classId}",
+            $"child={childId}",
         };
 
         if (!string.IsNullOrWhiteSpace(next))
         {
             query.Add($"page={Uri.EscapeDataString(next)}");
         }
-
-        query.Add($"child={childId}");
-        query.Add($"tz={Uri.EscapeDataString(_options.TimeZoneId)}");
-        query.Add($"center_id={centerId}");
 
         var path =
             $"v1_2/children/{childId}/reports/?{string.Join("&", query)}";
@@ -314,34 +277,6 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
     {
         EnsureLoggedIn();
 
-        var myInfo = _myInfo ?? await GetMyInfoAsync(cancellationToken);
-        var child = myInfo.Children.FirstOrDefault()
-            ?? throw new InvalidOperationException(
-                "키즈노트 계정에 등록된 자녀가 없습니다.");
-
-        var enrollment = child.Enrollment.FirstOrDefault()
-            ?? throw new InvalidOperationException(
-                $"{child.Name} 자녀의 소속 반 정보가 없습니다.");
-
-        var report = await GetSingleReportAsync(
-            reportId,
-            enrollment.BelongToClass,
-            child.Id,
-            enrollment.CenterId,
-            cancellationToken);
-
-        return report;
-    }
-
-    public async Task<SingleReport> GetSingleReportAsync(
-        long reportId,
-        long classId,
-        long childId,
-        long centerId,
-        CancellationToken cancellationToken = default)
-    {
-        EnsureLoggedIn();
-
         if (reportId <= 0)
         {
             throw new ArgumentOutOfRangeException(
@@ -349,12 +284,7 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
                 "알림장 번호는 0보다 커야 합니다.");
         }
 
-        var path =
-            $"v1_2/reports/{reportId}/" +
-            $"?cls={classId}" +
-            $"&child={childId}" +
-            $"&tz={Uri.EscapeDataString(_options.TimeZoneId)}" +
-            $"&center_id={centerId}";
+        var path = $"v1_2/reports/{reportId}";
 
         using var response = await SendWithAutomaticReauthenticationAsync(
             token => _httpClient.GetAsync(path, token),
