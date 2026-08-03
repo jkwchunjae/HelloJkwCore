@@ -26,7 +26,7 @@ public class BettingGroupStageService : IBettingGroupStageService
         _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10));
         _timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
         _timer.AutoReset = true;
-        _timer.Start();
+        // _timer.Start();
 
         cacheClearInvoker.ClearCacheInvoked += (_, _) =>
         {

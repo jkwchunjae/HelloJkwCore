@@ -23,7 +23,7 @@ public class BettingFinalService : IBettingFinalService
         _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
         _timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
         _timer.AutoReset = true;
-        _timer.Start();
+        // _timer.Start();
 
         if (cacheClearInvoker != null)
         {

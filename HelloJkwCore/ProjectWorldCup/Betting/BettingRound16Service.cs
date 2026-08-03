@@ -39,7 +39,7 @@ public class BettingRound16Service : IBettingRound16Service
         _timer = new System.Timers.Timer(TimeSpan.FromMinutes(10).TotalMilliseconds);
         _timer.Elapsed += async (s, e) => await UpdateStandingsAsync();
         _timer.AutoReset = true;
-        _timer.Start();
+        // _timer.Start();
 
         cacheClearInvoker.ClearCacheInvoked += (_, _) =>
         {
