@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using HelloJkwCore.Components.Account
 @inherits JkwPageBase
 
 <PageTitle>HelloJkw</PageTitle>
@@ -36,10 +37,5 @@ else
 {
     <MudText Typo="Typo.h4">안녕하세요.</MudText>
 
-    <MudButton Href="/account/login"
-        Variant="Variant.Outlined"
-        Size="Size.Large"
-    >
-        로그인
-    </MudButton>
+    <Login />
 }
