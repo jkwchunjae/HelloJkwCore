@@ -11,10 +11,9 @@ public partial class DiaryWrite : JkwPageBase
 
     private DiaryInfo DiaryInfo { get; set; }
     private DateTime? Date { get; set; }
-    private string Content { get; set; }
+    private string Content { get; set; } = string.Empty;
     private bool ContentHasError { get; set; }
     private bool HasError { get; set; }
-    private DiaryText _diaryText;
 
     protected override async Task OnPageInitializedAsync()
     {
@@ -57,15 +56,10 @@ public partial class DiaryWrite : JkwPageBase
         }
     }
 
-    async Task WriteDiaryAsync()
+    private async Task WriteDiaryAsync()
     {
         if (!IsAuthenticated)
             return;
-
-        if (_diaryText != null)
-        {
-            await _diaryText.FlushAsync();
-        }
 
         if (DiaryInfo == null)
             return;
@@ -98,7 +92,7 @@ public partial class DiaryWrite : JkwPageBase
         }
     }
 
-    async Task OnContentChanged(string content)
+    private async Task OnContentChanged(string content)
     {
         Content = content;
 
@@ -112,18 +106,18 @@ public partial class DiaryWrite : JkwPageBase
         }
     }
 
-    async Task OnDateChanged(DateTime? date)
+    private async Task OnDateChanged(DateTime? date)
     {
         Date = date;
         await SaveTemporaryAsync();
     }
 
-    void OnContentErrorStateChanged(bool error)
+    private void OnContentErrorStateChanged(bool error)
     {
         ContentHasError = error;
     }
 
-    async Task SaveTemporaryAsync()
+    private async Task SaveTemporaryAsync()
     {
         if (!IsAuthenticated)
             return;
@@ -133,7 +127,7 @@ public partial class DiaryWrite : JkwPageBase
         await DiaryTemporaryService.SaveTemporaryDiary(User, DiaryInfo, Date.Value, Content);
     }
 
-    async Task<(bool Found, DateTime Date, string Content)> TryGetTemporaryAsync()
+    private async Task<(bool Found, DateTime Date, string Content)> TryGetTemporaryAsync()
     {
         if (!IsAuthenticated)
             return (false, DateTime.MinValue, string.Empty);
