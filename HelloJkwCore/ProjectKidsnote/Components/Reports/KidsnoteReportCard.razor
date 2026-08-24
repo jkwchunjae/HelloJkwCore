@@ -1,6 +1,8 @@
+@using System.Globalization
+
 <MudPaper Class="pa-4 mb-4 kidsnote-report" Elevation="1">
     <MudText Typo="Typo.body1" Class="kidsnote-report-meta">
-        @Report.DateWritten · @Report.AuthorName
+        @FormatDateWritten(Report.DateWritten) · @Report.AuthorName
     </MudText>
     <p class="kidsnote-content">@Report.Content</p>
 
@@ -22,4 +24,21 @@
 
 @code {
     [Parameter, EditorRequired] public SingleReport Report { get; set; } = null!;
+
+    private static string FormatDateWritten(string dateWritten)
+    {
+        if (!DateOnly.TryParse(
+                dateWritten,
+                CultureInfo.GetCultureInfo("ko-KR"),
+                DateTimeStyles.AllowWhiteSpaces,
+                out var date))
+        {
+            return dateWritten;
+        }
+
+        var dayOfWeek = date.ToString(
+            "dddd",
+            CultureInfo.GetCultureInfo("ko-KR"));
+        return $"{dateWritten} {dayOfWeek}";
+    }
 }
