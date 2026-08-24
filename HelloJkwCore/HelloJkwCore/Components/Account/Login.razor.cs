@@ -12,10 +12,13 @@ public partial class Login : ComponentBase
     [Inject] public IJSRuntime Js { get; set; } = default!;
     [Inject] public ISnackbar Snackbar { get; set; } = default!;
     [Inject] private SignInManager<AppUser> SignInManager { get; set; } = default!;
+    [Inject] private IWebHostEnvironment Environment { get; set; } = default!;
 
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
+    [SupplyParameterFromQuery] private string? DevelopmentLoginError { get; set; }
     private AuthenticationScheme[] externalLogins = [];
     private string UserAgent = string.Empty;
+    private bool IsDevelopment => Environment.IsDevelopment();
     private bool IsInAppBrowser => ExceptApps.Any(app => UserAgent.Contains(app));
     private string[] ExceptApps = new[] { "kakao", "naver" };
 

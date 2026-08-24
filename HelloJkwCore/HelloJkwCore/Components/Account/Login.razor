@@ -3,6 +3,74 @@
 
 <PageTitle>로그인</PageTitle>
 
+@if (IsDevelopment)
+{
+    <section class="development-login">
+        <MudText Typo="Typo.h6">개발용 로그인</MudText>
+        <MudText Typo="Typo.body2">개발 환경에서만 사용할 수 있습니다.</MudText>
+
+        @if (!string.IsNullOrWhiteSpace(DevelopmentLoginError))
+        {
+            <p class="development-login__error" role="alert">@DevelopmentLoginError</p>
+        }
+
+        <div class="development-login__block">
+            <MudText Typo="Typo.subtitle1">기존 사용자 로그인</MudText>
+            <form action="Account/DevelopmentLogin" method="post">
+                <AntiforgeryToken />
+                <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+                <label for="development-login-user-id">사용자 ID</label>
+                <input id="development-login-user-id"
+                       class="development-login__input"
+                       name="userId"
+                       type="text"
+                       required
+                       autofocus
+                       autocomplete="off" />
+                <MudButton ButtonType="ButtonType.Submit"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           FullWidth="true">
+                    ID로 로그인
+                </MudButton>
+            </form>
+        </div>
+
+        <div class="development-login__block">
+            <MudText Typo="Typo.subtitle1">새 사용자 만들기</MudText>
+            <MudText Typo="Typo.caption">생성 후 해당 사용자로 로그인합니다.</MudText>
+            <form action="Account/DevelopmentCreateUser" method="post">
+                <AntiforgeryToken />
+                <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+
+                <label for="development-create-user-id">사용자 ID</label>
+                <input id="development-create-user-id"
+                       class="development-login__input"
+                       name="userId"
+                       type="text"
+                       maxlength="128"
+                       required
+                       autocomplete="off" />
+
+                <label for="development-create-role">권한</label>
+                <select id="development-create-role"
+                        class="development-login__input"
+                        name="accountType">
+                    <option value="User">일반 사용자</option>
+                    <option value="Admin">Admin</option>
+                </select>
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Color="Color.Secondary"
+                           Variant="Variant.Filled"
+                           FullWidth="true">
+                    사용자 생성 및 로그인
+                </MudButton>
+            </form>
+        </div>
+    </section>
+}
+
 @foreach (var provider in externalLogins)
 {
     var loginImage = LoginImage(provider.Name);
