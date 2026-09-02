@@ -18,10 +18,25 @@
     margin-top: 1rem;
 }
 
-.kidsnote-images img {
+.kidsnote-image-button {
+    display: block;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0.25rem;
+    background: transparent;
+    cursor: zoom-in;
+    overflow: hidden;
+}
+
+.kidsnote-image-button:focus-visible {
+    outline: 0.2rem solid var(--mud-palette-primary);
+    outline-offset: 0.15rem;
+}
+
+.kidsnote-image-button img {
     display: block;
     width: 100%;
     max-height: 28rem;
     object-fit: contain;
-    border-radius: 0.25rem;
 }

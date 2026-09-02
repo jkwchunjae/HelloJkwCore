@@ -32,6 +32,8 @@ public partial class KidsnoteHome : JkwPageBase
     private bool _isLoadingAllReports;
     private bool _hasLoadedAllReports;
     private int _loadingReportsCount;
+    private readonly Dictionary<long, SingleReport> _viewerReportCache = [];
+    private string? _viewerNextPage;
 
     private string LoadAllReportsButtonText => _isLoadingAllReports
         ? $"불러오는 중 ({_loadingReportsCount})"
@@ -129,6 +131,7 @@ public partial class KidsnoteHome : JkwPageBase
                     "키즈노트 계정에 등록된 자녀가 없습니다.");
             _hasLoadedAllReports = false;
             _reports = await KidsnoteClient.GetReportsAsync(_selectedChild.Id);
+            ResetViewerReportCache(_reports);
             _initialDataLoaded = true;
             await LoadReportFromRouteAsync();
         }
@@ -205,6 +208,7 @@ public partial class KidsnoteHome : JkwPageBase
 
             _selectedReport = report;
             _reportIndex = reportIndex;
+            CacheViewerReport(report);
             _appliedReportId = requestedReportId;
         }
         catch (Exception exception) when (IsExpectedException(exception))
@@ -250,6 +254,7 @@ public partial class KidsnoteHome : JkwPageBase
             await foreach (var report in KidsnoteService.GetAllReportsAsync(childId))
             {
                 count++;
+                CacheViewerReport(report);
                 _ = InvokeAsync(() =>
                 {
                     _loadingReportsCount = count;
@@ -262,6 +267,7 @@ public partial class KidsnoteHome : JkwPageBase
             {
                 _reportIndex = reportIndex;
                 _hasLoadedAllReports = true;
+                _viewerNextPage = null;
             }
         }
         catch (Exception exception) when (IsExpectedException(exception))
@@ -303,6 +309,7 @@ public partial class KidsnoteHome : JkwPageBase
         try
         {
             _reports = await KidsnoteClient.GetReportsAsync(_selectedChild.Id);
+            ResetViewerReportCache(_reports);
             var report = _reports.Results.FirstOrDefault();
 
             _selectedReport = report;
@@ -333,6 +340,90 @@ public partial class KidsnoteHome : JkwPageBase
             $"/kidsnote/{reportId}",
             forceLoad: false,
             replace: replaceHistoryEntry);
+    }
+
+    private async Task<SingleReport?> LoadAdjacentReportForViewerAsync(
+        long reportId,
+        int offset,
+        CancellationToken cancellationToken)
+    {
+        if (_selectedChild is null || offset is not (-1 or 1))
+        {
+            return null;
+        }
+
+        while (true)
+        {
+            var orderedReportIds = _reportIndex.Reports
+                .Select(report => report.ReportId)
+                .Concat(_viewerReportCache.Keys)
+                .Distinct()
+                .OrderDescending()
+                .ToList();
+            var currentIndex = orderedReportIds.IndexOf(reportId);
+            var adjacentIndex = currentIndex + offset;
+
+            if (currentIndex >= 0 &&
+                adjacentIndex >= 0 &&
+                adjacentIndex < orderedReportIds.Count)
+            {
+                var adjacentReportId = orderedReportIds[adjacentIndex];
+                if (_viewerReportCache.TryGetValue(
+                    adjacentReportId,
+                    out var cachedReport))
+                {
+                    return cachedReport;
+                }
+
+                var loadedReport = await KidsnoteService.GetSingleReportAsync(
+                    adjacentReportId,
+                    _selectedChild.Id,
+                    cancellationToken);
+                CacheViewerReport(loadedReport);
+                return loadedReport;
+            }
+
+            if (offset < 0 || string.IsNullOrWhiteSpace(_viewerNextPage))
+            {
+                return null;
+            }
+
+            var requestedPage = _viewerNextPage;
+            var nextPage = await KidsnoteClient.GetReportsAsync(
+                _selectedChild.Id,
+                requestedPage,
+                cancellationToken);
+            _viewerNextPage = nextPage.Next;
+
+            var reportCountBefore = _viewerReportCache.Count;
+            foreach (var report in nextPage.Results)
+            {
+                CacheViewerReport(report);
+            }
+
+            if (_viewerReportCache.Count == reportCountBefore &&
+                string.Equals(requestedPage, _viewerNextPage, StringComparison.Ordinal))
+            {
+                _viewerNextPage = null;
+                return null;
+            }
+        }
+    }
+
+    private void ResetViewerReportCache(ReportsResponse reports)
+    {
+        _viewerReportCache.Clear();
+        _viewerNextPage = reports.Next;
+
+        foreach (var report in reports.Results)
+        {
+            CacheViewerReport(report);
+        }
+    }
+
+    private void CacheViewerReport(SingleReport report)
+    {
+        _viewerReportCache[report.Id] = report;
     }
 
     private static bool IsExpectedException(Exception exception) =>

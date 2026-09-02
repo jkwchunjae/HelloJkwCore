@@ -1,25 +1,58 @@
-<MudPaper Class="pa-4 mb-4 kidsnote-report" Elevation="1">
-    <MudText Typo="Typo.body1" Class="kidsnote-report-meta">
-        @Report.DateWritten · @Report.AuthorName
-    </MudText>
-    <p class="kidsnote-content">@Report.Content</p>
+@if (_viewerImageIndex is int viewerImageIndex)
+{
+    <KidsnoteReportViewer
+        InitialReport="Report"
+        InitialImageIndex="viewerImageIndex"
+        LoadAdjacentReport="LoadAdjacentReport"
+        OnClosed="CloseViewer" />
+}
+else
+{
+    <MudPaper Class="pa-4 mb-4 kidsnote-report" Elevation="1">
+        <MudText Typo="Typo.body1" Class="kidsnote-report-meta">
+            @Report.DateWritten · @Report.AuthorName
+        </MudText>
+        <p class="kidsnote-content">@Report.Content</p>
 
-    @if (Report.AttachedImages.Count > 0)
-    {
-        <div class="kidsnote-images">
-            @foreach (var image in Report.AttachedImages)
-            {
-                <a href="@image.Original" target="_blank" rel="noopener noreferrer">
-                    <img
-                        src="@image.Small"
-                        alt="@image.OriginalFileName"
-                        loading="lazy" />
-                </a>
-            }
-        </div>
-    }
-</MudPaper>
+        @if (Report.AttachedImages.Count > 0)
+        {
+            <div class="kidsnote-images">
+                @for (var index = 0; index < Report.AttachedImages.Count; index++)
+                {
+                    var imageIndex = index;
+                    var image = Report.AttachedImages[imageIndex];
+
+                    <button
+                        type="button"
+                        class="kidsnote-image-button"
+                        aria-label="@($"{image.OriginalFileName} 크게 보기")"
+                        @onclick="@(() => OpenViewer(imageIndex))">
+                        <img
+                            src="@image.Small"
+                            alt="@image.OriginalFileName"
+                            loading="lazy" />
+                    </button>
+                }
+            </div>
+        }
+    </MudPaper>
+}
 
 @code {
     [Parameter, EditorRequired] public SingleReport Report { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Func<long, int, CancellationToken, Task<SingleReport?>>
+        LoadAdjacentReport { get; set; } = null!;
+
+    private int? _viewerImageIndex;
+
+    private void OpenViewer(int imageIndex)
+    {
+        _viewerImageIndex = imageIndex;
+    }
+
+    private void CloseViewer()
+    {
+        _viewerImageIndex = null;
+    }
 }

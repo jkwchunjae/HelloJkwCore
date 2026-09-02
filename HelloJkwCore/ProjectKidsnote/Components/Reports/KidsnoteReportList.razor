@@ -57,7 +57,9 @@
         OnReportSelected="OnReportSelected" />
 </MudCollapse>
 
-<KidsnoteReportCard Report="Report" />
+<KidsnoteReportCard
+    Report="Report"
+    LoadAdjacentReport="LoadAdjacentReport" />
 
 <MudStack Row="true" Justify="Justify.Center" Spacing="2" Class="pb-20">
     <MudButton
@@ -85,6 +87,9 @@
     [Parameter, EditorRequired] public EventCallback<long> OnReportSelected { get; set; }
     [Parameter, EditorRequired] public EventCallback OnPreviousRequested { get; set; }
     [Parameter, EditorRequired] public EventCallback OnNextRequested { get; set; }
+    [Parameter, EditorRequired]
+    public Func<long, int, CancellationToken, Task<SingleReport?>>
+        LoadAdjacentReport { get; set; } = null!;
     [Parameter] public RenderFragment? HeaderActions { get; set; }
 
     private bool _isCalendarOpen;
