@@ -1,0 +1,76 @@
+@implements IAsyncDisposable
+@using Microsoft.JSInterop
+@inject IJSRuntime Js
+
+<section
+    @ref="_viewerElement"
+    class="kidsnote-viewer"
+    data-item-kind="@ItemKind"
+    role="dialog"
+    aria-modal="true"
+    aria-label="키즈노트 사진과 알림장 연속 보기"
+    tabindex="-1"
+    @onkeydown="HandleKeyDown">
+    <header class="kidsnote-viewer-header">
+        <div>
+            <div class="kidsnote-viewer-date">@_currentReport.DateWritten</div>
+            <div class="kidsnote-viewer-position">@PositionText</div>
+        </div>
+        <button
+            type="button"
+            class="kidsnote-viewer-close"
+            aria-label="연속 보기 닫기"
+            @onclick="CloseAsync">
+            ×
+        </button>
+    </header>
+
+    <div class="kidsnote-viewer-stage @TransitionClass">
+        @if (_itemKind == KidsnoteViewerItemKind.Photo)
+        {
+            var image = _currentReport.AttachedImages[_imageIndex];
+
+            <img
+                class="kidsnote-viewer-image"
+                src="@image.Original"
+                alt="@image.OriginalFileName" />
+        }
+        else
+        {
+            <article class="kidsnote-viewer-text-scroll" tabindex="0">
+                <div class="kidsnote-viewer-report-meta">
+                    @_currentReport.DateWritten · @_currentReport.AuthorName
+                </div>
+                <p class="kidsnote-viewer-report-content">@_currentReport.Content</p>
+            </article>
+        }
+    </div>
+
+    <nav class="kidsnote-viewer-controls" aria-label="연속 보기 이동">
+        <button
+            type="button"
+            aria-label="다음 항목으로 이동"
+            disabled="@_isTransitioning"
+            @onclick="@(() => MoveAsync(1))">
+            ↑
+        </button>
+        <button
+            type="button"
+            aria-label="이전 항목으로 이동"
+            disabled="@_isTransitioning"
+            @onclick="@(() => MoveAsync(-1))">
+            ↓
+        </button>
+    </nav>
+
+    @if (!string.IsNullOrWhiteSpace(_notice))
+    {
+        <div class="kidsnote-viewer-notice" role="status" aria-live="polite">
+            @_notice
+        </div>
+    }
+
+    <div class="kidsnote-viewer-hint" aria-hidden="true">
+        위·아래로 밀어 계속 보기
+    </div>
+</section>

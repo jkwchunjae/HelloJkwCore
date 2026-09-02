@@ -37,7 +37,8 @@ else if (_myInfo is not null && _selectedChild is not null && _reports is not nu
             OnChildSelected="SelectChildAsync"
             OnReportSelected="SelectReportFromCalendar"
             OnPreviousRequested="ShowPreviousReportAsync"
-            OnNextRequested="ShowNextReportAsync">
+            OnNextRequested="ShowNextReportAsync"
+            LoadAdjacentReport="LoadAdjacentReportForViewerAsync">
             <HeaderActions>
                 <div class="kidsnote-load-all-actions">
                     <MudButton
