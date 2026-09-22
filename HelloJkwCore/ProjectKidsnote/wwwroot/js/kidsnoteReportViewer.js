@@ -8,6 +8,52 @@ export function initialize(root, dotNetReference) {
     let startedAtBottom = false;
     let wheelDistance = 0;
     let invoking = false;
+    let scale = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+    let gesture = null;
+    let photoGesture = false;
+
+    const getImage = () => root.querySelector(".kidsnote-viewer-image");
+    const applyTransform = () => {
+        const image = getImage();
+        if (!image) return;
+        // Clamp to the visible photo, including object-fit letterboxing.
+        const fit = image.naturalWidth && image.naturalHeight
+            ? Math.min(image.clientWidth / image.naturalWidth,
+                image.clientHeight / image.naturalHeight)
+            : 0;
+        const maxX = Math.max(0, (image.naturalWidth * fit * scale - image.clientWidth) / 2);
+        const maxY = Math.max(0, (image.naturalHeight * fit * scale - image.clientHeight) / 2);
+        offsetX = Math.max(-maxX, Math.min(maxX, offsetX));
+        offsetY = Math.max(-maxY, Math.min(maxY, offsetY));
+        image.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+    };
+    const resetZoom = () => {
+        scale = 1;
+        offsetX = offsetY = 0;
+        gesture = null;
+        startY = null;
+        applyTransform();
+    };
+    const beginPhotoGesture = (touches) => {
+        const image = getImage();
+        if (!image || !touches.length) {
+            gesture = null;
+            return;
+        }
+        const rect = image.parentElement.getBoundingClientRect();
+        const first = touches[0];
+        const second = touches[1] ?? first;
+        gesture = {
+            x: (first.clientX + second.clientX) / 2 - rect.left - rect.width / 2,
+            y: (first.clientY + second.clientY) / 2 - rect.top - rect.height / 2,
+            distance: touches.length > 1
+                ? Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY)
+                : 0,
+            scale, offsetX, offsetY,
+        };
+    };
 
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
@@ -45,6 +91,12 @@ export function initialize(root, dotNetReference) {
     };
 
     const onTouchStart = (event) => {
+        if (!isTextItem() && (event.touches.length > 1 || scale > 1 || photoGesture)) {
+            photoGesture = true;
+            startY = null;
+            beginPhotoGesture(event.touches);
+            return;
+        }
         if (event.touches.length !== 1) {
             startY = null;
             return;
@@ -57,12 +109,37 @@ export function initialize(root, dotNetReference) {
     };
 
     const onTouchMove = (event) => {
+        if (photoGesture && gesture && !isTextItem()) {
+            event.preventDefault();
+            const image = getImage();
+            if (!image || !event.touches.length) return;
+            const rect = image.parentElement.getBoundingClientRect();
+            const first = event.touches[0];
+            const second = event.touches[1] ?? first;
+            const x = (first.clientX + second.clientX) / 2 - rect.left - rect.width / 2;
+            const y = (first.clientY + second.clientY) / 2 - rect.top - rect.height / 2;
+            if (event.touches.length > 1 && gesture.distance > 0) {
+                const distance = Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
+                scale = Math.max(1, Math.min(5, gesture.scale * distance / gesture.distance));
+            }
+            const ratio = scale / gesture.scale;
+            offsetX = x - (gesture.x - gesture.offsetX) * ratio;
+            offsetY = y - (gesture.y - gesture.offsetY) * ratio;
+            applyTransform();
+            return;
+        }
         if (!isTextItem() && startY !== null) {
             event.preventDefault();
         }
     };
 
     const onTouchEnd = (event) => {
+        if (photoGesture) {
+            startY = null;
+            beginPhotoGesture(event.touches);
+            if (!event.touches.length) photoGesture = false;
+            return;
+        }
         if (startY === null || event.changedTouches.length === 0) {
             return;
         }
@@ -81,7 +158,17 @@ export function initialize(root, dotNetReference) {
         }
     };
 
+    const onTouchCancel = () => {
+        startY = null;
+        gesture = null;
+        photoGesture = false;
+    };
+
     const onWheel = (event) => {
+        if (!isTextItem() && scale > 1) {
+            event.preventDefault();
+            return;
+        }
         const direction = event.deltaY > 0 ? 1 : -1;
         if (isTextItem()) {
             const boundaries = getBoundaries();
@@ -103,6 +190,14 @@ export function initialize(root, dotNetReference) {
         void navigate(wheelDirection);
     };
 
+    // Blazor can reuse the img element when moving to another photo.
+    const observer = new MutationObserver(resetZoom);
+    observer.observe(root.querySelector(".kidsnote-viewer-stage"), {
+        childList: true, subtree: true, attributes: true, attributeFilter: ["src"],
+    });
+    root.addEventListener("load", applyTransform, true);
+    window.addEventListener("resize", applyTransform);
+    root.addEventListener("touchcancel", onTouchCancel, { passive: true });
     root.addEventListener("touchstart", onTouchStart, { passive: true });
     root.addEventListener("touchmove", onTouchMove, { passive: false });
     root.addEventListener("touchend", onTouchEnd, { passive: true });
@@ -120,6 +215,10 @@ export function initialize(root, dotNetReference) {
                 : 0;
         },
         dispose() {
+            observer.disconnect();
+            root.removeEventListener("load", applyTransform, true);
+            window.removeEventListener("resize", applyTransform);
+            root.removeEventListener("touchcancel", onTouchCancel);
             root.removeEventListener("touchstart", onTouchStart);
             root.removeEventListener("touchmove", onTouchMove);
             root.removeEventListener("touchend", onTouchEnd);
