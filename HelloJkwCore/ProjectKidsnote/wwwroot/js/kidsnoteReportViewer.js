@@ -91,7 +91,14 @@ export function initialize(root, dotNetReference) {
     };
 
     const onTouchStart = (event) => {
+        // Keep native taps on close/navigation buttons, even while zoomed in.
+        if (event.touches.length === 1 && event.target?.closest?.("button")) {
+            startY = null;
+            return;
+        }
         if (!isTextItem() && (event.touches.length > 1 || scale > 1 || photoGesture)) {
+            // Claim the gesture before the browser starts native pinch/scroll handling.
+            if (event.cancelable) event.preventDefault();
             photoGesture = true;
             startY = null;
             beginPhotoGesture(event.touches);
@@ -191,14 +198,25 @@ export function initialize(root, dotNetReference) {
     };
 
     // Blazor can reuse the img element when moving to another photo.
-    const observer = new MutationObserver(resetZoom);
+    let observedImage = getImage();
+    let observedSource = observedImage?.getAttribute("src");
+    const observer = new MutationObserver(() => {
+        const image = getImage();
+        const source = image?.getAttribute("src");
+        // A Blazor render can mutate the stage without changing the photo.
+        if (image !== observedImage || source !== observedSource) {
+            observedImage = image;
+            observedSource = source;
+            resetZoom();
+        }
+    });
     observer.observe(root.querySelector(".kidsnote-viewer-stage"), {
         childList: true, subtree: true, attributes: true, attributeFilter: ["src"],
     });
     root.addEventListener("load", applyTransform, true);
     window.addEventListener("resize", applyTransform);
     root.addEventListener("touchcancel", onTouchCancel, { passive: true });
-    root.addEventListener("touchstart", onTouchStart, { passive: true });
+    root.addEventListener("touchstart", onTouchStart, { passive: false });
     root.addEventListener("touchmove", onTouchMove, { passive: false });
     root.addEventListener("touchend", onTouchEnd, { passive: true });
     root.addEventListener("wheel", onWheel, { passive: false });

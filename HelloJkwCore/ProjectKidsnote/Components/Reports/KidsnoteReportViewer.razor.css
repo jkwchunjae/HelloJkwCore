@@ -12,6 +12,11 @@
     overscroll-behavior: none;
 }
 
+/* Include the letterbox and overlays in the photo's custom touch surface. */
+.kidsnote-viewer[data-item-kind="photo"] {
+    touch-action: none;
+}
+
 .kidsnote-viewer-header {
     position: absolute;
     top: 0;

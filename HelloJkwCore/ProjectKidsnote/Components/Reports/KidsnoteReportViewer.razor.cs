@@ -53,7 +53,7 @@ public partial class KidsnoteReportViewer
         {
             _module = await Js.InvokeAsync<IJSObjectReference>(
                 "import",
-                "./_content/ProjectKidsnote/js/kidsnoteReportViewer.js");
+                "./_content/ProjectKidsnote/js/kidsnoteReportViewer.js?v=2");
             _dotNetReference = DotNetObjectReference.Create(this);
             _viewerInterop = await _module.InvokeAsync<IJSObjectReference>(
                 "initialize",
