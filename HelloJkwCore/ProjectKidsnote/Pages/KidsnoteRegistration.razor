@@ -35,7 +35,7 @@
             <MudAlert Severity="Severity.Error" role="alert">@_error</MudAlert>
         }
 
-        @if (_family is not null && !_ready && (!_busy || _family.Auth is null))
+        @if (_family is not null && _showConnectionForm && !_busy)
         {
             <MudPaper Class="connection-form" Elevation="0" Outlined="true" @key="_family.User">
                 <MudStack Spacing="3">
@@ -70,12 +70,12 @@
                 </MudAvatar>
                 <div>
                     <MudText Typo="Typo.subtitle2" HtmlTag="h2" id="connected-account">키즈노트 계정</MudText>
-                    <MudText Typo="Typo.body2" Class="muted">계정에서 아이 @(_choices.Count)명을 불러왔어요.</MudText>
+                    <MudText Typo="Typo.body2" Class="muted">등록한 아이는 @(family.Kids.Count)명입니다.</MudText>
                 </div>
-                <span class="connection-status">
-                    <MudIcon Icon="@Icons.Material.Outlined.CheckCircle" Size="Size.Small" />
-                    연결됨
-                </span>
+                @if (family.Auth?.EncryptedAuthInfo is not null && !_showConnectionForm)
+                {
+                    <MudButton Class="quiet-action" Disabled="_busy" OnClick="RetryAsync">아이 목록 새로고침</MudButton>
+                }
             </section>
 
             <div class="@(_accessTarget is null ? "registration-grid" : "registration-grid editing-access")" @key="family.User">
@@ -184,7 +184,7 @@
                     </div>
                     @if (!VisibleChildren.Any())
                     {
-                        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">연결된 계정에 아이가 없습니다.</MudAlert>
+                        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">표시할 아이가 없습니다.</MudAlert>
                     }
                     @foreach (var kid in VisibleChildren)
                     {

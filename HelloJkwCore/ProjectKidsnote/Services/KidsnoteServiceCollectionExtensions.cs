@@ -17,6 +17,7 @@ public static class KidsnoteServiceCollectionExtensions
         services.AddSingleton(options!);
         services.AddSingleton<KidsnoteFamilies>();
         services.AddScoped<KidsnoteMenuState>();
+        services.AddScoped<KidsnoteSessions>();
         services.AddSingleton<KidsnoteCredentials>();
         services.AddKeyedSingleton<IFileSystem>(
             nameof(KidsnoteService),

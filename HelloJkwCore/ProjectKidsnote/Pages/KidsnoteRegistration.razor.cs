@@ -1,8 +1,9 @@
+using System.Net;
 using Common;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MudBlazor;
-using ProjectKidsnote.Client;
-using ProjectKidsnote.Configuration;
+using ProjectKidsnote.Models.Account;
 using ProjectKidsnote.Models.Authentication;
 using ProjectKidsnote.Models.Parents;
 using ProjectKidsnote.Services;
@@ -13,11 +14,12 @@ public partial class KidsnoteRegistration
 {
     [Inject] private KidsnoteFamilies Families { get; set; } = null!;
     [Inject] private KidsnoteCredentials Credentials { get; set; } = null!;
-    [Inject] private KidsnoteOptions Options { get; set; } = null!;
+    [Inject] private KidsnoteSessions Sessions { get; set; } = null!;
     [Inject] private AppUserManager Accounts { get; set; } = null!;
     [Inject] private KidsnoteMenuState Menu { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private IDialogService Dialogs { get; set; } = null!;
+    [Inject] private ILogger<KidsnoteRegistration> Logger { get; set; } = null!;
 
     private List<KidsParent> _families = [];
     private KidsParent? _family;
@@ -38,6 +40,7 @@ public partial class KidsnoteRegistration
     private ElementReference _accessHeading;
     private bool _focusAccessHeading;
     private bool _ready;
+    private bool _showConnectionForm;
     private bool _busy;
 
     private bool CanConnect => !_busy && !string.IsNullOrWhiteSpace(_accountId) && !string.IsNullOrWhiteSpace(_password);
@@ -79,16 +82,19 @@ public partial class KidsnoteRegistration
         CancelRename();
         _accountId = _password = "";
         _ready = false;
+        _showConnectionForm = false;
         _choices.Clear();
         _users.Clear();
         _family = null;
         _families = (await Families.ReadAsync()).Where(p => p.CanManage(User!.Id)).ToList();
+        var savedOwners = _families.Select(p => p.User).ToHashSet();
         if (User!.HasRole(UserRole.Kidsnote) && !_families.Any(p => p.User == User.Id))
             _families.Add(new KidsParent { User = User.Id });
         _family = _families.FirstOrDefault(p => p.User.Id == owner) ?? _families.FirstOrDefault();
         if (_family is null) throw new InvalidOperationException("가족 설정을 관리할 권한이 없습니다.");
-        if (_family.Auth?.EncryptedAuthInfo is { } encrypted)
-            await LoginAsync(Credentials.Open(_family.User, encrypted), saveCredentials: false);
+        _ready = savedOwners.Contains(_family.User);
+        _showConnectionForm = _family.Auth?.EncryptedAuthInfo is null;
+        _users = (await Accounts.GetUsersInRoleAsync("all")).OrderBy(u => u.DisplayName).ToList();
     }
 
     private string FamilyLabel(KidsParent family) => family.User == User!.Id ? "내 가족"
@@ -99,14 +105,14 @@ public partial class KidsnoteRegistration
         _families.FirstOrDefault(family => family.User.Id == owner) is { } family ? FamilyLabel(family) : "";
 
     private Task SwitchAsync(string? owner) => RunAsync(() => OpenFamilyAsync(owner));
-    private Task RetryAsync() => SwitchAsync(_family!.User.Id);
+    private Task RetryAsync() => RunAsync(() => LoginAsync(_family!.Auth.EncryptedAuthInfo!, saveCredentials: false));
 
     private async Task ConnectAsync()
     {
         if (!CanConnect) return;
         try
         {
-            await RunAsync(() => LoginAsync(new KidsnoteLoginRequest(_accountId.Trim(), _password), saveCredentials: true));
+            await RunAsync(() => LoginAsync(Credentials.Protect(_family!.User, new KidsnoteLoginRequest(_accountId.Trim(), _password)), saveCredentials: true));
         }
         finally
         {
@@ -114,26 +120,81 @@ public partial class KidsnoteRegistration
         }
     }
 
-    private async Task LoginAsync(KidsnoteLoginRequest login, bool saveCredentials)
+    private async Task LoginAsync(string encrypted, bool saveCredentials)
     {
-        using var client = new KidsnoteClient(Options);
-        await client.LoginAsync(login.UserId, login.Password);
+        _showConnectionForm = true;
+        var step = "Login";
+        UserInfo info;
+        try
+        {
+            info = saveCredentials ? await ReadInfoAsync() : await RestoreConnectionAsync(ReadInfoAsync);
+        }
+        catch (HttpRequestException ex)
+        {
+            Logger.LogWarning("Kidsnote connection failed at {Step}. HTTP status: {StatusCode}; error: {RequestError}.",
+                step, (int?)ex.StatusCode, ex.HttpRequestError);
+            _error = ex.StatusCode switch
+            {
+                HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden =>
+                    "키즈노트에서 접근을 허용하지 않았습니다. 키즈노트 로그인 정보를 확인해 주세요.",
+                HttpStatusCode.TooManyRequests =>
+                    "키즈노트 연결 요청이 너무 많습니다. 잠시 후 다시 연결해 주세요.",
+                _ => "키즈노트에 연결하지 못했습니다. 잠시 후 다시 연결해 주세요."
+            };
+            return;
+        }
+        catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+        {
+            Logger.LogWarning("Kidsnote connection timed out at {Step}.", step);
+            _error = "키즈노트 응답이 지연되고 있습니다. 잠시 후 다시 연결해 주세요.";
+            return;
+        }
+
         if (saveCredentials)
         {
-            var encrypted = Credentials.Protect(_family!.User, login);
             await PersistAsync(p => p.Auth = new KidsnoteAuth { EncryptedAuthInfo = encrypted });
         }
 
-        var info = await client.GetMyInfoAsync();
         _choices = info.Children.Select(child => new Kid
         {
             ChildId = child.Id, Name = child.Name, NicknameForUrl = "",
             CenterId = (child.Enrollment.FirstOrDefault(e => e.IsApproved && !e.RemovedChild)
                 ?? child.Enrollment.FirstOrDefault())?.CenterId ?? 0
         }).ToList();
-        _users = (await Accounts.GetUsersInRoleAsync("all")).OrderBy(u => u.DisplayName).ToList();
+        _showConnectionForm = false;
         _ready = true;
+
+        async Task<UserInfo> ReadInfoAsync()
+        {
+            step = "Login";
+            var client = await Sessions.GetAsync(_family!.User, encrypted);
+            step = "Profile";
+            return await client.GetMyInfoAsync();
+        }
     }
+
+    internal static async Task<UserInfo> RestoreConnectionAsync(Func<Task<UserInfo>> readInfo)
+    {
+        try
+        {
+            return await readInfo();
+        }
+        catch (Exception ex) when (IsTemporaryConnectionFailure(ex))
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
+            return await readInfo();
+        }
+    }
+
+    private static bool IsTemporaryConnectionFailure(Exception exception) => exception switch
+    {
+        HttpRequestException { StatusCode: HttpStatusCode.RequestTimeout } => true,
+        HttpRequestException { StatusCode: { } status } => (int)status is >= 500 and <= 599,
+        HttpRequestException { HttpRequestError: HttpRequestError.ConnectionError or
+            HttpRequestError.NameResolutionError or HttpRequestError.ResponseEnded } => true,
+        TaskCanceledException { InnerException: TimeoutException } => true,
+        _ => false
+    };
 
     private async Task PersistAsync(Action<KidsParent> change)
     {
@@ -301,7 +362,12 @@ public partial class KidsnoteRegistration
         _error = null;
         try { await action(); }
         catch (InvalidOperationException ex) { _error = ex.Message; }
-        catch (HttpRequestException) { _error = "키즈노트 연결에 실패했습니다. 로그인 정보와 연결 상태를 확인해 주세요."; }
+        catch (HttpRequestException ex)
+        {
+            Logger.LogWarning("Kidsnote registration storage request failed. HTTP status: {StatusCode}; error: {RequestError}.",
+                (int?)ex.StatusCode, ex.HttpRequestError);
+            _error = "가족 설정이나 계정 목록을 불러오거나 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.";
+        }
         catch (Exception) { _error = "키즈노트 계정 또는 저장소를 확인하고 다시 시도해 주세요."; }
         finally { _busy = false; }
     }

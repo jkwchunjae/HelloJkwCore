@@ -2,11 +2,10 @@
 @using ProjectKidsnote.Services
 @using ProjectKidsnote.Models.Parents
 @using ProjectKidsnote.Configuration
-@using ProjectKidsnote.Client
 @using Microsoft.Extensions.DependencyInjection
 @implements IDisposable
 @inject KidsnoteFamilies Families
-@inject KidsnoteCredentials Credentials
+@inject KidsnoteSessions Sessions
 @inject KidsnoteOptions Options
 @inject IServiceProvider Services
 
@@ -29,7 +28,7 @@ else if (_shown.Count > 0)
 {
     <KidsnoteReportList Title="@_title" Reports="_shown" ReportIndex="_index"
         CanNavigatePrevious="@(_shown[0].DateWritten != Ordered().First().Date)"
-        CanNavigateNext="@(_sources.Any(s => s.Next is not null) || _shown[0].DateWritten != Ordered().Last().Date)"
+        CanNavigateNext="@(_sources.Any(s => s.HasMorePages) || _shown[0].DateWritten != Ordered().Last().Date)"
         OnPreviousRequested="() => MoveDayAsync(-1)" OnNextRequested="() => MoveDayAsync(1)"
         OnReportSelected="SelectReportAsync" LoadAdjacentReport="AdjacentAsync">
         <HeaderActions>
@@ -45,11 +44,13 @@ else
 @code {
     [Parameter, EditorRequired] public AppUser Actor { get; set; } = null!;
     [Parameter, EditorRequired] public string Nicknames { get; set; } = "";
-    private sealed class Source(Kid kid, KidsnoteClient client, KidsnoteService reports)
+    private sealed class Source(Kid kid, KidsnoteService reports)
     {
         public Kid Kid { get; } = kid;
-        public KidsnoteClient Client { get; } = client;
         public KidsnoteService Reports { get; } = reports;
+        public bool FirstPagePending = true;
+        public bool HasMorePages => FirstPagePending || Next is not null;
+        public string? CachedDate;
         public string? Next;
         public string? OldestPageDate;
     }
@@ -57,7 +58,6 @@ else
     private sealed record Entry(Source Source, long Id, string Date);
     private readonly List<Source> _sources = [];
     private readonly Dictionary<long, Entry> _entries = [];
-    private readonly List<KidsnoteClient> _clients = [];
     private readonly CancellationTokenSource _lifetime = new();
     private CancellationToken Token => _lifetime.Token;
     private List<SingleReport> _shown = [];
@@ -96,29 +96,30 @@ else
 
     private async Task LoadInitialAsync()
     {
-        DisposeClients();
         _sources.Clear();
         _entries.Clear();
         var children = await ResolveAsync();
         _authorized = children.Select(x => (x.Parent.User, x.Kid.ChildId)).ToList();
         _title = string.Join(", ", children.Select(x => x.Kid.Name));
         var files = Services.GetRequiredKeyedService<IFileSystem>(nameof(KidsnoteService));
+        var localTime = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, TimeZoneInfo.FindSystemTimeZoneById(Options.TimeZoneId));
+        var today = localTime.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
         foreach (var family in children.GroupBy(x => x.Parent))
         {
             Token.ThrowIfCancellationRequested();
-            var client = new KidsnoteClient(Options);
-            _clients.Add(client);
-            var login = Credentials.Open(family.Key.User, family.Key.Auth.EncryptedAuthInfo!);
-            await client.LoginAsync(login.UserId, login.Password, Token);
-            var reports = new KidsnoteService(client, files);
+            var reports = new KidsnoteService(async token =>
+                await Sessions.GetAsync(family.Key.User, family.Key.Auth.EncryptedAuthInfo!, token), files);
             foreach (var (_, kid) in family)
             {
-                var source = new Source(kid, client, reports);
+                var source = new Source(kid, reports);
                 _sources.Add(source);
                 var index = await reports.GetReportIndexAsync(kid.ChildId, Token);
                 foreach (var item in index.Reports)
                     _entries[item.ReportId] = new Entry(source, item.ReportId, item.DateWritten);
-                await ReadPageAsync(source);
+                if (index.Reports.Any(item => item.DateWritten == today))
+                    source.CachedDate = today;
+                else
+                    await ReadPageAsync(source);
             }
         }
         if (Ordered().FirstOrDefault() is { } first) await ShowDayAsync(first.Date);
@@ -129,23 +130,27 @@ else
 
     private async Task ReadPageAsync(Source source)
     {
-        var page = await source.Client.GetReportsAsync(source.Kid.ChildId, source.Next, Token);
+        var page = await source.Reports.GetPageAsync(source.Kid.ChildId, source.Next, Token);
         foreach (var report in page.Results)
         {
             if (report.Child != source.Kid.ChildId) throw new InvalidDataException("아이 정보가 일치하지 않습니다.");
             _entries[report.Id] = new Entry(source, report.Id, report.DateWritten);
         }
         source.Next = string.IsNullOrWhiteSpace(page.Next) || page.Next == source.Next ? null : page.Next;
+        source.FirstPagePending = false;
         if (page.Results.Count > 0) source.OldestPageDate = page.Results.Min(r => r.DateWritten);
     }
 
     // Include every same-day report, even when siblings' page boundaries differ.
-    private async Task ReadThroughAsync(string date)
+    private async Task ReadThroughAsync(string date, bool includeOlder = false)
     {
         foreach (var source in _sources)
-            while (source.Next is not null && (source.OldestPageDate is null ||
+        {
+            if (!includeOlder && date == source.CachedDate) continue;
+            while (source.HasMorePages && (source.OldestPageDate is null ||
                 string.CompareOrdinal(source.OldestPageDate, date) >= 0))
                 await ReadPageAsync(source);
+        }
     }
 
     private async Task ShowDayAsync(string date)
@@ -172,7 +177,7 @@ else
     {
         await CheckAccessAsync();
         var date = _shown[0].DateWritten;
-        await ReadThroughAsync(date);
+        await ReadThroughAsync(date, includeOlder: offset > 0);
         var days = Ordered().Select(e => e.Date).Distinct().ToList();
         var target = days.IndexOf(date) + offset;
         if (target >= 0 && target < days.Count) await ShowDayAsync(days[target]);
@@ -181,7 +186,7 @@ else
     private async Task<SingleReport?> AdjacentAsync(long id, int offset, CancellationToken token)
     {
         await CheckAccessAsync();
-        await ReadThroughAsync(_entries[id].Date);
+        await ReadThroughAsync(_entries[id].Date, includeOlder: offset > 0);
         var ordered = Ordered().ToList();
         var next = ordered.FindIndex(e => e.Id == id) + offset;
         return next >= 0 && next < ordered.Count ? await LoadAsync(ordered[next], token) : null;
@@ -192,7 +197,7 @@ else
         await CheckAccessAsync();
         foreach (var source in _sources)
         {
-            while (source.Next is not null) await ReadPageAsync(source);
+            while (source.HasMorePages) await ReadPageAsync(source);
         }
         foreach (var entry in _entries.Values) await LoadAsync(entry, Token);
         await ShowDayAsync(_shown[0].DateWritten);
@@ -226,13 +231,6 @@ else
     public void Dispose()
     {
         _lifetime.Cancel();
-        DisposeClients();
         _lifetime.Dispose();
-    }
-
-    private void DisposeClients()
-    {
-        foreach (var client in _clients) client.Dispose();
-        _clients.Clear();
     }
 }

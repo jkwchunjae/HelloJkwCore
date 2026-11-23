@@ -25,7 +25,7 @@ public interface IKidsnoteService
 
 public sealed class KidsnoteService : IKidsnoteService
 {
-    private readonly IKidsnoteClient _kidsnoteClient;
+    private readonly Func<CancellationToken, Task<IKidsnoteClient>> _getClient;
     private readonly IFileSystem _fileSystem;
     // Separate sessions can open the same child and report concurrently.
     private static readonly SemaphoreSlim[] ReportLocks = Enumerable.Range(0, 32)
@@ -35,8 +35,13 @@ public sealed class KidsnoteService : IKidsnoteService
     public KidsnoteService(
         IKidsnoteClient kidsnoteClient,
         [FromKeyedServices(nameof(KidsnoteService))] IFileSystem fileSystem)
+        : this(_ => Task.FromResult(kidsnoteClient), fileSystem)
     {
-        _kidsnoteClient = kidsnoteClient;
+    }
+
+    internal KidsnoteService(Func<CancellationToken, Task<IKidsnoteClient>> getClient, IFileSystem fileSystem)
+    {
+        _getClient = getClient;
         _fileSystem = fileSystem;
     }
 
@@ -79,7 +84,8 @@ public sealed class KidsnoteService : IKidsnoteService
             return savedReport;
         }
 
-        var report = await _kidsnoteClient.GetSingleReportAsync(
+        var client = await _getClient(cancellationToken);
+        var report = await client.GetSingleReportAsync(
             reportId,
             cancellationToken);
 
@@ -187,11 +193,10 @@ public sealed class KidsnoteService : IKidsnoteService
 
     public async IAsyncEnumerable<SingleReport> GetAllReportsAsync(long childId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var client = _kidsnoteClient;
         string? next = null;
         do
         {
-            var reportsResponse = await client.GetReportsAsync(childId, next, cancellationToken: cancellationToken);
+            var reportsResponse = await GetPageAsync(childId, next, cancellationToken);
 
             var reports = await reportsResponse.Results
                 .Select(x => GetSingleReportAsync(x.Id, childId, cancellationToken))
@@ -203,5 +208,11 @@ public sealed class KidsnoteService : IKidsnoteService
             }
             next = reportsResponse.Next;
         } while (next != null);
+    }
+
+    internal async Task<ReportsResponse> GetPageAsync(long childId, string? next, CancellationToken token)
+    {
+        var client = await _getClient(token);
+        return await client.GetReportsAsync(childId, next, token);
     }
 }
