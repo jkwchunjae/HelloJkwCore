@@ -15,6 +15,8 @@ public static class KidsnoteServiceCollectionExtensions
         var options = configuration.GetSection(KidsnoteOptions.SectionName).Get<KidsnoteOptions>();
 
         services.AddSingleton(options!);
+        services.AddSingleton<KidsnoteFamilies>();
+        services.AddSingleton<KidsnoteCredentials>();
         services.AddSingleton<IKidsnoteClient, KidsnoteClient>();
         services.AddSingleton<IKidsnoteService, KidsnoteService>();
         services.AddKeyedSingleton<IFileSystem>(
