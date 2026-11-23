@@ -1,4 +1,4 @@
-﻿using Dropbox.Api;
+using Dropbox.Api;
 using Dropbox.Api.Files;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -75,9 +75,10 @@ public class DropboxFileSystem : IFileSystem
             await _client.Files.CreateFolderV2Async(path);
             return true;
         }
-        catch
+        catch (ApiException<CreateFolderError> ex) when (ex.ErrorResponse.IsPath &&
+            ex.ErrorResponse.AsPath.Value.IsConflict && ex.ErrorResponse.AsPath.Value.AsConflict.Value.IsFolder)
         {
-            throw;
+            return true;
         }
     }
 
@@ -103,9 +104,9 @@ public class DropboxFileSystem : IFileSystem
             var metadata = await _client.Files.GetMetadataAsync(path);
             return metadata.IsFolder;
         }
-        catch
+        catch (ApiException<GetMetadataError> ex) when (ex.ErrorResponse.IsPath && ex.ErrorResponse.AsPath.Value.IsNotFound)
         {
-            throw;
+            return false;
         }
     }
 
@@ -117,9 +118,9 @@ public class DropboxFileSystem : IFileSystem
             var metadata = await _client.Files.GetMetadataAsync(path);
             return metadata.IsFile;
         }
-        catch
+        catch (ApiException<GetMetadataError> ex) when (ex.ErrorResponse.IsPath && ex.ErrorResponse.AsPath.Value.IsNotFound)
         {
-            throw;
+            return false;
         }
     }
 
