@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @using HelloJkwCore.Components.Account
 @inherits JkwPageBase
 
@@ -20,18 +20,7 @@
         </Authorized>
     </AuthorizeView>
     
-    <AuthorizeView Roles="Kidsnote">
-        <Authorized>
-            <MudButton
-                Href="kidsnote"
-                StartIcon="@Icons.Material.Filled.MenuBook"
-                Variant="Variant.Outlined"
-                Color="Color.Dark"
-            >
-                하정이 키즈노트
-            </MudButton>
-        </Authorized>
-    </AuthorizeView>
+    <ProjectKidsnote.Components.KidsnoteLinks Actor="User" />
 }
 else
 {

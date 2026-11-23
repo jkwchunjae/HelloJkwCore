@@ -1,0 +1,56 @@
+@using Microsoft.AspNetCore.Components.Routing
+@using Common
+@using ProjectKidsnote.Services
+@inject KidsnoteFamilies Families
+
+@foreach (var (label, href) in _links)
+{
+    @if (Navigation)
+    {
+        <MudNavLink Href="@href" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.ChildCare">@label</MudNavLink>
+    }
+    else
+    {
+        <MudButton Href="@href" StartIcon="@Icons.Material.Filled.ChildCare" Variant="Variant.Outlined"
+                   Color="Color.Dark">@label</MudButton>
+    }
+}
+@if (_failed)
+{
+    <MudText Typo="Typo.caption">키즈노트 목록을 불러오지 못했습니다.</MudText>
+}
+
+@code {
+    [Parameter] public AppUser? Actor { get; set; }
+    [Parameter] public bool Navigation { get; set; }
+    private readonly List<(string Label, string Href)> _links = [];
+    private AppUser? _loadedFor;
+    private bool _failed;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_loadedFor == Actor) return;
+        var actor = _loadedFor = Actor;
+        _links.Clear();
+        _failed = false;
+        if (actor is null) return;
+
+        try
+        {
+            var families = await Families.ReadAsync();
+            if (actor != _loadedFor) return;
+            if (actor.HasRole(UserRole.Kidsnote) || families.Any(p => p.CanManage(actor.Id)))
+                _links.Add(("키즈노트 등록", "kidsnote/manage/family"));
+            var kids = families.SelectMany(p => p.Kids.Where(k => p.CanRead(actor.Id, k)))
+                .OrderBy(k => k.NicknameForUrl, StringComparer.Ordinal).ToList();
+            foreach (var kid in kids)
+                _links.Add(($"{kid.Name} 키즈노트", $"kidsnote/{kid.NicknameForUrl}/"));
+            if (kids.Count > 1)
+                _links.Add(("아이들 키즈노트", $"kidsnote/{string.Join('-', kids.Select(k => k.NicknameForUrl))}"));
+        }
+        catch (Exception)
+        {
+            _failed = true;
+        }
+    }
+}

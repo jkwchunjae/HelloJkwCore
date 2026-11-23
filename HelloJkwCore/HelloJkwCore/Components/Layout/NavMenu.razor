@@ -1,4 +1,4 @@
-﻿@inherits JkwPageBase
+@inherits JkwPageBase
 
 <MudNavMenu Class="mud-nav-menu-custom">
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
@@ -26,13 +26,7 @@
             </MudNavLink>
         </Authorized>
     </AuthorizeView>
-    <AuthorizeView Roles="Kidsnote">
-        <Authorized>
-            <MudNavLink Href="kidsnote" Icon="@Icons.Material.Filled.ChildCare">
-                키즈노트
-            </MudNavLink>
-        </Authorized>
-    </AuthorizeView>
+    <ProjectKidsnote.Components.KidsnoteLinks Actor="User" Navigation="true" />
     <MudNavLink Href="baduk" Icon="@Icons.Material.Filled.Window">
         바둑
     </MudNavLink>
