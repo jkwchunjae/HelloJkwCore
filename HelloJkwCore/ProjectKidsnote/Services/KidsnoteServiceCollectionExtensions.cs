@@ -17,8 +17,6 @@ public static class KidsnoteServiceCollectionExtensions
         services.AddSingleton(options!);
         services.AddSingleton<KidsnoteFamilies>();
         services.AddSingleton<KidsnoteCredentials>();
-        services.AddSingleton<IKidsnoteClient, KidsnoteClient>();
-        services.AddSingleton<IKidsnoteService, KidsnoteService>();
         services.AddKeyedSingleton<IFileSystem>(
             nameof(KidsnoteService),
             (provider, _) =>

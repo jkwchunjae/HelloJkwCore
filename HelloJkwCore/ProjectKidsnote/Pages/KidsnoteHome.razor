@@ -1,81 +1,18 @@
-@page "/kidsnote"
-@page "/kidsnote/{ReportId:long}"
+@page "/kidsnote/{Nicknames}"
 @inherits JkwPageBase
 
 <PageTitle>키즈노트</PageTitle>
-
-@if (!string.IsNullOrWhiteSpace(_errorMessage))
+@if (User is not null)
 {
-    <MudAlert Severity="Severity.Error" Class="mb-4 kidsnote-alert">
-        @_errorMessage
-    </MudAlert>
+    <KidsnoteTimeline @key="Nicknames" Actor="User" Nicknames="Nicknames" />
 }
 
-@if (_isBusy)
-{
-    <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
-}
-else if (!KidsnoteClient.IsLoggedIn)
-{
-    <KidsnoteLoginForm
-        HasConfiguredAccount="@Options.HasCredentials"
-        IsBusy="_isBusy"
-        OnLogin="LoginAsync"
-        OnLoginWithConfiguredAccount="LoginWithConfiguredAccountAsync" />
-}
-else if (_myInfo is not null && _selectedChild is not null && _reports is not null)
-{
-    @if (_selectedReport is not null)
+@code {
+    [Parameter] public string Nicknames { get; set; } = "";
+
+    protected override Task OnPageInitializedAsync()
     {
-        <KidsnoteReportList
-            MyInfo="_myInfo"
-            SelectedChild="_selectedChild"
-            Report="_selectedReport"
-            ReportIndex="_reportIndex"
-            CanNavigatePrevious="CanNavigatePrevious"
-            CanNavigateNext="CanNavigateNext"
-            OnChildSelected="SelectChildAsync"
-            OnReportSelected="SelectReportFromCalendar"
-            OnPreviousRequested="ShowPreviousReportAsync"
-            OnNextRequested="ShowNextReportAsync"
-            LoadAdjacentReport="LoadAdjacentReportForViewerAsync">
-            <HeaderActions>
-                <div class="kidsnote-load-all-actions">
-                    <MudButton
-                        Class="kidsnote-load-all-desktop"
-                        OnClick="LoadAllReportsAsync"
-                        Variant="Variant.Outlined"
-                        Disabled="@_isLoadingAllReports">
-                        @LoadAllReportsButtonText
-                    </MudButton>
-                    <MudTooltip Text="@LoadAllReportsButtonText">
-                        <MudIconButton
-                            Class="kidsnote-load-all-mobile"
-                            Icon="@(_isLoadingAllReports
-                                ? Icons.Material.Filled.HourglassTop
-                                : _hasLoadedAllReports
-                                    ? Icons.Material.Filled.CheckCircle
-                                    : Icons.Material.Filled.Download)"
-                            OnClick="LoadAllReportsAsync"
-                            Disabled="@_isLoadingAllReports"
-                            Size="Size.Small"
-                            aria-label="@LoadAllReportsButtonText" />
-                    </MudTooltip>
-                </div>
-            </HeaderActions>
-        </KidsnoteReportList>
+        if (User is null) Navi.NavigateTo("/account/login");
+        return Task.CompletedTask;
     }
-    else if (string.IsNullOrWhiteSpace(_errorMessage))
-    {
-        <MudAlert Severity="Severity.Info">등록된 알림장이 없습니다.</MudAlert>
-    }
-}
-else
-{
-    <MudButton
-        OnClick="LoadInitialDataAsync"
-        Variant="Variant.Filled"
-        Color="Color.Primary">
-        다시 불러오기
-    </MudButton>
 }

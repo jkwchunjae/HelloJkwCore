@@ -101,6 +101,23 @@ public sealed class KidsnoteServiceTest
             item.DateWritten == savedReport.DateWritten);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RejectsReportOfAnotherChildBeforeIndexing(bool cached)
+    {
+        var otherChild = ChildId + 1;
+        var report = CreateReport();
+        if (cached)
+            await _fileSystem.WriteJsonAsync(p => p.KidsReportFile(otherChild, ReportId), report);
+        else
+            _kidsnoteClient.Setup(c => c.GetSingleReportAsync(ReportId, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(report);
+
+        await Assert.ThrowsAsync<InvalidDataException>(() => _service.GetSingleReportAsync(ReportId, otherChild));
+        (await _service.GetReportIndexAsync(otherChild)).Reports.Should().BeEmpty();
+    }
+
     private static SingleReport CreateReport()
     {
         return new SingleReport

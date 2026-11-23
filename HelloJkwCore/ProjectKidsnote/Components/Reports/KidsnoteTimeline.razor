@@ -1,0 +1,205 @@
+@using Common
+@using ProjectKidsnote.Services
+@using ProjectKidsnote.Models.Parents
+@using ProjectKidsnote.Configuration
+@using ProjectKidsnote.Client
+@using Microsoft.Extensions.DependencyInjection
+@implements IDisposable
+@inject KidsnoteFamilies Families
+@inject KidsnoteCredentials Credentials
+@inject KidsnoteOptions Options
+@inject IServiceProvider Services
+
+@if (_error is not null)
+{
+    <MudAlert Severity="Severity.Error">@_error</MudAlert>
+}
+else if (_busy)
+{
+    <MudProgressLinear Indeterminate="true" />
+}
+else if (_shown.Count > 0)
+{
+    <KidsnoteReportList Title="@_title" Reports="_shown" ReportIndex="_index"
+        CanNavigatePrevious="@(_shown[0].DateWritten != Ordered().First().Date)"
+        CanNavigateNext="@(_sources.Any(s => s.Next is not null) || _shown[0].DateWritten != Ordered().Last().Date)"
+        OnPreviousRequested="() => MoveDayAsync(-1)" OnNextRequested="() => MoveDayAsync(1)"
+        OnReportSelected="SelectReportAsync" LoadAdjacentReport="AdjacentAsync">
+        <HeaderActions>
+            <MudButton Variant="Variant.Outlined" OnClick="LoadAllAsync" Disabled="_allLoaded">전체불러오기</MudButton>
+        </HeaderActions>
+    </KidsnoteReportList>
+}
+else
+{
+    <MudAlert Severity="Severity.Info">등록된 알림장이 없습니다.</MudAlert>
+}
+
+@code {
+    [Parameter, EditorRequired] public AppUser Actor { get; set; } = null!;
+    [Parameter, EditorRequired] public string Nicknames { get; set; } = "";
+    private sealed class Source(Kid kid, KidsnoteClient client, KidsnoteService reports)
+    {
+        public Kid Kid { get; } = kid;
+        public KidsnoteClient Client { get; } = client;
+        public KidsnoteService Reports { get; } = reports;
+        public string? Next;
+        public string? OldestPageDate;
+    }
+
+    private sealed record Entry(Source Source, long Id, string Date);
+    private readonly List<Source> _sources = [];
+    private readonly Dictionary<long, Entry> _entries = [];
+    private readonly List<KidsnoteClient> _clients = [];
+    private readonly CancellationTokenSource _lifetime = new();
+    private CancellationToken Token => _lifetime.Token;
+    private List<SingleReport> _shown = [];
+    private KidsnoteReportIndex _index = new();
+    private string _title = "";
+    private string? _error;
+    private bool _busy;
+    private bool _allLoaded;
+    private List<(UserId Owner, long Child)> _authorized = [];
+
+    private async Task<List<(KidsParent Parent, Kid Kid)>> ResolveAsync()
+    {
+        const string denied = "요청한 아이의 알림장을 조회할 권한이 없습니다.";
+        var parents = await Families.ReadAsync();
+        var results = new List<(KidsParent Parent, Kid Kid)>();
+        foreach (var name in Nicknames.Split('-').Distinct(StringComparer.Ordinal))
+        {
+            var match = parents.SelectMany(p => p.Kids.Where(k => k.NicknameForUrl == name && p.CanRead(Actor.Id, k))
+                .Select(k => (Parent: p, Kid: k))).SingleOrDefault();
+            if (match.Kid is null) throw new UnauthorizedAccessException(denied);
+            results.Add(match);
+        }
+        return results;
+    }
+
+    private async Task CheckAccessAsync()
+    {
+        var current = await ResolveAsync();
+        if (!_authorized.SequenceEqual(current.Select(x => (x.Parent.User, x.Kid.ChildId))))
+            throw new UnauthorizedAccessException("가족 설정이 변경되었습니다. 다시 접속해 주세요.");
+    }
+
+    protected override Task OnInitializedAsync() => RunAsync(async () =>
+    {
+        var children = await ResolveAsync();
+        _authorized = children.Select(x => (x.Parent.User, x.Kid.ChildId)).ToList();
+        _title = string.Join(", ", children.Select(x => x.Kid.Name));
+        var files = Services.GetRequiredKeyedService<IFileSystem>(nameof(KidsnoteService));
+        foreach (var family in children.GroupBy(x => x.Parent))
+        {
+            Token.ThrowIfCancellationRequested();
+            var client = new KidsnoteClient(Options);
+            _clients.Add(client);
+            var login = Credentials.Open(family.Key.User, family.Key.Auth.EncryptedAuthInfo!);
+            await client.LoginAsync(login.UserId, login.Password, Token);
+            var reports = new KidsnoteService(client, files);
+            foreach (var (_, kid) in family)
+            {
+                var source = new Source(kid, client, reports);
+                _sources.Add(source);
+                var index = await reports.GetReportIndexAsync(kid.ChildId, Token);
+                foreach (var item in index.Reports)
+                    _entries[item.ReportId] = new Entry(source, item.ReportId, item.DateWritten);
+                await ReadPageAsync(source);
+            }
+        }
+        if (Ordered().FirstOrDefault() is { } first) await ShowDayAsync(first.Date);
+    });
+
+    private IEnumerable<Entry> Ordered() => _entries.Values.OrderByDescending(e => e.Date, StringComparer.Ordinal)
+        .ThenBy(e => e.Source.Kid.NicknameForUrl, StringComparer.Ordinal).ThenByDescending(e => e.Id);
+
+    private async Task ReadPageAsync(Source source)
+    {
+        var page = await source.Client.GetReportsAsync(source.Kid.ChildId, source.Next, Token);
+        foreach (var report in page.Results)
+        {
+            if (report.Child != source.Kid.ChildId) throw new InvalidDataException("아이 정보가 일치하지 않습니다.");
+            _entries[report.Id] = new Entry(source, report.Id, report.DateWritten);
+        }
+        source.Next = string.IsNullOrWhiteSpace(page.Next) || page.Next == source.Next ? null : page.Next;
+        if (page.Results.Count > 0) source.OldestPageDate = page.Results.Min(r => r.DateWritten);
+    }
+
+    // Include every same-day report, even when siblings' page boundaries differ.
+    private async Task ReadThroughAsync(string date)
+    {
+        foreach (var source in _sources)
+            while (source.Next is not null && (source.OldestPageDate is null ||
+                string.CompareOrdinal(source.OldestPageDate, date) >= 0))
+                await ReadPageAsync(source);
+    }
+
+    private async Task ShowDayAsync(string date)
+    {
+        await ReadThroughAsync(date);
+        var shown = new List<SingleReport>();
+        foreach (var entry in Ordered().Where(e => e.Date == date))
+            shown.Add(await LoadAsync(entry, Token));
+        _shown = shown;
+        _index = new KidsnoteReportIndex { Reports = Ordered().Select(e =>
+            new KidsnoteReportIndexItem { ReportId = e.Id, DateWritten = e.Date }).ToList() };
+    }
+
+    private static Task<SingleReport> LoadAsync(Entry entry, CancellationToken token) =>
+        entry.Source.Reports.GetSingleReportAsync(entry.Id, entry.Source.Kid.ChildId, token);
+
+    private Task SelectReportAsync(long id) => RunAsync(async () =>
+    {
+        await CheckAccessAsync();
+        await ShowDayAsync(_entries[id].Date);
+    });
+
+    private Task MoveDayAsync(int offset) => RunAsync(async () =>
+    {
+        await CheckAccessAsync();
+        var date = _shown[0].DateWritten;
+        await ReadThroughAsync(date);
+        var days = Ordered().Select(e => e.Date).Distinct().ToList();
+        var target = days.IndexOf(date) + offset;
+        if (target >= 0 && target < days.Count) await ShowDayAsync(days[target]);
+    });
+
+    private async Task<SingleReport?> AdjacentAsync(long id, int offset, CancellationToken token)
+    {
+        await CheckAccessAsync();
+        await ReadThroughAsync(_entries[id].Date);
+        var ordered = Ordered().ToList();
+        var next = ordered.FindIndex(e => e.Id == id) + offset;
+        return next >= 0 && next < ordered.Count ? await LoadAsync(ordered[next], token) : null;
+    }
+
+    private Task LoadAllAsync() => RunAsync(async () =>
+    {
+        await CheckAccessAsync();
+        foreach (var source in _sources)
+        {
+            while (source.Next is not null) await ReadPageAsync(source);
+        }
+        foreach (var entry in _entries.Values) await LoadAsync(entry, Token);
+        await ShowDayAsync(_shown[0].DateWritten);
+        _allLoaded = true;
+    });
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        if (_busy) return;
+        _busy = true;
+        try { await action(); }
+        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
+        catch (UnauthorizedAccessException ex) { _error = ex.Message; }
+        catch (Exception) { _error = "알림장을 불러오지 못했습니다. 계정 연결을 확인한 후 다시 시도해 주세요."; }
+        finally { _busy = false; }
+    }
+
+    public void Dispose()
+    {
+        _lifetime.Cancel();
+        foreach (var client in _clients) client.Dispose();
+        _lifetime.Dispose();
+    }
+}

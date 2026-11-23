@@ -23,11 +23,11 @@ public interface IKidsnoteService
         CancellationToken cancellationToken = default);
 }
 
-public sealed class KidsnoteService : IKidsnoteService, IDisposable
+public sealed class KidsnoteService : IKidsnoteService
 {
     private readonly IKidsnoteClient _kidsnoteClient;
     private readonly IFileSystem _fileSystem;
-    private readonly SemaphoreSlim _indexLock = new(1, 1);
+    private static readonly SemaphoreSlim _indexLock = new(1, 1);
 
     public KidsnoteService(
         IKidsnoteClient kidsnoteClient,
@@ -57,6 +57,7 @@ public sealed class KidsnoteService : IKidsnoteService, IDisposable
             var savedReport = await _fileSystem.ReadJsonAsync<SingleReport>(
                 reportPath,
                 cancellationToken);
+            ValidateReport(savedReport, childId, reportId);
             await UpsertIndexAsync(childId, savedReport, cancellationToken);
             return savedReport;
         }
@@ -65,6 +66,7 @@ public sealed class KidsnoteService : IKidsnoteService, IDisposable
             reportId,
             cancellationToken);
 
+        ValidateReport(report, childId, reportId);
         await _fileSystem.CreateDirectoryAsync(
             paths => paths.KidsReportFolder(childId),
             cancellationToken);
@@ -98,9 +100,10 @@ public sealed class KidsnoteService : IKidsnoteService, IDisposable
         }
     }
 
-    public void Dispose()
+    private static void ValidateReport(SingleReport report, long childId, long reportId)
     {
-        _indexLock.Dispose();
+        if (report.Child != childId || report.Id != reportId)
+            throw new InvalidDataException("요청한 아이의 알림장이 아닙니다.");
     }
 
     private async Task UpsertIndexAsync(

@@ -19,16 +19,6 @@
         Class="mt-3">
         로그인
     </MudButton>
-    @if (HasConfiguredAccount)
-    {
-        <MudButton
-            OnClick="OnLoginWithConfiguredAccount"
-            Variant="Variant.Text"
-            Color="Color.Secondary"
-            Class="mt-3 ml-2">
-            설정된 계정으로 로그인
-        </MudButton>
-    }
 </MudPaper>
 
 @code {
@@ -36,8 +26,6 @@
     private string _password = string.Empty;
 
     [Parameter, EditorRequired] public EventCallback<KidsnoteLoginRequest> OnLogin { get; set; }
-    [Parameter] public EventCallback OnLoginWithConfiguredAccount { get; set; }
-    [Parameter] public bool HasConfiguredAccount { get; set; }
     [Parameter] public bool IsBusy { get; set; }
 
     private bool CanLogin =>

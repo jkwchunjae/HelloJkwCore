@@ -1,7 +1,7 @@
 <div
     class="kidsnote-report-header mb-4">
     <MudText Typo="Typo.h6" Class="kidsnote-heading kidsnote-report-header-title">
-        @SelectedChild.Name 알림장
+        @Title 알림장
     </MudText>
     <MudStack
         Row="true"
@@ -35,17 +35,6 @@
         AlignItems="AlignItems.Center"
         Spacing="2"
         Class="kidsnote-report-header-actions">
-        @if (MyInfo.Children.Count > 1)
-        {
-            <MudMenu Label="자녀 선택" Variant="Variant.Outlined" Size="Size.Small">
-                @foreach (var child in MyInfo.Children)
-                {
-                    <MudMenuItem OnClick="@(() => OnChildSelected.InvokeAsync(child.Id))">
-                        @child.Name
-                    </MudMenuItem>
-                }
-            </MudMenu>
-        }
         @HeaderActions
     </MudStack>
 </div>
@@ -53,13 +42,14 @@
 <MudCollapse Expanded="_isCalendarOpen">
     <KidsnoteReportCalendar
         ReportIndex="ReportIndex"
-        SelectedReportId="Report.Id"
+        SelectedReportId="Reports[0].Id"
         OnReportSelected="OnReportSelected" />
 </MudCollapse>
 
-<KidsnoteReportCard
-    Report="Report"
-    LoadAdjacentReport="LoadAdjacentReport" />
+@foreach (var report in Reports)
+{
+    <KidsnoteReportCard @key="report.Id" Report="report" LoadAdjacentReport="LoadAdjacentReport" />
+}
 
 <MudStack Row="true" Justify="Justify.Center" Spacing="2" Class="pb-20">
     <MudButton
@@ -77,13 +67,11 @@
 </MudStack>
 
     @code {
-    [Parameter, EditorRequired] public UserInfo MyInfo { get; set; } = null!;
-    [Parameter, EditorRequired] public Child SelectedChild { get; set; } = null!;
-    [Parameter, EditorRequired] public SingleReport Report { get; set; } = null!;
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter, EditorRequired] public List<SingleReport> Reports { get; set; } = [];
     [Parameter, EditorRequired] public KidsnoteReportIndex ReportIndex { get; set; } = null!;
     [Parameter] public bool CanNavigatePrevious { get; set; }
     [Parameter] public bool CanNavigateNext { get; set; }
-    [Parameter, EditorRequired] public EventCallback<long> OnChildSelected { get; set; }
     [Parameter, EditorRequired] public EventCallback<long> OnReportSelected { get; set; }
     [Parameter, EditorRequired] public EventCallback OnPreviousRequested { get; set; }
     [Parameter, EditorRequired] public EventCallback OnNextRequested { get; set; }

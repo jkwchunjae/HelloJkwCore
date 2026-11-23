@@ -13,7 +13,6 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
     private readonly CookieContainer _cookieContainer = new();
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
-    private readonly KidsnoteOptions _options;
     private readonly SemaphoreSlim _reauthenticationLock = new(1, 1);
     private KidsnoteLoginRequest? _lastSuccessfulLogin;
     private UserInfo? _myInfo;
@@ -21,7 +20,6 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
 
     public KidsnoteClient(KidsnoteOptions options)
     {
-        _options = options;
 
         var baseAddress = CreateBaseAddress(options.BaseAddress);
         var handler = new HttpClientHandler
@@ -177,7 +175,7 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
         }
 
         throw new HttpRequestException(
-            $"{operation} 실패: HTTP {(int)response.StatusCode} - {responseBody}",
+            $"{operation} 실패: HTTP {(int)response.StatusCode}",
             inner: null,
             response.StatusCode);
     }
@@ -232,7 +230,7 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
             IsLoggedIn = false;
             _myInfo = null;
 
-            var login = GetSavedLogin();
+            var login = _lastSuccessfulLogin;
             if (login is null)
             {
                 throw new InvalidOperationException(
@@ -245,18 +243,6 @@ public sealed class KidsnoteClient : IKidsnoteClient, IDisposable
         {
             _reauthenticationLock.Release();
         }
-    }
-
-    private KidsnoteLoginRequest? GetSavedLogin()
-    {
-        if (_lastSuccessfulLogin is not null)
-        {
-            return _lastSuccessfulLogin;
-        }
-
-        return _options.HasCredentials
-            ? new KidsnoteLoginRequest(_options.UserId!, _options.Password!)
-            : null;
     }
 
     private static bool IsSessionExpired(HttpStatusCode statusCode) =>
