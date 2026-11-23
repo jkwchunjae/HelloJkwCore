@@ -53,6 +53,24 @@ public sealed class KidsnoteFamiliesTest
     }
 
     [Fact]
+    public async Task StoredConnectionUsesCurrentCredentialsAndRejectsRevokedManager()
+    {
+        var family = Family(owner, "hong");
+        await families.SaveAsync(owner, family);
+        (await families.GetManagedCredentialsAsync(partner.Id, owner.Id)).Should().Be("encrypted");
+
+        family.Auth.EncryptedAuthInfo = "replacement";
+        await families.SaveAsync(owner, family);
+        (await families.GetManagedCredentialsAsync(partner.Id, owner.Id)).Should().Be("replacement");
+
+        family.Partners.Clear();
+        family.AllowedList.Add(partner.Id);
+        await families.SaveAsync(owner, family);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => families.GetManagedCredentialsAsync(partner.Id, owner.Id));
+        (await families.GetManagedCredentialsAsync(owner.Id, owner.Id)).Should().Be("replacement");
+    }
+
+    [Fact]
     public async Task RejectsConflictingNicknamesAndStaleEdits()
     {
         var first = Family(owner, "hong");

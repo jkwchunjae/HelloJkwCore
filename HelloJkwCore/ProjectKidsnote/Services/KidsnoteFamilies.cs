@@ -17,6 +17,15 @@ internal sealed class KidsnoteFamilies(
         finally { gate.Release(); }
     }
 
+    public async Task<string> GetManagedCredentialsAsync(UserId actor, UserId owner)
+    {
+        var family = (await ReadAsync()).SingleOrDefault(p => p.User == owner);
+        if (family is null || !family.CanManage(actor))
+            throw new InvalidOperationException("가족 설정을 관리할 권한이 없습니다.");
+        return family.Auth?.EncryptedAuthInfo
+            ?? throw new InvalidOperationException("먼저 키즈노트 계정을 연결해 주세요.");
+    }
+
     private async Task<List<KidsParent>> ReadFilesAsync()
     {
         List<KidsParent> parents = [];

@@ -105,14 +105,14 @@ public partial class KidsnoteRegistration
         _families.FirstOrDefault(family => family.User.Id == owner) is { } family ? FamilyLabel(family) : "";
 
     private Task SwitchAsync(string? owner) => RunAsync(() => OpenFamilyAsync(owner));
-    private Task RetryAsync() => RunAsync(() => LoginAsync(_family!.Auth.EncryptedAuthInfo!, saveCredentials: false));
+    private Task RetryAsync() => RunAsync(() => LoginAsync());
 
     private async Task ConnectAsync()
     {
         if (!CanConnect) return;
         try
         {
-            await RunAsync(() => LoginAsync(Credentials.Protect(_family!.User, new KidsnoteLoginRequest(_accountId.Trim(), _password)), saveCredentials: true));
+            await RunAsync(() => LoginAsync(Credentials.Protect(_family!.User, new KidsnoteLoginRequest(_accountId.Trim(), _password))));
         }
         finally
         {
@@ -120,14 +120,15 @@ public partial class KidsnoteRegistration
         }
     }
 
-    private async Task LoginAsync(string encrypted, bool saveCredentials)
+    private async Task LoginAsync(string? newCredentials = null)
     {
+        var owner = _family!.User;
         _showConnectionForm = true;
         var step = "Login";
         UserInfo info;
         try
         {
-            info = saveCredentials ? await ReadInfoAsync() : await RestoreConnectionAsync(ReadInfoAsync);
+            info = newCredentials is null ? await RestoreConnectionAsync(ReadInfoAsync) : await ReadInfoAsync();
         }
         catch (HttpRequestException ex)
         {
@@ -150,9 +151,9 @@ public partial class KidsnoteRegistration
             return;
         }
 
-        if (saveCredentials)
+        if (newCredentials is not null)
         {
-            await PersistAsync(p => p.Auth = new KidsnoteAuth { EncryptedAuthInfo = encrypted });
+            await PersistAsync(p => p.Auth = new KidsnoteAuth { EncryptedAuthInfo = newCredentials });
         }
 
         _choices = info.Children.Select(child => new Kid
@@ -167,7 +168,8 @@ public partial class KidsnoteRegistration
         async Task<UserInfo> ReadInfoAsync()
         {
             step = "Login";
-            var client = await Sessions.GetAsync(_family!.User, encrypted);
+            var encrypted = newCredentials ?? await Families.GetManagedCredentialsAsync(User!.Id, owner);
+            var client = await Sessions.GetAsync(owner, encrypted);
             step = "Profile";
             return await client.GetMyInfoAsync();
         }
