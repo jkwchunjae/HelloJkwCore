@@ -15,6 +15,7 @@ public partial class KidsnoteRegistration
     [Inject] private KidsnoteCredentials Credentials { get; set; } = null!;
     [Inject] private KidsnoteOptions Options { get; set; } = null!;
     [Inject] private AppUserManager Accounts { get; set; } = null!;
+    [Inject] private KidsnoteMenuState Menu { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private List<KidsParent> _families = [];
@@ -88,6 +89,7 @@ public partial class KidsnoteRegistration
         var saved = await Families.UpdateAsync(User!, current, change);
         _families[_families.IndexOf(current)] = saved;
         _family = saved;
+        Menu.NotifyChanged();
         Snackbar.Add("저장되었습니다.", Severity.Success);
     }
 

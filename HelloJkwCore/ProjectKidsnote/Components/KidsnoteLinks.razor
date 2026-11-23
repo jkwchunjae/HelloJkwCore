@@ -2,6 +2,8 @@
 @using Common
 @using ProjectKidsnote.Services
 @inject KidsnoteFamilies Families
+@inject KidsnoteMenuState Menu
+@implements IDisposable
 
 @foreach (var (label, href) in _links)
 {
@@ -27,9 +29,28 @@
     private AppUser? _loadedFor;
     private bool _failed;
 
-    protected override async Task OnParametersSetAsync()
+    private int _version;
+
+    protected override void OnInitialized() => Menu.Changed += OnMenuChanged;
+
+    private void OnMenuChanged() => _ = InvokeAsync(async () =>
     {
-        if (_loadedFor == Actor) return;
+        await LoadAsync();
+        StateHasChanged();
+    });
+
+    public void Dispose()
+    {
+        Menu.Changed -= OnMenuChanged;
+        _version++;
+    }
+
+    protected override Task OnParametersSetAsync() =>
+        _loadedFor == Actor ? Task.CompletedTask : LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        var version = ++_version;
         var actor = _loadedFor = Actor;
         _links.Clear();
         _failed = false;
@@ -38,7 +59,7 @@
         try
         {
             var families = await Families.ReadAsync();
-            if (actor != _loadedFor) return;
+            if (version != _version) return;
             if (actor.HasRole(UserRole.Kidsnote) || families.Any(p => p.CanManage(actor.Id)))
                 _links.Add(("키즈노트 등록", "kidsnote/manage/family"));
             var kids = families.SelectMany(p => p.Kids.Where(k => p.CanRead(actor.Id, k)))
@@ -50,7 +71,7 @@
         }
         catch (Exception)
         {
-            _failed = true;
+            if (version == _version) _failed = true;
         }
     }
 }
