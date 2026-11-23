@@ -37,61 +37,82 @@
     }
     @if (_ready && _family is not null)
     {
-        <section>
-            <h2>내 아이</h2>
+        <section class="family-panel" aria-labelledby="family-title" @key="_family.User">
+            <header class="panel-heading">
+                <MudIcon Icon="@Icons.Material.Outlined.People" />
+                <h2 id="family-title">가족 설정</h2>
+            </header>
+            <details class="permissions">
+                <summary><strong>배우자</strong><span class="count">@(_family.Partners.Count)명</span></summary>
+                <div class="edit-fields">
+                    <KidsnoteUserPicker Label="배우자" Users="_users.Where(u => u.Id != _family.User)"
+                        Selection="_family.Partners" Disabled="_busy" Changed="change => ChangeAccessAsync(change, partners: true)" />
+                </div>
+            </details>
+            <details class="permissions">
+                <summary><strong>모든 아이의 알림장을 볼 사람</strong><span class="count">@(_family.AllowedList.Count)명</span></summary>
+                <div class="edit-fields">
+                    <KidsnoteUserPicker Label="모든 아이의 알림장을 볼 사람" Users="_users"
+                        Selection="_family.AllowedList" Disabled="_busy" Changed="change => ChangeAccessAsync(change)" />
+                </div>
+            </details>
+        </section>
+
+        <section class="children-section" aria-labelledby="children-title">
+            <h2 id="children-title">아이 목록 <span class="count">@VisibleChildren.Count()명</span></h2>
             @if (!VisibleChildren.Any())
             {
                 <MudAlert Severity="Severity.Info">연결된 계정에 아이가 없습니다.</MudAlert>
             }
-            <div class="child-list">
-                @foreach (var kid in VisibleChildren)
-                {
-                    var registered = _family.Kids.FirstOrDefault(k => k.ChildId == kid.ChildId);
-                    <article class="settings-card" @key="kid.ChildId">
-                        <div class="child-heading">
+            @foreach (var kid in VisibleChildren)
+            {
+                var registered = _family.Kids.FirstOrDefault(k => k.ChildId == kid.ChildId);
+                <article class="child-card" @key="(_family.User, kid.ChildId)">
+                    <header class="child-heading">
+                        <div class="child-icon"><MudIcon Icon="@Icons.Material.Outlined.ChildCare" /></div>
+                        <div>
                             <h3>@kid.Name</h3>
                             @if (registered is not null)
                             {
-                                <MudButton Variant="Variant.Text" Color="Color.Error" Disabled="_busy"
-                                           OnClick="() => UnregisterAsync(kid.ChildId)">등록 해제</MudButton>
+                                <p class="registered-state"><MudIcon Icon="@Icons.Material.Outlined.CheckCircle" Size="Size.Small" />
+                                    이 홈페이지에 등록된 아이입니다.</p>
                             }
                         </div>
-                        @if (registered is null)
+                        @if (registered is not null)
                         {
+                            <MudButton Href="@($"/kidsnote/{registered.NicknameForUrl}/")" Variant="Variant.Outlined"
+                                       Size="Size.Small" Color="Color.Primary">알림장 보기</MudButton>
+                        }
+                    </header>
+                    @if (registered is null)
+                    {
+                        <div class="edit-fields">
                             <MudTextField T="string" Label="URL 닉네임" HelperText="영문 소문자와 숫자를 사용할 수 있어요."
                                 Variant="Variant.Outlined" Immediate="true" @bind-Value="kid.NicknameForUrl" Disabled="_busy" />
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
                                 Disabled="@(_busy || string.IsNullOrWhiteSpace(kid.NicknameForUrl))"
                                 OnClick="() => RegisterAsync(kid)">@ObjectName(kid.Name) 이 홈페이지에서 조회할 수 있도록 등록하기</MudButton>
-                        }
-                        else
-                        {
-                            <div class="registered-state">
-                                <MudIcon Icon="@Icons.Material.Outlined.CheckCircle" Size="Size.Small" Color="Color.Success" />
-                                이 홈페이지에 등록된 아이입니다.
+                        </div>
+                    }
+                    else
+                    {
+                        <details class="child-settings">
+                            <summary>아이 등록 및 열람 설정</summary>
+                            <div class="edit-fields">
+                                <MudTextField T="string" @key="(_family.Revision, _inputVersion)" Label="URL 닉네임"
+                                    HelperText="@($"/kidsnote/{registered.NicknameForUrl}/")" Variant="Variant.Outlined"
+                                    Value="@registered.NicknameForUrl" ValueChanged="name => RenameAsync(kid.ChildId, name)" Disabled="_busy" />
+                                <KidsnoteUserPicker Label="@($"{kid.Name} 알림장을 볼 사람")" Users="_users" Selection="registered.AllowedList"
+                                    Disabled="_busy" Changed="change => ChangeAccessAsync(change, kid.ChildId)" />
+                                <div class="remove-action">
+                                    <MudButton Color="Color.Error" Size="Size.Small" Disabled="_busy"
+                                               OnClick="() => UnregisterAsync(kid.ChildId)">등록 해제</MudButton>
+                                </div>
                             </div>
-                            <MudTextField T="string" @key="(_family.Revision, _inputVersion)" Label="URL 닉네임"
-                                HelperText="@($"/kidsnote/{registered.NicknameForUrl}/")" Variant="Variant.Outlined"
-                                Value="@registered.NicknameForUrl" ValueChanged="name => RenameAsync(kid.ChildId, name)" Disabled="_busy" />
-                            <KidsnoteUserPicker Label="@($"{kid.Name} 알림장을 볼 사람")" Users="_users" Selection="registered.AllowedList"
-                                Disabled="_busy" Changed="change => ChangeAccessAsync(change, kid.ChildId)" />
-                        }
-                    </article>
-                }
-            </div>
-        </section>
-        <section>
-            <h2>가족과 공유</h2>
-            <div class="access-grid">
-                <div class="settings-card">
-                    <KidsnoteUserPicker Label="배우자" Users="_users.Where(u => u.Id != _family.User)"
-                        Selection="_family.Partners" Disabled="_busy" Changed="change => ChangeAccessAsync(change, partners: true)" />
-                </div>
-                <div class="settings-card">
-                    <KidsnoteUserPicker Label="모든 아이의 알림장을 볼 사람" Users="_users"
-                        Selection="_family.AllowedList" Disabled="_busy" Changed="change => ChangeAccessAsync(change)" />
-                </div>
-            </div>
+                        </details>
+                    }
+                </article>
+            }
         </section>
     }
 </main>
