@@ -10,13 +10,20 @@
 @inject KidsnoteOptions Options
 @inject IServiceProvider Services
 
-@if (_error is not null)
+@if (_busy || !RendererInfo.IsInteractive)
+{
+    <div role="status" aria-live="polite">
+        <MudText>알림장을 불러오는 중입니다.</MudText>
+        <MudProgressLinear Indeterminate="true" Class="mt-2" />
+    </div>
+}
+else if (_error is not null)
 {
     <MudAlert Severity="Severity.Error">@_error</MudAlert>
-}
-else if (_busy)
-{
-    <MudProgressLinear Indeterminate="true" />
+    @if (_retry is not null)
+    {
+        <MudButton Variant="Variant.Outlined" Class="mt-2" OnClick="RetryAsync">다시 시도</MudButton>
+    }
 }
 else if (_shown.Count > 0)
 {
@@ -57,6 +64,7 @@ else
     private KidsnoteReportIndex _index = new();
     private string _title = "";
     private string? _error;
+    private Func<Task>? _retry;
     private bool _busy;
     private bool _allLoaded;
     private List<(UserId Owner, long Child)> _authorized = [];
@@ -83,8 +91,14 @@ else
             throw new UnauthorizedAccessException("가족 설정이 변경되었습니다. 다시 접속해 주세요.");
     }
 
-    protected override Task OnInitializedAsync() => RunAsync(async () =>
+    protected override Task OnInitializedAsync() =>
+        RendererInfo.IsInteractive ? RunAsync(LoadInitialAsync) : Task.CompletedTask;
+
+    private async Task LoadInitialAsync()
     {
+        DisposeClients();
+        _sources.Clear();
+        _entries.Clear();
         var children = await ResolveAsync();
         _authorized = children.Select(x => (x.Parent.User, x.Kid.ChildId)).ToList();
         _title = string.Join(", ", children.Select(x => x.Kid.Name));
@@ -108,7 +122,7 @@ else
             }
         }
         if (Ordered().FirstOrDefault() is { } first) await ShowDayAsync(first.Date);
-    });
+    }
 
     private IEnumerable<Entry> Ordered() => _entries.Values.OrderByDescending(e => e.Date, StringComparer.Ordinal)
         .ThenBy(e => e.Source.Kid.NicknameForUrl, StringComparer.Ordinal).ThenByDescending(e => e.Id);
@@ -185,21 +199,40 @@ else
         _allLoaded = true;
     });
 
+    private Task RetryAsync() => _retry is { } action ? RunAsync(action) : Task.CompletedTask;
+
     private async Task RunAsync(Func<Task> action)
     {
         if (_busy) return;
         _busy = true;
+        _retry = null;
+        _error = null;
         try { await action(); }
         catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
         catch (UnauthorizedAccessException ex) { _error = ex.Message; }
-        catch (Exception) { _error = "알림장을 불러오지 못했습니다. 계정 연결을 확인한 후 다시 시도해 주세요."; }
+        catch (Exception ex)
+        {
+            _retry = action;
+            _error = ex switch
+            {
+                OperationCanceledException or TimeoutException => "응답 시간이 초과되어 알림장 조회를 마치지 못했습니다.",
+                HttpRequestException => "키즈노트 서버에서 알림장을 불러오지 못했습니다.",
+                _ => "알림장을 불러오지 못했습니다."
+            };
+        }
         finally { _busy = false; }
     }
 
     public void Dispose()
     {
         _lifetime.Cancel();
-        foreach (var client in _clients) client.Dispose();
+        DisposeClients();
         _lifetime.Dispose();
+    }
+
+    private void DisposeClients()
+    {
+        foreach (var client in _clients) client.Dispose();
+        _clients.Clear();
     }
 }
