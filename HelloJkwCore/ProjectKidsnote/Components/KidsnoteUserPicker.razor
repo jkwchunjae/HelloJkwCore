@@ -1,0 +1,24 @@
+@using Common
+<fieldset class="my-3">
+    <legend>@Label</legend>
+    @foreach (var person in Users)
+    {
+        <label class="d-inline-flex align-center mr-4">
+            <input type="checkbox" checked="@Selection.Contains(person.Id)"
+                   @onchange="e => Toggle(person.Id, e.Value is true)" />
+            <span class="ml-1">@person.DisplayName (@string.Join(", ", person.Logins.Select(l => l.Provider).Distinct()))</span>
+        </label>
+    }
+</fieldset>
+
+@code {
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+    [Parameter, EditorRequired] public IEnumerable<AppUser> Users { get; set; } = [];
+    [Parameter, EditorRequired] public List<UserId> Selection { get; set; } = [];
+
+    private void Toggle(UserId id, bool selected)
+    {
+        Selection.Remove(id);
+        if (selected) Selection.Add(id);
+    }
+}
