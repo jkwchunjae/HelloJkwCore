@@ -39,12 +39,12 @@
     {
         <section>
             <h2>내 아이</h2>
-            @if (!_choices.Any())
+            @if (!VisibleChildren.Any())
             {
                 <MudAlert Severity="Severity.Info">연결된 계정에 아이가 없습니다.</MudAlert>
             }
             <div class="child-list">
-                @foreach (var kid in _choices)
+                @foreach (var kid in VisibleChildren)
                 {
                     var registered = _family.Kids.FirstOrDefault(k => k.ChildId == kid.ChildId);
                     <article class="settings-card" @key="kid.ChildId">

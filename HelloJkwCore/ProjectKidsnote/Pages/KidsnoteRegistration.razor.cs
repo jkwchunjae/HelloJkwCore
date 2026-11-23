@@ -22,6 +22,9 @@ public partial class KidsnoteRegistration
     private KidsParent? _family;
     private List<AppUser> _users = [];
     private List<Kid> _choices = [];
+    private IEnumerable<Kid> VisibleChildren => _choices.Concat(
+        _family!.Kids.Where(saved => !_choices.Any(k => k.ChildId == saved.ChildId)));
+
     private string? _error;
     private bool _ready;
     private bool _busy;
@@ -34,7 +37,8 @@ public partial class KidsnoteRegistration
             Navi.NavigateTo("/account/login");
             return Task.CompletedTask;
         }
-        return RunAsync(() => OpenFamilyAsync(User.Id.Id));
+        // The interactive circuit restores the session once, after prerendering.
+        return RendererInfo.IsInteractive ? RunAsync(() => OpenFamilyAsync(User.Id.Id)) : Task.CompletedTask;
     }
 
     private async Task OpenFamilyAsync(string? owner)
@@ -77,8 +81,6 @@ public partial class KidsnoteRegistration
             CenterId = (child.Enrollment.FirstOrDefault(e => e.IsApproved && !e.RemovedChild)
                 ?? child.Enrollment.FirstOrDefault())?.CenterId ?? 0
         }).ToList();
-        // Keep previously registered children manageable if they disappear from the external listing.
-        _choices.AddRange(_family!.Kids.Where(saved => !_choices.Any(k => k.ChildId == saved.ChildId)));
         _users = (await Accounts.GetUsersInRoleAsync("all")).OrderBy(u => u.DisplayName).ToList();
         _ready = true;
     }
