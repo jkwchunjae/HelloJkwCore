@@ -1,147 +1,97 @@
 @page "/kidsnote/manage/family"
 @inherits JkwPageBase
 @using ProjectKidsnote.Components
-@using ProjectKidsnote.Models.Parents
-@using ProjectKidsnote.Services
-@using ProjectKidsnote.Client
-@using ProjectKidsnote.Configuration
-@inject KidsnoteFamilies Families
-@inject KidsnoteCredentials Credentials
-@inject KidsnoteOptions Options
-@inject AppUserManager Accounts
 
 <PageTitle>키즈노트 등록</PageTitle>
-<MudText Typo="Typo.h5">키즈노트 등록</MudText>
-@if (_error is not null)
-{
-    <MudAlert Severity="Severity.Error">@_error</MudAlert>
-}
-@if (_family is not null)
-{
-    <fieldset disabled="@_busy">
-        @if (_families.Count > 1)
-        {
-            <label>관리할 가족
-                <select value="@_family.User.Id" @onchange="SwitchFamily">
-                    @foreach (var family in _families)
-                    {
-                        <option value="@family.User.Id">@FamilyLabel(family)</option>
-                    }
-                </select>
-            </label>
-        }
+<main class="family-settings">
+    <header class="family-heading">
+        <span class="heading-icon"><MudIcon Icon="@Icons.Material.Outlined.ChildCare" Size="Size.Large" /></span>
+        <h1>키즈노트 등록</h1>
+    </header>
+
+    @if (_families.Count > 1)
+    {
+        <MudSelect T="string" Label="관리할 가족" Variant="Variant.Outlined" Value="@_family?.User.Id"
+                   ValueChanged="SwitchAsync" Disabled="_busy">
+            @foreach (var family in _families)
+            {
+                <MudSelectItem Value="@family.User.Id">@FamilyLabel(family)</MudSelectItem>
+            }
+        </MudSelect>
+    }
+    @if (_error is not null)
+    {
+        <MudAlert Severity="Severity.Error">@_error</MudAlert>
+    }
+    @if (_busy)
+    {
+        <MudProgressLinear Indeterminate="true" Color="Color.Primary" aria-label="처리 중" />
+    }
+    @if (_family is not null && !_ready && (!_busy || _family.Auth is null))
+    {
+        <KidsnoteLoginForm @key="_family.User" OnLogin="ConnectAsync" IsBusy="_busy" />
         @if (_family.Auth?.EncryptedAuthInfo is not null)
         {
-            <MudButton OnClick="RefreshAsync" Disabled="_busy">연결된 계정에서 아이 목록 불러오기</MudButton>
+            <MudButton OnClick="RetryAsync" Disabled="_busy">저장된 계정으로 다시 연결</MudButton>
         }
-        <KidsnoteLoginForm OnLogin="ConnectAsync" IsBusy="_busy" />
-        <KidsnoteUserPicker Label="배우자" Users="_users.Where(u => u.Id != _family.User)" Selection="_family.Partners" />
-        <KidsnoteUserPicker Label="모든 아이의 알림장을 볼 사람" Users="_users" Selection="_family.AllowedList" />
-        @foreach (var kid in _choices)
-        {
-            <div class="my-4" @key="kid.ChildId">
-                <label><input type="checkbox" checked="@_selected.Contains(kid.ChildId)"
-                              @onchange="e => Select(kid.ChildId, e.Value is true)" /> @kid.Name</label>
-                @if (_selected.Contains(kid.ChildId))
+    }
+    @if (_ready && _family is not null)
+    {
+        <section>
+            <h2>내 아이</h2>
+            @if (!_choices.Any())
+            {
+                <MudAlert Severity="Severity.Info">연결된 계정에 아이가 없습니다.</MudAlert>
+            }
+            <div class="child-list">
+                @foreach (var kid in _choices)
                 {
-                    <MudTextField @bind-Value="kid.NicknameForUrl" Label="URL 닉네임 (영문 소문자·숫자)" />
-                    <KidsnoteUserPicker Label="@($"{kid.Name} 알림장을 볼 사람")" Users="_users" Selection="kid.AllowedList" />
+                    var registered = _family.Kids.FirstOrDefault(k => k.ChildId == kid.ChildId);
+                    <article class="settings-card" @key="kid.ChildId">
+                        <div class="child-heading">
+                            <h3>@kid.Name</h3>
+                            @if (registered is not null)
+                            {
+                                <MudButton Variant="Variant.Text" Color="Color.Error" Disabled="_busy"
+                                           OnClick="() => UnregisterAsync(kid.ChildId)">등록 해제</MudButton>
+                            }
+                        </div>
+                        @if (registered is null)
+                        {
+                            <MudTextField T="string" Label="URL 닉네임" HelperText="영문 소문자와 숫자를 사용할 수 있어요."
+                                Variant="Variant.Outlined" Immediate="true" @bind-Value="kid.NicknameForUrl" Disabled="_busy" />
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                                Disabled="@(_busy || string.IsNullOrWhiteSpace(kid.NicknameForUrl))"
+                                OnClick="() => RegisterAsync(kid)">@ObjectName(kid.Name) 이 홈페이지에서 조회할 수 있도록 등록하기</MudButton>
+                        }
+                        else
+                        {
+                            <div class="registered-state">
+                                <MudIcon Icon="@Icons.Material.Outlined.CheckCircle" Size="Size.Small" Color="Color.Success" />
+                                이 홈페이지에 등록된 아이입니다.
+                            </div>
+                            <MudTextField T="string" @key="(_family.Revision, _inputVersion)" Label="URL 닉네임"
+                                HelperText="@($"/kidsnote/{registered.NicknameForUrl}/")" Variant="Variant.Outlined"
+                                Value="@registered.NicknameForUrl" ValueChanged="name => RenameAsync(kid.ChildId, name)" Disabled="_busy" />
+                            <KidsnoteUserPicker Label="@($"{kid.Name} 알림장을 볼 사람")" Users="_users" Selection="registered.AllowedList"
+                                Disabled="_busy" Changed="change => ChangeAccessAsync(change, kid.ChildId)" />
+                        }
+                    </article>
                 }
             </div>
-        }
-        <MudButton OnClick="SaveAsync" Disabled="@(_busy || _family.Auth?.EncryptedAuthInfo is null)"
-                   Variant="Variant.Filled" Color="Color.Primary">저장</MudButton>
-    </fieldset>
-}
-
-@code {
-    private List<KidsParent> _families = [];
-    private KidsParent? _family;
-    private IList<AppUser> _users = [];
-    private List<Kid> _choices = [];
-    private HashSet<long> _selected = [];
-    private string? _error;
-    private bool _busy;
-
-    protected override async Task OnPageInitializedAsync()
-    {
-        if (User is null) { Navi.NavigateTo("/account/login"); return; }
-        await RunAsync(async () =>
-        {
-            _families = (await Families.ReadAsync()).Where(p => p.CanManage(User.Id)).ToList();
-            if (User.HasRole(UserRole.Kidsnote) && !_families.Any(p => p.User == User.Id))
-                _families.Add(new KidsParent { User = User.Id });
-            if (_families.Count == 0) throw new InvalidOperationException("가족 설정을 관리할 권한이 없습니다.");
-            _users = (await Accounts.GetUsersInRoleAsync("all")).OrderBy(u => u.DisplayName).ToList();
-            Edit(_families.FirstOrDefault(p => p.User == User.Id) ?? _families[0]);
-        });
+        </section>
+        <section>
+            <h2>가족과 공유</h2>
+            <div class="access-grid">
+                <div class="settings-card">
+                    <KidsnoteUserPicker Label="배우자" Users="_users.Where(u => u.Id != _family.User)"
+                        Selection="_family.Partners" Disabled="_busy" Changed="change => ChangeAccessAsync(change, partners: true)" />
+                </div>
+                <div class="settings-card">
+                    <KidsnoteUserPicker Label="모든 아이의 알림장을 볼 사람" Users="_users"
+                        Selection="_family.AllowedList" Disabled="_busy" Changed="change => ChangeAccessAsync(change)" />
+                </div>
+            </div>
+        </section>
     }
-
-    private string FamilyLabel(KidsParent family) =>
-        $"{_users.FirstOrDefault(u => u.Id == family.User)?.DisplayName} 가족 ({string.Join(", ", family.Kids.Select(k => k.Name))})";
-
-    private async Task SwitchFamily(ChangeEventArgs e)
-    {
-        // Reload saved values so switching families discards all unsaved edits together.
-        await OnPageInitializedAsync();
-        if (_error is null) Edit(_families.Single(p => p.User.Id == e.Value?.ToString()));
-    }
-
-    private void Edit(KidsParent family)
-    {
-        _family = family;
-        _choices = [.. family.Kids];
-        _selected = family.Kids.Select(k => k.ChildId).ToHashSet();
-    }
-
-    private void Select(long id, bool selected)
-    {
-        if (selected) _selected.Add(id);
-        else _selected.Remove(id);
-    }
-
-    private Task RefreshAsync() => RunAsync(() => LoadChildrenAsync(
-        Credentials.Open(_family!.User, _family.Auth.EncryptedAuthInfo!)));
-
-    private Task ConnectAsync(KidsnoteLoginRequest login) => RunAsync(() => LoadChildrenAsync(login));
-
-    private async Task LoadChildrenAsync(KidsnoteLoginRequest login)
-    {
-        using var client = new KidsnoteClient(Options);
-        await client.LoginAsync(login.UserId, login.Password);
-        var info = await client.GetMyInfoAsync();
-        var choices = info.Children.Select(child =>
-        {
-            var existing = _choices.FirstOrDefault(k => k.ChildId == child.Id);
-            var center = child.Enrollment.FirstOrDefault(e => e.IsApproved && !e.RemovedChild)
-                ?? child.Enrollment.FirstOrDefault();
-            return new Kid
-            {
-                ChildId = child.Id, Name = child.Name, CenterId = center?.CenterId ?? 0,
-                NicknameForUrl = existing?.NicknameForUrl ?? "", AllowedList = existing?.AllowedList ?? []
-            };
-        }).ToList();
-        _family!.Auth = new KidsnoteAuth { EncryptedAuthInfo = Credentials.Protect(_family.User, login) };
-        _choices = choices;
-        _selected.IntersectWith(choices.Select(k => k.ChildId));
-    }
-
-    private Task SaveAsync() => RunAsync(async () =>
-    {
-        _family!.Kids.Clear();
-        _family.Kids.AddRange(_choices.Where(k => _selected.Contains(k.ChildId)));
-        await Families.SaveAsync(User!, _family);
-        Navi.NavigateTo("/", forceLoad: true);
-    });
-
-    private async Task RunAsync(Func<Task> action)
-    {
-        if (_busy) return;
-        _busy = true;
-        _error = null;
-        try { await action(); }
-        catch (InvalidOperationException ex) { _error = ex.Message; }
-        catch (Exception) { _error = "키즈노트 계정 또는 저장소를 확인하고 다시 시도해 주세요."; }
-        finally { _busy = false; }
-    }
-}
+</main>

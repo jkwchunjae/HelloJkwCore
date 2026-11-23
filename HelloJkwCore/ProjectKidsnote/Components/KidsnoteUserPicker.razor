@@ -1,24 +1,45 @@
 @using Common
-<fieldset class="my-3">
-    <legend>@Label</legend>
-    @foreach (var person in Users)
+<h3 class="mud-typography mud-typography-subtitle1 mb-2">@Label</h3>
+<MudSelect T="UserId" @key="_version" Label="@($"{Label} 추가")" Variant="Variant.Outlined" Dense="true"
+           AnchorOrigin="Origin.BottomCenter" Disabled="Disabled" ValueChanged="AddAsync">
+    @foreach (var person in Users.Where(u => !Selection.Contains(u.Id)))
     {
-        <label class="d-inline-flex align-center mr-4">
-            <input type="checkbox" checked="@Selection.Contains(person.Id)"
-                   @onchange="e => Toggle(person.Id, e.Value is true)" />
-            <span class="ml-1">@person.DisplayName (@string.Join(", ", person.Logins.Select(l => l.Provider).Distinct()))</span>
-        </label>
+        <MudSelectItem Value="person.Id">@person.DisplayName · @Providers(person)</MudSelectItem>
     }
-</fieldset>
+</MudSelect>
+@if (Selection.Count > 0)
+{
+    <MudSimpleTable Dense="true" Elevation="0" Class="mt-2">
+        <thead><tr><th>이름</th><th>인증 수단</th><th>관리</th></tr></thead>
+        <tbody>
+            @foreach (var id in Selection)
+            {
+                var user = Users.FirstOrDefault(u => u.Id == id);
+                <tr @key="id">
+                    <td>@(user?.DisplayName ?? "알 수 없는 사용자")</td>
+                    <td>@(user is null ? "—" : Providers(user))</td>
+                    <td><MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.PersonRemove"
+                        aria-label="@($"{user?.DisplayName} 목록에서 제외")" Disabled="Disabled"
+                        OnClick="() => Changed.InvokeAsync((id, false))" /></td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+}
 
 @code {
     [Parameter, EditorRequired] public string Label { get; set; } = "";
     [Parameter, EditorRequired] public IEnumerable<AppUser> Users { get; set; } = [];
     [Parameter, EditorRequired] public List<UserId> Selection { get; set; } = [];
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter, EditorRequired] public EventCallback<(UserId Id, bool Add)> Changed { get; set; }
+    private int _version;
 
-    private void Toggle(UserId id, bool selected)
+    private static string Providers(AppUser user) => string.Join(", ", user.Logins.Select(l => l.Provider).Distinct());
+
+    private async Task AddAsync(UserId? id)
     {
-        Selection.Remove(id);
-        if (selected) Selection.Add(id);
+        if (id is not null) await Changed.InvokeAsync((id, true));
+        _version++;
     }
 }
