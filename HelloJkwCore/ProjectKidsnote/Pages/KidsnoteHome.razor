@@ -4,7 +4,7 @@
 <PageTitle>키즈노트</PageTitle>
 @if (User is not null)
 {
-    <KidsnoteTimeline @key="Nicknames" Actor="User" Nicknames="Nicknames" />
+    <KidsnoteTimeline @key="Nicknames" Actor="User" Nicknames="@Nicknames" />
 }
 
 @code {

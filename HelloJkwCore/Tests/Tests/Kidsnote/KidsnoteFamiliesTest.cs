@@ -35,6 +35,7 @@ public sealed class KidsnoteFamiliesTest
         (await files.GetFilesAsync(p => p["ParentPath"])).Should().Equal("kidsnote.parent.json");
 
         var loaded = (await families.ReadAsync()).Single();
+        loaded.CanRead(owner.Id, loaded.Kids[1]).Should().BeTrue();
         loaded.CanRead(partner.Id, loaded.Kids[1]).Should().BeTrue();
         loaded.CanRead(viewer, loaded.Kids[0]).Should().BeTrue();
         loaded.CanRead(viewer, loaded.Kids[1]).Should().BeFalse();
