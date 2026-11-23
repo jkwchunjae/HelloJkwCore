@@ -29,6 +29,18 @@ internal sealed class KidsnoteFamilies(
         return parents;
     }
 
+    public async Task<KidsParent> UpdateAsync(AppUser actor, KidsParent current, Action<KidsParent> change)
+    {
+        var parents = await ReadAsync();
+        var draft = parents.SingleOrDefault(p => p.User == current.User) ?? new KidsParent { User = current.User };
+        if (draft.Revision != current.Revision)
+            throw new InvalidOperationException("가족 설정이 변경되었습니다. 화면을 새로고침해 주세요.");
+
+        change(draft);
+        await SaveAsync(actor, draft);
+        return draft;
+    }
+
     public async Task SaveAsync(AppUser actor, KidsParent draft)
     {
         await gate.WaitAsync();

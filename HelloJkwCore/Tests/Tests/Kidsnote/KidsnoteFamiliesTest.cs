@@ -68,6 +68,23 @@ public sealed class KidsnoteFamiliesTest
     }
 
     [Fact]
+    public async Task SavesConnectionBeforeChildrenAndKeepsPreviousStateOnInvalidEdit()
+    {
+        var connection = await families.UpdateAsync(owner, new KidsParent { User = owner.Id },
+            p => p.Auth = new KidsnoteAuth { EncryptedAuthInfo = "encrypted" });
+        var saved = (await families.ReadAsync()).Single();
+        saved.Kids.Should().BeEmpty();
+        saved.Auth.EncryptedAuthInfo.Should().Be("encrypted");
+
+        var registered = await families.UpdateAsync(owner, connection,
+            p => p.Kids.Add(new Kid { ChildId = 1, NicknameForUrl = "hong" }));
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            families.UpdateAsync(owner, registered, p => p.Kids[0].NicknameForUrl = "invalid-name"));
+        registered.Kids.Single().NicknameForUrl.Should().Be("hong");
+        (await families.ReadAsync()).Single().Kids.Single().NicknameForUrl.Should().Be("hong");
+    }
+
+    [Fact]
     public void CredentialsRoundTripOnlyForTheirOwner()
     {
         var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string>
