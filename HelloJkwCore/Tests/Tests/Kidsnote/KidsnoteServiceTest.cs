@@ -101,6 +101,22 @@ public sealed class KidsnoteServiceTest
             item.DateWritten == savedReport.DateWritten);
     }
 
+    [Fact]
+    public async Task ConcurrentSessionsShareTheSavedReport()
+    {
+        var response = new TaskCompletionSource<SingleReport>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _kidsnoteClient.Setup(c => c.GetSingleReportAsync(ReportId, It.IsAny<CancellationToken>()))
+            .Returns(response.Task);
+        var otherSession = new KidsnoteService(_kidsnoteClient.Object, _fileSystem);
+        var first = _service.GetSingleReportAsync(ReportId, ChildId);
+        var second = otherSession.GetSingleReportAsync(ReportId, ChildId);
+        response.SetResult(CreateReport());
+        await Task.WhenAll(first, second);
+
+        _kidsnoteClient.Verify(c => c.GetSingleReportAsync(ReportId, It.IsAny<CancellationToken>()), Times.Once);
+        (await _service.GetReportIndexAsync(ChildId)).Reports.Should().ContainSingle();
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]

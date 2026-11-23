@@ -5,7 +5,7 @@ namespace ProjectKidsnote.Models.Parents;
 /// <summary>
 /// 키즈노트 부모님의 정보를 저장한다.
 /// UserRole.Kidsnote 권한이 있는 사람이 객체를 생성 하게 된다.
-/// 
+///
 /// Azure, Dropbox에 저장한다.
 /// 키즈노트 인증정보도 저장해야 하는데, 암호화 해서 저장한다.
 /// </summary>

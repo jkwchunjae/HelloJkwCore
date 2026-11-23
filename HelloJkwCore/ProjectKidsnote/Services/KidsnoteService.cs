@@ -27,6 +27,9 @@ public sealed class KidsnoteService : IKidsnoteService
 {
     private readonly IKidsnoteClient _kidsnoteClient;
     private readonly IFileSystem _fileSystem;
+    // Separate sessions can open the same child and report concurrently.
+    private static readonly SemaphoreSlim[] ReportLocks = Enumerable.Range(0, 32)
+        .Select(_ => new SemaphoreSlim(1, 1)).ToArray();
     private static readonly SemaphoreSlim _indexLock = new(1, 1);
 
     public KidsnoteService(
@@ -49,6 +52,20 @@ public sealed class KidsnoteService : IKidsnoteService
                 "알림장 번호는 0보다 커야 합니다.");
         }
 
+        var gate = ReportLocks[reportId % ReportLocks.Length];
+        await gate.WaitAsync(cancellationToken);
+        try
+        {
+            return await ReadOrFetchReportAsync(reportId, childId, cancellationToken);
+        }
+        finally
+        {
+            gate.Release();
+        }
+    }
+
+    private async Task<SingleReport> ReadOrFetchReportAsync(long reportId, long childId, CancellationToken cancellationToken)
+    {
         Func<Paths, string> reportPath =
             paths => paths.KidsReportFile(childId, reportId);
 
