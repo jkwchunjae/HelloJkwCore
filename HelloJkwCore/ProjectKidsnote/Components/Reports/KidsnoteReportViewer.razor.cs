@@ -15,6 +15,7 @@ public partial class KidsnoteReportViewer
     public Func<long, int, CancellationToken, Task<SingleReport?>>
         LoadAdjacentReport { get; set; } = null!;
     [Parameter, EditorRequired] public EventCallback OnClosed { get; set; }
+    [Parameter] public EventCallback<string> OnDateChanged { get; set; }
 
     private readonly CancellationTokenSource _disposeTokenSource = new();
     private ElementReference _viewerElement;
@@ -102,6 +103,7 @@ public partial class KidsnoteReportViewer
                 TransitionDurationMilliseconds,
                 _disposeTokenSource.Token);
 
+            var previousDate = _currentReport.DateWritten;
             _currentReport = destination.Report;
             _itemKind = destination.ItemKind;
             _imageIndex = destination.ImageIndex;
@@ -111,6 +113,8 @@ public partial class KidsnoteReportViewer
             _transitionClass = direction > 0
                 ? "kidsnote-viewer-enter-from-bottom"
                 : "kidsnote-viewer-enter-from-top";
+            if (_currentReport.DateWritten != previousDate)
+                await OnDateChanged.InvokeAsync(_currentReport.DateWritten);
             StateHasChanged();
             await Task.Delay(
                 TransitionDurationMilliseconds,

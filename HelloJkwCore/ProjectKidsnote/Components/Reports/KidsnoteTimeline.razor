@@ -1,4 +1,5 @@
 @using Common
+@using System.Globalization
 @using ProjectKidsnote.Services
 @using ProjectKidsnote.Models.Parents
 @using ProjectKidsnote.Configuration
@@ -8,6 +9,7 @@
 @inject KidsnoteSessions Sessions
 @inject KidsnoteOptions Options
 @inject IServiceProvider Services
+@inject NavigationManager Navigation
 
 @if (_busy || !RendererInfo.IsInteractive)
 {
@@ -24,13 +26,18 @@ else if (_error is not null)
         <MudButton Variant="Variant.Outlined" Class="mt-2" OnClick="RetryAsync">다시 시도</MudButton>
     }
 }
+else if (_shown.Count == 0 && RequestedDate is not null)
+{
+    <MudAlert Severity="Severity.Info">선택한 날짜의 알림장이 없습니다.</MudAlert>
+    <MudButton Href="@Navigation.GetUriWithQueryParameter("date", (string?)null)">최신 알림장 보기</MudButton>
+}
 else if (_shown.Count > 0)
 {
     <KidsnoteReportList Title="@_title" Reports="_shown" ReportIndex="_index"
         CanNavigatePrevious="@(_shown[0].DateWritten != Ordered().First().Date)"
         CanNavigateNext="@(_sources.Any(s => s.HasMorePages) || _shown[0].DateWritten != Ordered().Last().Date)"
         OnPreviousRequested="() => MoveDayAsync(-1)" OnNextRequested="() => MoveDayAsync(1)"
-        OnReportSelected="SelectReportAsync" LoadAdjacentReport="AdjacentAsync">
+        OnReportSelected="SelectReport" OnOpenViewer="OpenViewer">
         <HeaderActions>
             <MudButton Variant="Variant.Outlined" OnClick="LoadAllAsync" Disabled="_allLoaded">전체불러오기</MudButton>
         </HeaderActions>
@@ -41,9 +48,16 @@ else
     <MudAlert Severity="Severity.Info">등록된 알림장이 없습니다.</MudAlert>
 }
 
+@if (_viewer is { } viewer)
+{
+    <KidsnoteReportViewer InitialReport="viewer.Report" InitialImageIndex="viewer.ImageIndex"
+        LoadAdjacentReport="AdjacentAsync" OnDateChanged="ViewerDateChanged" OnClosed="CloseViewer" />
+}
+
 @code {
     [Parameter, EditorRequired] public AppUser Actor { get; set; } = null!;
     [Parameter, EditorRequired] public string Nicknames { get; set; } = "";
+    [SupplyParameterFromQuery(Name = "date")] private string? RequestedDate { get; set; }
     private sealed class Source(Kid kid, KidsnoteService reports)
     {
         public Kid Kid { get; } = kid;
@@ -67,6 +81,11 @@ else
     private Func<Task>? _retry;
     private bool _busy;
     private bool _allLoaded;
+    private bool _initialized;
+    private bool _datePending;
+    private string? _lastRequestedDate;
+    private (SingleReport Report, int ImageIndex)? _viewer;
+    private string? _viewerDate;
     private List<(UserId Owner, long Child)> _authorized = [];
 
     private async Task<List<(KidsParent Parent, Kid Kid)>> ResolveAsync()
@@ -91,8 +110,41 @@ else
             throw new UnauthorizedAccessException("가족 설정이 변경되었습니다. 다시 접속해 주세요.");
     }
 
-    protected override Task OnInitializedAsync() =>
-        RendererInfo.IsInteractive ? RunAsync(LoadInitialAsync) : Task.CompletedTask;
+    protected override Task OnParametersSetAsync()
+    {
+        if (!RendererInfo.IsInteractive || (_initialized && RequestedDate == _lastRequestedDate))
+            return Task.CompletedTask;
+
+        _lastRequestedDate = RequestedDate;
+        if (_viewer is not null && RequestedDate != _viewerDate) CloseViewer();
+        _datePending = true;
+        return RunAsync(ApplyRequestedDateAsync);
+    }
+
+    private async Task ApplyRequestedDateAsync()
+    {
+        _datePending = false;
+        var date = RequestedDate;
+        if (date is not null && !DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out _))
+        {
+            _shown.Clear();
+            return;
+        }
+        if (!_initialized)
+        {
+            await LoadInitialAsync();
+            _initialized = true;
+        }
+        else
+        {
+            await CheckAccessAsync();
+        }
+
+        date ??= Ordered().FirstOrDefault()?.Date;
+        if (date is not null) await ShowDayAsync(date);
+        else _shown.Clear();
+    }
 
     private async Task LoadInitialAsync()
     {
@@ -122,7 +174,6 @@ else
                     await ReadPageAsync(source);
             }
         }
-        if (Ordered().FirstOrDefault() is { } first) await ShowDayAsync(first.Date);
     }
 
     private IEnumerable<Entry> Ordered() => _entries.Values.OrderByDescending(e => e.Date, StringComparer.Ordinal)
@@ -167,11 +218,27 @@ else
     private static Task<SingleReport> LoadAsync(Entry entry, CancellationToken token) =>
         entry.Source.Reports.GetSingleReportAsync(entry.Id, entry.Source.Kid.ChildId, token);
 
-    private Task SelectReportAsync(long id) => RunAsync(async () =>
+    private void NavigateToDate(string date)
     {
-        await CheckAccessAsync();
-        await ShowDayAsync(_entries[id].Date);
-    });
+        if (RequestedDate != date)
+            Navigation.NavigateTo(Navigation.GetUriWithQueryParameter("date", date));
+    }
+
+    private void SelectReport(long id) => NavigateToDate(_entries[id].Date);
+
+    private void OpenViewer((SingleReport Report, int ImageIndex) selection)
+    {
+        _viewer = selection;
+        _viewerDate = selection.Report.DateWritten;
+    }
+
+    private void ViewerDateChanged(string date)
+    {
+        _viewerDate = date;
+        NavigateToDate(date);
+    }
+
+    private void CloseViewer() => _viewer = null;
 
     private Task MoveDayAsync(int offset) => RunAsync(async () =>
     {
@@ -180,7 +247,7 @@ else
         await ReadThroughAsync(date, includeOlder: offset > 0);
         var days = Ordered().Select(e => e.Date).Distinct().ToList();
         var target = days.IndexOf(date) + offset;
-        if (target >= 0 && target < days.Count) await ShowDayAsync(days[target]);
+        if (!_datePending && target >= 0 && target < days.Count) NavigateToDate(days[target]);
     });
 
     private async Task<SingleReport?> AdjacentAsync(long id, int offset, CancellationToken token)
@@ -226,6 +293,9 @@ else
             };
         }
         finally { _busy = false; }
+
+        if (_datePending && !_lifetime.IsCancellationRequested)
+            await RunAsync(ApplyRequestedDateAsync);
     }
 
     public void Dispose()
