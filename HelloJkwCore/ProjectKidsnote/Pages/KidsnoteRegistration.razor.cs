@@ -26,6 +26,7 @@ public partial class KidsnoteRegistration
         _family!.Kids.Where(saved => !_choices.Any(k => k.ChildId == saved.ChildId)));
 
     private string? _error;
+    private long? _editingKid;
     private bool _ready;
     private bool _busy;
     private int _inputVersion;
@@ -43,6 +44,7 @@ public partial class KidsnoteRegistration
 
     private async Task OpenFamilyAsync(string? owner)
     {
+        _editingKid = null;
         _ready = false;
         _choices.Clear();
         _users.Clear();

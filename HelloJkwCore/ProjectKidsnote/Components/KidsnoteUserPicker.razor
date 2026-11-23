@@ -1,5 +1,4 @@
 @using Common
-<h3 class="mud-typography mud-typography-subtitle1 mb-2">@Label</h3>
 <MudSelect T="UserId" @key="_version" Label="@($"{Label} 추가")" Variant="Variant.Outlined" Dense="true"
            AnchorOrigin="Origin.BottomCenter" Disabled="Disabled" ValueChanged="AddAsync">
     @foreach (var person in Users.Where(u => !Selection.Contains(u.Id)))
@@ -10,7 +9,8 @@
 @if (Selection.Count > 0)
 {
     <MudSimpleTable Dense="true" Elevation="0" Class="mt-2">
-        <thead><tr><th>이름</th><th>인증 수단</th><th>관리</th></tr></thead>
+        <caption class="mud-sr-only">@Label 목록</caption>
+        <thead><tr><th scope="col">이름</th><th scope="col">인증 수단</th><th scope="col">관리</th></tr></thead>
         <tbody>
             @foreach (var id in Selection)
             {

@@ -1,0 +1,42 @@
+@using Common
+<article class="family-card @Tone">
+    <div class="card-heading">
+        <span class="tile-icon" aria-hidden="true"><MudIcon Icon="@Icon" /></span>
+        <h3>@Title</h3>
+    </div>
+    <p class="access-description">@Description</p>
+    <div class="card-footer">
+        <span class="members">@MemberSummary</span>
+        <button type="button" class="edit-button" aria-controls="@_panelId" aria-expanded="@(_open ? "true" : "false")"
+                aria-label="@($"{Title} 목록 {(_open ? "닫기" : "편집")}")" @onclick="() => _open = !_open">
+            <MudIcon Icon="@(_open ? Icons.Material.Outlined.Close : Icons.Material.Outlined.Edit)" Size="Size.Small" />
+            @(_open ? "닫기" : "편집")
+        </button>
+    </div>
+    <div class="member-editor" id="@_panelId" hidden="@(!_open)">
+        <KidsnoteUserPicker Label="@Title" Users="Users" Selection="Selection" Disabled="Disabled" Changed="Changed" />
+    </div>
+</article>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter, EditorRequired] public string Description { get; set; } = "";
+    [Parameter, EditorRequired] public string Icon { get; set; } = "";
+    [Parameter, EditorRequired] public string Tone { get; set; } = "";
+    [Parameter, EditorRequired] public IEnumerable<AppUser> Users { get; set; } = [];
+    [Parameter, EditorRequired] public List<UserId> Selection { get; set; } = [];
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter, EditorRequired] public EventCallback<(UserId Id, bool Add)> Changed { get; set; }
+
+    private readonly string _panelId = $"members-{Guid.NewGuid():N}";
+    private bool _open;
+    private string MemberSummary
+    {
+        get
+        {
+            if (Selection.Count == 0) return "지정한 사람이 없어요";
+            var name = Users.FirstOrDefault(u => u.Id == Selection[0])?.DisplayName ?? "이름 없음";
+            return Selection.Count == 1 ? name : $"{name} 외 {Selection.Count - 1}명";
+        }
+    }
+}
