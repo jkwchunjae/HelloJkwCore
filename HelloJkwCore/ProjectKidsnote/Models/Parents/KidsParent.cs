@@ -59,7 +59,6 @@ internal class Kid
     /// https://hellojkw.com/kidsnote/{NicknameForUrl} 로 접근 가능하다.
     /// 예를 들면
     /// https://hellojkw.com/kidsnote/jkw 로 접근 가능하다.
-    /// Azure, dropbox에 저장할 때에도 폴더 명으로 사용한다.
     /// 알파벳 소문자, 숫자만 허용한다. 특수문자, 한글은 허용하지 않는다.
     /// </summary>
     public string NicknameForUrl { get; set; } = default!;
