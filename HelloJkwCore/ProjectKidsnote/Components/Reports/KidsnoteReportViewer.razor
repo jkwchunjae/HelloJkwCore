@@ -51,14 +51,14 @@
             type="button"
             aria-label="다음 항목으로 이동"
             disabled="@_isTransitioning"
-            @onclick="@(() => MoveAsync(1))">
+            @onclick="@(() => MoveAsync(-1))">
             ↑
         </button>
         <button
             type="button"
             aria-label="이전 항목으로 이동"
             disabled="@_isTransitioning"
-            @onclick="@(() => MoveAsync(-1))">
+            @onclick="@(() => MoveAsync(1))">
             ↓
         </button>
     </nav>
